@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata schemaVersion="2">
+	<id>mvc-evolution</id>
+	<version>0.0.1</version>
+	<authors>Filip Èí</authors>
+	<owners>Filip Èí</owners>
+
+	<description>bla</description>
+	<dependencies>
+	  <dependency id="EntityFramework" version="5.0.0" />
+	</dependencies>
+  </metadata>
+</package>
