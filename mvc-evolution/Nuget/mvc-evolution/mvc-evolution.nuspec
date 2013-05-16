@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-  <metadata schemaVersion="2">
-	<id>mvc-evolution</id>
-	<version>0.0.1</version>
-	<authors>Filip Èíž</authors>
-	<owners>Filip Èíž</owners>
+	<metadata schemaVersion="2">
+		<id>MVCEvolution</id>
+		<version>0.0.1</version>
+		<authors>Filip Ciz</authors>
+		<owners>Filip Ciz</owners>
 
-	<description>bla</description>
-	<dependencies>
-	  <dependency id="EntityFramework" version="5.0.0" />
-	</dependencies>
-  </metadata>
+		<description>bla</description>
+		<!-- <dependencies>
+			<dependency id="EntityFramework" version="5.0.0" />
+		</dependencies> -->
+	
+	</metadata>
+
+	<files>
+		<!-- TODO: Change to release path! -->
+		<file src="..\..\mvc-evolution.PowerShell\bin\Debug\*.dll" target="tools" />
+
+		<file src="tools\*.*" target="tools" />		
+	</files>
 </package>
