@@ -15,6 +15,10 @@ namespace mvc_evolution.PowerShell.Extensions
             return project.GetPropertyValue<string>("FullPath");
         }
 
+        public static string GetRootNamespace(this Project project)
+        {
+            return project.GetPropertyValue<string>("RootNamespace");
+        }
 
         private static T GetPropertyValue<T>(this Project project, string propertyName)
         {

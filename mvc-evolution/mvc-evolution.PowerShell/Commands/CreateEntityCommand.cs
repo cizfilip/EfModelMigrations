@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EnvDTE;
 using mvc_evolution.PowerShell.Extensions;
+using mvc_evolution.PowerShell.Model;
 
 namespace mvc_evolution.PowerShell.Commands
 {
@@ -22,8 +23,6 @@ namespace mvc_evolution.PowerShell.Commands
 
         protected override void ExecuteCore()
         {
-            
-
             var fileName = className + ".cs";
 
             WriteLine(fileName);
@@ -33,8 +32,15 @@ namespace mvc_evolution.PowerShell.Commands
             string newFilePath = Path.Combine(project.GetProjectDir(), fileName);
 
             WriteLine(newFilePath);
-            
-            string content = GetNewClassContent();
+
+            var classModel = new ClassModel()
+            {
+                Name = className,
+                Namespace = project.GetRootNamespace(),
+                Properties = Enumerable.Empty<PropertyModel>()
+            };
+
+            string content = GetNewClassContent(classModel);
 
             WriteLine(content);
 
@@ -44,15 +50,22 @@ namespace mvc_evolution.PowerShell.Commands
 
         }
 
-        private string GetNewClassContent()
+        private string GetNewClassContent(ClassModel classModel)
         {
             StringBuilder classContent = new StringBuilder();
 
-            classContent.AppendFormat("namespace dummy.{0}.dumy", className);
+            classContent.AppendFormat("namespace {0}", classModel.Namespace);
+            classContent.AppendLine();
             classContent.AppendLine("{");
-            classContent.AppendFormat("\tclass {0} ", className);
+            classContent.AppendFormat("\tclass {0} ", classModel.Name);
+            classContent.AppendLine();
             classContent.AppendLine("\t{");
 
+            foreach (var prop in classModel.Properties)
+            {
+                classContent.AppendFormat("\t\tpublic {0} {1} { get; set; }", prop.Type, prop.Name);
+                classContent.AppendLine();
+            }
 
             classContent.AppendLine("\t}");
             classContent.AppendLine("}");
