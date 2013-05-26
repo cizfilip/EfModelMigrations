@@ -13,14 +13,15 @@ function Add-DummyClass
 {
     [CmdletBinding()] 
     param (
-        [string] $ClassName
+        [parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
     )
 
     $runner = New-MVCEvolutionRunner $ProjectName 
 
     try
     {
-        Invoke-RunnerCommand $runner mvc_evolution.PowerShell.Commands.CreateEntityCommand $ClassName             
+        Invoke-RunnerCommand $runner mvc_evolution.PowerShell.Commands.CreateEntityCommand @( $ClassName, $Properties )
 
         $error = Get-RunnerError $runner                    
 

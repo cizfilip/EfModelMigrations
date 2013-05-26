@@ -18,6 +18,8 @@ namespace mvc_evolution.PowerShell.Extensions
         public static string GetRootNamespace(this Project project)
         {
             return project.GetPropertyValue<string>("RootNamespace");
+            //or default namespace ??
+            //return project.GetPropertyValue<string>("DefaultNamespace");
         }
 
         private static T GetPropertyValue<T>(this Project project, string propertyName)

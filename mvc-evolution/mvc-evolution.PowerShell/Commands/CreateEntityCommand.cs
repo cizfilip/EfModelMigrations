@@ -13,10 +13,19 @@ namespace mvc_evolution.PowerShell.Commands
     internal class CreateEntityCommand : DomainCommand
     {
         private string className;
+        private IEnumerable<PropertyModel> properties;
 
-        public CreateEntityCommand(string className) 
+        public CreateEntityCommand(string className, string[] properties) 
         {
             this.className = className;
+         
+            this.properties = from p in properties
+                              let splitted = p.Split(':')
+                              select new PropertyModel()
+                              {
+                                  Name = splitted.FirstOrDefault(),
+                                  Type = splitted.LastOrDefault()
+                              };
 
             Execute();
         }
@@ -37,7 +46,7 @@ namespace mvc_evolution.PowerShell.Commands
             {
                 Name = className,
                 Namespace = project.GetRootNamespace(),
-                Properties = Enumerable.Empty<PropertyModel>()
+                Properties = properties
             };
 
             string content = GetNewClassContent(classModel);
@@ -57,13 +66,13 @@ namespace mvc_evolution.PowerShell.Commands
             classContent.AppendFormat("namespace {0}", classModel.Namespace);
             classContent.AppendLine();
             classContent.AppendLine("{");
-            classContent.AppendFormat("\tclass {0} ", classModel.Name);
+            classContent.AppendFormat("\tpublic class {0} ", classModel.Name);
             classContent.AppendLine();
             classContent.AppendLine("\t{");
 
             foreach (var prop in classModel.Properties)
             {
-                classContent.AppendFormat("\t\tpublic {0} {1} { get; set; }", prop.Type, prop.Name);
+                classContent.AppendFormat("\t\tpublic {0} {1} {{ get; set; }}", prop.Type, prop.Name);
                 classContent.AppendLine();
             }
 
