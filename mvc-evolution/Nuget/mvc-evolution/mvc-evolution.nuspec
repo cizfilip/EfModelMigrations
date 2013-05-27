@@ -7,9 +7,9 @@
 		<owners>Filip Ciz</owners>
 
 		<description>bla</description>
-		<!-- <dependencies>
+		<!--<dependencies>
 			<dependency id="EntityFramework" version="5.0.0" />
-		</dependencies> -->
+		</dependencies>--> 
 	
 	</metadata>
 

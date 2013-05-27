@@ -37,8 +37,14 @@
   <ItemGroup>
     <Compile Include="Commands\CreateEntityCommand.cs" />
     <Compile Include="DomainCommand.cs" />
+    <Compile Include="Extensions\CodeModelExtensions.cs" />
     <Compile Include="Extensions\ProjectExtensions.cs" />
+    <Compile Include="Generators\ClassGenerator.cs" />
+    <Compile Include="Generators\DbContextGenerator.cs" />
+    <Compile Include="Locators\DbContextLocator.cs" />
     <Compile Include="Model\ClassModel.cs" />
+    <Compile Include="Model\DbContextModel.cs" />
+    <Compile Include="Model\DbSetPropertyModel.cs" />
     <Compile Include="Model\PropertyModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

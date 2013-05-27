@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,12 @@ namespace mvc_evolution.PowerShell.Extensions
             //return project.GetPropertyValue<string>("DefaultNamespace");
         }
 
+        public static void AddContentToProject(this Project project, string path, string content)
+        {
+            File.WriteAllText(path, content);
+            project.ProjectItems.AddFromFile(path);
+        }
+
         private static T GetPropertyValue<T>(this Project project, string propertyName)
         {
 
@@ -35,5 +42,10 @@ namespace mvc_evolution.PowerShell.Extensions
             return (T)property.Value;
         }
 
+
+
+        
+
+        
     }
 }
