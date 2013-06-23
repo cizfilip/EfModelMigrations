@@ -48,10 +48,11 @@ namespace mvc_evolution.PowerShell
         {
             get
             {
-                //TODO: Rethrow with our exception if FileNotFound
-                return Assembly.LoadFrom(efDllPath);                
+                return LoadAssemblyFromFile(efDllPath);               
             }
         }
+
+        
 
         public void Execute()
         {
@@ -111,6 +112,10 @@ namespace mvc_evolution.PowerShell
         }
 
 
-
+        protected Assembly LoadAssemblyFromFile(string path)
+        {
+            //TODO: Rethrow with our exception if FileNotFound
+            return Assembly.LoadFile(path);  
+        }
     }
 }

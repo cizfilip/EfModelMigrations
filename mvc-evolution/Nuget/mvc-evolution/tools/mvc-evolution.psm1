@@ -222,24 +222,39 @@ function Get-PackageInstallPath($package)
 
 function New-AppDomainSetup($Project, $InstallPath)
 {
+	$packageRootPath = Split-Path $InstallPath
+	
+	$packageName = Split-Path $InstallPath -Leaf
+	
     $info = New-Object System.AppDomainSetup -Property @{
             ShadowCopyFiles = 'true';
-            ApplicationBase = $InstallPath;
-            PrivateBinPath = 'tools';
+            ApplicationBase = $packageRootPath; # package root
+            PrivateBinPath = $packageName + '\tools';
             ConfigurationFile = ([AppDomain]::CurrentDomain.SetupInformation.ConfigurationFile)
         }
     
     $targetFrameworkVersion = (New-Object System.Runtime.Versioning.FrameworkName ($Project.Properties.Item('TargetFrameworkMoniker').Value)).Version
+	$efPath = Get-EntityFrameworkInstallPath($Project)
+	$efPackageName = Split-Path $efPath -Leaf
 
     if ($targetFrameworkVersion -lt (New-Object Version @( 4, 5 )))
     {
-        $info.PrivateBinPath += ';lib\net40'
+		$info.PrivateBinPath += ';' + $efPackageName + '\lib\net40'
+        $info.PrivateBinPath += ';' + $packageName + '\lib\net40'
     }
     else
     {
-        $info.PrivateBinPath += ';lib\net45'
+	
+		$info.PrivateBinPath += ';' + $efPackageName + '\lib\net45'
+        $info.PrivateBinPath += ';' + $packageName + '\lib\net45'
     }
 
+	
+	
+	
+	
+	Write-Host $info.ApplicationBase
+	Write-Host $info.PrivateBinPath
 
     return $info
 }

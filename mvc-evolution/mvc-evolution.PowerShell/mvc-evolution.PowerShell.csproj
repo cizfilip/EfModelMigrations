@@ -40,14 +40,21 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CreateEntityCommand.cs" />
     <Compile Include="DomainCommand.cs" />
+    <Compile Include="Extensions\AssemblyExtensions.cs" />
     <Compile Include="Extensions\CodeModelExtensions.cs" />
+    <Compile Include="Extensions\MetadataWorkspaceExtensions.cs" />
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Generators\ClassGenerator.cs" />
     <Compile Include="Generators\DbContextGenerator.cs" />
+    <Compile Include="Generators\MigrationGenerator.cs" />
+    <Compile Include="Generators\MigrationWriter.cs" />
     <Compile Include="Locators\DbContextLocator.cs" />
     <Compile Include="Model\ClassModel.cs" />
     <Compile Include="Model\DbContextModel.cs" />

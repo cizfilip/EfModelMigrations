@@ -10,6 +10,7 @@ namespace mvc_evolution.PowerShell.Extensions
 {
     internal static class ProjectExtensions
     {
+        public const string WebSiteProjectTypeGuid = "{E24C65DC-7377-472B-9ABA-BC803B73C61A}";
 
         public static string GetProjectDir(this Project project)
         {
@@ -26,6 +27,11 @@ namespace mvc_evolution.PowerShell.Extensions
         public static void AddContentToProject(this Project project, string path, string content)
         {
             File.WriteAllText(path, content);
+            project.ProjectItems.AddFromFile(path);
+        }
+
+        public static void AddFileToProject(this Project project, string path)
+        {
             project.ProjectItems.AddFromFile(path);
         }
 
@@ -52,8 +58,46 @@ namespace mvc_evolution.PowerShell.Extensions
             return dte.Solution.SolutionBuild.LastBuildInfo == 0;
         }
 
-        
+        public static string GetAssemblyName(this Project project)
+        {
+            return project.GetPropertyValue<string>("AssemblyName");
+        }
 
+        public static string GetAssemblyPath(this Project project)
+        {
+            return Path.Combine(project.GetTargetDir(), project.GetPropertyValue<string>("OutputFileName"));
+        }
+
+        public static string GetTargetDir(this Project project)
+        {
+            var fullPath = project.GetProjectDir();
+
+
+            //TODO: WebProject Check
+            //var outputPath
+            //    = project.IsWebSiteProject()
+            //          ? "Bin"
+            //          : project.GetConfigurationPropertyValue<string>("OutputPath");
+
+            var outputPath = project.GetConfigurationPropertyValue<string>("OutputPath");
+
+            return Path.Combine(fullPath, outputPath);
+        }
+
+        private static T GetConfigurationPropertyValue<T>(this Project project, string propertyName)
+        {
+           
+            var property = project.ConfigurationManager.ActiveConfiguration.Properties.Item(propertyName);
+
+            if (property == null)
+            {
+                return default(T);
+            }
+
+            return (T)property.Value;
+        }
+
+    
         
     }
 }

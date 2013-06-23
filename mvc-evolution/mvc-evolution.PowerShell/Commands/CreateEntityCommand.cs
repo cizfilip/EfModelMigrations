@@ -12,13 +12,16 @@ using mvc_evolution.PowerShell.Locators;
 using mvc_evolution.PowerShell.Model;
 using System.Data.Entity.Migrations.Design;
 using System.Reflection;
+using System.Data.Entity.Migrations.Model;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
 
 namespace mvc_evolution.PowerShell.Commands
 {
     internal class CreateEntityCommand : DomainCommand
     {
         private string className;
-        private IEnumerable<PropertyModel> classProperties;
+        private IEnumerable<mvc_evolution.PowerShell.Model.PropertyModel> classProperties;
 
         public CreateEntityCommand(string className, string[] properties) 
         {
@@ -26,7 +29,7 @@ namespace mvc_evolution.PowerShell.Commands
          
             this.classProperties = from p in properties
                               let splitted = p.Split(':')
-                              select new PropertyModel()
+                              select new mvc_evolution.PowerShell.Model.PropertyModel()
                               {
                                   Name = splitted.FirstOrDefault(),
                                   Type = splitted.LastOrDefault()
@@ -64,11 +67,38 @@ namespace mvc_evolution.PowerShell.Commands
             {
                 throw new InvalidOperationException("Unable to add new migration, project failed to build!");
             }
-                        
 
 
+            WriteLine(project.GetAssemblyPath());
 
+            Assembly projectAssembly = LoadAssemblyFromFile(project.GetAssemblyPath());
+
+            //Type dbContextType = efAssembly.GetType("System.Data.Entity.DbContext", throwOnError: true);
+            //Type configurationBaseType = efAssembly.GetType("System.Data.Entity.Migrations.DbMigrationsConfiguration", throwOnError: true);
+
+            Type dbContextType = typeof(DbContext);
+            Type configurationBaseType = typeof(DbMigrationsConfiguration);
             
+
+            Type contextType = projectAssembly.GetContextType(dbContextType);
+            Type configurationType = projectAssembly.GetConfigurationType(configurationBaseType);
+
+            DbContext context =  (DbContext)Activator.CreateInstance(contextType);
+
+            var generator = new MigrationGenerator(efAssembly, context, (DbMigrationsConfiguration)Activator.CreateInstance(configurationType));
+
+            List<MigrationOperation> operations = new List<MigrationOperation>();
+
+            //TODO: maxlength dává blbost když je nastaven na MAX
+            //TODO: Storage type se zapisuje i když se jedná o default
+            operations.Add(new MigrationOperationBuilder(context).BuildCreateTableOperation(projectAssembly.GetType(project.GetRootNamespace() + "." + className)));
+
+            var migration = generator.GenerateMigration(string.Format("Add{0}Entity", className), operations);
+
+
+            new MigrationWriter(project).Write(migration);
+
+            WriteLine("Successfully added new migration to project: " + migration.MigrationId);
         }
 
         private void AddOrModifyDbContextInProject(Project project)
