@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using EnvDTE;
 using mvc_evolution.PowerShell.Dispatcher;
+using System.Reflection;
+using System.IO;
 
 namespace mvc_evolution.PowerShell
 {
@@ -12,11 +14,14 @@ namespace mvc_evolution.PowerShell
     {
         private readonly AppDomain domain;
         private readonly DomainDispatcher dispatcher;
+        private readonly string efDllPath;
 
         protected DomainCommand()
         {
-            domain = AppDomain.CurrentDomain;
-            dispatcher = (DomainDispatcher)domain.GetData("dispatcher");
+            this.domain = AppDomain.CurrentDomain;
+            this.dispatcher = (DomainDispatcher)domain.GetData("dispatcher");
+
+            this.efDllPath = (string)domain.GetData("efDllPath");
         }
 
         public virtual Project Project
@@ -37,6 +42,15 @@ namespace mvc_evolution.PowerShell
         protected AppDomain Domain
         {
             get { return domain; }
+        }
+
+        protected Assembly EFAssembly
+        {
+            get
+            {
+                //TODO: Rethrow with our exception if FileNotFound
+                return Assembly.LoadFrom(efDllPath);                
+            }
         }
 
         public void Execute()
@@ -95,6 +109,8 @@ namespace mvc_evolution.PowerShell
             domain.SetData("error.TypeName", ex.GetType().FullName);
             domain.SetData("error.StackTrace", ex.ToString());
         }
+
+
 
     }
 }

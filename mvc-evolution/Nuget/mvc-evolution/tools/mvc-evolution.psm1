@@ -46,7 +46,7 @@ function Add-DummyClass
 function New-MVCEvolutionRunner($ProjectName)
 {
     $project = Get-MVCEvolutionProject $ProjectName
-    Build-Project $project
+    #Build-Project $project
 
 
     $installPath = Get-MVCEvolutionInstallPath $project
@@ -54,9 +54,12 @@ function New-MVCEvolutionRunner($ProjectName)
 
     $info = New-AppDomainSetup $project $installPath
 
+
+	$efDllPath = Get-EntityFrameworkDllPath($project)
+
     $domain = [AppDomain]::CreateDomain('MVCEvolution', $null, $info)
     $domain.SetData('project', $project)
-    #$domain.SetData('contextProject', $contextProject)
+    $domain.SetData('efDllPath', $efDllPath)
     #$domain.SetData('startUpProject', $startUpProject)
     #$domain.SetData('configurationTypeName', $ConfigurationTypeName)
     #$domain.SetData('connectionStringName', $ConnectionStringName)
@@ -147,33 +150,65 @@ function Build-Project($project)
     }
 }
 
-# function Get-MVCEvolutionInstallPath($project)
-# {
-#     $package = Get-Package -ProjectName $project.FullName | ?{ $_.Id -eq 'MVCEvolution' }
 
-#     if (!$package)
-#     {
-#         $projectName = $project.Name
-
-#         throw "The MVCEvolution package is not installed on project '$projectName'."
-#     }
-    
-#     return Get-PackageInstallPath $package
-# }
-
-function Get-MVCEvolutionInstallPath($project)
+function Get-EntityFrameworkDllPath($project)
 {
-    # Solution level vs project level package - prozatim solution level, pro project viz vyse
-    $package = Get-Package | ?{ $_.Id -eq 'MVCEvolution' }
+	$efInstallPath = Get-EntityFrameworkInstallPath($project)
+	
+	$targetFrameworkVersion = (New-Object System.Runtime.Versioning.FrameworkName ($project.Properties.Item('TargetFrameworkMoniker').Value)).Version
+
+    if ($targetFrameworkVersion -lt (New-Object Version @( 4, 5 )))
+    {
+        $efInstallPath += '\lib\net40'
+    }
+    else
+    {
+		$efInstallPath += '\lib\net45'
+    }
+	return $efInstallPath += '\EntityFramework.dll'
+	
+	
+}
+
+function Get-EntityFrameworkInstallPath($project)
+{
+    $package = Get-Package -ProjectName $project.FullName | ?{ $_.Id -eq 'EntityFramework' }
 
     if (!$package)
     {
+        $projectName = $project.Name
 
-        throw "The MVCEvolution package is not installed."
+        throw "The EntityFramework package is not installed on project '$projectName'."
     }
     
     return Get-PackageInstallPath $package
 }
+
+function Get-MVCEvolutionInstallPath($project)
+{
+    $package = Get-Package -ProjectName $project.FullName | ?{ $_.Id -eq 'MVCEvolution' }
+    if (!$package)
+    {
+        $projectName = $project.Name
+        throw "The MVCEvolution package is not installed on project '$projectName'."
+    }
+    
+    return Get-PackageInstallPath $package
+}
+
+# function Get-MVCEvolutionInstallPath($project)
+# {
+#     # Solution level vs project level package - prozatim solution level, pro project viz vyse
+#     $package = Get-Package | ?{ $_.Id -eq 'MVCEvolution' }
+# 
+#     if (!$package)
+#     {
+# 
+#         throw "The MVCEvolution package is not installed."
+#     }
+#     
+#     return Get-PackageInstallPath $package
+# }
 
 function Get-PackageInstallPath($package)
 {
@@ -204,6 +239,7 @@ function New-AppDomainSetup($Project, $InstallPath)
     {
         $info.PrivateBinPath += ';lib\net45'
     }
+
 
     return $info
 }

@@ -56,6 +56,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\mvc-evolution.Core\mvc-evolution.Core.csproj">
+      <Project>{3d39c9d1-8af8-4b41-846f-9eea1c8676f4}</Project>
+      <Name>mvc-evolution.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\mvc-evolution.PowerShell.Dispatcher\mvc-evolution.PowerShell.Dispatcher.csproj">
       <Project>{08a149f7-78ca-4bcc-bf04-45b15cd40e9a}</Project>
       <Name>mvc-evolution.PowerShell.Dispatcher</Name>

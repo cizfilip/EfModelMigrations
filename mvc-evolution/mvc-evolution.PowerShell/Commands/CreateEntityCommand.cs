@@ -10,6 +10,8 @@ using mvc_evolution.PowerShell.Extensions;
 using mvc_evolution.PowerShell.Generators;
 using mvc_evolution.PowerShell.Locators;
 using mvc_evolution.PowerShell.Model;
+using System.Data.Entity.Migrations.Design;
+using System.Reflection;
 
 namespace mvc_evolution.PowerShell.Commands
 {
@@ -37,9 +39,36 @@ namespace mvc_evolution.PowerShell.Commands
         {
             var project = Project;
 
+            //Assembly efAssembly = EFAssembly;
+
+            //var ctxExtensions = efAssembly.GetType("System.Data.Entity.Utilities.DbContextExtensions", throwOnError: true);
+
+            //WriteLine(ctxExtensions.Name);
+
+
             AddClassToProject(project);
 
             AddOrModifyDbContextInProject(project);
+
+            AddMigrationToProject(project);
+        }
+
+        private void AddMigrationToProject(Project project)
+        {
+            WriteLine("Scaffolding new migration...");
+
+            Assembly efAssembly = EFAssembly;
+
+            //Build project
+            if (!project.TryBuild())
+            {
+                throw new InvalidOperationException("Unable to add new migration, project failed to build!");
+            }
+                        
+
+
+
+            
         }
 
         private void AddOrModifyDbContextInProject(Project project)
