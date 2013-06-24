@@ -42,20 +42,13 @@ namespace mvc_evolution.PowerShell.Commands
         {
             var project = Project;
 
-            //Assembly efAssembly = EFAssembly;
-
-            //var ctxExtensions = efAssembly.GetType("System.Data.Entity.Utilities.DbContextExtensions", throwOnError: true);
-
-            //WriteLine(ctxExtensions.Name);
-
-
             AddClassToProject(project);
 
             AddOrModifyDbContextInProject(project);
 
             AddMigrationToProject(project);
         }
-
+        
         private void AddMigrationToProject(Project project)
         {
             WriteLine("Scaffolding new migration...");
@@ -69,23 +62,10 @@ namespace mvc_evolution.PowerShell.Commands
             }
 
 
-            WriteLine(project.GetAssemblyPath());
-
             Assembly projectAssembly = LoadAssemblyFromFile(project.GetAssemblyPath());
+            DbContext context = (DbContext)Activator.CreateInstance(projectAssembly.GetContextType());
+            DbMigrationsConfiguration configuration = (DbMigrationsConfiguration)Activator.CreateInstance(projectAssembly.GetConfigurationType());
 
-            //Type dbContextType = efAssembly.GetType("System.Data.Entity.DbContext", throwOnError: true);
-            //Type configurationBaseType = efAssembly.GetType("System.Data.Entity.Migrations.DbMigrationsConfiguration", throwOnError: true);
-
-            Type dbContextType = typeof(DbContext);
-            Type configurationBaseType = typeof(DbMigrationsConfiguration);
-            
-
-            Type contextType = projectAssembly.GetContextType(dbContextType);
-            Type configurationType = projectAssembly.GetConfigurationType(configurationBaseType);
-
-            DbContext context =  (DbContext)Activator.CreateInstance(contextType);
-
-            var generator = new MigrationGenerator(efAssembly, context, (DbMigrationsConfiguration)Activator.CreateInstance(configurationType));
 
             List<MigrationOperation> operations = new List<MigrationOperation>();
 
@@ -93,13 +73,156 @@ namespace mvc_evolution.PowerShell.Commands
             //TODO: Storage type se zapisuje i když se jedná o default
             operations.Add(new MigrationOperationBuilder(context).BuildCreateTableOperation(projectAssembly.GetType(project.GetRootNamespace() + "." + className)));
 
-            var migration = generator.GenerateMigration(string.Format("Add{0}Entity", className), operations);
+
+            //var migration = GenerateMigrationMethod1(efAssembly, projectAssembly, context, configuration, operations);
+            var migration = GenerateMigrationMethod2(efAssembly, projectAssembly, context, configuration, operations);
 
 
             new MigrationWriter(project).Write(migration);
 
             WriteLine("Successfully added new migration to project: " + migration.MigrationId);
         }
+
+        private ScaffoldedMigration GenerateMigrationMethod1(Assembly efAssembly, Assembly projectAssembly, DbContext context, 
+            DbMigrationsConfiguration configuration, IEnumerable<MigrationOperation> operations)
+        {
+            var generator = new MigrationGenerator(efAssembly, context, configuration);
+
+            return generator.GenerateMigration(GetMigrationName(), operations);
+        }
+
+        private ScaffoldedMigration GenerateMigrationMethod2(Assembly efAssembly, Assembly projectAssembly, DbContext context,
+            DbMigrationsConfiguration configuration, IEnumerable<MigrationOperation> operations)
+        {
+            configuration.CodeGenerator = new ExtendedCSharpMigrationCodeGenerator(operations);
+
+            MigrationScaffolder scaffolder = new MigrationScaffolder(configuration);
+
+            return scaffolder.Scaffold(GetMigrationName(), ignoreChanges: true);
+        }
+
+
+        //private void AddMigrationToProjectMethod1(Project project)
+        //{
+        //    WriteLine("Scaffolding new migration...");
+
+        //    Assembly efAssembly = EFAssembly;
+
+        //    //Build project
+        //    if (!project.TryBuild())
+        //    {
+        //        throw new InvalidOperationException("Unable to add new migration, project failed to build!");
+        //    }
+
+
+        //    Assembly projectAssembly = LoadAssemblyFromFile(project.GetAssemblyPath());
+        //    DbContext context = (DbContext)Activator.CreateInstance(projectAssembly.GetContextType());
+        //    DbMigrationsConfiguration configuration = (DbMigrationsConfiguration)Activator.CreateInstance(projectAssembly.GetConfigurationType());
+
+
+        //    var generator = new MigrationGenerator(efAssembly, context, configuration);
+
+        //    List<MigrationOperation> operations = new List<MigrationOperation>();
+
+        //    //TODO: maxlength dává blbost když je nastaven na MAX
+        //    //TODO: Storage type se zapisuje i když se jedná o default
+        //    operations.Add(new MigrationOperationBuilder(context).BuildCreateTableOperation(projectAssembly.GetType(project.GetRootNamespace() + "." + className)));
+
+        //    var migration = generator.GenerateMigration(GetMigrationName(), operations);
+
+
+        //    new MigrationWriter(project).Write(migration);
+
+        //    WriteLine("Successfully added new migration to project: " + migration.MigrationId);
+        //}
+
+        //private void AddMigrationToProjectMethod2(Project project)
+        //{
+        //    WriteLine("Scaffolding new migration...");
+
+        //    Assembly efAssembly = EFAssembly;
+
+        //    //Build project
+        //    if (!project.TryBuild())
+        //    {
+        //        throw new InvalidOperationException("Unable to add new migration, project failed to build!");
+        //    }
+            
+        //    Assembly projectAssembly = LoadAssemblyFromFile(project.GetAssemblyPath());
+            
+        //    DbContext context = (DbContext)Activator.CreateInstance(projectAssembly.GetContextType());
+        //    DbMigrationsConfiguration configuration = (DbMigrationsConfiguration)Activator.CreateInstance(projectAssembly.GetConfigurationType());
+
+
+        //    List<MigrationOperation> operations = new List<MigrationOperation>();
+
+        //    //TODO: maxlength dává blbost když je nastaven na MAX
+        //    //TODO: Storage type se zapisuje i když se jedná o default
+        //    operations.Add(new MigrationOperationBuilder(context).BuildCreateTableOperation(projectAssembly.GetType(project.GetRootNamespace() + "." + className)));
+
+        //    configuration.CodeGenerator = new ExtendedCSharpMigrationCodeGenerator(operations);
+
+        //    MigrationScaffolder scaffolder = new MigrationScaffolder(configuration);
+
+        //    //Generate and write empty migration
+        //    var migration = scaffolder.Scaffold(GetMigrationName(), ignoreChanges: true);
+        //    new MigrationWriter(project).Write(migration);
+
+
+        //    //string migrationFullName = configuration.MigrationsNamespace + "." + GetMigrationName();
+        //    //WriteLine(migrationFullName);
+
+        //    //var migrationCode = project.CodeModel.CodeTypeFromFullName(migrationFullName);
+
+        //    //if (migrationCode == null)
+        //    //{
+        //    //    throw new InvalidOperationException("Cannot find generated empty migration!");
+        //    //}
+
+        //    //CodeFunction upMethod = null;
+        //    //CodeFunction downMethod = null;
+
+        //    //foreach (CodeElement item in migrationCode.Members)
+        //    //{
+        //    //    if (item is CodeFunction)
+        //    //    {
+        //    //        CodeFunction func = item as CodeFunction;
+        //    //        if (func.Name == "Up")
+        //    //        {
+        //    //            upMethod = func;
+        //    //        }
+        //    //        else if (func.Name == "Down")
+        //    //        {
+        //    //            downMethod = func;
+        //    //        }
+        //    //    }
+        //    //}
+
+        //    //if (upMethod == null || downMethod == null)
+        //    //{
+        //    //    throw new InvalidOperationException("Cannot find Up or Down method in generated empty migration!");
+        //    //}
+
+
+            
+
+        //    //WriteLine(upMethod.Name);
+        //    //WriteLine(downMethod.Name);
+
+
+        //    //List<MigrationOperation> operations = new List<MigrationOperation>();
+
+        //    ////TODO: maxlength dává blbost když je nastaven na MAX
+        //    ////TODO: Storage type se zapisuje i když se jedná o default
+        //    //operations.Add(new MigrationOperationBuilder(context).BuildCreateTableOperation(projectAssembly.GetType(project.GetRootNamespace() + "." + className)));
+
+
+
+
+            
+
+        //    WriteLine("Successfully added new migration to project: " + migration.MigrationId);
+        //}
 
         private void AddOrModifyDbContextInProject(Project project)
         {
@@ -198,6 +321,11 @@ namespace mvc_evolution.PowerShell.Commands
             //TODO: Try peek to EF source code for better pluralization method 
             //hint: pluralizationService = System.Data.Entity.Design.PluralizationServices.PluralizationService.CreateService(new CultureInfo(Culture));
             return str + "s";
+        }
+
+        private string GetMigrationName()
+        {
+            return string.Format("Add{0}Entity", className);
         }
     }
 }

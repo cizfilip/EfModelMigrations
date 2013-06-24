@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -9,8 +11,10 @@ namespace mvc_evolution.PowerShell.Extensions
 {
     internal static class AssemblyExtensions
     {
-        public static Type GetContextType(this Assembly assembly, Type dbContextType)
+        public static Type GetContextType(this Assembly assembly)
         {
+            Type dbContextType = typeof(DbContext);
+            
             var contextTypes = assembly.GetAccessibleTypes()
                                            .Where(t => dbContextType.IsAssignableFrom(t))
                                            .ToList();
@@ -28,8 +32,11 @@ namespace mvc_evolution.PowerShell.Extensions
             return contextTypes.First();
         }
 
-        public static Type GetConfigurationType(this Assembly assembly, Type configurationBaseType)
+        public static Type GetConfigurationType(this Assembly assembly)
         {
+
+            Type configurationBaseType = typeof(DbMigrationsConfiguration);
+
             var contextTypes = assembly.GetAccessibleTypes()
                                            .Where(t => configurationBaseType.IsAssignableFrom(t))
                                            .ToList();

@@ -249,12 +249,9 @@ function New-AppDomainSetup($Project, $InstallPath)
         $info.PrivateBinPath += ';' + $packageName + '\lib\net45'
     }
 
-	
-	
-	
-	
-	Write-Host $info.ApplicationBase
-	Write-Host $info.PrivateBinPath
+
+	#Write-Host $info.ApplicationBase
+	#Write-Host $info.PrivateBinPath
 
     return $info
 }

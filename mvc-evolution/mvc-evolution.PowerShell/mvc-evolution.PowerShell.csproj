@@ -53,6 +53,7 @@
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Generators\ClassGenerator.cs" />
     <Compile Include="Generators\DbContextGenerator.cs" />
+    <Compile Include="Generators\ExtendedCSharpMigrationCodeGenerator.cs" />
     <Compile Include="Generators\MigrationGenerator.cs" />
     <Compile Include="Generators\MigrationWriter.cs" />
     <Compile Include="Locators\DbContextLocator.cs" />
