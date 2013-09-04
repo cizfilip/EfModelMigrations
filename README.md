@@ -1,2 +1,2 @@
-mvc-evolution
+EfModelMigrations
 =============
