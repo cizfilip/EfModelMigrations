@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("mvc-evolution.PowerShell")]
+[assembly: AssemblyTitle("EfModelMigrations.Runtime")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("mvc-evolution.PowerShell")]
+[assembly: AssemblyProduct("EfModelMigrations.Runtime")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5543939d-1e9c-4e93-b8ee-681e11398d6b")]
+[assembly: Guid("f5168807-5578-4250-8287-d2662ad0a018")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,6 +34,3 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-
-// For CSharpMigrationCodeGeneration  - Assembly.GetInformationalVersion()
-[assembly: AssemblyInformationalVersion("1.0.0-alpha")]
