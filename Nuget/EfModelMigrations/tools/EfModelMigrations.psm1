@@ -1,20 +1,20 @@
 <#
 .SYNOPSIS
-    Add dummy class to project.
+    Model command.
 
 .DESCRIPTION
-    Add dummy class to project.
+    Model command.
 
-.PARAMETER ClassName
-    Name of the dummy class
+.PARAMETER command
+    Command.
 
 #>
-function Add-DummyClass
+function Model
 {
     [CmdletBinding()] 
     param (
-        [parameter(Position = 0, Mandatory = $true)][string] $ClassName,
-		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+        [parameter(Position = 0, Mandatory = $true)][string] $Command,
+		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Params
     )
 
     $runner = New-MVCEvolutionRunner $ProjectName 
@@ -283,4 +283,4 @@ function Invoke-RunnerCommand($runner, $command, $parameters, $anonymousArgument
 
 
 # EXPORT ----------------------
-Export-ModuleMember @( 'Add-DummyClass' )
+Export-ModuleMember @( 'Model' )

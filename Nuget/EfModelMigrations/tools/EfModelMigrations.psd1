@@ -1,12 +1,12 @@
 @{
     # Script module or binary module file associated with this manifest
-    ModuleToProcess = 'mvc-evolution.psm1'
+    ModuleToProcess = 'EfModelMigrations.psm1'
 
     # Version number of this module.
     ModuleVersion = '0.0.1.0'
 
     # ID used to uniquely identify this module
-    GUID = '55ae2527-3f2e-4477-a29d-2e07e4032976'
+    GUID = '13DBFDC8-F07B-4709-A593-A5D045B4C191'
 
     # Author of this module
     Author = 'Filip Èíž'
@@ -15,10 +15,10 @@
     CompanyName = 'FIT CTU'
 
     # Copyright statement for this module
-    Copyright = '(c) MVC Evolution Team. All rights reserved.'
+    Copyright = '(c) Ef Model Migrations Team. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description = 'MVC Evolution PowerShell module for use within NuGet''s Package Manager Console'
+    Description = 'Ef Model Migrations PowerShell module for use within NuGet''s Package Manager Console'
 
     # Minimum version of the Windows PowerShell engine required by this module
     PowerShellVersion = '2.0'
