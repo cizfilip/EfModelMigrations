@@ -51,9 +51,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ModelCommand.cs" />
+    <Compile Include="PowerShellCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EfModelMigrations.PowerShellDispatcher\EfModelMigrations.PowerShellDispatcher.csproj">
+      <Project>{b3087707-88d4-47ea-9eb0-953e07b0496e}</Project>
+      <Name>EfModelMigrations.PowerShellDispatcher</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EfModelMigrations\EfModelMigrations.csproj">
       <Project>{b1bbe8eb-8f96-4f0d-b20a-350f10c28e9b}</Project>
       <Name>EfModelMigrations</Name>

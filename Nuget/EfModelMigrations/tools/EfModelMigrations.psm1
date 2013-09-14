@@ -17,11 +17,11 @@ function Model
 		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Params
     )
 
-    $runner = New-MVCEvolutionRunner $ProjectName 
+    $runner = New-EfModelMigrationsRunner $ProjectName 
 
     try
     {
-        Invoke-RunnerCommand $runner mvc_evolution.PowerShell.Commands.CreateEntityCommand @( $ClassName, $Properties )
+        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.ModelCommand @( $Command, $Params )
 
         $error = Get-RunnerError $runner                    
 
@@ -43,13 +43,13 @@ function Model
 
 #private
 
-function New-MVCEvolutionRunner($ProjectName)
+function New-EfModelMigrationsRunner($ProjectName)
 {
-    $project = Get-MVCEvolutionProject $ProjectName
+    $project = Get-ModelMigrationsProject $ProjectName
     #Build-Project $project
 
 
-    $installPath = Get-MVCEvolutionInstallPath $project
+    $installPath = Get-EfModelMigrationsInstallPath $project
     $toolsPath = Join-Path $installPath tools
 
     $info = New-AppDomainSetup $project $installPath
@@ -57,7 +57,7 @@ function New-MVCEvolutionRunner($ProjectName)
 
 	$efDllPath = Get-EntityFrameworkDllPath($project)
 
-    $domain = [AppDomain]::CreateDomain('MVCEvolution', $null, $info)
+    $domain = [AppDomain]::CreateDomain('EfModelMigrations', $null, $info)
     $domain.SetData('project', $project)
     $domain.SetData('efDllPath', $efDllPath)
     #$domain.SetData('startUpProject', $startUpProject)
@@ -66,7 +66,7 @@ function New-MVCEvolutionRunner($ProjectName)
     #$domain.SetData('connectionString', $ConnectionString)
     #$domain.SetData('connectionProviderName', $ConnectionProviderName)
     
-    $dispatcher = New-DomainDispatcher $toolsPath
+    $dispatcher = New-PowerShellDispatcher $toolsPath
     $domain.SetData('dispatcher', $dispatcher)
 
     return @{
@@ -75,12 +75,36 @@ function New-MVCEvolutionRunner($ProjectName)
     }
 }
 
-function New-DomainDispatcher($ToolsPath)
+function Get-SingleProject($name)
+{
+    $project = Get-Project $name
+
+    if ($project -is [array])
+    {
+        throw "More than one project '$name' was found. Specify the full name of the one to use."
+    }
+
+    return $project
+}
+
+function Get-ModelMigrationsProject($name)
+{
+    if ($name)
+    {
+        return Get-SingleProject $name
+    }
+
+    $project = Get-Project
+    
+    return $project
+}
+
+function New-PowerShellDispatcher($ToolsPath)
 {
     [AppDomain]::CurrentDomain.SetShadowCopyFiles()
-    $utilityAssembly = [System.Reflection.Assembly]::LoadFrom((Join-Path $ToolsPath 'mvc-evolution.PowerShell.Dispatcher.dll'))
+    $utilityAssembly = [System.Reflection.Assembly]::LoadFrom((Join-Path $ToolsPath 'EfModelMigrations.PowerShellDispatcher.dll'))
     $dispatcher = $utilityAssembly.CreateInstance(
-        'mvc_evolution.PowerShell.Dispatcher.DomainDispatcher',
+        'EfModelMigrations.PowerShellDispatcher.Dispatcher',
         $false,
         [System.Reflection.BindingFlags]::Instance -bor [System.Reflection.BindingFlags]::Public,
         $null,
@@ -124,17 +148,6 @@ function Get-SingleProject($name)
     return $project
 }
 
-function Get-MVCEvolutionProject($name)
-{
-    if ($name)
-    {
-        return Get-SingleProject $name
-    }
-
-    $project = Get-Project
-    
-    return $project
-}
 
 function Build-Project($project)
 {
@@ -184,9 +197,9 @@ function Get-EntityFrameworkInstallPath($project)
     return Get-PackageInstallPath $package
 }
 
-function Get-MVCEvolutionInstallPath($project)
+function Get-EfModelMigrationsInstallPath($project)
 {
-    $package = Get-Package -ProjectName $project.FullName | ?{ $_.Id -eq 'MVCEvolution' }
+    $package = Get-Package -ProjectName $project.FullName | ?{ $_.Id -eq 'EfModelMigrations' }
     if (!$package)
     {
         $projectName = $project.Name
@@ -195,20 +208,6 @@ function Get-MVCEvolutionInstallPath($project)
     
     return Get-PackageInstallPath $package
 }
-
-# function Get-MVCEvolutionInstallPath($project)
-# {
-#     # Solution level vs project level package - prozatim solution level, pro project viz vyse
-#     $package = Get-Package | ?{ $_.Id -eq 'MVCEvolution' }
-# 
-#     if (!$package)
-#     {
-# 
-#         throw "The MVCEvolution package is not installed."
-#     }
-#     
-#     return Get-PackageInstallPath $package
-# }
 
 function Get-PackageInstallPath($package)
 {
@@ -268,7 +267,7 @@ function Invoke-RunnerCommand($runner, $command, $parameters, $anonymousArgument
     }
 
     $domain.CreateInstanceFrom(
-        (Join-Path $runner.ToolsPath 'mvc-evolution.PowerShell.dll'),
+        (Join-Path $runner.ToolsPath 'EfModelMigrations.Runtime.dll'),
         $command,
         $false,
         0,

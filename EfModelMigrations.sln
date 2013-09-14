@@ -34,6 +34,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{3168CEA6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "Tests\UnitTests\UnitTests.csproj", "{D9979191-F415-4AC8-9778-D129BE7E7429}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EfModelMigrations.PowerShellDispatcher", "EfModelMigrations.PowerShellDispatcher\EfModelMigrations.PowerShellDispatcher.csproj", "{B3087707-88D4-47EA-9EB0-953E07B0496E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{D9979191-F415-4AC8-9778-D129BE7E7429}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9979191-F415-4AC8-9778-D129BE7E7429}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9979191-F415-4AC8-9778-D129BE7E7429}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3087707-88D4-47EA-9EB0-953E07B0496E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3087707-88D4-47EA-9EB0-953E07B0496E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3087707-88D4-47EA-9EB0-953E07B0496E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3087707-88D4-47EA-9EB0-953E07B0496E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

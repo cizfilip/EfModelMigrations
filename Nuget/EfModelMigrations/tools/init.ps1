@@ -6,3 +6,4 @@ if (Get-Module | ?{ $_.Name -eq 'EfModelMigrations' })
 }
 
 Import-Module (Join-Path $toolsPath EfModelMigrations.psd1)
+
