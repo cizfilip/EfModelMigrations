@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata schemaVersion="2">
+		<id>EfModelMigrations</id>
+		<version>0.0.1</version>
+		<authors>Filip Ciz</authors>
+		<owners>Filip Ciz</owners>
+
+		<description>Framework for model migrations</description>
+		<dependencies>
+			<dependency id="EntityFramework" version="6.0.0-rc1" />
+		</dependencies>
+		<references>
+			<reference file="EfModelMigrations.dll" />
+		</references>
+	
+	</metadata>
+
+	<files>
+		<!-- TODO: Change to release path! -->
+		<file src="..\..\EfModelMigrations\bin\Debug\EfModelMigrations.Runtime.dll" target="tools" />
+		
+		<file src="..\..\EfModelMigrations\bin\Debug\EfModelMigrations.dll" target="lib" />
+
+		<file src="tools\*.*" target="tools" />		
+	</files>
+</package>

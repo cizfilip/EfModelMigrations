@@ -5,6 +5,31 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EfModelMigrations", "EfMode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EfModelMigrations.Runtime", "EfModelMigrations.Runtime\EfModelMigrations.Runtime.csproj", "{E3C1F0FF-93BF-4A98-98A1-23804B5178B9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{66A8FBAD-1FB7-4696-8D95-5E8CC1B3AE2A}"
+	ProjectSection(SolutionItems) = preProject
+		Nuget\NuGet.exe = Nuget\NuGet.exe
+		Nuget\Pack-EfModelMigrations.bat = Nuget\Pack-EfModelMigrations.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EfModelMigrations", "EfModelMigrations", "{FF599C21-7BF1-4D4E-8FE1-7771A339FA4C}"
+	ProjectSection(SolutionItems) = preProject
+		Nuget\EfModelMigrations\EfModelMigrations.nuspec = Nuget\EfModelMigrations\EfModelMigrations.nuspec
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{2D7305CC-95BA-400D-BE07-72CA86C6FC32}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{572DCB9D-F357-46B9-A9BF-1809EA47B933}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{ECB1E8E1-619B-4C2F-A7DB-E8E0526863CF}"
+	ProjectSection(SolutionItems) = preProject
+		Nuget\EfModelMigrations\tools\EfModelMigrations.psd1 = Nuget\EfModelMigrations\tools\EfModelMigrations.psd1
+		Nuget\EfModelMigrations\tools\EfModelMigrations.psm1 = Nuget\EfModelMigrations\tools\EfModelMigrations.psm1
+		Nuget\EfModelMigrations\tools\init.ps1 = Nuget\EfModelMigrations\tools\init.ps1
+		Nuget\EfModelMigrations\tools\install.ps1 = Nuget\EfModelMigrations\tools\install.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "net45", "net45", "{E104FFC2-6E7F-4EC1-B7FB-C7F91E87C9A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,5 +47,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FF599C21-7BF1-4D4E-8FE1-7771A339FA4C} = {66A8FBAD-1FB7-4696-8D95-5E8CC1B3AE2A}
+		{2D7305CC-95BA-400D-BE07-72CA86C6FC32} = {FF599C21-7BF1-4D4E-8FE1-7771A339FA4C}
+		{572DCB9D-F357-46B9-A9BF-1809EA47B933} = {FF599C21-7BF1-4D4E-8FE1-7771A339FA4C}
+		{ECB1E8E1-619B-4C2F-A7DB-E8E0526863CF} = {FF599C21-7BF1-4D4E-8FE1-7771A339FA4C}
+		{E104FFC2-6E7F-4EC1-B7FB-C7F91E87C9A5} = {572DCB9D-F357-46B9-A9BF-1809EA47B933}
 	EndGlobalSection
 EndGlobal
