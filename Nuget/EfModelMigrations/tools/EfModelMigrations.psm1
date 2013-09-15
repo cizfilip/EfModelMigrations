@@ -20,8 +20,16 @@ function Model
     $runner = New-EfModelMigrationsRunner $ProjectName 
 
     try
-    {
-        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.ModelCommand @( $Command, $Params )
+    {	
+		#if([string]::Equals($Command, "Enable", [stringCo]) 
+		if($Command -ieq "Enable")
+		{
+			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.EnableCommand @( $Params )
+		}
+		else
+		{
+        	Invoke-RunnerCommand $runner EfModelMigrations.Runtime.ModelCommand @( $Command, $Params )
+		}
 
         $error = Get-RunnerError $runner                    
 
@@ -203,7 +211,7 @@ function Get-EfModelMigrationsInstallPath($project)
     if (!$package)
     {
         $projectName = $project.Name
-        throw "The MVCEvolution package is not installed on project '$projectName'."
+        throw "The EfModelMigrations package is not installed on project '$projectName'."
     }
     
     return Get-PackageInstallPath $package
@@ -248,7 +256,8 @@ function New-AppDomainSetup($Project, $InstallPath)
         $info.PrivateBinPath += ';' + $packageName + '\lib\net45'
     }
 
-
+	#TODO: Remove next line. Dll with framework in release must be in net40 and net45 subfolders and they are added above.
+	$info.PrivateBinPath += ';' + $packageName + '\lib'
 	#Write-Host $info.ApplicationBase
 	#Write-Host $info.PrivateBinPath
 

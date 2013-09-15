@@ -15,15 +15,25 @@ namespace EfModelMigrations.Runtime
         private readonly Dispatcher dispatcher;
         private readonly string efDllPath;
 
-        protected PowerShellCommand()
+        private string[] parameters;
+
+        protected PowerShellCommand(string[] parameters)
         {
+            this.parameters = parameters;
+
             this.domain = AppDomain.CurrentDomain;
             this.dispatcher = (Dispatcher)domain.GetData("dispatcher");
 
             this.efDllPath = (string)domain.GetData("efDllPath");
         }
 
-        public virtual Project Project
+
+        public string[] Parameters
+        {
+            get { return parameters; }
+        }
+
+        public Project Project
         {
             get { return (Project)domain.GetData("project"); }
         }

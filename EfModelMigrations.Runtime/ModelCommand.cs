@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EfModelMigrations.Commands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,16 +9,29 @@ namespace EfModelMigrations.Runtime
 {
     internal class ModelCommand : PowerShellCommand
     {
-        public ModelCommand(string commandName, string[] parameters)
+        private string commandName;
+        
+
+        public ModelCommand(string commandName, string[] parameters) : base(parameters)
         {
-            WriteLine(commandName);
+            this.commandName = commandName;
 
             Execute();
         }
 
         protected override void ExecuteCore()
         {
-            WriteLine("Jupi jsme tam");
+            string fullCommandName = commandName + "Command";
+            
+            var commandType = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
+                               from type in assembly.GetTypes()
+                               where typeof(ModelMigrationCommand).IsAssignableFrom(type) && string.Equals(type.Name, fullCommandName, StringComparison.OrdinalIgnoreCase)
+                               select type).Single();
+
+            var command = Activator.CreateInstance(commandType, new object[] { parameters }) as ModelMigrationCommand;
+
+            WriteLine("Command first param:");
+            WriteLine(command.Parameters.First());
         }
     }
 }
