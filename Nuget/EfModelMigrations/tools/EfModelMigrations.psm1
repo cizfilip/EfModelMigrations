@@ -24,11 +24,15 @@ function Model
 		#if([string]::Equals($Command, "Enable", [stringCo]) 
 		if($Command -ieq "Enable")
 		{
-			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.EnableCommand @( $Params )
+			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.EnableCommand @( $Params )
+			
+			$defaultModelMigrationsDir = "ModelMigrations"
+			$dbMigrationsDir = $defaultModelMigrationsDir + "\DbMigrations"
+			Enable-Migrations -MigrationsDirectory $dbMigrationsDir
 		}
 		else
 		{
-        	Invoke-RunnerCommand $runner EfModelMigrations.Runtime.ModelCommand @( $Command, $Params )
+        	Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ModelCommand @( $Command, $Params )
 		}
 
         $error = Get-RunnerError $runner                    
@@ -63,11 +67,11 @@ function New-EfModelMigrationsRunner($ProjectName)
     $info = New-AppDomainSetup $project $installPath
 
 
-	$efDllPath = Get-EntityFrameworkDllPath($project)
+	#$efDllPath = Get-EntityFrameworkDllPath($project)
 
     $domain = [AppDomain]::CreateDomain('EfModelMigrations', $null, $info)
     $domain.SetData('project', $project)
-    $domain.SetData('efDllPath', $efDllPath)
+    #$domain.SetData('efDllPath', $efDllPath)
     #$domain.SetData('startUpProject', $startUpProject)
     #$domain.SetData('configurationTypeName', $ConfigurationTypeName)
     #$domain.SetData('connectionStringName', $ConnectionStringName)

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EfModelMigrations.Runtime
+namespace EfModelMigrations.Runtime.PowerShell
 {
     internal class ModelCommand : PowerShellCommand
     {
@@ -28,7 +28,7 @@ namespace EfModelMigrations.Runtime
                                where typeof(ModelMigrationCommand).IsAssignableFrom(type) && string.Equals(type.Name, fullCommandName, StringComparison.OrdinalIgnoreCase)
                                select type).Single();
 
-            var command = Activator.CreateInstance(commandType, new object[] { parameters }) as ModelMigrationCommand;
+            var command = Activator.CreateInstance(commandType, new object[] { Parameters }) as ModelMigrationCommand;
 
             WriteLine("Command first param:");
             WriteLine(command.Parameters.First());

@@ -6,14 +6,17 @@ using System.Threading.Tasks;
 using EfModelMigrations.PowerShellDispatcher;
 using EnvDTE;
 using System.Reflection;
+using EfModelMigrations.Runtime.Infrastructure;
+using EfModelMigrations.Runtime.Extensions;
 
-namespace EfModelMigrations.Runtime
+namespace EfModelMigrations.Runtime.PowerShell
 {
     internal abstract class PowerShellCommand
     {
         private readonly AppDomain domain;
         private readonly Dispatcher dispatcher;
-        private readonly string efDllPath;
+
+        //private readonly string efDllPath;
 
         private string[] parameters;
 
@@ -24,7 +27,7 @@ namespace EfModelMigrations.Runtime
             this.domain = AppDomain.CurrentDomain;
             this.dispatcher = (Dispatcher)domain.GetData("dispatcher");
 
-            this.efDllPath = (string)domain.GetData("efDllPath");
+            //this.efDllPath = (string)domain.GetData("efDllPath");
         }
 
 
@@ -33,34 +36,35 @@ namespace EfModelMigrations.Runtime
             get { return parameters; }
         }
 
+        private Project project;
         public Project Project
         {
-            get { return (Project)domain.GetData("project"); }
+            get 
+            {
+                if (project == null)
+                {
+                    project = (Project)domain.GetData("project"); 
+                }
+                return project;
+            }
         }
 
-        public Project StartUpProject
-        {
-            get { return (Project)domain.GetData("startUpProject"); }
-        }
+        //public Project StartUpProject
+        //{
+        //    get { return (Project)domain.GetData("startUpProject"); }
+        //}
 
-        public Project ContextProject
-        {
-            get { return (Project)domain.GetData("contextProject"); }
-        }
+        //public Project ContextProject
+        //{
+        //    get { return (Project)domain.GetData("contextProject"); }
+        //}
 
         protected AppDomain Domain
         {
             get { return domain; }
         }
 
-        protected Assembly EFAssembly
-        {
-            get
-            {
-                return LoadAssemblyFromFile(efDllPath);
-            }
-        }
-
+       
 
 
         public void Execute()
@@ -80,6 +84,11 @@ namespace EfModelMigrations.Runtime
         }
 
         protected abstract void ExecuteCore();
+
+        protected NewAppDomainExecutor CreateExecutor()
+        {
+            return new NewAppDomainExecutor(Project.GetAssemblyPath());
+        }
 
         public virtual void WriteLine(string message)
         {
@@ -102,6 +111,11 @@ namespace EfModelMigrations.Runtime
             dispatcher.WriteVerbose(message);
         }
 
+        public void InvokeScript(string script)
+        {
+            dispatcher.InvokeScript(script);
+        }
+
         private void Init()
         {
             domain.SetData("wasError", false);
@@ -121,11 +135,7 @@ namespace EfModelMigrations.Runtime
         }
 
 
-        protected Assembly LoadAssemblyFromFile(string path)
-        {
-            //TODO: Rethrow with our exception if FileNotFound
-            return Assembly.LoadFile(path);
-        }
+        
     }
     
 }

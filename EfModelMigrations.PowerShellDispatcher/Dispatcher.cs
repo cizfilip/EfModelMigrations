@@ -5,7 +5,7 @@ using System.Management.Automation;
 namespace EfModelMigrations.PowerShellDispatcher
 {
     /// <summary>
-    ///     Provides a way of dispatching specific calls form the PowerShell commands'
+    ///     Provides a way of dispatching specific calls form the PowerShell commands
     ///     AppDomain to the Visual Studio's main AppDomain.
     /// </summary>
 
@@ -69,6 +69,12 @@ namespace EfModelMigrations.PowerShellDispatcher
             }
 
             dte.ItemOperations.OpenFile(fileName);
+        }
+
+
+        public void InvokeScript(string script)
+        {
+            cmdlet.InvokeCommand.InvokeScript(script);
         }
     }
 
