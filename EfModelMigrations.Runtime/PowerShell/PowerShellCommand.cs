@@ -8,6 +8,8 @@ using EnvDTE;
 using System.Reflection;
 using EfModelMigrations.Runtime.Infrastructure;
 using EfModelMigrations.Runtime.Extensions;
+using EfModelMigrations.Exceptions;
+using EfModelMigrations.Runtime.Properties;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
@@ -75,6 +77,7 @@ namespace EfModelMigrations.Runtime.PowerShell
 
             try
             {
+                BuildProject();
                 ExecuteCore();
             }
             catch (Exception ex)
@@ -82,6 +85,8 @@ namespace EfModelMigrations.Runtime.PowerShell
                 Throw(ex);
             }
         }
+
+
 
         protected abstract void ExecuteCore();
 
@@ -134,7 +139,13 @@ namespace EfModelMigrations.Runtime.PowerShell
             domain.SetData("error.StackTrace", ex.ToString());
         }
 
-
+        private void BuildProject()
+        {
+            if (!Project.TryBuild())
+            {
+                throw new ModelMigrationsException(Resources.CannotBuildProject);
+            }
+        }
         
     }
     

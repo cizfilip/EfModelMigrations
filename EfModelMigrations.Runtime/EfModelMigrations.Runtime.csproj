@@ -54,6 +54,7 @@
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Infrastructure\NewAppDomainExecutor.cs" />
     <Compile Include="Infrastructure\Runners\BaseRunner.cs" />
+    <Compile Include="Infrastructure\Runners\GenerateMigrationFromCommandRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindDbContextRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindDbMigrationsConfigurationRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindModelMigrationsConfigurationRunner.cs" />
@@ -71,11 +72,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>DbContextTemplate.tt</DependentUpon>
     </Compile>
+    <Compile Include="Templates\DbContextTemplateDefinitions.cs" />
     <Compile Include="Templates\ModelMigrationsConfigurationTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelMigrationsConfigurationTemplate.tt</DependentUpon>
     </Compile>
+    <Compile Include="Templates\ModelMigrationsConfigurationTemplateDefinitions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EfModelMigrations.PowerShellDispatcher\EfModelMigrations.PowerShellDispatcher.csproj">

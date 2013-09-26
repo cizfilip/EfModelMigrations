@@ -18,7 +18,7 @@ namespace EfModelMigrations.Runtime.Templates
     
     #line 1 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "11.0.0.0")]
-    public partial class ModelMigrationsConfigurationTemplate : ModelMigrationsConfigurationTemplateBase
+    internal partial class ModelMigrationsConfigurationTemplate : ModelMigrationsConfigurationTemplateBase
     {
 #line hidden
         /// <summary>
@@ -34,26 +34,11 @@ namespace EfModelMigrations.Runtime.Templates
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n    class ModelMigrationConfiguration : ModelMigrationsConfigurationBase\r\n  " +
-                    "  {\r\n        public ModelMigrationConfiguration()\r\n        {\r\n\r\n        }\r\n    }" +
-                    "\r\n}\r\n\r\n\r\n");
+            this.Write("\r\n{\r\n    internal sealed class ModelMigrationConfiguration : ModelMigrationsConfi" +
+                    "gurationBase\r\n    {\r\n        public ModelMigrationConfiguration()\r\n        {\r\n\r\n" +
+                    "        }\r\n    }\r\n}\r\n\r\n");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 20 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
- 
-public string Namespace { get; set; }
-
-public ModelMigrationsConfigurationTemplate Init(string @namespace)
-{
-    this.Namespace = @namespace;
-
-    return this;
-}
-
-        
-        #line default
-        #line hidden
     }
     
     #line default
@@ -63,7 +48,7 @@ public ModelMigrationsConfigurationTemplate Init(string @namespace)
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "11.0.0.0")]
-    public class ModelMigrationsConfigurationTemplateBase
+    internal class ModelMigrationsConfigurationTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

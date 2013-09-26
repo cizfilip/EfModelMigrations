@@ -79,6 +79,33 @@ namespace EfModelMigrations.Runtime.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot create instance of type {0}..
+        /// </summary>
+        internal static string CannotCreateInstance {
+            get {
+                return ResourceManager.GetString("CannotCreateInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find configuration class in project..
+        /// </summary>
+        internal static string CannotFindConfiguration {
+            get {
+                return ResourceManager.GetString("CannotFindConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Command name not specified..
+        /// </summary>
+        internal static string CommandNameNotSpecified {
+            get {
+                return ResourceManager.GetString("CommandNameNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Model migrations was successfully enabled in current project..
         /// </summary>
         internal static string ModelEnableSuccessfull {

@@ -47,19 +47,39 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CreateClassCommand.cs" />
-    <Compile Include="Commands\ModelMigrationCommand.cs" />
+    <Compile Include="Commands\ModelMigrationsCommand.cs" />
     <Compile Include="Configuration\ModelMigrationsConfigurationBase.cs" />
     <Compile Include="Exceptions\ModelMigrationsException.cs" />
+    <Compile Include="Infrastructure\Generators\GeneratedModelMigration.cs" />
+    <Compile Include="Infrastructure\Generators\IModelMigrationGenerator.cs" />
+    <Compile Include="Infrastructure\Generators\CSharpModelMigrationGenerator.cs" />
+    <Compile Include="Infrastructure\Generators\ModelMigrationGeneratorBase.cs" />
+    <Compile Include="Infrastructure\Generators\Templates\ModelMigrationTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelMigrationTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\Generators\Templates\ModelMigrationTemplateDefinitions.cs" />
+    <Compile Include="Infrastructure\Model\PropertyModel.cs" />
+    <Compile Include="ModelMigration.cs" />
+    <Compile Include="ModelMigrationExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Transformations\CreateClassTransformation.cs" />
+    <Compile Include="Transformations\ModelTransformation.cs" />
+    <Compile Include="Transformations\RemoveClassTransformation.cs" />
     <Compile Include="Utilities\TypeFinder.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Infrastructure\Generators\Templates\ModelMigrationTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ModelMigrationTemplate.cs</LastGenOutput>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +88,10 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

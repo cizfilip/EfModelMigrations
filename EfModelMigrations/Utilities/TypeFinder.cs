@@ -12,15 +12,16 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Utilities
 {
+    //TODO: Rewrite this class too ugly...
     public class TypeFinder
     {
         //well known types
-        public bool FindModelMigrationsConfigurationType(Assembly assembly, out Type foundType)
+        public bool TryFindModelMigrationsConfigurationType(Assembly assembly, out Type foundType)
         {
             return TryFindType(assembly, typeof(ModelMigrationsConfigurationBase), out foundType);
         }
 
-        public bool FindDbMigrationsConfigurationType(Assembly assembly, out Type foundType)
+        public bool TryFindDbMigrationsConfigurationType(Assembly assembly, out Type foundType)
         {
             return TryFindType(assembly, typeof(DbMigrationsConfiguration), out foundType);
         }
@@ -34,6 +35,18 @@ namespace EfModelMigrations.Utilities
         {
             var types = FindTypes(assembly, baseType);
 
+            return TryMatchType(types, baseType, out foundType, derivedTypeName);
+        }
+
+        public bool TryFindType(Type baseType, out Type foundType, string derivedTypeName = null)
+        {
+            var types = FindTypes(baseType);
+
+            return TryMatchType(types, baseType, out foundType, derivedTypeName);
+        }
+
+        private bool TryMatchType(IEnumerable<Type> types, Type baseType, out Type foundType, string derivedTypeName = null)
+        {
             if (!string.IsNullOrEmpty(derivedTypeName))
             {
                 types = types.Where(t => string.Equals(t.Name, derivedTypeName, StringComparison.OrdinalIgnoreCase));
@@ -42,7 +55,7 @@ namespace EfModelMigrations.Utilities
             var typesCount = types.Count();
             if (typesCount > 1)
             {
-                throw new ModelMigrationsException(string.Format(Resources.TypeFinder_MultipleTypesFound, assembly.FullName));
+                throw new ModelMigrationsException(string.Format(Resources.TypeFinder_MultipleTypesFound, baseType.FullName));
             }
 
             if (typesCount == 0)
@@ -62,7 +75,19 @@ namespace EfModelMigrations.Utilities
 
             if (!TryFindType(assembly, baseType, out foundType, derivedTypeName))
             {
-                throw new ModelMigrationsException(string.Format(Resources.TypeFinder_NoTypesFound, assembly.FullName));
+                throw new ModelMigrationsException(string.Format(Resources.TypeFinder_NoTypesFound));
+            }
+
+            return foundType;
+        }
+
+        public Type FindType(Type baseType, string derivedTypeName = null)
+        {
+            Type foundType;
+
+            if (!TryFindType(baseType, out foundType, derivedTypeName))
+            {
+                throw new ModelMigrationsException(string.Format(Resources.TypeFinder_NoTypesFound, baseType.FullName));
             }
 
             return foundType;

@@ -1,4 +1,4 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template visibility="internal" language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Collections.Generic" #>
 using System;
@@ -7,23 +7,8 @@ using System.Data.Entity;
 
 namespace <#= Namespace #>
 {
-    class <#= ContextName #> : DbContext
+    public class <#= ContextName #> : DbContext
     {
         
     }
 }
-
-
-
-<#+ 
-public string Namespace { get; set; }
-public string ContextName { get; set; }
-
-public DbContextTemplate Init(string @namespace, string contextName)
-{
-    this.Namespace = @namespace;
-    this.ContextName = contextName;
-
-    return this;
-}
-#>

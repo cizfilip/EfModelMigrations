@@ -17,7 +17,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
             bool dbConfigurationExists = false;
             Type foundType;
 
-            if (typeFinder.FindDbMigrationsConfigurationType(LoadProjectAssembly(), out foundType))
+            if (typeFinder.TryFindDbMigrationsConfigurationType(ProjectAssembly, out foundType))
             {
                 dbConfigurationExists = true;
             }

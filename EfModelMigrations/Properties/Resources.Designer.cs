@@ -61,7 +61,7 @@ namespace EfModelMigrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to More than one type was found in the assembly &apos;{0}&apos;..
+        ///   Looks up a localized string similar to More than one type with base type {0} was found..
         /// </summary>
         internal static string TypeFinder_MultipleTypesFound {
             get {
@@ -70,7 +70,7 @@ namespace EfModelMigrations.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No type was found in the assembly &apos;{0}&apos;..
+        ///   Looks up a localized string similar to No type with base type {0} was found..
         /// </summary>
         internal static string TypeFinder_NoTypesFound {
             get {

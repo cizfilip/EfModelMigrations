@@ -10,6 +10,7 @@ using EfModelMigrations.Runtime.Properties;
 using EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders;
 using EfModelMigrations.Runtime.Templates;
 using System.IO;
+using EfModelMigrations.Configuration;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
@@ -22,14 +23,7 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         protected override void ExecuteCore()
         {
-            //build project
-            var project = Project;
-
-            if (!project.TryBuild())
-            {
-                throw new ModelMigrationsException(Resources.CannotBuildProject);
-            }
-
+            
             using (var executor = CreateExecutor())
             {
                 //find model migration configuration
@@ -40,13 +34,15 @@ namespace EfModelMigrations.Runtime.PowerShell
                     return;
                 }
 
+                //TODO: az budem prepirat migrationsdirectory pres parametr nesmi to byt absolutni cesta!! - check zde i v setteru v configuraci
+
                 //create configuration
                 string configurationFileName = "ModelMigrationsConfiguration.cs";
-                string migrationsDirectory = "ModelMigrations";
-                string migrationsNamespace = project.GetRootNamespace() + "." + migrationsDirectory;
-                string configuration = new ModelMigrationsConfigurationTemplate().Init(migrationsNamespace).TransformText();
+                string migrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
+                string migrationsNamespace = Project.GetRootNamespace() + "." + migrationsDirectory;
+                string configuration = new ModelMigrationsConfigurationTemplate() { Namespace = migrationsNamespace }.TransformText();
 
-                project.AddContentToProject(Path.Combine(migrationsDirectory, configurationFileName), configuration);
+                Project.AddContentToProject(Path.Combine(migrationsDirectory, configurationFileName), configuration);
 
 
                 //find Db migrations configuration
@@ -60,12 +56,12 @@ namespace EfModelMigrations.Runtime.PowerShell
                     if (!dbConfigurationExists)
                     {
                         //create db context
-                        string contextName = project.Name + "Context";
+                        string contextName = Project.Name + "Context";
                         string contextFileName = contextName + ".cs";
-                        string contextNamespace = project.GetRootNamespace();
-                        string context = new DbContextTemplate().Init(contextNamespace, contextName).TransformText();
+                        string contextNamespace = Project.GetRootNamespace();
+                        string context = new DbContextTemplate() { ContextName = contextName, Namespace = contextNamespace }.TransformText();
 
-                        project.AddContentToProject(contextFileName, context);
+                        Project.AddContentToProject(contextFileName, context);
                     }
 
                     //call enable migrations

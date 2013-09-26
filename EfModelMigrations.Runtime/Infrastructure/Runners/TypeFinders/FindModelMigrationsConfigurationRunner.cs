@@ -18,7 +18,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
             bool modelConfigurationExists = false;
             Type foundType;
 
-            if (typeFinder.FindModelMigrationsConfigurationType(LoadProjectAssembly(), out foundType))
+            if (typeFinder.TryFindModelMigrationsConfigurationType(ProjectAssembly, out foundType))
             {
                 modelConfigurationExists = true;
             }
