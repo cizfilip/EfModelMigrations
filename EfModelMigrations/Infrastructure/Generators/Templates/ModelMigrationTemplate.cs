@@ -60,37 +60,30 @@ foreach (var import in Imports)
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n    public class ");
+            this.Write("\r\n{\r\n    [ModelMigrationId(\"");
             
             #line 17 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ModelMigrationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
-            
-            #line default
-            #line hidden
-            this.Write(" : ModelMigration\r\n    {\r\n        public ");
-            
-            #line 19 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ModelMigrationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
-            
-            #line default
-            #line hidden
-            this.Write("()\r\n        {\r\n            Id = \"");
-            
-            #line 21 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ModelMigrationTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(MigrationId));
             
             #line default
             #line hidden
-            this.Write("\";\r\n        }\r\n\r\n        public override void Up()\r\n        { \r\n");
+            this.Write("\")]\r\n    public class ");
             
-            #line 26 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ModelMigrationTemplate.tt"
+            #line 18 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ModelMigrationTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ClassName));
+            
+            #line default
+            #line hidden
+            this.Write(" : ModelMigration\r\n    {\r\n        public override void Up()\r\n        { \r\n");
+            
+            #line 22 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ModelMigrationTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(IndentMethodBody(UpMethod, methodBodyIndent)));
             
             #line default
             #line hidden
             this.Write("\r\n        }\r\n\r\n        public override void Down()\r\n        {\r\n");
             
-            #line 31 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ModelMigrationTemplate.tt"
+            #line 27 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ModelMigrationTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(IndentMethodBody(DownMethod, methodBodyIndent)));
             
             #line default

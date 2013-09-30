@@ -34,7 +34,6 @@ namespace EfModelMigrations.Runtime.PowerShell
                 throw new ModelMigrationsException(Resources.CommandNameNotSpecified);
             }
 
-
             GeneratedModelMigration migration = null;
             using (var executor = CreateExecutor())
             {
@@ -49,21 +48,6 @@ namespace EfModelMigrations.Runtime.PowerShell
             {
                 Project.AddContentToProject(Path.Combine(migration.MigrationDirectory, migration.MigrationId + ".cs"), migration.SourceCode);
             }
-
-
-
-
-            //string fullCommandName = commandName + "Command";
-            
-            //var commandType = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-            //                   from type in assembly.GetTypes()
-            //                   where typeof(ModelMigrationCommand).IsAssignableFrom(type) && string.Equals(type.Name, fullCommandName, StringComparison.OrdinalIgnoreCase)
-            //                   select type).Single();
-
-            //var command = Activator.CreateInstance(commandType, new object[] { Parameters }) as ModelMigrationCommand;
-
-            //WriteLine("Command first param:");
-            //WriteLine(command.Parameters.First());
         }
     }
 }

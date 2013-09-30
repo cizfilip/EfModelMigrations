@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -52,12 +53,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\ProjectExtensions.cs" />
+    <Compile Include="Infrastructure\Migrations\ModelMigrator.cs" />
     <Compile Include="Infrastructure\NewAppDomainExecutor.cs" />
     <Compile Include="Infrastructure\Runners\BaseRunner.cs" />
+    <Compile Include="Infrastructure\Runners\Migrators\ApplyModelChangesRunner.cs" />
+    <Compile Include="Infrastructure\Runners\TypeFinders\FindMigrationsToApplyOrRevert.cs" />
     <Compile Include="Infrastructure\Runners\GenerateMigrationFromCommandRunner.cs" />
+    <Compile Include="Infrastructure\Runners\Migrators\MigratorBaseRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindDbContextRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindDbMigrationsConfigurationRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindModelMigrationsConfigurationRunner.cs" />
+    <Compile Include="PowerShell\MigrateCommand.cs" />
     <Compile Include="PowerShell\ModelCommand.cs" />
     <Compile Include="PowerShell\EnableCommand.cs" />
     <Compile Include="PowerShell\PowerShellCommand.cs" />
@@ -109,6 +115,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -11,19 +11,21 @@ using EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders;
 using EfModelMigrations.Runtime.Templates;
 using System.IO;
 using EfModelMigrations.Configuration;
+using System.Resources;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
     class EnableCommand : PowerShellCommand
     {
-        public EnableCommand(string[] parameters) : base(parameters)
+        public EnableCommand(string[] parameters)
+            : base(parameters)
         {
             Execute();
         }
 
         protected override void ExecuteCore()
         {
-            
+
             using (var executor = CreateExecutor())
             {
                 //find model migration configuration
@@ -35,15 +37,20 @@ namespace EfModelMigrations.Runtime.PowerShell
                 }
 
                 //TODO: az budem prepirat migrationsdirectory pres parametr nesmi to byt absolutni cesta!! - check zde i v setteru v configuraci
+                //+ nastavit novou directory cestu v construktoru vygenerovane konfigurace
 
                 //create configuration
-                string configurationFileName = "ModelMigrationsConfiguration.cs";
+                string configurationFile = "ModelMigrationsConfiguration";
+                string configurationFileName = configurationFile + ".cs";
                 string migrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
                 string migrationsNamespace = Project.GetRootNamespace() + "." + migrationsDirectory;
                 string configuration = new ModelMigrationsConfigurationTemplate() { Namespace = migrationsNamespace }.TransformText();
 
                 Project.AddContentToProject(Path.Combine(migrationsDirectory, configurationFileName), configuration);
-
+                //TODO: Zajistit aby byl resource soubor checknut do source control (je to jenom zamek pro TFS) - btw mozna zarucit pro vsechny nove pridane soubory!
+                string resourceFileName = configurationFile + ".resx";
+                string resourcePath = Path.Combine(migrationsDirectory, resourceFileName);
+                WriteResourceFile(resourcePath);
 
                 //find Db migrations configuration
                 bool dbConfigurationExists = executor.ExecuteRunner<bool>(new FindDbMigrationsConfigurationRunner());
@@ -72,6 +79,20 @@ namespace EfModelMigrations.Runtime.PowerShell
             }
 
             WriteLine(Resources.ModelEnableSuccessfull);
+        }
+
+        private void WriteResourceFile(string relativePath)
+        {
+            StringBuilder sb = new StringBuilder();
+            using (var writer = new StringWriter(sb))
+            {
+                using (var resWriter = new ResXResourceWriter(writer))
+                {
+                    resWriter.AddResource("AppliedMigrations", "");
+                }
+            }
+
+            Project.AddContentToProject(relativePath, sb.ToString());
         }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace EfModelMigrations.Configuration
         {
             ModelMigrationGenerator = new CSharpModelMigrationGenerator();
             ModelMigrationsNamespace = GetType().Namespace;
+            ModelMigrationsAssembly = GetType().Assembly;
             ModelMigrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
         }
 
@@ -22,5 +24,15 @@ namespace EfModelMigrations.Configuration
 
         public string ModelMigrationsNamespace { get; set; }
         public string ModelMigrationsDirectory { get; set; }
+        public Assembly ModelMigrationsAssembly { get; set; }
+
+        //TODO: Prepsat az bude hotova komopnenta pro update resource souboru s jiz aplikovanymi migracemi
+        public IEnumerable<string> GetAppliedMigrations()
+        {
+            return Enumerable.Empty<string>();
+            //Resources = new ResourceManager(GetType());
+            //Resources.GetString("AppliedMigrations");
+        }
+
     }
 }

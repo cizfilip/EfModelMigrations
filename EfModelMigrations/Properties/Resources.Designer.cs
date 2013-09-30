@@ -61,6 +61,33 @@ namespace EfModelMigrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find migration with id {0}..
+        /// </summary>
+        internal static string CannotFindMigration {
+            get {
+                return ResourceManager.GetString("CannotFindMigration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find migration Id..
+        /// </summary>
+        internal static string CannotFindMigrationId {
+            get {
+                return ResourceManager.GetString("CannotFindMigrationId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid model migration id..
+        /// </summary>
+        internal static string InvalidModelMigrationId {
+            get {
+                return ResourceManager.GetString("InvalidModelMigrationId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to More than one type with base type {0} was found..
         /// </summary>
         internal static string TypeFinder_MultipleTypesFound {

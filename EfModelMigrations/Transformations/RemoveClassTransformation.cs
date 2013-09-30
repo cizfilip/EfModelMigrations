@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EfModelMigrations.Operations;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,12 +16,17 @@ namespace EfModelMigrations.Transformations
             this.Name = name;
         }
 
-        public override void GetModelChangeOperations()
+        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations()
         {
             throw new NotImplementedException();
         }
 
         public override ModelTransformation Inverse()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override System.Data.Entity.Migrations.Model.MigrationOperation GetDbMigrationOperation()
         {
             throw new NotImplementedException();
         }

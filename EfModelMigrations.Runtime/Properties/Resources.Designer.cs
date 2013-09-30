@@ -124,6 +124,15 @@ namespace EfModelMigrations.Runtime.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to find any migration to apply or revert..
+        /// </summary>
+        internal static string NoMigrationsToMigrate {
+            get {
+                return ResourceManager.GetString("NoMigrationsToMigrate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Specified path must be relative to project directory..
         /// </summary>
         internal static string ProjectExtensions_PathMustBeRelative {

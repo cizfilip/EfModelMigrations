@@ -30,6 +30,10 @@ function Model
 			$dbMigrationsDir = $defaultModelMigrationsDir + "\DbMigrations"
 			Enable-Migrations -MigrationsDirectory $dbMigrationsDir
 		}
+		elseif($Command -ieq "Migrate")
+		{
+			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( $Params )
+		}
 		else
 		{
         	Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ModelCommand @( $Command, $Params )

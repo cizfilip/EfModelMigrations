@@ -66,6 +66,8 @@ namespace EfModelMigrations.Runtime.Extensions
             project.ProjectItems.AddFromFile(absolutePath);
         }
 
+        
+
         private static T GetPropertyValue<T>(this Project project, string propertyName)
         {
             var property = project.Properties.Item(propertyName);

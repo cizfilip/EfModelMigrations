@@ -14,13 +14,9 @@ using <#= import #>;
 
 namespace <#= Namespace #>
 {
+    [ModelMigrationId("<#= MigrationId #>")]
     public class <#= ClassName #> : ModelMigration
     {
-        public <#= ClassName #>()
-        {
-            Id = "<#= MigrationId #>";
-        }
-
         public override void Up()
         { 
 <#= IndentMethodBody(UpMethod, methodBodyIndent) #>

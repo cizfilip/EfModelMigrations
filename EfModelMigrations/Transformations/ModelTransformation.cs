@@ -1,15 +1,14 @@
-﻿using System;
+﻿using EfModelMigrations.Operations;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.Entity.Migrations.Model;
 
 namespace EfModelMigrations.Transformations
 {
     public abstract class ModelTransformation
     {
-        public abstract void GetModelChangeOperations();
+        public abstract IEnumerable<ModelChangeOperation> GetModelChangeOperations();
 
+        public abstract MigrationOperation GetDbMigrationOperation();
 
         public abstract ModelTransformation Inverse();
     }
