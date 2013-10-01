@@ -21,10 +21,9 @@ function Model
 
     try
     {	
-		#if([string]::Equals($Command, "Enable", [stringCo]) 
 		if($Command -ieq "Enable")
 		{
-			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.EnableCommand @( $Params )
+			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.EnableCommand @( ,$Params )
 			
 			$defaultModelMigrationsDir = "ModelMigrations"
 			$dbMigrationsDir = $defaultModelMigrationsDir + "\DbMigrations"
@@ -32,7 +31,9 @@ function Model
 		}
 		elseif($Command -ieq "Migrate")
 		{
-			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( $Params )
+			#TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
+			#magic comma strikes back...
+			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( ,$Params )
 		}
 		else
 		{
@@ -272,16 +273,16 @@ function New-AppDomainSetup($Project, $InstallPath)
     return $info
 }
 
-function Invoke-RunnerCommand($runner, $command, $parameters, $anonymousArguments)
+function Invoke-RunnerCommand($runner, $command, $parameters)
 {
     $domain = $runner.Domain
 
-    if ($anonymousArguments)
-    {
-        $anonymousArguments.GetEnumerator() | %{
-            $domain.SetData($_.Name, $_.Value)
-        }
-    }
+    #if ($anonymousArguments)
+    #{
+    #    $anonymousArguments.GetEnumerator() | %{
+    #        $domain.SetData($_.Name, $_.Value)
+    #    }
+    #}
 
     $domain.CreateInstanceFrom(
         (Join-Path $runner.ToolsPath 'EfModelMigrations.Runtime.dll'),

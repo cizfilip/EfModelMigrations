@@ -16,11 +16,11 @@ namespace EfModelMigrations.Runtime.PowerShell
         public MigrateCommand(string[] parameters)
             : base(parameters)
         {
-            if (parameters.Length > 0)
+            if (parameters != null && parameters.Length > 0)
             {
                 this.targetMigrationId = parameters[0];
             }
-            
+
             Execute();
         }
 
@@ -35,25 +35,17 @@ namespace EfModelMigrations.Runtime.PowerShell
                 });
             }
 
-            if (result != null)
+
+            if (result.ModelMigrationsIds.Any())
             {
-                if (result.ModelMigrationsIds.Any())
-                {
-                    var migrator = new ModelMigrator(CreateExecutor);
-                    if (result.IsRevert)
-                    {
-                        migrator.RevertMigrations(result.ModelMigrationsIds);
-                    }
-                    else
-                    {
-                        migrator.ApplyMigrations(result.ModelMigrationsIds);
-                    }
-                }
-                else
-                {
-                    WriteLine(Resources.NoMigrationsToMigrate);
-                }
+                var migrator = new ModelMigrator(Project, CreateExecutor);
+                migrator.Migrate(result.ModelMigrationsIds, result.IsRevert);
             }
+            else
+            {
+                WriteLine(Resources.NoMigrationsToMigrate);
+            }
+
         }
     }
 }

@@ -7,8 +7,10 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace EfModelMigrations.Runtime.Templates
+namespace EfModelMigrations.Infrastructure.Generators.Templates
 {
+    using System.Linq;
+    using System.Text;
     using System.Collections.Generic;
     using System;
     
@@ -16,9 +18,9 @@ namespace EfModelMigrations.Runtime.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
+    #line 1 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "11.0.0.0")]
-    internal partial class ModelMigrationsConfigurationTemplate : ModelMigrationsConfigurationTemplateBase
+    internal partial class PropertyTemplate : PropertyTemplateBase
     {
 #line hidden
         /// <summary>
@@ -26,24 +28,34 @@ namespace EfModelMigrations.Runtime.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using System;\r\nusing System.Collections.Generic;\r\nusing EfModelMigrations.Configu" +
-                    "ration;\r\n\r\nnamespace ");
             
-            #line 8 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Namespace));
+            #line 6 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(CodeModelVisibilityMapper(PropertyModel.Visibility)));
             
             #line default
             #line hidden
-            this.Write("\r\n{\r\n    internal sealed class ModelMigrationConfiguration : ModelMigrationsConfi" +
-                    "gurationBase\r\n    {\r\n        public ModelMigrationConfiguration()\r\n        {\r\n  " +
-                    "          ModelNamespace = \"");
+            this.Write(" ");
             
-            #line 14 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(ModelNamespace));
+            #line 6 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(PropertyModel.Type));
             
             #line default
             #line hidden
-            this.Write("\";\r\n        }\r\n    }\r\n}\r\n\r\n");
+            this.Write(" ");
+            
+            #line 6 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(PropertyModel.Name));
+            
+            #line default
+            #line hidden
+            this.Write(" { get; ");
+            
+            #line 6 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
+ if(PropertyModel.IsSetterPrivate) { Write("private "); }
+            
+            #line default
+            #line hidden
+            this.Write("set; }\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -55,7 +67,7 @@ namespace EfModelMigrations.Runtime.Templates
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "11.0.0.0")]
-    internal class ModelMigrationsConfigurationTemplateBase
+    internal class PropertyTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

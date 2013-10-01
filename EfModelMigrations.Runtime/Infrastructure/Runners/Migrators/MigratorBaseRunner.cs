@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Transformations;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
+using EnvDTE;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 {
@@ -12,6 +14,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
     internal abstract class MigratorBaseRunner : BaseRunner
     {
         public string ModelMigrationId { get; set; }
+        public Project ModelProject { get; set; }
 
         private ModelMigration modelMigration;
         protected ModelMigration ModelMigration
@@ -22,7 +25,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
                 {
                     var locator = new ModelMigrationsLocator(Configuration);
                     var modelMigrationType = locator.FindModelMigration(ModelMigrationId);
-                    return CreateInstance<ModelMigration>(modelMigrationType);
+                    modelMigration = CreateInstance<ModelMigration>(modelMigrationType);
+                    modelMigration.ClassModelProvider = new VsClassModelProvider(ModelProject, Configuration.ModelNamespace);
                 }
                 return modelMigration;
             }

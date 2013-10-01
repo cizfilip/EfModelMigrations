@@ -7,8 +7,10 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace EfModelMigrations.Runtime.Templates
+namespace EfModelMigrations.Infrastructure.Generators.Templates
 {
+    using System.Linq;
+    using System.Text;
     using System.Collections.Generic;
     using System;
     
@@ -16,9 +18,9 @@ namespace EfModelMigrations.Runtime.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
+    #line 1 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ClassTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "11.0.0.0")]
-    internal partial class ModelMigrationsConfigurationTemplate : ModelMigrationsConfigurationTemplateBase
+    internal partial class ClassTemplate : ClassTemplateBase
     {
 #line hidden
         /// <summary>
@@ -26,24 +28,59 @@ namespace EfModelMigrations.Runtime.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using System;\r\nusing System.Collections.Generic;\r\nusing EfModelMigrations.Configu" +
-                    "ration;\r\n\r\nnamespace ");
             
-            #line 8 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Namespace));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n{\r\n    internal sealed class ModelMigrationConfiguration : ModelMigrationsConfi" +
-                    "gurationBase\r\n    {\r\n        public ModelMigrationConfiguration()\r\n        {\r\n  " +
-                    "          ModelNamespace = \"");
-            
-            #line 14 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(ModelNamespace));
+            #line 6 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ClassTemplate.tt"
+
+foreach (var import in Imports)
+{
+
             
             #line default
             #line hidden
-            this.Write("\";\r\n        }\r\n    }\r\n}\r\n\r\n");
+            this.Write("using ");
+            
+            #line 10 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(import));
+            
+            #line default
+            #line hidden
+            this.Write(";\r\n");
+            
+            #line 11 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ClassTemplate.tt"
+
+}
+
+            
+            #line default
+            #line hidden
+            this.Write("\r\nnamespace ");
+            
+            #line 15 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ClassModel.Namespace));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n{\r\n    ");
+            
+            #line 17 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(CodeModelVisibilityMapper(ClassModel.Visibility)));
+            
+            #line default
+            #line hidden
+            this.Write(" class ");
+            
+            #line 17 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ClassModel.Name));
+            
+            #line default
+            #line hidden
+            
+            #line 17 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\ClassTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(GetBasesListString()));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n    {\r\n        \r\n    }\r\n}\r\n\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -55,7 +92,7 @@ namespace EfModelMigrations.Runtime.Templates
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "11.0.0.0")]
-    internal class ModelMigrationsConfigurationTemplateBase
+    internal class ClassTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

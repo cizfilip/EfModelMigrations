@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
 {
+    //TODO: porovnavam migrationID s migration name !!! Fail
     [Serializable]
     internal class FindMigrationsToApplyOrRevert : BaseRunner
     {

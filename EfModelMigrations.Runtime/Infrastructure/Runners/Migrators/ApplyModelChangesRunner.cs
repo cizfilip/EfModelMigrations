@@ -1,5 +1,7 @@
 ﻿using EfModelMigrations.Operations;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Transformations;
+using EnvDTE;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
     internal class ApplyModelChangesRunner : MigratorBaseRunner
     {
         public bool IsRevert { get; set; }
+        
 
         public override void Run()
         {
@@ -19,12 +22,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
             List<ModelChangeOperation> executedOperations = new List<ModelChangeOperation>();
 
+            var modelChangesProvider = new VsModelChangesProvider(ModelProject, Configuration.ModelNamespace, Configuration.CodeGenerator);
+
             try
             {
                 foreach (var operation in operations)
                 {
-                    //TODO: insert god object as param
-                    operation.ExecuteModelChanges();
+                    operation.ExecuteModelChanges(modelChangesProvider);
 
                     executedOperations.Add(operation);
                 }
@@ -33,14 +37,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
             {
                 foreach (var operation in executedOperations.Select(o => o.Inverse()).Reverse())
                 {
-                    //TODO: insert god object as param
-                    operation.ExecuteModelChanges();
+                    operation.ExecuteModelChanges(modelChangesProvider);
                 }
 
                 throw;
             }
-
-
         }
     }
 }

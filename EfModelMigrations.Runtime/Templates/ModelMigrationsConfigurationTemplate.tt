@@ -11,7 +11,7 @@ namespace <#= Namespace #>
     {
         public ModelMigrationConfiguration()
         {
-
+            ModelNamespace = "<#= ModelNamespace #>";
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using EfModelMigrations.Infrastructure.Model;
+﻿using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Transformations;
 using System;
 using System.Collections.Generic;
@@ -13,8 +13,14 @@ namespace EfModelMigrations
     {
         public static void CreateClass(this ModelMigration migration, string className, object properties)
         {
+            //TODO: Dat do classcodemodelu namespace atd....
             migration.AddTransformation(
-                new CreateClassTransformation(className, ConvertObjectToPropertyModel(properties))
+                new CreateClassTransformation(
+                    new ClassCodeModel()
+                    {
+                        Name = className,
+                        Properties = ConvertObjectToPropertyModel(properties)
+                    })
                 );
         }
 
@@ -23,19 +29,22 @@ namespace EfModelMigrations
         public static void RemoveClass(this ModelMigration migration, string className)
         {
             migration.AddTransformation(
-                new RemoveClassTransformation(className)
+                new RemoveClassTransformation(
+                    migration.ClassModelProvider.GetClassCodeModel(className)
+                    )
                 );
         }
 
 
-        private static IEnumerable<PropertyModel> ConvertObjectToPropertyModel(object properties)
+        private static IEnumerable<PropertyCodeModel> ConvertObjectToPropertyModel(object properties)
         {
             foreach (var property in properties.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
             {
-                yield return new PropertyModel()
+                yield return new PropertyCodeModel()
                 {
                     Name = property.Name,
-                    Type = property.GetGetMethod().Invoke(properties, new object[] { }) as string
+                    Type = property.GetGetMethod().Invoke(properties, new object[] { }) as string,
+                    Visibility = CodeModelVisibility.Public
                 };
             }
         }

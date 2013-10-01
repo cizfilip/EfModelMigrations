@@ -88,6 +88,15 @@ namespace EfModelMigrations.Runtime.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find class with name {0} in model project..
+        /// </summary>
+        internal static string CannotFindClassInModelProject {
+            get {
+                return ResourceManager.GetString("CannotFindClassInModelProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find configuration class in project..
         /// </summary>
         internal static string CannotFindConfiguration {
@@ -138,6 +147,42 @@ namespace EfModelMigrations.Runtime.Properties {
         internal static string ProjectExtensions_PathMustBeRelative {
             get {
                 return ResourceManager.GetString("ProjectExtensions_PathMustBeRelative", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot add property {0} to class {1} in model project..
+        /// </summary>
+        internal static string VsCodeModel_FailedToAddProperty {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToAddProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot create class {0} in model project..
+        /// </summary>
+        internal static string VsCodeModel_FailedToCreateClass {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToCreateClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot remove class {0} from model project..
+        /// </summary>
+        internal static string VsCodeModel_FailedToRemoveClass {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToRemoveClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot remove property {0} from class {1} in model project..
+        /// </summary>
+        internal static string VsCodeModel_FailedToRemoveProperty {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToRemoveProperty", resourceCulture);
             }
         }
     }

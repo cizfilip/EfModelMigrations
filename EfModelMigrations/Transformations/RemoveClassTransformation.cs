@@ -1,6 +1,8 @@
-﻿using EfModelMigrations.Operations;
+﻿using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Operations;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,24 +11,35 @@ namespace EfModelMigrations.Transformations
 {
     public class RemoveClassTransformation : ModelTransformation
     {
-        public string Name { get; private set; }
-
-        public RemoveClassTransformation(string name)
+        private ClassCodeModel classModel;
+        public ClassCodeModel ClassModel
         {
-            this.Name = name;
+            get
+            {
+                return classModel;
+            }
         }
 
+        public RemoveClassTransformation(ClassCodeModel classModel)
+        {
+            this.classModel = classModel;
+        }
+        
         public override IEnumerable<ModelChangeOperation> GetModelChangeOperations()
         {
-            throw new NotImplementedException();
+            foreach (var property in classModel.Properties)
+            {
+                yield return new RemovePropertyFromClassOperation(classModel, property);
+            }
+            yield return new RemoveClassOperation(classModel);
         }
 
         public override ModelTransformation Inverse()
         {
-            throw new NotImplementedException();
+            return new CreateClassTransformation(classModel);
         }
 
-        public override System.Data.Entity.Migrations.Model.MigrationOperation GetDbMigrationOperation()
+        public override MigrationOperation GetDbMigrationOperation()
         {
             throw new NotImplementedException();
         }

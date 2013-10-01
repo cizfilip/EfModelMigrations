@@ -1,16 +1,11 @@
-﻿using EfModelMigrations.Exceptions;
-using EfModelMigrations.Runtime.Properties;
+﻿using EfModelMigrations.Runtime.Properties;
 using EnvDTE;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Extensions
 {
-    public static class ProjectExtensions
+    internal static class ProjectExtensions
     {
         public static bool TryBuild(this Project project)
         {
@@ -91,5 +86,7 @@ namespace EfModelMigrations.Runtime.Extensions
 
             return (T)property.Value;
         }
+
+
     }
 }

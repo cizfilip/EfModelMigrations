@@ -1,38 +1,43 @@
-﻿using EfModelMigrations.Infrastructure.Model;
+﻿using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Operations;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EF = System.Data.Entity.Migrations.Model;
+using System.Data.Entity.Migrations.Model;
 
 namespace EfModelMigrations.Transformations
 {
     public class CreateClassTransformation : ModelTransformation
     {
-        public string Name { get; private set; }
-        public IEnumerable<PropertyModel> Properties { get; private set; }
-        
-        public CreateClassTransformation(string name, IEnumerable<PropertyModel> properties)
+        private ClassCodeModel classModel;
+        public ClassCodeModel ClassModel
         {
-            this.Name = name;
-            this.Properties = properties;
+            get
+            {
+                return classModel;
+            }
         }
 
 
+        public CreateClassTransformation(ClassCodeModel classModel)
+        {
+            this.classModel = classModel;
+        }
+
         public override IEnumerable<ModelChangeOperation> GetModelChangeOperations()
         {
-            throw new NotImplementedException();
+            yield return new CreateClassOperation(classModel);
+            foreach (var property in classModel.Properties)
+            {
+                yield return new AddPropertyToClassOperation(classModel, property);
+            }
         }
 
         public override ModelTransformation Inverse()
         {
-            return new RemoveClassTransformation(Name);
+            return new RemoveClassTransformation(classModel);
         }
 
-        //TODO: prejmenovat PropertyModel - koliduje se tridou se stejnym jmenem v System.Data.Entity.Migrations.Model
-        public override EF.MigrationOperation GetDbMigrationOperation()
+        public override MigrationOperation GetDbMigrationOperation()
         {
             throw new NotImplementedException();
         }

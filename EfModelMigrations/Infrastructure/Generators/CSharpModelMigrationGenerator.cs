@@ -57,11 +57,11 @@ namespace EfModelMigrations.Infrastructure.Generators
         protected virtual void Generate(CreateClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.CreateClass(");
-            builder.Append(QuoteString(transformation.Name));
+            builder.Append(QuoteString(transformation.ClassModel.Name));
             builder.AppendLine(", new {");
             
             string indent = "    ";
-            foreach (var property in transformation.Properties)
+            foreach (var property in transformation.ClassModel.Properties)
             {
                 builder.Append(indent);
                 builder.Append(property.Name);
@@ -76,7 +76,7 @@ namespace EfModelMigrations.Infrastructure.Generators
         protected virtual void Generate(RemoveClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.RemoveClass(");
-            builder.Append(QuoteString(transformation.Name));
+            builder.Append(QuoteString(transformation.ClassModel.Name));
             builder.AppendLine(");");
         }
 

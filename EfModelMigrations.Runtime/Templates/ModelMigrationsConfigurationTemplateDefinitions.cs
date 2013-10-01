@@ -9,5 +9,7 @@ namespace EfModelMigrations.Runtime.Templates
     internal partial class ModelMigrationsConfigurationTemplate
     {
         public string Namespace { get; set; }
+
+        public string ModelNamespace { get; set; }
     }
 }

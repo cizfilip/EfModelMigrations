@@ -40,11 +40,17 @@ namespace EfModelMigrations.Runtime.PowerShell
                 //+ nastavit novou directory cestu v construktoru vygenerovane konfigurace
 
                 //create configuration
+                //TODO: nejspis prejmenovat jen na Configuration - po vzoru EF konfigurace. Bacha prejmenovat i v templatu
                 string configurationFile = "ModelMigrationsConfiguration";
                 string configurationFileName = configurationFile + ".cs";
                 string migrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
                 string migrationsNamespace = Project.GetRootNamespace() + "." + migrationsDirectory;
-                string configuration = new ModelMigrationsConfigurationTemplate() { Namespace = migrationsNamespace }.TransformText();
+                string configuration = new ModelMigrationsConfigurationTemplate() 
+                    { 
+                        Namespace = migrationsNamespace,
+                        ModelNamespace = Project.GetRootNamespace()
+                    }
+                    .TransformText();
 
                 Project.AddContentToProject(Path.Combine(migrationsDirectory, configurationFileName), configuration);
                 //TODO: Zajistit aby byl resource soubor checknut do source control (je to jenom zamek pro TFS) - btw mozna zarucit pro vsechny nove pridane soubory!

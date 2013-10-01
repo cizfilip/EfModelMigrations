@@ -50,22 +50,44 @@
     <Compile Include="Commands\ModelMigrationsCommand.cs" />
     <Compile Include="Configuration\ModelMigrationsConfigurationBase.cs" />
     <Compile Include="Exceptions\ModelMigrationsException.cs" />
+    <Compile Include="Infrastructure\CodeModel\CodeModelVisibility.cs" />
+    <Compile Include="Infrastructure\Generators\CSharpCodeGenerator.cs" />
     <Compile Include="Infrastructure\Generators\GeneratedModelMigration.cs" />
+    <Compile Include="Infrastructure\Generators\ICodeGenerator.cs" />
     <Compile Include="Infrastructure\Generators\IModelMigrationGenerator.cs" />
     <Compile Include="Infrastructure\Generators\CSharpModelMigrationGenerator.cs" />
     <Compile Include="Infrastructure\Generators\ModelMigrationGeneratorBase.cs" />
+    <Compile Include="Infrastructure\Generators\Templates\ClassTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ClassTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\Generators\Templates\ClassTemplateDefinitions.cs" />
     <Compile Include="Infrastructure\Generators\Templates\ModelMigrationTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ModelMigrationTemplate.tt</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Generators\Templates\ModelMigrationTemplateDefinitions.cs" />
+    <Compile Include="Infrastructure\Generators\Templates\PropertyTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>PropertyTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\Generators\Templates\PropertyTemplateDefinitions.cs" />
+    <Compile Include="Infrastructure\IClassModelProvider.cs" />
+    <Compile Include="Infrastructure\IModelChangesProvider.cs" />
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
-    <Compile Include="Infrastructure\Model\PropertyModel.cs" />
+    <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
+    <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
     <Compile Include="ModelMigration.cs" />
     <Compile Include="ModelMigrationExtensions.cs" />
     <Compile Include="ModelMigrationIdAttribute.cs" />
+    <Compile Include="Operations\AddPropertyToClassOperation.cs" />
+    <Compile Include="Operations\CreateClassOperation.cs" />
     <Compile Include="Operations\ModelChangeOperation.cs" />
+    <Compile Include="Operations\RemoveClassOperation.cs" />
+    <Compile Include="Operations\RemovePropertyFromClassOperation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -79,9 +101,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Infrastructure\Generators\Templates\ClassTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ClassTemplate.cs</LastGenOutput>
+    </None>
     <None Include="Infrastructure\Generators\Templates\ModelMigrationTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>ModelMigrationTemplate.cs</LastGenOutput>
+    </None>
+    <None Include="Infrastructure\Generators\Templates\PropertyTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>PropertyTemplate.cs</LastGenOutput>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

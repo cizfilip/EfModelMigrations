@@ -1,4 +1,6 @@
-﻿using System;
+﻿using EfModelMigrations.Runtime.Infrastructure.Runners.Migrators;
+using EnvDTE;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,35 +11,34 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
     internal class ModelMigrator
     {
         private Func<NewAppDomainExecutor> executorFactory;
+        private Project modelProject;
 
-        public ModelMigrator(Func<NewAppDomainExecutor> executorFactory)
+        public ModelMigrator(Project modelProject, Func<NewAppDomainExecutor> executorFactory)
         {
             this.executorFactory = executorFactory;
+            this.modelProject = modelProject;
         }
 
-        public void ApplyMigrations(IEnumerable<string> migrationIds)
+        public void Migrate(IEnumerable<string> migrationIds, bool isRevert)
         {
             foreach (var migrationId in migrationIds)
             {
-                Migrate(migrationId, isRevert: false);
+                Migrate(migrationId, isRevert);
             }
         }
-        public void RevertMigrations(IEnumerable<string> migrationIds)
-        {
-            foreach (var migrationId in migrationIds)
-            {
-                Migrate(migrationId, isRevert: true);
-            }
-        }
-
-
+        
 
         private void Migrate(string migratonId, bool isRevert)
         {
             //apply model changes
             using (var executor = executorFactory())
             {
-                //executor.ExecuteRunner(new )
+                executor.ExecuteRunner(new ApplyModelChangesRunner()
+                {
+                    ModelProject = modelProject,
+                    ModelMigrationId = migratonId,
+                    IsRevert = isRevert
+                });
             }
         }
     }

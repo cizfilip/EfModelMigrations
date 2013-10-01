@@ -1,5 +1,5 @@
 ﻿using EfModelMigrations.Exceptions;
-using EfModelMigrations.Infrastructure.Model;
+using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Transformations;
 using System;
 using System.Collections.Generic;
@@ -11,22 +11,16 @@ namespace EfModelMigrations.Commands
 {
     public class CreateClassCommand : ModelMigrationsCommand
     {
-        private string className;
-        private List<PropertyModel> properties;
-
-        public CreateClassCommand()
-        {
-            properties = new List<PropertyModel>();
-        }
+        private ClassCodeModel codeModel;
 
         public override IEnumerable<ModelTransformation> GetTransformations()
         {
-            yield return new CreateClassTransformation(className, properties);
+            yield return new CreateClassTransformation(codeModel);
         }
 
         public override string GetMigrationName()
         {
-            return "CreateClass" + className;
+            return "CreateClass" + codeModel.Name;
         }
 
         //TODO: Dat stringy vyjimek do resourcu
@@ -37,16 +31,25 @@ namespace EfModelMigrations.Commands
                 throw new ModelMigrationsException("Name od the new class is missing.");
             }
 
-            className = parameters[0];
-
-            foreach (string param in parameters.Skip(1))
+            //TODO: parsovat i dalsi veci az budou hotovz lepsi parametry z powershellu
+            codeModel = new ClassCodeModel()
             {
-                properties.Add(ParsePropertyModel(param));
+                Name = parameters[0],
+                Properties = ParseProperties(parameters.Skip(1))
+            };
+
+        }
+
+        private IEnumerable<PropertyCodeModel> ParseProperties(IEnumerable<string> parameters)
+        {
+            foreach (var param in parameters)
+            {
+                yield return ParsePropertyModel(param);
             }
         }
 
         //TODO: Dat stringy vyjimek do resourcu
-        private PropertyModel ParsePropertyModel(string param)
+        private PropertyCodeModel ParsePropertyModel(string param)
         {
             var splitted = param.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -55,7 +58,7 @@ namespace EfModelMigrations.Commands
                 throw new ModelMigrationsException("Wrong property format, use [PropertyName]:[PropertyType], example: Name:string ");
             }
 
-            return new PropertyModel()
+            return new PropertyCodeModel()
             {
                 Name = splitted[0],
                 Type = splitted[1]
