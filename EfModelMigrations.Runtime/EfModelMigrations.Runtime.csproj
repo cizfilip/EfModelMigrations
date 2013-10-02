@@ -61,6 +61,7 @@
     <Compile Include="Infrastructure\NewAppDomainExecutor.cs" />
     <Compile Include="Infrastructure\Runners\BaseRunner.cs" />
     <Compile Include="Infrastructure\Runners\Migrators\ApplyModelChangesRunner.cs" />
+    <Compile Include="Infrastructure\Runners\Migrators\GenerateDbMigrationRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindMigrationsToApplyOrRevert.cs" />
     <Compile Include="Infrastructure\Runners\GenerateMigrationFromCommandRunner.cs" />
     <Compile Include="Infrastructure\Runners\Migrators\MigratorBaseRunner.cs" />

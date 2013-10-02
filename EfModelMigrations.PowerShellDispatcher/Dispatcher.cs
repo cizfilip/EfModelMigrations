@@ -76,6 +76,8 @@ namespace EfModelMigrations.PowerShellDispatcher
         {
             cmdlet.InvokeCommand.InvokeScript(script);
         }
+
+       
     }
 
 }

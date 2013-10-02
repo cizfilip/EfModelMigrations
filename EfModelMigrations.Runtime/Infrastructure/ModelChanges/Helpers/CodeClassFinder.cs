@@ -12,40 +12,43 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 {
     internal class CodeClassFinder
     {
-        private Project modelProject;
-        private string modelNamespace;
+        private Project project;
 
-        public CodeClassFinder(Project modelProject, string modelNamespace)
+        public CodeClassFinder(Project project)
         {
-            this.modelProject = modelProject;
-            this.modelNamespace = modelNamespace;
+            this.project = project;
         }
 
 
-        public CodeClass2 FindCodeClass(string className)
+        public CodeClass2 FindCodeClass(string @namespace, string className)
         {
-            CodeClass2 codeClass = FindClassFromFullName(GetFullNameOfClass(className));
+            return FindCodeClassFromFullName(GetFullNameOfClass(@namespace, className));
+        }
+
+        public CodeClass2 FindCodeClassFromFullName(string classFullName)
+        {
+            CodeClass2 codeClass = FindClassFromFullNameInternal(classFullName);
 
             if (codeClass == null)
-                throw new ModelMigrationsException(string.Format(Resources.CannotFindClassInModelProject, className));
+                throw new ModelMigrationsException(string.Format(Resources.CannotFindClassInModelProject, classFullName));
 
             return codeClass;
         }
 
-        private string GetFullNameOfClass(string className)
+        private string GetFullNameOfClass(string @namespace, string className)
         {
-            return modelNamespace + "." + className;
+            return @namespace + "." + className;
         }
 
 
         /// <summary>
         /// Gets the type only if typeName is its fully-qualified name and it's local to the specified project
         /// </summary>
-        private CodeClass2 FindClassFromFullName(string className)
+        private CodeClass2 FindClassFromFullNameInternal(string className)
         {
             try
             {
-                var fullNameResult = modelProject.CodeModel.CodeTypeFromFullName(className);
+                var fullNameResult = project.CodeModel.CodeTypeFromFullName(className);
                 if ((fullNameResult != null) && (fullNameResult.InfoLocation == vsCMInfoLocation.vsCMInfoLocationProject))
                     return fullNameResult as CodeClass2;
             }

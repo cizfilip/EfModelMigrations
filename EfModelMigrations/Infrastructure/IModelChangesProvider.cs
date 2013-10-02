@@ -4,6 +4,9 @@ namespace EfModelMigrations.Infrastructure
 {
     public interface IModelChangesProvider
     {
+        IDbContextChangesProvider ChangeDbContext { get; }
+
+
         void CreateEmptyClass(ClassCodeModel classModel);
         void RemoveClass(ClassCodeModel classModel);
 

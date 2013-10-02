@@ -151,6 +151,15 @@ namespace EfModelMigrations.Runtime.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot add DbSet property to DbContext for class {0} in model project..
+        /// </summary>
+        internal static string VsCodeModel_FailedToAddDbSetProperty {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToAddDbSetProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot add property {0} to class {1} in model project..
         /// </summary>
         internal static string VsCodeModel_FailedToAddProperty {
@@ -169,11 +178,38 @@ namespace EfModelMigrations.Runtime.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find DbSet property for class {0} in DbContext..
+        /// </summary>
+        internal static string VsCodeModel_FailedToFindDbSetProperty {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToFindDbSetProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot find property {0} in class {1}..
+        /// </summary>
+        internal static string VsCodeModel_FailedToFindProperty {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToFindProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot remove class {0} from model project..
         /// </summary>
         internal static string VsCodeModel_FailedToRemoveClass {
             get {
                 return ResourceManager.GetString("VsCodeModel_FailedToRemoveClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot remove DbSet property from DbContext for class {0} in model project..
+        /// </summary>
+        internal static string VsCodeModel_FailedToRemoveDbSetProperty {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToRemoveDbSetProperty", resourceCulture);
             }
         }
         

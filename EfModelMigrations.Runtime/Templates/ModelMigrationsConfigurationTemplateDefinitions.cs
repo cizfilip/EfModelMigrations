@@ -11,5 +11,7 @@ namespace EfModelMigrations.Runtime.Templates
         public string Namespace { get; set; }
 
         public string ModelNamespace { get; set; }
+
+        public string EfMigrationsConfigurationFullName { get; set; }
     }
 }

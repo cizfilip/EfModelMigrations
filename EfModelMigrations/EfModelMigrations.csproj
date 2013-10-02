@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Commands\CreateClassCommand.cs" />
     <Compile Include="Commands\ModelMigrationsCommand.cs" />
+    <Compile Include="Configuration\ModelMigrationsConfiguration.cs" />
     <Compile Include="Configuration\ModelMigrationsConfigurationBase.cs" />
     <Compile Include="Exceptions\ModelMigrationsException.cs" />
     <Compile Include="Infrastructure\CodeModel\CodeModelVisibility.cs" />
@@ -63,6 +64,12 @@
       <DependentUpon>ClassTemplate.tt</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\Generators\Templates\ClassTemplateDefinitions.cs" />
+    <Compile Include="Infrastructure\Generators\Templates\DbSetPropertyTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>DbSetPropertyTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Infrastructure\Generators\Templates\DbSetPropertyTemplateDefinitons.cs" />
     <Compile Include="Infrastructure\Generators\Templates\ModelMigrationTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -76,6 +83,7 @@
     </Compile>
     <Compile Include="Infrastructure\Generators\Templates\PropertyTemplateDefinitions.cs" />
     <Compile Include="Infrastructure\IClassModelProvider.cs" />
+    <Compile Include="Infrastructure\IDbContextChangesProvider.cs" />
     <Compile Include="Infrastructure\IModelChangesProvider.cs" />
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
@@ -85,6 +93,9 @@
     <Compile Include="ModelMigrationIdAttribute.cs" />
     <Compile Include="Operations\AddPropertyToClassOperation.cs" />
     <Compile Include="Operations\CreateClassOperation.cs" />
+    <Compile Include="Operations\DbContext\AddDbSetPropertyOperation.cs" />
+    <Compile Include="Operations\DbContext\DbContextChangeOperation.cs" />
+    <Compile Include="Operations\DbContext\RemoveDbSetPropertyOperation.cs" />
     <Compile Include="Operations\ModelChangeOperation.cs" />
     <Compile Include="Operations\RemoveClassOperation.cs" />
     <Compile Include="Operations\RemovePropertyFromClassOperation.cs" />
@@ -104,6 +115,10 @@
     <None Include="Infrastructure\Generators\Templates\ClassTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>ClassTemplate.cs</LastGenOutput>
+    </None>
+    <None Include="Infrastructure\Generators\Templates\DbSetPropertyTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>DbSetPropertyTemplate.cs</LastGenOutput>
     </None>
     <None Include="Infrastructure\Generators\Templates\ModelMigrationTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

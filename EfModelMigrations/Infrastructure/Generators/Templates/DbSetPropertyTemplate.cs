@@ -7,8 +7,10 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace EfModelMigrations.Runtime.Templates
+namespace EfModelMigrations.Infrastructure.Generators.Templates
 {
+    using System.Linq;
+    using System.Text;
     using System.Collections.Generic;
     using System;
     
@@ -16,9 +18,9 @@ namespace EfModelMigrations.Runtime.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
+    #line 1 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\DbSetPropertyTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "11.0.0.0")]
-    internal partial class ModelMigrationsConfigurationTemplate : ModelMigrationsConfigurationTemplateBase
+    internal partial class DbSetPropertyTemplate : DbSetPropertyTemplateBase
     {
 #line hidden
         /// <summary>
@@ -26,30 +28,21 @@ namespace EfModelMigrations.Runtime.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using System;\r\nusing System.Collections.Generic;\r\nusing EfModelMigrations.Configu" +
-                    "ration;\r\n\r\nnamespace ");
+            this.Write("public IDbSet<");
             
-            #line 8 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(Namespace));
-            
-            #line default
-            #line hidden
-            this.Write("\r\n{\r\n    internal sealed class Configuration : ModelMigrationsConfiguration<");
-            
-            #line 10 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(EfMigrationsConfigurationFullName));
+            #line 6 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\DbSetPropertyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(GenericType));
             
             #line default
             #line hidden
-            this.Write(">\r\n    {\r\n        public Configuration()\r\n        {\r\n            ModelNamespace =" +
-                    " \"");
+            this.Write("> ");
             
-            #line 14 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\ModelMigrationsConfigurationTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(ModelNamespace));
+            #line 6 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\DbSetPropertyTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default
             #line hidden
-            this.Write("\";\r\n        }\r\n    }\r\n}\r\n\r\n");
+            this.Write(" { get; set; }\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -61,7 +54,7 @@ namespace EfModelMigrations.Runtime.Templates
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "11.0.0.0")]
-    internal class ModelMigrationsConfigurationTemplateBase
+    internal class DbSetPropertyTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

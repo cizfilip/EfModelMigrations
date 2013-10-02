@@ -29,6 +29,21 @@ namespace EfModelMigrations.Infrastructure.Generators
             }.TransformText();
         }
 
+        public string GenerateDbSetProperty(ClassCodeModel classForAddProperty)
+        {
+            //TODO: Takhle jde delat dpset property bez public setteru
+            //public DbSet<Blog> Blogs
+            //{
+            //    get { return Set<Blog>(); }
+            //}
+
+            return new DbSetPropertyTemplate()
+            {
+                GenericType = classForAddProperty.Name,
+                Name = classForAddProperty.Name + "Set" //TODO: asi spis pluralizovat jmeno
+            }.TransformText();
+        }
+
 
         public string GetFileExtensions()
         {
@@ -61,5 +76,8 @@ namespace EfModelMigrations.Infrastructure.Generators
                     return "public";
             }
         }
+
+
+        
     }
 }

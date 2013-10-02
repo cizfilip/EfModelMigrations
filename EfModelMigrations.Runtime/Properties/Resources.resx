@@ -147,14 +147,26 @@
   <data name="ProjectExtensions_PathMustBeRelative" xml:space="preserve">
     <value>Specified path must be relative to project directory.</value>
   </data>
+  <data name="VsCodeModel_FailedToAddDbSetProperty" xml:space="preserve">
+    <value>Cannot add DbSet property to DbContext for class {0} in model project.</value>
+  </data>
   <data name="VsCodeModel_FailedToAddProperty" xml:space="preserve">
     <value>Cannot add property {0} to class {1} in model project.</value>
   </data>
   <data name="VsCodeModel_FailedToCreateClass" xml:space="preserve">
     <value>Cannot create class {0} in model project.</value>
   </data>
+  <data name="VsCodeModel_FailedToFindDbSetProperty" xml:space="preserve">
+    <value>Cannot find DbSet property for class {0} in DbContext.</value>
+  </data>
+  <data name="VsCodeModel_FailedToFindProperty" xml:space="preserve">
+    <value>Cannot find property {0} in class {1}.</value>
+  </data>
   <data name="VsCodeModel_FailedToRemoveClass" xml:space="preserve">
     <value>Cannot remove class {0} from model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToRemoveDbSetProperty" xml:space="preserve">
+    <value>Cannot remove DbSet property from DbContext for class {0} in model project.</value>
   </data>
   <data name="VsCodeModel_FailedToRemoveProperty" xml:space="preserve">
     <value>Cannot remove property {0} from class {1} in model project.</value>

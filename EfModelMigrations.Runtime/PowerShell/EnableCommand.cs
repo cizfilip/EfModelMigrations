@@ -25,7 +25,6 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         protected override void ExecuteCore()
         {
-
             using (var executor = CreateExecutor())
             {
                 //find model migration configuration
@@ -35,54 +34,103 @@ namespace EfModelMigrations.Runtime.PowerShell
                     WriteLine(Resources.ModelMigrationsAlreadyEnabled);
                     return;
                 }
-
-                //TODO: az budem prepirat migrationsdirectory pres parametr nesmi to byt absolutni cesta!! - check zde i v setteru v configuraci
-                //+ nastavit novou directory cestu v construktoru vygenerovane konfigurace
-
-                //create configuration
-                //TODO: nejspis prejmenovat jen na Configuration - po vzoru EF konfigurace. Bacha prejmenovat i v templatu
-                string configurationFile = "ModelMigrationsConfiguration";
-                string configurationFileName = configurationFile + ".cs";
-                string migrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
-                string migrationsNamespace = Project.GetRootNamespace() + "." + migrationsDirectory;
-                string configuration = new ModelMigrationsConfigurationTemplate() 
-                    { 
-                        Namespace = migrationsNamespace,
-                        ModelNamespace = Project.GetRootNamespace()
-                    }
-                    .TransformText();
-
-                Project.AddContentToProject(Path.Combine(migrationsDirectory, configurationFileName), configuration);
-                //TODO: Zajistit aby byl resource soubor checknut do source control (je to jenom zamek pro TFS) - btw mozna zarucit pro vsechny nove pridane soubory!
-                string resourceFileName = configurationFile + ".resx";
-                string resourcePath = Path.Combine(migrationsDirectory, resourceFileName);
-                WriteResourceFile(resourcePath);
-
-                //find Db migrations configuration
-                bool dbConfigurationExists = executor.ExecuteRunner<bool>(new FindDbMigrationsConfigurationRunner());
-                if (!dbConfigurationExists)
-                {
-                    //enable db migrations
-                    //find db context
-                    bool dbContextExists = executor.ExecuteRunner<bool>(new FindDbContextRunner());
-
-                    if (!dbConfigurationExists)
-                    {
-                        //create db context
-                        string contextName = Project.Name + "Context";
-                        string contextFileName = contextName + ".cs";
-                        string contextNamespace = Project.GetRootNamespace();
-                        string context = new DbContextTemplate() { ContextName = contextName, Namespace = contextNamespace }.TransformText();
-
-                        Project.AddContentToProject(contextFileName, context);
-                    }
-
-                    //call enable migrations
-                    //InvokeScript("Enable-Migrations");
-
-                }
-
             }
+
+            //create db context
+            //TODO: musime zajistit ze DBContext (at jiz vytvorenz zde nebo pozdeji jiz existujici ma v sobe using na namespace modelu) - tak abz se zkompiloval kod napr. IDbSet<Person>
+            string contextName = Project.Name + "Context";
+            string contextFileName = contextName + ".cs";
+            string contextNamespace = Project.GetRootNamespace();
+            string context = new DbContextTemplate() { ContextName = contextName, Namespace = contextNamespace }.TransformText();
+
+            Project.AddContentToProject(contextFileName, context);
+
+
+            string migrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
+            //Enable ef migrations
+            string efMigrationsDirectory = "DbMigrations";
+            string efMigrationsFullDirectory = Path.Combine(migrationsDirectory, efMigrationsDirectory);
+            string efMigrationsConfigTypeName = efMigrationsDirectory + ".Configuration";
+            InvokeScript("Enable-Migrations -MigrationsDirectory " + efMigrationsFullDirectory);
+
+            //create configuration
+            string configurationFile = "Configuration";
+            string configurationFileName = configurationFile + ".cs";
+            
+            string migrationsNamespace = Project.GetRootNamespace() + "." + migrationsDirectory;
+            string configuration = new ModelMigrationsConfigurationTemplate() 
+                { 
+                    Namespace = migrationsNamespace,
+                    ModelNamespace = Project.GetRootNamespace(),
+                    EfMigrationsConfigurationFullName = efMigrationsConfigTypeName
+                }
+                .TransformText();
+            Project.AddContentToProject(Path.Combine(migrationsDirectory, configurationFileName), configuration);
+            //TODO: Zajistit aby byl resource soubor checknut do source control (je to jenom zamek pro TFS) - btw mozna zarucit pro vsechny nove pridane soubory!
+            string resourceFileName = configurationFile + ".resx";
+            string resourcePath = Path.Combine(migrationsDirectory, resourceFileName);
+            WriteResourceFile(resourcePath);
+
+
+            //TODO: zrevidovat TODOcka ze stare implementace Enablu:
+            //using (var executor = CreateExecutor())
+            //{
+            //    //find model migration configuration
+            //    bool configurationExists = executor.ExecuteRunner<bool>(new FindModelMigrationsConfigurationRunner());
+            //    if (configurationExists)
+            //    {
+            //        WriteLine(Resources.ModelMigrationsAlreadyEnabled);
+            //        return;
+            //    }
+
+            //    //TODO: az budem prepirat migrationsdirectory pres parametr nesmi to byt absolutni cesta!! - check zde i v setteru v configuraci
+            //    //+ nastavit novou directory cestu v construktoru vygenerovane konfigurace
+
+            //    //create configuration
+            //    string configurationFile = "Configuration";
+            //    string configurationFileName = configurationFile + ".cs";
+            //    string migrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
+            //    string migrationsNamespace = Project.GetRootNamespace() + "." + migrationsDirectory;
+            //    string configuration = new ModelMigrationsConfigurationTemplate() 
+            //        { 
+            //            Namespace = migrationsNamespace,
+            //            ModelNamespace = Project.GetRootNamespace(),
+            //            EfMigrationsConfigurationFullName = ??
+            //        }
+            //        .TransformText();
+
+            //    Project.AddContentToProject(Path.Combine(migrationsDirectory, configurationFileName), configuration);
+            //    //TODO: Zajistit aby byl resource soubor checknut do source control (je to jenom zamek pro TFS) - btw mozna zarucit pro vsechny nove pridane soubory!
+            //    string resourceFileName = configurationFile + ".resx";
+            //    string resourcePath = Path.Combine(migrationsDirectory, resourceFileName);
+            //    WriteResourceFile(resourcePath);
+
+            //    //find Db migrations configuration
+            //    bool dbConfigurationExists = executor.ExecuteRunner<bool>(new FindDbMigrationsConfigurationRunner());
+            //    if (!dbConfigurationExists)
+            //    {
+            //        //enable db migrations
+            //        //find db context
+            //        bool dbContextExists = executor.ExecuteRunner<bool>(new FindDbContextRunner());
+
+            //        if (!dbConfigurationExists)
+            //        {
+            //            //create db context
+            //            //TODO: musime zajistit ze DBContext (at jiz vytvorenz zde nebo pozdeji jiz existujici ma v sobe using na namespace modelu) - tak abz se zkompiloval kod napr. IDbSet<Person>
+            //            string contextName = Project.Name + "Context";
+            //            string contextFileName = contextName + ".cs";
+            //            string contextNamespace = Project.GetRootNamespace();
+            //            string context = new DbContextTemplate() { ContextName = contextName, Namespace = contextNamespace }.TransformText();
+
+            //            Project.AddContentToProject(contextFileName, context);
+            //        }
+
+            //        //call enable migrations
+            //        //InvokeScript("Enable-Migrations");
+
+            //    }
+
+            //}
 
             WriteLine(Resources.ModelEnableSuccessfull);
         }

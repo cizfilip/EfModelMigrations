@@ -14,7 +14,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
     internal class ApplyModelChangesRunner : MigratorBaseRunner
     {
         public bool IsRevert { get; set; }
-        
 
         public override void Run()
         {
@@ -22,7 +21,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
             List<ModelChangeOperation> executedOperations = new List<ModelChangeOperation>();
 
-            var modelChangesProvider = new VsModelChangesProvider(ModelProject, Configuration.ModelNamespace, Configuration.CodeGenerator);
+            //TODO: obejit se bez dynamic
+            string dbContextFullName = CreateInstance<dynamic>(Configuration.EfMigrationsConfigurationType).ContextType.FullName;         
+
+
+            var modelChangesProvider = new VsModelChangesProvider(ModelProject, 
+                Configuration.ModelNamespace, 
+                dbContextFullName,
+                Configuration.CodeGenerator
+                );
 
             try
             {

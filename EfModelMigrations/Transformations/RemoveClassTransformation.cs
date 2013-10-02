@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Operations;
+using EfModelMigrations.Operations.DbContext;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -27,6 +28,7 @@ namespace EfModelMigrations.Transformations
         
         public override IEnumerable<ModelChangeOperation> GetModelChangeOperations()
         {
+            yield return new RemoveDbSetPropertyOperation(classModel);
             foreach (var property in classModel.Properties)
             {
                 yield return new RemovePropertyFromClassOperation(classModel, property);

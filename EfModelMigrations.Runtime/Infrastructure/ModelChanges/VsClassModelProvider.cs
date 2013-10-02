@@ -19,12 +19,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         {
             this.modelProject = modelProject;
             this.modelNamespace = modelNamespace;
-            this.classFinder = new CodeClassFinder(modelProject, modelNamespace);
+            this.classFinder = new CodeClassFinder(modelProject);
         }
 
         public ClassCodeModel GetClassCodeModel(string className)
         {
-            CodeClass2 codeClass = classFinder.FindCodeClass(className);
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, className);
 
             return new VsCodeClassToClassCodeModelMapper().MapToClassCodeModel(codeClass);
         }

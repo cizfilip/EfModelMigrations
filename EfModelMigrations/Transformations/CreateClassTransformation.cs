@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Operations;
+using EfModelMigrations.Operations.DbContext;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -30,6 +31,7 @@ namespace EfModelMigrations.Transformations
             {
                 yield return new AddPropertyToClassOperation(classModel, property);
             }
+            yield return new AddDbSetPropertyOperation(classModel);
         }
 
         public override ModelTransformation Inverse()

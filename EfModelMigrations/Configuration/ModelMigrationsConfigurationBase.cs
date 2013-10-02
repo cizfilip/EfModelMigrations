@@ -21,6 +21,7 @@ namespace EfModelMigrations.Configuration
             ModelMigrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
         }
 
+        //Generators
         public IModelMigrationGenerator ModelMigrationGenerator { get; set; }
         public ICodeGenerator CodeGenerator { get; set; }
 
@@ -30,6 +31,8 @@ namespace EfModelMigrations.Configuration
         public Assembly ModelMigrationsAssembly { get; set; }
 
         public string ModelNamespace { get; set; }
+
+        public Type EfMigrationsConfigurationType { get; set; }
 
         //TODO: Prepsat az bude hotova komopnenta pro update resource souboru s jiz aplikovanymi migracemi
         public IEnumerable<string> GetAppliedMigrations()
