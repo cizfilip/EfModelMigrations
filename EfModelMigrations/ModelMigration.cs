@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EfModelMigrations.Infrastructure;
 
 namespace EfModelMigrations
 {
@@ -57,10 +56,6 @@ namespace EfModelMigrations
         {
             transformations.Clear();
         }
-
-        //TODO: must have private or internal setter
-        public IClassModelProvider ClassModelProvider { get; set; }
-
 
     }
 }

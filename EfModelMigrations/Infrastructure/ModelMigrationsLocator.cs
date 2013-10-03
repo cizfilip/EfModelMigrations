@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace EfModelMigrations.Infrastructure
 {
+    //TODO: Musime mit metodu co zajisti unikatnost jmen migraci
     public class ModelMigrationsLocator
     {
         /// <summary>
@@ -81,9 +82,8 @@ namespace EfModelMigrations.Infrastructure
                 throw new ModelMigrationsException(Resources.CannotFindMigrationId, e);
             }
 
-            if (string.IsNullOrEmpty(id))
+            if (string.IsNullOrEmpty(id) || !ModelMigrationIdGenerator.IsValidId(id))
             {
-                //TODO: Kontrola zda-li je id validni - pres nejakou helper tridu ktera bude generovat idcka
                 throw new ModelMigrationsException(Resources.InvalidModelMigrationId);
             }
             return id;

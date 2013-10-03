@@ -28,7 +28,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
                     var locator = new ModelMigrationsLocator(Configuration);
                     var modelMigrationType = locator.FindModelMigration(ModelMigrationId);
                     modelMigration = CreateInstance<ModelMigration>(modelMigrationType);
-                    modelMigration.ClassModelProvider = new VsClassModelProvider(ModelProject, Configuration.ModelNamespace);
                 }
                 return modelMigration;
             }
@@ -75,9 +74,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
             return ModelMigration.Transformations;
         }
 
+        protected IClassModelProvider GetClassModelProvider()
+        {
+            return new VsClassModelProvider(ModelProject, Configuration.ModelNamespace);
+        }
+
         public override abstract void Run();
         
 
-
+        
     }
 }

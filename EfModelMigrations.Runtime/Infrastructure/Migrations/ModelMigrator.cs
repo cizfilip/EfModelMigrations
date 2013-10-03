@@ -22,6 +22,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
         public void Migrate(IEnumerable<string> migrationIds, bool isRevert)
         {
+            //TODO: vracet jiz hotove migrace v pripade chyby!
             foreach (var migrationId in migrationIds)
             {
                 Migrate(migrationId, isRevert);

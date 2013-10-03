@@ -39,6 +39,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             {
                 migration = executor.ExecuteRunner<GeneratedModelMigration>(new GenerateMigrationFromCommandRunner() 
                         { 
+                            ModelProject = Project,
                             CommandName = this.commandName,
                             Parameters = base.Parameters
                         });

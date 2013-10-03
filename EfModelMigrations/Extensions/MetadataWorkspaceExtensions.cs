@@ -18,13 +18,13 @@ namespace EfModelMigrations.Extensions
 
         //TODO: co kdyz se tridy nenajdou v metadatech... - nemelo by nejspis nastat - promyslet
 
-        public static string GetTableNameForClass(this MetadataWorkspace metadata, ClassCodeModel classModel)
+        public static string GetTableNameForClassName(this MetadataWorkspace metadata, string className)
         {
             EntitySetBase et = metadata.GetItemCollection(DataSpace.SSpace)
                 .GetItems<EntityContainer>()
                 .Single()
                 .BaseEntitySets
-                .Where(x => EqualsIgnoreCase(x.Name, classModel.Name)) 
+                .Where(x => EqualsIgnoreCase(x.Name, className)) 
                 .Single();
 
             String tableName = String.Concat(et.MetadataProperties["Schema"].Value, ".", et.MetadataProperties["Table"].Value);
@@ -32,12 +32,12 @@ namespace EfModelMigrations.Extensions
             return tableName;
         }
 
-        public static IEnumerable<EdmProperty> GetTableColumnsForClass(this MetadataWorkspace metadata, ClassCodeModel classModel)
+        public static IEnumerable<EdmProperty> GetTableColumnsForClass(this MetadataWorkspace metadata, string className)
         {
             EntityType storageEntityType = metadata.GetItems(DataSpace.SSpace)
                 .Where(x => x.BuiltInTypeKind == BuiltInTypeKind.EntityType)
                 .OfType<EntityType>()
-                .Where(x => EqualsIgnoreCase(x.Name, classModel.Name))  
+                .Where(x => EqualsIgnoreCase(x.Name, className))  
                 .Single();
 
             return storageEntityType.Properties;

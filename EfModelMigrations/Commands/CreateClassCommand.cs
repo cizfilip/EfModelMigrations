@@ -1,11 +1,10 @@
 ﻿using EfModelMigrations.Exceptions;
+using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EfModelMigrations.Commands
 {
@@ -13,7 +12,7 @@ namespace EfModelMigrations.Commands
     {
         private ClassCodeModel codeModel;
 
-        public override IEnumerable<ModelTransformation> GetTransformations()
+        public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
             yield return new CreateClassTransformation(codeModel);
         }
@@ -35,35 +34,11 @@ namespace EfModelMigrations.Commands
             codeModel = new ClassCodeModel()
             {
                 Name = parameters[0],
-                Properties = ParseProperties(parameters.Skip(1))
+                Properties = ParametersParser.ParseProperties(parameters.Skip(1))
             };
 
         }
 
-        private IEnumerable<PropertyCodeModel> ParseProperties(IEnumerable<string> parameters)
-        {
-            foreach (var param in parameters)
-            {
-                yield return ParsePropertyModel(param);
-            }
-        }
-
-        //TODO: Dat stringy vyjimek do resourcu
-        private PropertyCodeModel ParsePropertyModel(string param)
-        {
-            var splitted = param.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
-
-            if (splitted.Length != 2)
-            {
-                throw new ModelMigrationsException("Wrong property format, use [PropertyName]:[PropertyType], example: Name:string ");
-            }
-
-            return new PropertyCodeModel()
-            {
-                Name = splitted[0],
-                Type = splitted[1]
-            };
-
-        }
+        
     }
 }

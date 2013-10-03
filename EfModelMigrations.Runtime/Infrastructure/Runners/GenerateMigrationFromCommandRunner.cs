@@ -1,6 +1,8 @@
 ﻿using EfModelMigrations.Commands;
 using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Utilities;
+using EnvDTE;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,6 +15,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
     [Serializable]
     internal class GenerateMigrationFromCommandRunner : BaseRunner
     {
+
+        public Project ModelProject { get; set; }
+
         public string CommandName { get; set; }
         public string[] Parameters { get; set; }
 
@@ -25,7 +30,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             ModelMigrationsCommand command = CreateInstance<ModelMigrationsCommand>(commandType);
 
             command.ParseParameters(Parameters);
-            var transformations = command.GetTransformations();
+            //TODO: vytvareni class model provideru je zde i v MigratorBaseRunner - nejak poresit
+            var classModelProvider = new VsClassModelProvider(ModelProject, Configuration.ModelNamespace);
+            var transformations = command.GetTransformations(classModelProvider);
 
 
             //params for generation

@@ -28,12 +28,12 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         public CreateTableOperation CreateTableOperation(ClassCodeModel classModel)
         {
             //get table name
-            string tableName = metadata.GetTableNameForClass(classModel);
+            string tableName = metadata.GetTableNameForClassName(classModel.Name);
             CreateTableOperation createTableOperation = new CreateTableOperation(tableName);
 
             //map properties to colums 
             //TODO: mapuji se vsechny properties ne jenom ty v classModel - zde asi ok
-            IEnumerable<ColumnModel> columns = metadata.GetTableColumnsForClass(classModel).Select(prop => CreateColumnModel(prop));
+            IEnumerable<ColumnModel> columns = metadata.GetTableColumnsForClass(classModel.Name).Select(prop => CreateColumnModel(prop));
             foreach (var column in columns)
             {
                 createTableOperation.Columns.Add(column);
@@ -51,33 +51,34 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return createTableOperation;
         }
 
-        public DropTableOperation DropTableOperation(ClassCodeModel classModel)
+        public DropTableOperation DropTableOperation(string className)
         {
-            string tableName = metadata.GetTableNameForClass(classModel);
-            //TODO: predavat i CreateTableOperation??
+            //TODO: mapovani fail jelikoz trida uz neni
+            string tableName = metadata.GetTableNameForClassName(className);
+            //TODO: predavat i CreateTableOperation - Ano musim jelikoz jinak EF v Down metod2 Db migrace nevygeneruje nic
             var dropTableOperation = new DropTableOperation(tableName);
             return dropTableOperation;
         }
 
-        public AddColumnOperation AddColumnOperation(ClassCodeModel classModel, PropertyCodeModel propertyModel)
+        public AddColumnOperation AddColumnOperation(string className, PropertyCodeModel propertyModel)
         {
-            string tableName = metadata.GetTableNameForClass(classModel);
+            string tableName = metadata.GetTableNameForClassName(className);
             
             //TODO: spoleha na to ze property se jmenuje stejne jako column - fail
-            var columnModel = metadata.GetTableColumnsForClass(classModel).Single(c => string.Equals(c.Name, propertyModel.Name, StringComparison.OrdinalIgnoreCase));
+            var columnModel = metadata.GetTableColumnsForClass(className).Single(c => string.Equals(c.Name, propertyModel.Name, StringComparison.OrdinalIgnoreCase));
 
             var addColumnOperation = new AddColumnOperation(tableName, CreateColumnModel(columnModel));
 
             return addColumnOperation;
         }
 
-        public DropColumnOperation DropColumnOperation(ClassCodeModel classModel, PropertyCodeModel propertyModel)
+        public DropColumnOperation DropColumnOperation(string className, string propertyName)
         {
-            string tableName = metadata.GetTableNameForClass(classModel);
+            string tableName = metadata.GetTableNameForClassName(className);
 
-            //TODO: predavat i CreateColumnOperation - ne ef nebude mit potrebu treba delat inverzi
+            //TODO: predavat i CreateColumnOperation
             //TODO: spravne pretransformovat i property name
-            var dropColumnOperation = new DropColumnOperation(tableName, propertyModel.Name);
+            var dropColumnOperation = new DropColumnOperation(tableName, propertyName);
 
             return dropColumnOperation;
         }

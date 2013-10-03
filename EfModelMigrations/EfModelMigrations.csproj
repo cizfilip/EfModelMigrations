@@ -46,8 +46,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\AddPropertiesCommand.cs" />
     <Compile Include="Commands\CreateClassCommand.cs" />
     <Compile Include="Commands\ModelMigrationsCommand.cs" />
+    <Compile Include="Commands\ParametersParser.cs" />
+    <Compile Include="Commands\RemoveClassCommand.cs" />
+    <Compile Include="Commands\RemovePropertiesCommand.cs" />
     <Compile Include="Configuration\ModelMigrationsConfiguration.cs" />
     <Compile Include="Configuration\ModelMigrationsConfigurationBase.cs" />
     <Compile Include="Exceptions\ModelMigrationsException.cs" />
@@ -110,9 +114,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Transformations\AddPropertyTransformation.cs" />
     <Compile Include="Transformations\CreateClassTransformation.cs" />
     <Compile Include="Transformations\ModelTransformation.cs" />
     <Compile Include="Transformations\RemoveClassTransformation.cs" />
+    <Compile Include="Transformations\RemovePropertyTransformation.cs" />
     <Compile Include="Utilities\TypeFinder.cs" />
   </ItemGroup>
   <ItemGroup>

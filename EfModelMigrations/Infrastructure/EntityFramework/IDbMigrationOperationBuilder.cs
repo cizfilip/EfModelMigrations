@@ -12,11 +12,11 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
     {
         //create/remove table
         CreateTableOperation CreateTableOperation(ClassCodeModel classModel);
-        DropTableOperation DropTableOperation(ClassCodeModel classModel);
+        DropTableOperation DropTableOperation(string className);
 
         //add/remove column
-        AddColumnOperation AddColumnOperation(ClassCodeModel classModel, PropertyCodeModel propertyModel);
-        DropColumnOperation DropColumnOperation(ClassCodeModel classModel, PropertyCodeModel propertyModel);
+        AddColumnOperation AddColumnOperation(string className, PropertyCodeModel propertyModel);
+        DropColumnOperation DropColumnOperation(string className, string propertyName);
 
         //Rename operatoins
         RenameTableOperation RenameTableOperation(ClassCodeModel classModel, string newTableName);

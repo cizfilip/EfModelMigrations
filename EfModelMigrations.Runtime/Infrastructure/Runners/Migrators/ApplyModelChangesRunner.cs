@@ -18,7 +18,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
         public override void Run()
         {
-            IEnumerable<ModelChangeOperation> operations = GetModelTransformations(IsRevert).SelectMany(t => t.GetModelChangeOperations());
+
+            var classModelProvider = GetClassModelProvider();
+
+            IEnumerable<ModelChangeOperation> operations = GetModelTransformations(IsRevert).SelectMany(t => t.GetModelChangeOperations(classModelProvider));
 
             List<ModelChangeOperation> executedOperations = new List<ModelChangeOperation>();
 

@@ -59,7 +59,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append("this.CreateClass(");
             builder.Append(QuoteString(transformation.ClassModel.Name));
             builder.AppendLine(", new {");
-            
+
             string indent = "    ";
             foreach (var property in transformation.ClassModel.Properties)
             {
@@ -76,7 +76,33 @@ namespace EfModelMigrations.Infrastructure.Generators
         protected virtual void Generate(RemoveClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.RemoveClass(");
-            builder.Append(QuoteString(transformation.ClassModel.Name));
+            builder.Append(QuoteString(transformation.ClassName));
+            builder.AppendLine(");");
+        }
+
+        protected virtual void Generate(AddPropertyTransformation transformation, StringBuilder builder)
+        {
+            builder.Append("this.AddProperty(");
+            builder.Append(QuoteString(transformation.ClassName));
+            builder.AppendLine(", new {");
+
+            string indent = "    ";
+
+            builder.Append(indent);
+            builder.Append(transformation.PropertyModel.Name);
+            builder.Append(" = ");
+            builder.Append(QuoteString(transformation.PropertyModel.Type));
+            builder.AppendLine();
+
+            builder.AppendLine("});");
+        }
+
+        protected virtual void Generate(RemovePropertyTransformation transformation, StringBuilder builder)
+        {
+            builder.Append("this.RemoveProperty(");
+            builder.Append(QuoteString(transformation.ClassName));
+            builder.Append(", ");
+            builder.Append(QuoteString(transformation.PropertyName));
             builder.AppendLine(");");
         }
 

@@ -1,7 +1,10 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Exceptions;
+using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Runtime.Properties;
 using EfModelMigrations.Utilities;
+using EnvDTE;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -98,5 +101,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 throw new ModelMigrationsException(string.Format(Resources.CannotCreateInstance, type.Name), e);
             }
         }
+
+        
+       
     }
 }

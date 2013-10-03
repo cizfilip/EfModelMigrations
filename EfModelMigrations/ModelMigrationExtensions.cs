@@ -24,15 +24,20 @@ namespace EfModelMigrations
                 );
         }
 
-
-
         public static void RemoveClass(this ModelMigration migration, string className)
         {
-            migration.AddTransformation(
-                new RemoveClassTransformation(
-                    migration.ClassModelProvider.GetClassCodeModel(className)
-                    )
-                );
+            migration.AddTransformation(new RemoveClassTransformation(className));
+        }
+
+
+        public static void AddProperty(this ModelMigration migration, string className, object property)
+        {
+            migration.AddTransformation(new AddPropertyTransformation(className, ConvertObjectToPropertyModel(property).Single()));
+        }
+
+        public static void RemoveProperty(this ModelMigration migration, string className, string propertyName)
+        {
+            migration.AddTransformation(new RemovePropertyTransformation(className, propertyName));
         }
 
 

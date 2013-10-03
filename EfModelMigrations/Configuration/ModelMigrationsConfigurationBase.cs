@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,9 +38,8 @@ namespace EfModelMigrations.Configuration
         //TODO: Prepsat az bude hotova komopnenta pro update resource souboru s jiz aplikovanymi migracemi
         public IEnumerable<string> GetAppliedMigrations()
         {
-            return Enumerable.Empty<string>();
-            //Resources = new ResourceManager(GetType());
-            //Resources.GetString("AppliedMigrations");
+            ResourceManager resources = new ResourceManager(GetType());
+            return resources.GetString("AppliedMigrations").Split(new char[] {','}, StringSplitOptions.RemoveEmptyEntries);
         }
 
     }

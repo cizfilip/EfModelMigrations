@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure
 {
+    
     public class ModelMigrationIdGenerator
     {
         private static readonly Regex migrationIdPattern = new Regex(@"\d{15}_.+");

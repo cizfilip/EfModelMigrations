@@ -1,4 +1,5 @@
-﻿using EfModelMigrations.Infrastructure.CodeModel;
+﻿using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.DbContext;
@@ -13,22 +14,25 @@ namespace EfModelMigrations.Transformations
 {
     public class RemoveClassTransformation : ModelTransformation
     {
-        private ClassCodeModel classModel;
-        public ClassCodeModel ClassModel
+        private CreateClassTransformation inverse;
+
+        public string ClassName { get; private set; }
+            
+
+        public RemoveClassTransformation(string className)
         {
-            get
-            {
-                return classModel;
-            }
+            this.ClassName = className;
         }
 
-        public RemoveClassTransformation(ClassCodeModel classModel)
+        public RemoveClassTransformation(string className, CreateClassTransformation inverse) : this(className)
         {
-            this.classModel = classModel;
+            this.inverse = inverse;
         }
-        
-        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations()
+
+        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
+            var classModel = modelProvider.GetClassCodeModel(ClassName);
+
             yield return new RemoveDbSetPropertyOperation(classModel);
             foreach (var property in classModel.Properties)
             {
@@ -39,12 +43,12 @@ namespace EfModelMigrations.Transformations
 
         public override ModelTransformation Inverse()
         {
-            return new CreateClassTransformation(classModel);
+            return inverse;
         }
 
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            return builder.DropTableOperation(classModel);
+            return builder.DropTableOperation(ClassName);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using EfModelMigrations.Infrastructure.CodeModel;
+﻿using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.DbContext;
@@ -10,40 +11,33 @@ namespace EfModelMigrations.Transformations
 {
     public class CreateClassTransformation : ModelTransformation
     {
-        private ClassCodeModel classModel;
-        public ClassCodeModel ClassModel
-        {
-            get
-            {
-                return classModel;
-            }
-        }
+        public ClassCodeModel ClassModel { get; private set; }
 
 
         public CreateClassTransformation(ClassCodeModel classModel)
         {
-            this.classModel = classModel;
+            this.ClassModel = classModel;
         }
 
-        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations()
+        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
             //TODO: vyhayovat vyjimky pokud trida jiz existuje... i jinde treba v addproperty pokud property jiz existuje atd..
-            yield return new CreateClassOperation(classModel);
-            foreach (var property in classModel.Properties)
+            yield return new CreateClassOperation(ClassModel);
+            foreach (var property in ClassModel.Properties)
             {
-                yield return new AddPropertyToClassOperation(classModel, property);
+                yield return new AddPropertyToClassOperation(ClassModel, property);
             }
-            yield return new AddDbSetPropertyOperation(classModel);
+            yield return new AddDbSetPropertyOperation(ClassModel);
         }
 
         public override ModelTransformation Inverse()
         {
-            return new RemoveClassTransformation(classModel);
+            return new RemoveClassTransformation(ClassModel.Name);
         }
 
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            return builder.CreateTableOperation(classModel);
+            return builder.CreateTableOperation(ClassModel);
         }
     }
 }
