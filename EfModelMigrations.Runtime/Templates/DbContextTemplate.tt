@@ -9,6 +9,9 @@ namespace <#= Namespace #>
 {
     public class <#= ContextName #> : DbContext
     {
-        
+        static <#= ContextName #>()
+        {
+            Database.SetInitializer<<#= ContextName #>>(null);
+        }
     }
 }

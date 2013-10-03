@@ -17,6 +17,14 @@ namespace EfModelMigrations.Runtime.Extensions
             return dte.Solution.SolutionBuild.LastBuildInfo == 0;
         }
 
+        public static void Build(this Project project, Func<Exception> exceptionFactory)
+        {
+            if (!TryBuild(project))
+            {
+                throw exceptionFactory();
+            }
+        }
+
         public static string GetTargetDir(this Project project)
         {
             var fullPath = project.GetProjectDir();
@@ -61,7 +69,10 @@ namespace EfModelMigrations.Runtime.Extensions
             project.ProjectItems.AddFromFile(absolutePath);
         }
 
-        
+        public static void AddFileToProject(this Project project, string path)
+        {
+            project.ProjectItems.AddFromFile(path);
+        }
 
         private static T GetPropertyValue<T>(this Project project, string propertyName)
         {

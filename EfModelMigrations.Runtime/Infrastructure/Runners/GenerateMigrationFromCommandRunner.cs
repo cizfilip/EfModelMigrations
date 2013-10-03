@@ -1,4 +1,5 @@
 ﻿using EfModelMigrations.Commands;
+using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Utilities;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             //params for generation
             //TODO: Migration name must be unique! We must check that...
             string migrationName = command.GetMigrationName();
-            string migrationId = GenerateMigrationId(migrationName);
+            string migrationId = ModelMigrationIdGenerator.GenerateId(migrationName);
             string migrationNamespace = Configuration.ModelMigrationsNamespace;
 
             var generator = Configuration.ModelMigrationGenerator;
@@ -48,17 +49,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             return CommandName + "Command";
         }
 
-        private string GenerateMigrationId(string migrationName)
-        {
-            //TODO: Generate timestamp like EF tema does - see source of EF
-
-            string migrationIdFormat = "yyyyMMddHHmmssf";
-
-            string timestamp = DateTime.UtcNow.ToString(migrationIdFormat, CultureInfo.InvariantCulture);
-            
-
-            return (timestamp + "_" + migrationName);
-        }
+    
 
         
     }

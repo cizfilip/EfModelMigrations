@@ -41,7 +41,21 @@ namespace EfModelMigrations.Runtime.Templates
             
             #line default
             #line hidden
-            this.Write(" : DbContext\r\n    {\r\n        \r\n    }\r\n}\r\n");
+            this.Write(" : DbContext\r\n    {\r\n        static ");
+            
+            #line 12 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ContextName));
+            
+            #line default
+            #line hidden
+            this.Write("()\r\n        {\r\n            Database.SetInitializer<");
+            
+            #line 14 "C:\Users\Filip\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(ContextName));
+            
+            #line default
+            #line hidden
+            this.Write(">(null);\r\n        }\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

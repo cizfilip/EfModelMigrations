@@ -43,7 +43,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             }
             else
             {
-                WriteLine(Resources.NoMigrationsToMigrate);
+                WriteLine(Resources.NoMigrationsToApplyOrRevert);
             }
 
         }

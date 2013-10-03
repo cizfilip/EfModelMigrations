@@ -51,7 +51,11 @@
     <Compile Include="Configuration\ModelMigrationsConfiguration.cs" />
     <Compile Include="Configuration\ModelMigrationsConfigurationBase.cs" />
     <Compile Include="Exceptions\ModelMigrationsException.cs" />
+    <Compile Include="Extensions\MetadataWorkspaceExtensions.cs" />
     <Compile Include="Infrastructure\CodeModel\CodeModelVisibility.cs" />
+    <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
+    <Compile Include="Infrastructure\EntityFramework\ExtendedCSharpMigrationCodeGenerator.cs" />
+    <Compile Include="Infrastructure\EntityFramework\IDbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\Generators\CSharpCodeGenerator.cs" />
     <Compile Include="Infrastructure\Generators\GeneratedModelMigration.cs" />
     <Compile Include="Infrastructure\Generators\ICodeGenerator.cs" />
@@ -85,6 +89,7 @@
     <Compile Include="Infrastructure\IClassModelProvider.cs" />
     <Compile Include="Infrastructure\IDbContextChangesProvider.cs" />
     <Compile Include="Infrastructure\IModelChangesProvider.cs" />
+    <Compile Include="Infrastructure\ModelMigrationIdGenerator.cs" />
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />

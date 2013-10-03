@@ -1,4 +1,5 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.DbContext;
 using System;
@@ -26,6 +27,7 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<ModelChangeOperation> GetModelChangeOperations()
         {
+            //TODO: vyhayovat vyjimky pokud trida jiz existuje... i jinde treba v addproperty pokud property jiz existuje atd..
             yield return new CreateClassOperation(classModel);
             foreach (var property in classModel.Properties)
             {
@@ -39,9 +41,9 @@ namespace EfModelMigrations.Transformations
             return new RemoveClassTransformation(classModel);
         }
 
-        public override MigrationOperation GetDbMigrationOperation()
+        public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            throw new NotImplementedException();
+            return builder.CreateTableOperation(classModel);
         }
     }
 }

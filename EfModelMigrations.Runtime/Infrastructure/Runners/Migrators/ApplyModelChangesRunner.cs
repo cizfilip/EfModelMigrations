@@ -4,6 +4,7 @@ using EfModelMigrations.Transformations;
 using EnvDTE;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,9 +22,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
             List<ModelChangeOperation> executedOperations = new List<ModelChangeOperation>();
 
-            //TODO: obejit se bez dynamic
-            string dbContextFullName = CreateInstance<dynamic>(Configuration.EfMigrationsConfigurationType).ContextType.FullName;         
-
+            string dbContextFullName = DbConfiguration.ContextType.FullName;         
 
             var modelChangesProvider = new VsModelChangesProvider(ModelProject, 
                 Configuration.ModelNamespace, 

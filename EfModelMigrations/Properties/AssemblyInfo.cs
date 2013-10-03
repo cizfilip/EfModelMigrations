@@ -34,3 +34,7 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+
+
+//TODO: Musime mit tenhle attribut jelikoz obsahujem novy generator dedici od CSharpMigrationCodeGenerator a jeho implementace ji potrebuje
+[assembly: AssemblyInformationalVersion("0.0.1-alpha1")]

@@ -141,7 +141,7 @@
   <data name="ModelMigrationsAlreadyEnabled" xml:space="preserve">
     <value>Model migrations was already enabled.</value>
   </data>
-  <data name="NoMigrationsToMigrate" xml:space="preserve">
+  <data name="NoMigrationsToApplyOrRevert" xml:space="preserve">
     <value>Unable to find any migration to apply or revert.</value>
   </data>
   <data name="ProjectExtensions_PathMustBeRelative" xml:space="preserve">

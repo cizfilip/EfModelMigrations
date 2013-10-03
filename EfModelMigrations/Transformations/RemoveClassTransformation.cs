@@ -1,4 +1,5 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.DbContext;
 using System;
@@ -41,9 +42,9 @@ namespace EfModelMigrations.Transformations
             return new CreateClassTransformation(classModel);
         }
 
-        public override MigrationOperation GetDbMigrationOperation()
+        public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            throw new NotImplementedException();
+            return builder.DropTableOperation(classModel);
         }
     }
 }

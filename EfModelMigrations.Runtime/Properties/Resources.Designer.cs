@@ -135,9 +135,9 @@ namespace EfModelMigrations.Runtime.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Unable to find any migration to apply or revert..
         /// </summary>
-        internal static string NoMigrationsToMigrate {
+        internal static string NoMigrationsToApplyOrRevert {
             get {
-                return ResourceManager.GetString("NoMigrationsToMigrate", resourceCulture);
+                return ResourceManager.GetString("NoMigrationsToApplyOrRevert", resourceCulture);
             }
         }
         

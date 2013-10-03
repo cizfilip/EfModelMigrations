@@ -141,10 +141,7 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         private void BuildProject()
         {
-            if (!Project.TryBuild())
-            {
-                throw new ModelMigrationsException(Resources.CannotBuildProject);
-            }
+            Project.Build(() => new ModelMigrationsException(Resources.CannotBuildProject));
         }
         
     }

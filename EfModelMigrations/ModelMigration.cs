@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EfModelMigrations.Infrastructure;
 
 namespace EfModelMigrations
 {
@@ -32,6 +33,14 @@ namespace EfModelMigrations
                 return id;
             }
         }
+
+        public string Name
+        {
+            get
+            {
+                return ModelMigrationIdGenerator.GetNameFromId(Id);
+            }
+        }
         
 
         public abstract void Up();
@@ -51,7 +60,6 @@ namespace EfModelMigrations
 
         //TODO: must have private or internal setter
         public IClassModelProvider ClassModelProvider { get; set; }
-        
 
 
     }

@@ -7,6 +7,8 @@ using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Transformations;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EnvDTE;
+using System.Data.Entity.Migrations;
+using System.Data.Entity;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 {
@@ -29,6 +31,32 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
                     modelMigration.ClassModelProvider = new VsClassModelProvider(ModelProject, Configuration.ModelNamespace);
                 }
                 return modelMigration;
+            }
+        }
+
+        private DbMigrationsConfiguration dbConfiguration;
+        protected DbMigrationsConfiguration DbConfiguration
+        {
+            get
+            {
+                if (dbConfiguration == null)
+                {
+                    dbConfiguration = CreateInstance<DbMigrationsConfiguration>(Configuration.EfMigrationsConfigurationType);
+                }
+                return dbConfiguration;
+            }
+        }
+
+        private DbContext dbContext;
+        protected DbContext DbContext
+        {
+            get
+            {
+                if (dbContext == null)
+                {
+                    dbContext = CreateInstance<DbContext>(DbConfiguration.ContextType);
+                }
+                return dbContext;
             }
         }
 
