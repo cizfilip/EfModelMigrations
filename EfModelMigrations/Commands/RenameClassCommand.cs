@@ -9,32 +9,34 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Commands
 {
-    public class RemoveClassCommand : ModelMigrationsCommand
+    public class RenameClassCommand : ModelMigrationsCommand
     {
-        private string className;
+        private string oldClassName;
+        private string newClassName;
 
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
-            yield return new RemoveClassTransformation(className,
-                new CreateClassTransformation(className, modelProvider.GetClassCodeModel(className).Properties)
-                );
+            yield return new RenameClassTransformation(oldClassName, newClassName);
         }
 
         //TODO: Dat stringy vyjimek do resourcu
         public override void ParseParameters(string[] parameters)
         {
-            if (parameters.Length < 1)
+            if (parameters.Length != 2)
             {
-                throw new ModelMigrationsException("Name of class to remove is missing.");
+                throw new ModelMigrationsException("You must specify old class name and new class name.");
             }
 
-            className = parameters[0];
+            oldClassName = parameters[0];
+            newClassName = parameters[1];
         }
 
         public override string GetMigrationName()
         {
-            return "RemoveClass" + className;
+            return "RenameClass" + oldClassName;
         }
     }
+
+    
 }

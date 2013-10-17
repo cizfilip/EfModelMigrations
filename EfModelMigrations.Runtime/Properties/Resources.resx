@@ -171,4 +171,10 @@
   <data name="VsCodeModel_FailedToRemoveProperty" xml:space="preserve">
     <value>Cannot remove property {0} from class {1} in model project.</value>
   </data>
+  <data name="VsCodeModel_FailedToRenameClass" xml:space="preserve">
+    <value>Cannot rename class {0} in model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToRenameProperty" xml:space="preserve">
+    <value>Cannot rename property {0} from class {1} in model project.</value>
+  </data>
 </root>

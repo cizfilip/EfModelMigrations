@@ -11,33 +11,36 @@ namespace EfModelMigrations.Transformations
 {
     public class CreateClassTransformation : ModelTransformation
     {
-        public ClassCodeModel ClassModel { get; private set; }
+        public string ClassName { get; private set; }
+        public IEnumerable<PropertyCodeModel> Properties { get; private set; }
 
-
-        public CreateClassTransformation(ClassCodeModel classModel)
+        public CreateClassTransformation(string className, IEnumerable<PropertyCodeModel> properties)
         {
-            this.ClassModel = classModel;
+            this.ClassName = className;
+            this.Properties = properties;
         }
 
         public override IEnumerable<ModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
+            var classModel = modelProvider.CreateClassCodeModel(ClassName, null, null, null, Properties);
+
             //TODO: vyhayovat vyjimky pokud trida jiz existuje... i jinde treba v addproperty pokud property jiz existuje atd..
-            yield return new CreateClassOperation(ClassModel);
-            foreach (var property in ClassModel.Properties)
+            yield return new CreateClassOperation(classModel);
+            foreach (var property in Properties)
             {
-                yield return new AddPropertyToClassOperation(ClassModel, property);
+                yield return new AddPropertyToClassOperation(classModel, property);
             }
-            yield return new AddDbSetPropertyOperation(ClassModel);
+            yield return new AddDbSetPropertyOperation(classModel);
         }
 
         public override ModelTransformation Inverse()
         {
-            return new RemoveClassTransformation(ClassModel.Name);
+            return new RemoveClassTransformation(ClassName);
         }
 
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            return builder.CreateTableOperation(ClassModel);
+            return builder.CreateTableOperation(ClassName);
         }
     }
 }

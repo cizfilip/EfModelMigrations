@@ -9,6 +9,10 @@ using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EnvDTE;
 using System.Data.Entity.Migrations;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Xml.Linq;
+using System.IO;
+using System.Xml;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 {
@@ -76,7 +80,28 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
         protected IClassModelProvider GetClassModelProvider()
         {
-            return new VsClassModelProvider(ModelProject, Configuration.ModelNamespace);
+            return new VsClassModelProvider(ModelProject, Configuration);
+        }
+
+        protected XDocument GetEdmxModel()
+        {
+            XDocument doc;
+            using (var memoryStream = new MemoryStream())
+            {
+                using (var xmlWriter = XmlWriter.Create(
+                    memoryStream, new XmlWriterSettings
+                    {
+                        Indent = true
+                    }))
+                {
+                    EdmxWriter.WriteEdmx(DbContext, xmlWriter);
+                }
+
+                memoryStream.Position = 0;
+
+                doc = XDocument.Load(memoryStream);
+            }
+            return doc;
         }
 
         public override abstract void Run();

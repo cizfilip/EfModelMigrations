@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
+using EfModelMigrations.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace EfModelMigrations.Transformations
             var classModel = modelProvider.GetClassCodeModel(ClassName);
             //TODO: vracet hezci vyjimku kdyz se property nenajde
             //TODO: stejnej kod je i v RemovePropertiesCommand
-            var propertyModel = classModel.Properties.Single(p => string.Equals(p.Name, PropertyName, StringComparison.OrdinalIgnoreCase));
+            var propertyModel = classModel.Properties.Single(p => p.Name.EqualsOrdinalIgnoreCase(PropertyName));
 
             yield return new RemovePropertyFromClassOperation(classModel, propertyModel);
         }

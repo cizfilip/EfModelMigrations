@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations
 {
+    //TODO: definovat metody ktere vraci nazvy DB migraci (jak pro up tak down) mozna by primo up a down metoda mohla vracet string
     public abstract class ModelMigration
     {
         private List<ModelTransformation> transformations = new List<ModelTransformation>();

@@ -5,6 +5,7 @@ using EnvDTE;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
         public override void Run()
         {
+            string oldEdmxModel = GetEdmxModelAsString();
 
             var classModelProvider = GetClassModelProvider();
 
@@ -50,6 +52,19 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
                 }
 
                 throw;
+            }
+            finally
+            {
+                Return(oldEdmxModel);
+            }
+        }
+
+        private string GetEdmxModelAsString()
+        {
+            using (var writer = new StringWriter())
+            {
+                GetEdmxModel().Save(writer);
+                return writer.ToString();
             }
         }
     }

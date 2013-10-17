@@ -9,29 +9,39 @@ namespace EfModelMigrations.Infrastructure.CodeModel
     //TODO: jak to bude s defaultnima hodnotama pro nove tridy/property?
     public class ClassCodeModel
     {
-        public ClassCodeModel()
+        //TODO: change to internal - az bude InternalsVisibleTo
+        public ClassCodeModel(string @namespace,
+            string name,
+            CodeModelVisibility? visibility,
+            string baseType,
+            IEnumerable<string> implementedInterfaces,
+            IEnumerable<PropertyCodeModel> properties)
         {
             //TODO: defaults mst be supplied from configuration
-            Namespace = null;
-            Name = null;
-            Visibility = CodeModelVisibility.Public;
-            BaseType = null;
-            ImplementedInterfaces = Enumerable.Empty<string>();
-            Properties = Enumerable.Empty<PropertyCodeModel>();
+            //TODO: throw if namespace or model is null
+            Namespace = @namespace;
+            Name = name;
+            Visibility = visibility ?? CodeModelVisibility.Public;
+            BaseType = baseType;
+            ImplementedInterfaces = implementedInterfaces ?? Enumerable.Empty<string>();
+            Properties = properties ?? Enumerable.Empty<PropertyCodeModel>();
         }
 
-        //public IEnumerable<string> Imports { get; set; }
+        public string Namespace { get; private set; }
+        public string Name { get; private set; }
+        public CodeModelVisibility Visibility { get; private set; }
+        public string BaseType { get; private set; }
+        public IEnumerable<string> ImplementedInterfaces { get; private set; }
 
-        //TODO: Namespace?? vlastne ho nepouzivam protoze se vzdy prepisuje namespacem modeloveho projektu
-        public string Namespace { get; set; }
-        public string Name { get; set; }
-        public CodeModelVisibility Visibility { get; set; }
-        public string BaseType { get; set; }
-        public IEnumerable<string> ImplementedInterfaces { get; set; }
+        public IEnumerable<PropertyCodeModel> Properties { get; private set; }
 
-        public IEnumerable<PropertyCodeModel> Properties { get; set; }
-
-        
+        public string FullName
+        {
+            get
+            {
+                return Namespace + "." + Name;
+            }
+        }
     }
 
     

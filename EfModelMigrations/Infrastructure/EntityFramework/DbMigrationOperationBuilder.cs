@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Extensions;
+using EfModelMigrations.Infrastructure.EntityFramework.Edmx;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -10,175 +11,133 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.Core.Common;
+using System.Xml.Linq;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
+    //TODO: handlovat dobre vyjimky, poresit problem kdyz je migrace slozena s takovych transformaci ktere nam zabrani v mapovani (napr. CreateClass a RemoveClass te same tridy v jedne migraci)
     public class DbMigrationOperationBuilder : IDbMigrationOperationBuilder
     {
-        private MetadataWorkspace metadata;
+        private string modelNamespace;
+        private XDocument oldModel;
+        private XDocument newModel;
 
-        public DbMigrationOperationBuilder(DbContext context)
+        public DbMigrationOperationBuilder(string modelNamespace, XDocument oldModel, XDocument newModel)
         {
-            this.metadata = (context as IObjectContextAdapter).ObjectContext.MetadataWorkspace;
+            this.modelNamespace = modelNamespace;
+            this.oldModel = oldModel;
+            this.newModel = newModel;
         }
 
         #region IDbMigrationOperationBuilder implementation
         
-
-        public CreateTableOperation CreateTableOperation(ClassCodeModel classModel)
+        //TODO: Co kdyz ma vytvarena trida nejake vazby?? - Momentalne neni podporovano
+        public CreateTableOperation CreateTableOperation(string className)
         {
-            //get table name
-            string tableName = metadata.GetTableNameForClassName(classModel.Name);
-            CreateTableOperation createTableOperation = new CreateTableOperation(tableName);
-
-            //map properties to colums 
-            //TODO: mapuji se vsechny properties ne jenom ty v classModel - zde asi ok
-            IEnumerable<ColumnModel> columns = metadata.GetTableColumnsForClass(classModel.Name).Select(prop => CreateColumnModel(prop));
-            foreach (var column in columns)
-            {
-                createTableOperation.Columns.Add(column);
-            }
-
-            //add primary keys
-            var addPrimaryKeyOperation = new AddPrimaryKeyOperation();
-            var keyMembers = metadata.GetTableKeyColumnsForClass(classModel);
-            foreach (var key in keyMembers)
-            {
-                addPrimaryKeyOperation.Columns.Add(key.Name);
-            }
-            createTableOperation.PrimaryKey = addPrimaryKeyOperation;
-
-            return createTableOperation;
+            return CreateTableOperationInternal(newModel, GetFullClassName(className));
         }
 
         public DropTableOperation DropTableOperation(string className)
         {
-            //TODO: mapovani fail jelikoz trida uz neni
-            string tableName = metadata.GetTableNameForClassName(className);
-            //TODO: predavat i CreateTableOperation - Ano musim jelikoz jinak EF v Down metod2 Db migrace nevygeneruje nic
-            var dropTableOperation = new DropTableOperation(tableName);
+            string classFullName = GetFullClassName(className);
+
+            string tableName = oldModel.GetTableName(classFullName);
+
+            var inverseOperation = CreateTableOperationInternal(oldModel, classFullName);
+            var dropTableOperation = new DropTableOperation(tableName, inverseOperation);
+                      
             return dropTableOperation;
         }
 
-        public AddColumnOperation AddColumnOperation(string className, PropertyCodeModel propertyModel)
+        public AddColumnOperation AddColumnOperation(string className, string propertyName)
         {
-            string tableName = metadata.GetTableNameForClassName(className);
-            
-            //TODO: spoleha na to ze property se jmenuje stejne jako column - fail
-            var columnModel = metadata.GetTableColumnsForClass(className).Single(c => string.Equals(c.Name, propertyModel.Name, StringComparison.OrdinalIgnoreCase));
-
-            var addColumnOperation = new AddColumnOperation(tableName, CreateColumnModel(columnModel));
-
-            return addColumnOperation;
+            return AddColumnOperationInternal(newModel, GetFullClassName(className), propertyName);
         }
 
         public DropColumnOperation DropColumnOperation(string className, string propertyName)
         {
-            string tableName = metadata.GetTableNameForClassName(className);
+            string classFullName = GetFullClassName(className);
 
-            //TODO: predavat i CreateColumnOperation
-            //TODO: spravne pretransformovat i property name
-            var dropColumnOperation = new DropColumnOperation(tableName, propertyName);
+            string tableName = oldModel.GetTableName(classFullName);
+
+            string columnName = oldModel.GetColumnName(classFullName, propertyName);
+
+            var inverseOperation = AddColumnOperationInternal(oldModel, classFullName, propertyName);
+            var dropColumnOperation = new DropColumnOperation(tableName, columnName, inverseOperation);
 
             return dropColumnOperation;
         }
 
-
-        //TODO: Rename operace jsou dost humus - jelikoz po aplikaci zmen na tridach se znovu vytvori ModelMigrace a Transformace ale uz se nemuze najit class model protoze uz je prejmenovano
-        public RenameTableOperation RenameTableOperation(ClassCodeModel classModel, string newTableName)
+        public RenameTableOperation RenameTableOperation(string oldClassName, string newClassName)
         {
-            //string oldTableName = metadata.GetTableNameForClass(classModel);
+            string oldTableName = oldModel.GetTableName(GetFullClassName(oldClassName));
 
-            ////oldTableName is with schema, newName is NOT
-            //var renameTableOperation = new RenameTableOperation(oldTableName, newTableName);
+            string newTableName = newModel.GetTableNameWithoutSchema(GetFullClassName(newClassName));
 
-            //return renameTableOperation;
+            //oldTableName is with schema, newName is NOT
+            var renameTableOperation = new RenameTableOperation(oldTableName, newTableName);
 
-            throw new NotImplementedException();
+            return renameTableOperation;
         }
 
-        public RenameColumnOperation RenameColumnOperation(ClassCodeModel classModel, PropertyCodeModel propertyModel, string newName)
+        public RenameColumnOperation RenameColumnOperation(string className, string oldPropertyName, string newPropertyName)
         {
-            //string tableName = metadata.GetTableNameForClass(classModel);
+            string classFullName = GetFullClassName(className);
 
-            //var renameColumnOperation = new RenameColumnOperation(tableName, )
+            string tableName = newModel.GetTableName(classFullName);
 
-            throw new NotImplementedException();
+            string oldColumnName = oldModel.GetColumnName(classFullName, oldPropertyName);
+
+            string newColumnName = newModel.GetColumnName(classFullName, newPropertyName);
+
+            var renameColumnOperation = new RenameColumnOperation(tableName, oldColumnName, newColumnName);
+
+            return renameColumnOperation;
         }
 
         #endregion
 
         #region Private methods
 
-        private ColumnModel CreateColumnModel(EdmProperty property)
+        private CreateTableOperation CreateTableOperationInternal(XDocument edmx, string classFullName)
         {
-            string columnName = property.Name;
-            bool columnNullable = property.Nullable;
-            int? columnMaxLength = property.MaxLength;
-            byte? columnPrecision = property.Precision;
-            byte? columnScale = property.Scale;
-            StoreGeneratedPattern columnStoreGeneratedPattern = property.StoreGeneratedPattern;
-            var columnStoreType = property.TypeName;
+            //get table name
+            string tableName = edmx.GetTableName(classFullName);
+            CreateTableOperation createTableOperation = new CreateTableOperation(tableName);
 
-            //var entityType
-            //    = modelMetadata.StoreItemCollection
-            //                   .OfType<EntityType>()
-            //                   .Single(et => et.Name.EqualsIgnoreCase(entitySetName));
+            //map properties to colums 
+            edmx.GetColumnModelsForClass(classFullName)
+                .Each(c => createTableOperation.Columns.Add(c));
 
-            var typeUsage = property.TypeUsage;
-            //var typeUsage = modelMetadata.ProviderManifest.GetEdmType(property.TypeUsage);
+            //add primary keys
+            var addPrimaryKeyOperation = new AddPrimaryKeyOperation();
+            edmx.GetTableKeyColumnNamesForClass(classFullName)
+                .Each(k => addPrimaryKeyOperation.Columns.Add(k));
 
-            //var defaultStoreTypeName = modelMetadata.ProviderManifest.GetStoreType(typeUsage).EdmType.Name;
+            createTableOperation.PrimaryKey = addPrimaryKeyOperation;
 
-
-            var column
-                = new ColumnModel(property.PrimitiveType.PrimitiveTypeKind, typeUsage)
-                //= new ColumnModel(((PrimitiveType)property.TypeUsage.EdmType).PrimitiveTypeKind, typeUsage)
-                {
-                    Name = columnName,
-                    IsNullable = columnNullable,
-                    MaxLength = columnMaxLength,
-                    Precision = columnPrecision,
-                    Scale = columnScale,
-                    StoreType = columnStoreType
-                    //StoreType
-                    //    = !string.Equals(columnStoreType, defaultStoreTypeName, StringComparison.OrdinalIgnoreCase)
-                    //          ? columnStoreType
-                    //          : null
-                };
-
-            column.IsIdentity = columnStoreGeneratedPattern.HasFlag(StoreGeneratedPattern.Identity);
-            //TODO: check if identity type is valid type (EdmModelDiff does this)
-            //&& _validIdentityTypes.Contains(column.Type);
-
-            Facet facet;
-            if (typeUsage.Facets.TryGetValue(DbProviderManifest.FixedLengthFacetName, true, out facet)
-                && facet.Value != null
-                && (bool)facet.Value)
-            {
-                column.IsFixedLength = true;
-            }
-
-            if (typeUsage.Facets.TryGetValue(DbProviderManifest.UnicodeFacetName, true, out facet)
-                && facet.Value != null
-                && !(bool)facet.Value)
-            {
-                column.IsUnicode = false;
-            }
-
-            var isComputed = columnStoreGeneratedPattern.HasFlag(StoreGeneratedPattern.Computed);
-
-            if ((column.Type == PrimitiveTypeKind.Binary)
-                && (typeUsage.Facets.TryGetValue(DbProviderManifest.MaxLengthFacetName, true, out facet)
-                    && (facet.Value is int)
-                    && ((int)facet.Value == 8))
-                && isComputed)
-            {
-                column.IsTimestamp = true;
-            }
-
-            return column;
+            return createTableOperation;
         }
+
+        private AddColumnOperation AddColumnOperationInternal(XDocument edmx, string classFullName, string propertyName)
+        {
+            string tableName = edmx.GetTableName(classFullName);
+
+            string columnName = edmx.GetColumnName(classFullName, propertyName);
+
+            var columnModel = edmx.GetColumnModelsForClass(classFullName)
+                .Single(c => c.Name.EqualsOrdinalIgnoreCase(columnName));
+
+            var addColumnOperation = new AddColumnOperation(tableName, columnModel);
+
+            return addColumnOperation;
+        }
+
+        private string GetFullClassName(string className)
+        {
+            return modelNamespace + "." + className;
+        }
+
         #endregion
     }
 }

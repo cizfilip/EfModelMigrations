@@ -2,6 +2,7 @@
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Transformations;
+using EfModelMigrations.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace EfModelMigrations.Commands
         {
             var classModel = modelProvider.GetClassCodeModel(className);
             //TODO: vracet hezci vyjimku kdyz se property nenajde
-            return classModel.Properties.Single(p => string.Equals(p.Name, property, StringComparison.OrdinalIgnoreCase));
+            return classModel.Properties.Single(p => p.Name.EqualsOrdinalIgnoreCase(property));
         }
 
         //TODO: Dat stringy vyjimek do resourcu

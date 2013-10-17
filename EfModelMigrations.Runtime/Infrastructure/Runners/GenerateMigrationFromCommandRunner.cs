@@ -31,7 +31,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
             command.ParseParameters(Parameters);
             //TODO: vytvareni class model provideru je zde i v MigratorBaseRunner - nejak poresit
-            var classModelProvider = new VsClassModelProvider(ModelProject, Configuration.ModelNamespace);
+            var classModelProvider = new VsClassModelProvider(ModelProject, Configuration);
             var transformations = command.GetTransformations(classModelProvider);
 
 

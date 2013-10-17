@@ -7,9 +7,12 @@ using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Data.Entity.Migrations.Design;
 using System.Data.Entity.Migrations.Model;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 {
@@ -17,10 +20,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
     internal class GenerateDbMigrationRunner : MigratorBaseRunner
     {
         public bool IsRevert { get; set; }
+        public string OldEdmxModel { get; set; }
 
         public override void Run()
         {
-            var operationBuilder = new DbMigrationOperationBuilder(DbContext);
+            var operationBuilder = new DbMigrationOperationBuilder(Configuration.ModelNamespace, LoadEdmxFromString(OldEdmxModel), GetEdmxModel());
 
             IEnumerable<MigrationOperation> dbMigrationOperations = GetModelTransformations(IsRevert)
                 .Select(t => t.GetDbMigrationOperation(operationBuilder));
@@ -36,6 +40,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
             var scaffoldedMigration = scaffolder.Scaffold(dbMigrationName, ignoreChanges: true);
 
             Return(scaffoldedMigration);
+        }
+
+        private XDocument LoadEdmxFromString(string edmx)
+        {
+            return XDocument.Parse(edmx);
         }
     }
 }

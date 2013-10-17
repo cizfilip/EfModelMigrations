@@ -10,16 +10,17 @@ namespace EfModelMigrations.Commands
 {
     public class CreateClassCommand : ModelMigrationsCommand
     {
-        private ClassCodeModel codeModel;
+        private string className;
+        private IEnumerable<PropertyCodeModel> properties;
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
-            yield return new CreateClassTransformation(codeModel);
+            yield return new CreateClassTransformation(className, properties);
         }
 
         public override string GetMigrationName()
         {
-            return "CreateClass" + codeModel.Name;
+            return "CreateClass" + className;
         }
 
         //TODO: Dat stringy vyjimek do resourcu
@@ -31,12 +32,8 @@ namespace EfModelMigrations.Commands
             }
 
             //TODO: parsovat i dalsi veci az budou hotovz lepsi parametry z powershellu
-            codeModel = new ClassCodeModel()
-            {
-                Name = parameters[0],
-                Properties = ParametersParser.ParseProperties(parameters.Skip(1))
-            };
-
+            className = parameters[0];
+            properties = ParametersParser.ParseProperties(parameters.Skip(1));
         }
 
         

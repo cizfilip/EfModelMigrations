@@ -11,15 +11,15 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
     public interface IDbMigrationOperationBuilder
     {
         //create/remove table
-        CreateTableOperation CreateTableOperation(ClassCodeModel classModel);
+        CreateTableOperation CreateTableOperation(string className);
         DropTableOperation DropTableOperation(string className);
 
         //add/remove column
-        AddColumnOperation AddColumnOperation(string className, PropertyCodeModel propertyModel);
+        AddColumnOperation AddColumnOperation(string className, string propertyName);
         DropColumnOperation DropColumnOperation(string className, string propertyName);
 
         //Rename operatoins
-        RenameTableOperation RenameTableOperation(ClassCodeModel classModel, string newTableName);
-        RenameColumnOperation RenameColumnOperation(ClassCodeModel classModel, PropertyCodeModel propertyModel, string newName);
+        RenameTableOperation RenameTableOperation(string oldClassName, string newClassName);
+        RenameColumnOperation RenameColumnOperation(string className, string oldPropertyName, string newPropertyName);
     }
 }

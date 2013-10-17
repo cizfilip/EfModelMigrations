@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Exceptions;
+using EfModelMigrations.Extensions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.Generators;
@@ -52,8 +53,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         public void CreateEmptyClass(ClassCodeModel classModel)
         {
             //TODO: ujistit se za pouzivam validni C# identifikatory - pomoci metody CodeModel.IsValidID
-            classModel.Namespace = modelNamespace;
-
             string classContent = codeGenerator.GenerateEmptyClass(classModel);
             string filePath = Path.Combine(GetConventionPathFromNamespace(modelNamespace), classModel.Name + codeGenerator.GetFileExtensions());
 
@@ -102,16 +101,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, classModel.Name);
 
-            CodeElement codeProperty = null;
-
-            try
-            {
-                codeProperty = codeClass.Members.Item(propertyModel.Name);
-            }
-            catch (Exception e)
-            {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindProperty, propertyModel.Name, classModel.Name), e);
-            }
+            CodeProperty2 codeProperty = FindProperty(codeClass, propertyModel.Name);
 
             try
             {
@@ -120,6 +110,39 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             catch (Exception e)
             {
                 throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveProperty, propertyModel.Name, classModel.Name), e);
+            }
+        }
+
+        public void RenameClass(ClassCodeModel classModel, string newName)
+        {
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, classModel.Name);
+
+            CodeElement2 classElement = codeClass as CodeElement2;
+
+            try
+            {
+                classElement.RenameSymbol(newName);
+                // Rename file with source code of class - not good what about partial classes etc...
+                // vyhazuje vyjímku když soubor s novým názvem existuje !!
+                classElement.ProjectItem.Name = newName + ".cs";
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameClass, classModel.Name), e);
+            }
+        }
+
+        public void RenameProperty(ClassCodeModel classModel, PropertyCodeModel propertyModel, string newName)
+        {
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, classModel.Name);
+            CodeElement2 property = FindProperty(codeClass, propertyModel.Name) as CodeElement2;
+            try
+            {
+                property.RenameSymbol(newName);
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameProperty, propertyModel.Name, classModel.Name), e);
             }
         }
         #endregion 
@@ -171,6 +194,18 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
         
+        private CodeProperty2 FindProperty(CodeClass2 codeClass, string propertyName)
+        {
+            try
+            {
+                return (CodeProperty2)codeClass.Members.Item(propertyName);
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindProperty, propertyName, codeClass.Name), e);
+            }
+        }
+
         private string GetConventionPathFromNamespace(string @namespace)
         {
             string modelProjectRootNamespace = modelProject.GetRootNamespace();
@@ -222,12 +257,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             string fullClassName = modelNamespace + "." + classForRemoveProperty.Name;
 
-            if (string.Equals(fullClassName, genericTypeName, StringComparison.Ordinal))
+            if (fullClassName.EqualsOrdinal(genericTypeName))
                 return true;
 
             return false;
         }
 
         #endregion
+
+
+        
     }
 }

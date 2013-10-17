@@ -2,6 +2,7 @@
 using EfModelMigrations.Exceptions;
 using EfModelMigrations.Properties;
 using EfModelMigrations.Utilities;
+using EfModelMigrations.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace EfModelMigrations.Infrastructure
             var migrationsAssembly = configuration.ModelMigrationsAssembly;
 
             modelMigrations = typeFinder.FindTypes(migrationsAssembly, typeof(ModelMigration))
-                .Where(t => string.Equals(t.Namespace, migrationsNamespace, StringComparison.Ordinal))
+                .Where(t => t.Namespace.EqualsOrdinal(migrationsNamespace))
                 .Where(t => t.GetConstructor(Type.EmptyTypes) != null)
                 .Where(t => !t.IsAbstract && !t.IsGenericType)
                 .Select(t => new

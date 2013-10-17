@@ -221,5 +221,23 @@ namespace EfModelMigrations.Runtime.Properties {
                 return ResourceManager.GetString("VsCodeModel_FailedToRemoveProperty", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot rename class {0} in model project..
+        /// </summary>
+        internal static string VsCodeModel_FailedToRenameClass {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToRenameClass", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot rename property {0} from class {1} in model project..
+        /// </summary>
+        internal static string VsCodeModel_FailedToRenameProperty {
+            get {
+                return ResourceManager.GetString("VsCodeModel_FailedToRenameProperty", resourceCulture);
+            }
+        }
     }
 }

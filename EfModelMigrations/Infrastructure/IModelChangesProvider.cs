@@ -12,5 +12,8 @@ namespace EfModelMigrations.Infrastructure
 
         void AddPropertyToClass(ClassCodeModel classModel, PropertyCodeModel propertyModel);
         void RemovePropertyFromClass(ClassCodeModel classModel, PropertyCodeModel propertyModel);
+
+        void RenameClass(ClassCodeModel classModel, string newName);
+        void RenameProperty(ClassCodeModel classModel, PropertyCodeModel propertyModel, string newName);
     }
 }

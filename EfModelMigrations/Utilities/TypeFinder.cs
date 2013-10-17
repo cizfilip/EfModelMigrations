@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Exceptions;
+using EfModelMigrations.Extensions;
 using EfModelMigrations.Properties;
 using System;
 using System.Collections.Generic;
@@ -49,7 +50,7 @@ namespace EfModelMigrations.Utilities
         {
             if (!string.IsNullOrEmpty(derivedTypeName))
             {
-                types = types.Where(t => string.Equals(t.Name, derivedTypeName, StringComparison.OrdinalIgnoreCase));
+                types = types.Where(t => t.Name.EqualsOrdinalIgnoreCase(derivedTypeName));
             }
 
             var typesCount = types.Count();

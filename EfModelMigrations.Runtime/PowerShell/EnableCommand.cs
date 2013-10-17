@@ -142,7 +142,10 @@ namespace EfModelMigrations.Runtime.PowerShell
             {
                 using (var resWriter = new ResXResourceWriter(writer))
                 {
+                    //TODO: presunout tyhle magic stringy nekam globalne - pouziva je ModelMigrationsConfigurationUpdater a ModelMigrationsConfigurationBase
                     resWriter.AddResource("AppliedMigrations", "");
+                    //TODO: pro builder db migraci budu vytvaret vlastni edmx pred aplikaci zmen -> prozatim si last aplied db migraci drzet nemusim
+                    resWriter.AddResource("LastAppliedDbMigrationId", "");
                 }
             }
 

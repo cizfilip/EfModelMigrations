@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Infrastructure\Migrations\DbMigrationWriter.cs" />
+    <Compile Include="Infrastructure\Migrations\ModelMigrationsConfigurationUpdater.cs" />
     <Compile Include="Infrastructure\Migrations\ModelMigrator.cs" />
     <Compile Include="Infrastructure\ModelChanges\Helpers\CodeClassFinder.cs" />
     <Compile Include="Infrastructure\ModelChanges\Helpers\VsCodeClassToClassCodeModelMapper.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Infrastructure\Runners\BaseRunner.cs" />
     <Compile Include="Infrastructure\Runners\Migrators\ApplyModelChangesRunner.cs" />
     <Compile Include="Infrastructure\Runners\Migrators\GenerateDbMigrationRunner.cs" />
+    <Compile Include="Infrastructure\Runners\UpdateConfigurationRunner.cs" />
     <Compile Include="Infrastructure\Runners\Migrators\UpdateDatabaseRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindMigrationsToApplyOrRevert.cs" />
     <Compile Include="Infrastructure\Runners\GenerateMigrationFromCommandRunner.cs" />

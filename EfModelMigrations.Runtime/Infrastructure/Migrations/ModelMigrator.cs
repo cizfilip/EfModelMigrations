@@ -6,6 +6,7 @@ using EnvDTE;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Design;
+using System.IO;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 {
@@ -33,9 +34,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         private void Migrate(string migrationId, bool isRevert)
         {
             //apply model changes
+            string oldEdmxModel;
+
             using (var executor = executorFactory())
             {
-                ExecuteApplyRunner(executor, migrationId, isRevert);
+                oldEdmxModel = ExecuteApplyRunner(executor, migrationId, isRevert);
             }
 
             ScaffoldedMigration scaffoldedMigration = null;
@@ -51,6 +54,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                     {
                         ModelProject = modelProject,
                         ModelMigrationId = migrationId,
+                        OldEdmxModel = oldEdmxModel,
                         IsRevert = isRevert
                     });
                 }
@@ -82,6 +86,16 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                         ModelMigrationId = migrationId,
                         TargetDbMigration = scaffoldedMigration.MigrationId
                     });
+
+                    //update applied migrations in configuration 
+                    executor.ExecuteRunner(new UpdateConfigurationRunner()
+                    {
+                        //TODO: updatovat na projekt kde jsou migrace ne modelProject - az budu podporovat vicero projektu
+                        MigrationProject = modelProject,
+                        IsRevert = isRevert,
+                        AppliedModelMigrationId = migrationId,
+                        AppliedDbMigrationId = scaffoldedMigration.MigrationId
+                    });
                 }
             }
             catch (Exception)
@@ -92,9 +106,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             }
         }
 
-        private void ExecuteApplyRunner(NewAppDomainExecutor executor, string migrationId, bool isRevert)
+        private string ExecuteApplyRunner(NewAppDomainExecutor executor, string migrationId, bool isRevert)
         {
-            executor.ExecuteRunner(new ApplyModelChangesRunner()
+            return executor.ExecuteRunner<string>(new ApplyModelChangesRunner()
             {
                 ModelProject = modelProject,
                 ModelMigrationId = migrationId,

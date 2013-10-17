@@ -26,7 +26,7 @@ namespace EfModelMigrations.Transformations
 
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            return builder.AddColumnOperation(ClassName, PropertyModel);
+            return builder.AddColumnOperation(ClassName, PropertyModel.Name);
         }
 
         public override ModelTransformation Inverse()

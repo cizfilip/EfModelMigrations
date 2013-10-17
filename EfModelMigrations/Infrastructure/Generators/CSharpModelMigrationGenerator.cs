@@ -57,11 +57,11 @@ namespace EfModelMigrations.Infrastructure.Generators
         protected virtual void Generate(CreateClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.CreateClass(");
-            builder.Append(QuoteString(transformation.ClassModel.Name));
+            builder.Append(QuoteString(transformation.ClassName));
             builder.AppendLine(", new {");
 
             string indent = "    ";
-            foreach (var property in transformation.ClassModel.Properties)
+            foreach (var property in transformation.Properties)
             {
                 builder.Append(indent);
                 builder.Append(property.Name);
@@ -105,6 +105,27 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(QuoteString(transformation.PropertyName));
             builder.AppendLine(");");
         }
+
+        protected virtual void Generate(RenameClassTransformation transformation, StringBuilder builder)
+        {
+            builder.Append("this.RenameClass(");
+            builder.Append(QuoteString(transformation.OldClassName));
+            builder.Append(", ");
+            builder.Append(QuoteString(transformation.NewClassName));
+            builder.AppendLine(");");
+        }
+
+        protected virtual void Generate(RenamePropertyTransformation transformation, StringBuilder builder)
+        {
+            builder.Append("this.RenameProperty(");
+            builder.Append(QuoteString(transformation.ClassName));
+            builder.Append(", ");
+            builder.Append(QuoteString(transformation.OldPropertyName));
+            builder.Append(", ");
+            builder.Append(QuoteString(transformation.NewPropertyName));
+            builder.AppendLine(");");
+        }
+
 
         protected string QuoteString(string str)
         {

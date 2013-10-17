@@ -15,12 +15,7 @@ namespace EfModelMigrations
         {
             //TODO: Dat do classcodemodelu namespace atd....
             migration.AddTransformation(
-                new CreateClassTransformation(
-                    new ClassCodeModel()
-                    {
-                        Name = className,
-                        Properties = ConvertObjectToPropertyModel(properties)
-                    })
+                new CreateClassTransformation(className, ConvertObjectToPropertyModel(properties))
                 );
         }
 
@@ -38,6 +33,16 @@ namespace EfModelMigrations
         public static void RemoveProperty(this ModelMigration migration, string className, string propertyName)
         {
             migration.AddTransformation(new RemovePropertyTransformation(className, propertyName));
+        }
+
+        public static void RenameClass(this ModelMigration migration, string oldClassName, string newClassName)
+        {
+            migration.AddTransformation(new RenameClassTransformation(oldClassName, newClassName));
+        }
+
+        public static void RenameProperty(this ModelMigration migration, string className, string oldPropertyName, string newPropertyName)
+        {
+            migration.AddTransformation(new RenamePropertyTransformation(className, oldPropertyName, newPropertyName));
         }
 
 

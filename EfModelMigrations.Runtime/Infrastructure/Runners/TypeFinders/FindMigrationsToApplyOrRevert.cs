@@ -1,4 +1,5 @@
 ﻿using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,14 +27,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
 
             var appliedModelMigrations = locator.GetAppliedMigrationsIds();
             //check if fromMigration is same as last appliedMigrations
-            if (string.Equals(TargetMigrationId, appliedModelMigrations.LastOrDefault(), StringComparison.Ordinal))
+            if (TargetMigrationId.EqualsOrdinal(appliedModelMigrations.LastOrDefault()))
             {
                 Return(MigrationsToApplyOrRevertResult.Empty);
                 return;
             }
 
             //see if fromMigration is in applied migrations
-            var migrationsToUnapply = appliedModelMigrations.SkipWhile(m => !string.Equals(m, TargetMigrationId, StringComparison.Ordinal));
+            var migrationsToUnapply = appliedModelMigrations.SkipWhile(m => !m.EqualsOrdinal(TargetMigrationId));
             if (migrationsToUnapply.Any())
             {
                 Return(new MigrationsToApplyOrRevertResult(migrationsToUnapply.Reverse().ToList(), isRevert: true));
@@ -46,7 +47,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
             {
                 //return all pending migration including from migration
                 Return(new MigrationsToApplyOrRevertResult(
-                    pendingMigrations.TakeWhile(m => !string.Equals(m, TargetMigrationId, StringComparison.Ordinal))
+                    pendingMigrations.TakeWhile(m => !m.EqualsOrdinal(TargetMigrationId))
                         .Concat(new[] { TargetMigrationId })
                         .ToList(),
                     isRevert: true));

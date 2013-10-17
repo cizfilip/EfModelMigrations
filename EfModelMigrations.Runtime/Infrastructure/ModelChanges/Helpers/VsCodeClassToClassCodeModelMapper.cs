@@ -13,15 +13,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
     {
         public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass)
         {
-            return new ClassCodeModel()
-            {
-                Name = codeClass.Name,
-                Namespace = codeClass.Namespace.FullName,
-                BaseType = MapBaseType(codeClass.Bases),
-                ImplementedInterfaces = MapImplementedInterfaces(codeClass.ImplementedInterfaces),
-                Properties = MapProperties(codeClass.Children.OfType<CodeProperty2>()),
-                Visibility = MapVisibility(codeClass.Access)
-            };
+            return new ClassCodeModel(codeClass.Namespace.FullName,
+                codeClass.Name,
+                MapVisibility(codeClass.Access),
+                MapBaseType(codeClass.Bases),
+                MapImplementedInterfaces(codeClass.ImplementedInterfaces),
+                MapProperties(codeClass.Children.OfType<CodeProperty2>())
+                );
         }
 
         private IEnumerable<PropertyCodeModel> MapProperties(IEnumerable<CodeProperty2> codeProperties)
@@ -35,7 +33,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             {
                 Name = property.Name,
                 Type = property.Type.AsFullName,
-                Visibility = MapVisibility(property.Access),
+                Visibility = MapVisibility(property.Access) ?? CodeModelVisibility.Public,
                 IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate
             };
         }
@@ -62,7 +60,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             }
         }
 
-        private CodeModelVisibility MapVisibility(vsCMAccess access)
+        private CodeModelVisibility? MapVisibility(vsCMAccess access)
         {
             switch (access)
             {
@@ -82,7 +80,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 case vsCMAccess.vsCMAccessWithEvents:
                 case vsCMAccess.vsCMAccessAssemblyOrFamily:
                 default:
-                    return CodeModelVisibility.Public;
+                    return null;
             }
         }
     }
