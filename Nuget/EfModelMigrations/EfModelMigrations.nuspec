@@ -2,13 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata schemaVersion="2">
     <id>EfModelMigrations</id>
-    <version>0.0.1-alpha1</version>
+    <version>0.2.0</version>
     <authors>Filip Ciz</authors>
     <owners>Filip Ciz</owners>
 
     <description>Framework for model migrations</description>
     <dependencies>
-      <dependency id="EntityFramework" version="6.0.0-rc1" />
+      <dependency id="EntityFramework" version="6.0.1" />
     </dependencies>
     <references>
       <reference file="EfModelMigrations.dll" />

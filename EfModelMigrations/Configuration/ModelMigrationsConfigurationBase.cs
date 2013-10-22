@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Configuration
 {
+    //TODO: Pridat podporu pro defaulty pro generovani kodu (napr. defaultni viditelnost trid, predek ci interface pro vsechny nove tridy apod.)
     public class ModelMigrationsConfigurationBase
     {
         public static readonly string DefaultModelMigrationsDirectory = "ModelMigrations";

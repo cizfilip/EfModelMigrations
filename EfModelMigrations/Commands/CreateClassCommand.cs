@@ -8,6 +8,7 @@ using System.Linq;
 
 namespace EfModelMigrations.Commands
 {
+    //TODO: Prijmat i dalsi parametry v prikazu (predek, implementovane interfacy, viditelnost, isAbstract, isPartial atd...)
     public class CreateClassCommand : ModelMigrationsCommand
     {
         private string className;

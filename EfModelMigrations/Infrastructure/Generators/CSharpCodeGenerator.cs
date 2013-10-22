@@ -37,6 +37,10 @@ namespace EfModelMigrations.Infrastructure.Generators
             //    get { return Set<Blog>(); }
             //}
 
+            //TODO: Pluralizovat jmeno pomoci EF
+            //private IPluralizationService _pluralizationService
+            //= DbConfiguration.DependencyResolver.GetService<IPluralizationService>();
+
             return new DbSetPropertyTemplate()
             {
                 GenericType = classForAddProperty.Name,

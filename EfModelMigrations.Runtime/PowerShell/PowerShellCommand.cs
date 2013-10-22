@@ -38,6 +38,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             get { return parameters; }
         }
 
+        //TODO: Podpora rozdělení modelu/contextu/migrací do více projektů
         private Project project;
         public Project Project
         {

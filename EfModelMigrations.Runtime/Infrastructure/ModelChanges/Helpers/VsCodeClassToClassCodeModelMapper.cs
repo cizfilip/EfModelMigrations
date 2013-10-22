@@ -29,6 +29,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 
         private PropertyCodeModel MapProperty(CodeProperty2 property)
         {
+            //TODO: u Type bych mel vracet zkracene nazvy pro primitivni typy (int misto System.Int32)....
             return new PropertyCodeModel()
             {
                 Name = property.Name,

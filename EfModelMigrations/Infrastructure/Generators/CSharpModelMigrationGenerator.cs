@@ -106,6 +106,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.AppendLine(");");
         }
 
+        //TODO: generovat pomoci named parametru aby vysledek byl: this.RenameClass(oldName: name, newName: name)
         protected virtual void Generate(RenameClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.RenameClass(");
@@ -115,6 +116,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.AppendLine(");");
         }
 
+        //TODO: generovat pomoci named parametru aby vysledek byl: this.RenameProperty(className: name, oldName: name, newName: name)
         protected virtual void Generate(RenamePropertyTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.RenameProperty(");

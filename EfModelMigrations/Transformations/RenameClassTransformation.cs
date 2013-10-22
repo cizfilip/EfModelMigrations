@@ -28,6 +28,7 @@ namespace EfModelMigrations.Transformations
             yield return new RenameClassOperation(oldClassModel, NewClassName);
         }
 
+        //TODO: V DB by bylo treba prejmenovat i vsechny reference - napr. jmena cizich klicu atd... ??
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
             return builder.RenameTableOperation(OldClassName, NewClassName);
