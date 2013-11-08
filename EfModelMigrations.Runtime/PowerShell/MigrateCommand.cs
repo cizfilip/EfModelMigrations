@@ -11,15 +11,11 @@ namespace EfModelMigrations.Runtime.PowerShell
 {
     class MigrateCommand : PowerShellCommand
     {
-        private string targetMigrationId;
+        private string targetModelMigrationId;
 
-        public MigrateCommand(string[] parameters)
-            : base(parameters)
+        public MigrateCommand(string targetModelMigrationId) : base()
         {
-            if (parameters != null && parameters.Length > 0)
-            {
-                this.targetMigrationId = parameters[0];
-            }
+            this.targetModelMigrationId = targetModelMigrationId;
 
             Execute();
         }
@@ -31,7 +27,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             {
                 result = executor.ExecuteRunner<MigrationsToApplyOrRevertResult>(new FindMigrationsToApplyOrRevert()
                 {
-                    TargetMigrationId = targetMigrationId
+                    TargetMigrationId = targetModelMigrationId
                 });
             }
 

@@ -81,7 +81,7 @@
     <Compile Include="Infrastructure\Runners\TypeFinders\FindDbMigrationsConfigurationRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindModelMigrationsConfigurationRunner.cs" />
     <Compile Include="PowerShell\MigrateCommand.cs" />
-    <Compile Include="PowerShell\ModelCommand.cs" />
+    <Compile Include="PowerShell\ExecuteCommand.cs" />
     <Compile Include="PowerShell\EnableCommand.cs" />
     <Compile Include="PowerShell\PowerShellCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

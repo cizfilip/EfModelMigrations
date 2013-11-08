@@ -13,14 +13,16 @@ using System.IO;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
-    internal class ModelCommand : PowerShellCommand
+    internal class ExecuteCommand : PowerShellCommand
     {
-        private string commandName;
+        private string commandFullName;
+        private object[] parameters;
         
 
-        public ModelCommand(string commandName, string[] parameters) : base(parameters)
+        public ExecuteCommand(string commandFullName, object[] parameters) : base()
         {
-            this.commandName = commandName;
+            this.commandFullName = commandFullName;
+            this.parameters = parameters;
 
             Execute();
         }
@@ -29,7 +31,7 @@ namespace EfModelMigrations.Runtime.PowerShell
         {
             //TODO: Fail if model migrations not enabled
 
-            if (string.IsNullOrEmpty(commandName))
+            if (string.IsNullOrEmpty(commandFullName))
             {
                 throw new ModelMigrationsException(Resources.CommandNameNotSpecified);
             }
@@ -40,8 +42,8 @@ namespace EfModelMigrations.Runtime.PowerShell
                 migration = executor.ExecuteRunner<GeneratedModelMigration>(new GenerateMigrationFromCommandRunner() 
                         { 
                             ModelProject = Project,
-                            CommandName = this.commandName,
-                            Parameters = base.Parameters
+                            CommandFullName = this.commandFullName,
+                            Parameters = this.parameters
                         });
             }
 

@@ -35,7 +35,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 
 
         //TODO: Handlovat vyjimky
-
         public static string GetTableName(this XDocument edmx, string classFullName)
         {
             var entitySet = GetStorageEntitySetFromClassName(edmx, classFullName);

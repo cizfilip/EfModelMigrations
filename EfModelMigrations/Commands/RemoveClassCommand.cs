@@ -13,23 +13,22 @@ namespace EfModelMigrations.Commands
     {
         private string className;
 
+        //TODO: Dat stringy vyjimek do resourcu
+        public RemoveClassCommand(string className)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+            {
+                throw new ModelMigrationsException("Name of class to remove is missing.");
+            }
+
+            this.className = className;
+        }
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
             yield return new RemoveClassTransformation(className,
                 new CreateClassTransformation(className, modelProvider.GetClassCodeModel(className).Properties)
                 );
-        }
-
-        //TODO: Dat stringy vyjimek do resourcu
-        public override void ParseParameters(string[] parameters)
-        {
-            if (parameters.Length < 1)
-            {
-                throw new ModelMigrationsException("Name of class to remove is missing.");
-            }
-
-            className = parameters[0];
         }
 
         public override string GetMigrationName()

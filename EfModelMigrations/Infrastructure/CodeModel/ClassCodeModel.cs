@@ -18,7 +18,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             IEnumerable<PropertyCodeModel> properties)
         {
             //TODO: defaults mst be supplied from configuration
-            //TODO: throw if namespace or model is null
+            //TODO: throw if name, namespace or model is null !!!!!
             Namespace = @namespace;
             Name = name;
             Visibility = visibility ?? CodeModelVisibility.Public;

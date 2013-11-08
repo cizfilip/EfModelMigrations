@@ -14,22 +14,26 @@ namespace EfModelMigrations.Commands
         private string oldClassName;
         private string newClassName;
 
+        //TODO: Dat stringy vyjimek do resourcu
+        public RenameClassCommand(string oldClassName, string newClassName)
+        {
+            if (string.IsNullOrWhiteSpace(oldClassName))
+            {
+                throw new ModelMigrationsException("You must specify old class name.");
+            }
+
+            if (string.IsNullOrWhiteSpace(newClassName))
+            {
+                throw new ModelMigrationsException("You must specify new class name.");
+            }
+
+            this.oldClassName =  oldClassName;
+            this.newClassName = newClassName;
+        }
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
             yield return new RenameClassTransformation(oldClassName, newClassName);
-        }
-
-        //TODO: Dat stringy vyjimek do resourcu
-        public override void ParseParameters(string[] parameters)
-        {
-            if (parameters.Length != 2)
-            {
-                throw new ModelMigrationsException("You must specify old class name and new class name.");
-            }
-
-            oldClassName = parameters[0];
-            newClassName = parameters[1];
         }
 
         public override string GetMigrationName()

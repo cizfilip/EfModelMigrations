@@ -94,6 +94,7 @@ namespace EfModelMigrations.Utilities
             return foundType;
         }
 
+
         public IEnumerable<Type> FindTypes(Type baseType)
         {
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => FindTypes(a, baseType));

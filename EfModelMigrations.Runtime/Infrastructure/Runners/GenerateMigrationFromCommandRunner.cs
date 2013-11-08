@@ -1,7 +1,9 @@
 ﻿using EfModelMigrations.Commands;
+using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Utilities;
+using EfModelMigrations.Extensions;
 using EnvDTE;
 using System;
 using System.Collections.Generic;
@@ -18,18 +20,32 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
         public Project ModelProject { get; set; }
 
-        public string CommandName { get; set; }
-        public string[] Parameters { get; set; }
+        public string CommandFullName { get; set; }
+        public object[] Parameters { get; set; }
 
         public override void Run()
         {
             //Initialize Command
             //TODO: If Command not found Exception message from typefinder is too general, maybe rethrow here with better message
-            var typeFinder = new TypeFinder();
-            var commandType = typeFinder.FindType(typeof(ModelMigrationsCommand), GetConventionCommandName());
-            ModelMigrationsCommand command = CreateInstance<ModelMigrationsCommand>(commandType);
 
-            command.ParseParameters(Parameters);
+            ModelMigrationsCommand command;
+
+            try
+            {
+                Type commandType = AppDomain.CurrentDomain.GetAssemblies()
+                                        .SelectMany(a => 
+                                                a.GetTypes().Where( t => t.FullName.EqualsOrdinal(CommandFullName)
+                                            ))
+                                        .Single();
+                command = CreateInstance<ModelMigrationsCommand>(commandType, Parameters);
+            }
+            catch (Exception e)
+            {
+                //TODO: string do resourcu
+                throw new ModelMigrationsException("Cannot create command instance!", e);
+            }
+
+            
             //TODO: vytvareni class model provideru je zde i v MigratorBaseRunner - nejak poresit
             var classModelProvider = new VsClassModelProvider(ModelProject, Configuration);
             var transformations = command.GetTransformations(classModelProvider);
@@ -53,7 +69,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
         private string GetConventionCommandName()
         {
-            return CommandName + "Command";
+            return CommandFullName + "Command";
         }
 
     

@@ -46,6 +46,8 @@ namespace EfModelMigrations.Transformations
             return inverse;
         }
 
+        //TODO: pri dropu tabulky ci sloupecku se musi kontrolovat zda-li se s tim mazou nejaka data - a kdyby ano
+        //tak operaci provést jenom pokud byl predan parameter -Force
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
             return builder.DropTableOperation(ClassName);

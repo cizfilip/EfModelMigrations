@@ -14,6 +14,7 @@ namespace EfModelMigrations.Transformations
         public string ClassName { get; private set; }
         public IEnumerable<PropertyCodeModel> Properties { get; private set; }
 
+        //TODO: Pridat ve vsech transformaci validace na parametry v konstruktoru - jako v commandech
         public CreateClassTransformation(string className, IEnumerable<PropertyCodeModel> properties)
         {
             this.ClassName = className;

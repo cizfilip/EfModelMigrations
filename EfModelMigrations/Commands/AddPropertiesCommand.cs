@@ -14,6 +14,22 @@ namespace EfModelMigrations.Commands
     {
         private string className;
         private IEnumerable<PropertyCodeModel> propertiesToAdd;
+
+        //TODO: Dat stringy vyjimek do resourcu
+        public AddPropertiesCommand(string className, string[] propertiesToAdd)
+        {
+            if (string.IsNullOrWhiteSpace(className))
+            {
+                throw new ModelMigrationsException("Name of class for new properties is missing.");
+            }
+            if (propertiesToAdd == null || propertiesToAdd.Length == 0)
+            {
+                throw new ModelMigrationsException("No property to add.");
+            }
+
+            this.className = className;
+            this.propertiesToAdd = ParametersParser.ParseProperties(propertiesToAdd);
+        }
         
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
@@ -22,23 +38,6 @@ namespace EfModelMigrations.Commands
                 //TODO: predat parametry
                 yield return new AddPropertyTransformation(className, property);
             }
-        }
-
-        //TODO: Dat stringy vyjimek do resourcu
-        public override void ParseParameters(string[] parameters)
-        {
-            if (parameters.Length < 1)
-            {
-                throw new ModelMigrationsException("Name of class for new properties is missing.");
-            }
-            if (parameters.Length < 2)
-            {
-                throw new ModelMigrationsException("No property to add.");
-            }
-
-            className = parameters[0];
-
-            propertiesToAdd = ParametersParser.ParseProperties(parameters.Skip(1));
         }
 
         public override string GetMigrationName()

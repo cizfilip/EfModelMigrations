@@ -17,8 +17,7 @@ namespace EfModelMigrations.Runtime.PowerShell
 {
     class EnableCommand : PowerShellCommand
     {
-        public EnableCommand(string[] parameters)
-            : base(parameters)
+        public EnableCommand() : base()
         {
             Execute();
         }

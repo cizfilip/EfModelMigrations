@@ -1,40 +1,154 @@
 <#
 .SYNOPSIS
-    Model command.
+    Model-AddProperties command.
 
 .DESCRIPTION
-    Model command.
+    Model-AddProperties command.
 
 .PARAMETER command
-    Command.
+    Model-AddProperties command.
+#>
+function Model-AddProperties
+{
+	[CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+    )
+
+	Model-ExecuteCommand EfModelMigrations.Commands.AddPropertiesCommand @( $ClassName, $Properties )
+}
+
+<#
+.SYNOPSIS
+    Model-CreateClass command.
+
+.DESCRIPTION
+    Model-CreateClass command.
+
+.PARAMETER command
+    Model-CreateClass command.
+#>
+function Model-CreateClass
+{
+	[CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+    )
+
+	Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand @( $ClassName, $Properties )
+}
+
+<#
+.SYNOPSIS
+    Model-RemoveClass command.
+
+.DESCRIPTION
+    Model-RemoveClass command.
+
+.PARAMETER command
+    Model-RemoveClass command.
+#>
+function Model-RemoveClass
+{
+	[CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName
+    )
+
+	Model-ExecuteCommand EfModelMigrations.Commands.RemoveClassCommand @( ,$ClassName )
+}
+
+<#
+.SYNOPSIS
+    Model-RemoveProperties command.
+
+.DESCRIPTION
+    Model-RemoveProperties command.
+
+.PARAMETER command
+    Model-RemoveProperties command.
+#>
+function Model-RemoveProperties
+{
+	[CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+    )
+
+	Model-ExecuteCommand EfModelMigrations.Commands.RemovePropertiesCommand @( $ClassName, $Properties )
+}
+
+<#
+.SYNOPSIS
+    Model-RenameClass command.
+
+.DESCRIPTION
+    Model-RenameClass command.
+
+.PARAMETER command
+    Model-RenameClass command.
+#>
+function Model-RenameClass
+{
+	[CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $true)][string] $OldClassName,
+		[Parameter(Position = 1, Mandatory = $true)][string] $NewClassName
+    )
+
+	Model-ExecuteCommand EfModelMigrations.Commands.RenameClassCommand @( $OldClassName, $NewClassName )
+}
+
+<#
+.SYNOPSIS
+    Model-RenameProperty command.
+
+.DESCRIPTION
+    Model-RenameProperty command.
+
+.PARAMETER command
+    Model-RenameProperty command.
+#>
+function Model-RenameProperty
+{
+	[CmdletBinding()] 
+    param (
+		[Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+        [Parameter(Position = 1, Mandatory = $true)][string] $OldPropertyName,
+		[Parameter(Position = 2, Mandatory = $true)][string] $NewPropertyName
+    )
+
+	Model-ExecuteCommand EfModelMigrations.Commands.RenamePropertyCommand @( $ClassName, $OldPropertyName, $NewPropertyName )
+}
+
+
+<#
+.SYNOPSIS
+    Model-ExecuteCommand command.
+
+.DESCRIPTION
+    Model-ExecuteCommand command.
+
+.PARAMETER command
+    Model-ExecuteCommand Command.
 
 #>
-function Model
+function Model-ExecuteCommand
 {
     [CmdletBinding()] 
     param (
-        [parameter(Position = 0, Mandatory = $true)][string] $Command,
-		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Params
+        [Parameter(Position = 0, Mandatory = $true)][string] $CommandFullName,
+		[Parameter(Position = 1, Mandatory = $true)][Array] $Parameters
     )
 
     $runner = New-EfModelMigrationsRunner $ProjectName 
 
     try
     {	
-		if($Command -ieq "Enable")
-		{
-			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.EnableCommand @( ,$Params )
-		}
-		elseif($Command -ieq "Migrate")
-		{
-			#TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
-			#magic comma strikes back...
-			Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( ,$Params )
-		}
-		else
-		{
-        	Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ModelCommand @( $Command, $Params )
-		}
+		Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ExecuteCommand @( $CommandFullName, $Parameters )
 
         $error = Get-RunnerError $runner                    
 
@@ -53,6 +167,91 @@ function Model
     }
 }
 
+<#
+.SYNOPSIS
+    Model-Enable command.
+
+.DESCRIPTION
+    Model-Enable command.
+
+.PARAMETER command
+    Model-Enable Command.
+
+#>
+function Model-Enable
+{
+	[CmdletBinding()] 
+    param (
+        
+    )
+
+	#TODO: $ProjectName predavat ve vsech prikazech jako optional parametr??
+    $runner = New-EfModelMigrationsRunner $ProjectName 
+
+    try
+    {	
+		#TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
+		#magic comma strikes back...
+		Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.EnableCommand #@( ,$Params )
+	
+        $error = Get-RunnerError $runner                    
+        if ($error)
+        {
+            Write-Verbose $error.StackTrace
+            
+            throw $error.Message
+        }
+
+        #$(Get-VSComponentModel).GetService([NuGetConsole.IPowerConsoleWindow]).Show()           
+    }
+    finally
+    {               
+        Remove-Runner $runner       
+    }
+}
+
+<#
+.SYNOPSIS
+   Model-Migrate command.
+
+.DESCRIPTION
+   Model-Migrate command.
+
+.PARAMETER command
+   Model-Migrate Command.
+
+#>
+function Model-Migrate
+{
+	[CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $false)][string] $TargetModelMigrationId
+    )
+
+	#TODO: $ProjectName predavat ve vsech prikazech jako optional parametr??
+    $runner = New-EfModelMigrationsRunner $ProjectName 
+
+    try
+    {	
+		#TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
+		#magic comma strikes back...
+		Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( ,$TargetModelMigrationId )
+	
+        $error = Get-RunnerError $runner                    
+        if ($error)
+        {
+            Write-Verbose $error.StackTrace
+            
+            throw $error.Message
+        }
+
+        #$(Get-VSComponentModel).GetService([NuGetConsole.IPowerConsoleWindow]).Show()           
+    }
+    finally
+    {               
+        Remove-Runner $runner       
+    }
+}
 
 #private
 
@@ -296,4 +495,6 @@ function Invoke-RunnerCommand($runner, $command, $parameters)
 
 
 # EXPORT ----------------------
-Export-ModuleMember @( 'Model' )
+Export-ModuleMember @( 	'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
+						'Model-RemoveProperties', 'Model-RenameClass', 'Model-RenameProperty', 
+						'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate' )

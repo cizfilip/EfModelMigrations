@@ -8,8 +8,6 @@ namespace EfModelMigrations.Commands
     {
         public abstract IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider);
 
-        public abstract void ParseParameters(string[] parameters);
-
         public abstract string GetMigrationName();
     }
 }

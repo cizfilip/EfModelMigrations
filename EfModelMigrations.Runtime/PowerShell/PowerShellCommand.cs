@@ -20,23 +20,14 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         //private readonly string efDllPath;
 
-        private string[] parameters;
-
-        protected PowerShellCommand(string[] parameters)
+        protected PowerShellCommand()
         {
-            this.parameters = parameters;
-
             this.domain = AppDomain.CurrentDomain;
             this.dispatcher = (Dispatcher)domain.GetData("dispatcher");
 
             //this.efDllPath = (string)domain.GetData("efDllPath");
         }
 
-
-        public string[] Parameters
-        {
-            get { return parameters; }
-        }
 
         //TODO: Podpora rozdělení modelu/contextu/migrací do více projektů
         private Project project;

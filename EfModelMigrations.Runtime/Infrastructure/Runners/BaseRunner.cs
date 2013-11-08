@@ -90,11 +90,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             }
         }
 
-        protected T CreateInstance<T>(Type type)
+        protected T CreateInstance<T>(Type type, object[] constructorParameters = null)
         {
             try
             {
-                return (T)Activator.CreateInstance(type);
+                return (T)Activator.CreateInstance(type, constructorParameters);
             }
             catch (Exception e)
             {
