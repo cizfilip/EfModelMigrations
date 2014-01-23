@@ -37,6 +37,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
             MigrationScaffolder scaffolder = new MigrationScaffolder(configuration);
 
             string dbMigrationName = ModelMigration.Name;
+            if(IsRevert)
+            {
+                dbMigrationName = "Revert" + dbMigrationName;
+            }
+
             var scaffoldedMigration = scaffolder.Scaffold(dbMigrationName, ignoreChanges: true);
 
             Return(scaffoldedMigration);

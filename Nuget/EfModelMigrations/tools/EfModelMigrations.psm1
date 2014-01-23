@@ -10,13 +10,20 @@
 #>
 function Model-AddProperties
 {
-	[CmdletBinding()] 
+    [CmdletBinding()] 
     param (
-        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
-		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+        #TODO: u vsech povinnych parametru pouzivat HelpMessage
+        #TODO: rozmyslet i pouzivani alias atributu viz example zde.
+        #TODO: pripadne pouzivat i validacni atributy - viz http://technet.microsoft.com/en-us/library/hh847743.aspx
+        #TODO: pro bool parametry pouzit [Switch] jako typ attribut
+        [Parameter(Position = 0, Mandatory = $true, HelpMessage="TODO")]
+        #[alias("Class","CN")]
+        [string]
+        $ClassName,
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
     )
 
-	Model-ExecuteCommand EfModelMigrations.Commands.AddPropertiesCommand @( $ClassName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.AddPropertiesCommand @( $ClassName, $Properties )
 }
 
 <#
@@ -31,13 +38,13 @@ function Model-AddProperties
 #>
 function Model-CreateClass
 {
-	[CmdletBinding()] 
+    [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
-		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
     )
 
-	Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand @( $ClassName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand @( $ClassName, $Properties )
 }
 
 <#
@@ -52,12 +59,12 @@ function Model-CreateClass
 #>
 function Model-RemoveClass
 {
-	[CmdletBinding()] 
+    [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName
     )
 
-	Model-ExecuteCommand EfModelMigrations.Commands.RemoveClassCommand @( ,$ClassName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RemoveClassCommand @( ,$ClassName )
 }
 
 <#
@@ -72,13 +79,13 @@ function Model-RemoveClass
 #>
 function Model-RemoveProperties
 {
-	[CmdletBinding()] 
+    [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
-		[Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
     )
 
-	Model-ExecuteCommand EfModelMigrations.Commands.RemovePropertiesCommand @( $ClassName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.RemovePropertiesCommand @( $ClassName, $Properties )
 }
 
 <#
@@ -93,13 +100,13 @@ function Model-RemoveProperties
 #>
 function Model-RenameClass
 {
-	[CmdletBinding()] 
+    [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $OldClassName,
-		[Parameter(Position = 1, Mandatory = $true)][string] $NewClassName
+        [Parameter(Position = 1, Mandatory = $true)][string] $NewClassName
     )
 
-	Model-ExecuteCommand EfModelMigrations.Commands.RenameClassCommand @( $OldClassName, $NewClassName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RenameClassCommand @( $OldClassName, $NewClassName )
 }
 
 <#
@@ -114,14 +121,14 @@ function Model-RenameClass
 #>
 function Model-RenameProperty
 {
-	[CmdletBinding()] 
+    [CmdletBinding()] 
     param (
-		[Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
         [Parameter(Position = 1, Mandatory = $true)][string] $OldPropertyName,
-		[Parameter(Position = 2, Mandatory = $true)][string] $NewPropertyName
+        [Parameter(Position = 2, Mandatory = $true)][string] $NewPropertyName
     )
 
-	Model-ExecuteCommand EfModelMigrations.Commands.RenamePropertyCommand @( $ClassName, $OldPropertyName, $NewPropertyName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RenamePropertyCommand @( $ClassName, $OldPropertyName, $NewPropertyName )
 }
 
 
@@ -141,14 +148,14 @@ function Model-ExecuteCommand
     [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $CommandFullName,
-		[Parameter(Position = 1, Mandatory = $true)][Array] $Parameters
+        [Parameter(Position = 1, Mandatory = $true)][Array] $Parameters
     )
 
     $runner = New-EfModelMigrationsRunner $ProjectName 
 
     try
     {	
-		Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ExecuteCommand @( $CommandFullName, $Parameters )
+        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ExecuteCommand @( $CommandFullName, $Parameters )
 
         $error = Get-RunnerError $runner                    
 
@@ -180,20 +187,20 @@ function Model-ExecuteCommand
 #>
 function Model-Enable
 {
-	[CmdletBinding()] 
+    [CmdletBinding()] 
     param (
         
     )
 
-	#TODO: $ProjectName predavat ve vsech prikazech jako optional parametr??
+    #TODO: $ProjectName predavat ve vsech prikazech jako optional parametr??
     $runner = New-EfModelMigrationsRunner $ProjectName 
 
     try
     {	
-		#TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
-		#magic comma strikes back...
-		Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.EnableCommand #@( ,$Params )
-	
+        #TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
+        #magic comma strikes back...
+        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.EnableCommand #@( ,$Params )
+    
         $error = Get-RunnerError $runner                    
         if ($error)
         {
@@ -223,20 +230,20 @@ function Model-Enable
 #>
 function Model-Migrate
 {
-	[CmdletBinding()] 
+    [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $false)][string] $TargetModelMigrationId
     )
 
-	#TODO: $ProjectName predavat ve vsech prikazech jako optional parametr??
+    #TODO: $ProjectName predavat ve vsech prikazech jako optional parametr??
     $runner = New-EfModelMigrationsRunner $ProjectName 
 
     try
     {	
-		#TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
-		#magic comma strikes back...
-		Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( ,$TargetModelMigrationId )
-	
+        #TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
+        #magic comma strikes back...
+        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( ,$TargetModelMigrationId )
+    
         $error = Get-RunnerError $runner                    
         if ($error)
         {
@@ -267,7 +274,7 @@ function New-EfModelMigrationsRunner($ProjectName)
     $info = New-AppDomainSetup $project $installPath
 
 
-	#$efDllPath = Get-EntityFrameworkDllPath($project)
+    #$efDllPath = Get-EntityFrameworkDllPath($project)
 
     $domain = [AppDomain]::CreateDomain('EfModelMigrations', $null, $info)
     $domain.SetData('project', $project)
@@ -378,9 +385,9 @@ function Build-Project($project)
 
 function Get-EntityFrameworkDllPath($project)
 {
-	$efInstallPath = Get-EntityFrameworkInstallPath($project)
-	
-	$targetFrameworkVersion = (New-Object System.Runtime.Versioning.FrameworkName ($project.Properties.Item('TargetFrameworkMoniker').Value)).Version
+    $efInstallPath = Get-EntityFrameworkInstallPath($project)
+    
+    $targetFrameworkVersion = (New-Object System.Runtime.Versioning.FrameworkName ($project.Properties.Item('TargetFrameworkMoniker').Value)).Version
 
     if ($targetFrameworkVersion -lt (New-Object Version @( 4, 5 )))
     {
@@ -388,11 +395,11 @@ function Get-EntityFrameworkDllPath($project)
     }
     else
     {
-		$efInstallPath += '\lib\net45'
+        $efInstallPath += '\lib\net45'
     }
-	return $efInstallPath += '\EntityFramework.dll'
-	
-	
+    return $efInstallPath += '\EntityFramework.dll'
+    
+    
 }
 
 function Get-EntityFrameworkInstallPath($project)
@@ -433,10 +440,10 @@ function Get-PackageInstallPath($package)
 
 function New-AppDomainSetup($Project, $InstallPath)
 {
-	$packageRootPath = Split-Path $InstallPath
-	
-	$packageName = Split-Path $InstallPath -Leaf
-	
+    $packageRootPath = Split-Path $InstallPath
+    
+    $packageName = Split-Path $InstallPath -Leaf
+    
     $info = New-Object System.AppDomainSetup -Property @{
             ShadowCopyFiles = 'true';
             ApplicationBase = $packageRootPath; # package root
@@ -445,25 +452,25 @@ function New-AppDomainSetup($Project, $InstallPath)
         }
     
     $targetFrameworkVersion = (New-Object System.Runtime.Versioning.FrameworkName ($Project.Properties.Item('TargetFrameworkMoniker').Value)).Version
-	$efPath = Get-EntityFrameworkInstallPath($Project)
-	$efPackageName = Split-Path $efPath -Leaf
+    $efPath = Get-EntityFrameworkInstallPath($Project)
+    $efPackageName = Split-Path $efPath -Leaf
 
     if ($targetFrameworkVersion -lt (New-Object Version @( 4, 5 )))
     {
-		$info.PrivateBinPath += ';' + $efPackageName + '\lib\net40'
+        $info.PrivateBinPath += ';' + $efPackageName + '\lib\net40'
         $info.PrivateBinPath += ';' + $packageName + '\lib\net40'
     }
     else
     {
-	
-		$info.PrivateBinPath += ';' + $efPackageName + '\lib\net45'
+    
+        $info.PrivateBinPath += ';' + $efPackageName + '\lib\net45'
         $info.PrivateBinPath += ';' + $packageName + '\lib\net45'
     }
 
-	#TODO: Remove next line. Dll with framework in release must be in net40 and net45 subfolders and they are added above.
-	$info.PrivateBinPath += ';' + $packageName + '\lib'
-	#Write-Host $info.ApplicationBase
-	#Write-Host $info.PrivateBinPath
+    #TODO: Remove next line. Dll with framework in release must be in net40 and net45 subfolders and they are added above.
+    $info.PrivateBinPath += ';' + $packageName + '\lib'
+    #Write-Host $info.ApplicationBase
+    #Write-Host $info.PrivateBinPath
 
     return $info
 }
@@ -496,5 +503,5 @@ function Invoke-RunnerCommand($runner, $command, $parameters)
 
 # EXPORT ----------------------
 Export-ModuleMember @( 	'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
-						'Model-RemoveProperties', 'Model-RenameClass', 'Model-RenameProperty', 
-						'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate' )
+                        'Model-RemoveProperties', 'Model-RenameClass', 'Model-RenameProperty', 
+                        'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate' )
