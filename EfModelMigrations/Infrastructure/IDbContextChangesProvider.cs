@@ -9,7 +9,7 @@ namespace EfModelMigrations.Infrastructure
 {
     public interface IDbContextChangesProvider
     {
-        void AddDbSetPropertyForClass(ClassCodeModel classForAddProperty);
-        void RemoveDbSetPropertyForClass(ClassCodeModel classForRemoveProperty);
+        void AddDbSetPropertyForClass(string classNameForAddProperty);
+        void RemoveDbSetPropertyForClass(string classNameForRemoveProperty);
     }
 }

@@ -1,5 +1,4 @@
-﻿using EfModelMigrations.Configuration;
-using EfModelMigrations.Exceptions;
+﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Extensions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
@@ -10,12 +9,9 @@ using EfModelMigrations.Runtime.Properties;
 using EnvDTE;
 using EnvDTE80;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
@@ -150,22 +146,22 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         #region IDbContextChangesProvider Implementation
 
-        public void AddDbSetPropertyForClass(ClassCodeModel classForAddProperty)
+        public void AddDbSetPropertyForClass(string classNameForAddProperty)
         {
             CodeClass2 contextClass = GetDbContextCodeClass();
 
             AddPropertyToClassInternal(contextClass,
-                codeGenerator.GenerateDbSetProperty(classForAddProperty),
+                codeGenerator.GenerateDbSetProperty(classNameForAddProperty),
                 e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
-                    classForAddProperty.Name), e)
+                    classNameForAddProperty), e)
                 );
         }
 
-        public void RemoveDbSetPropertyForClass(ClassCodeModel classForRemoveProperty)
+        public void RemoveDbSetPropertyForClass(string classNameForRemoveProperty)
         {
             CodeClass2 contextClass = GetDbContextCodeClass();
 
-            CodeProperty2 property = FindPropertyOnDbContext(contextClass, classForRemoveProperty);
+            CodeProperty2 property = FindPropertyOnDbContext(contextClass, classNameForRemoveProperty);
             
             try
             {
@@ -173,7 +169,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveDbSetProperty, classForRemoveProperty.Name), e);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveDbSetProperty, classNameForRemoveProperty), e);
             }
         }
 
@@ -226,23 +222,23 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             return classFinder.FindCodeClassFromFullName(dbContextFullName);
         }
 
-        private CodeProperty2 FindPropertyOnDbContext(CodeClass2 ctxClass, ClassCodeModel classForRemoveProperty)
+        private CodeProperty2 FindPropertyOnDbContext(CodeClass2 ctxClass, string classNameForRemoveProperty)
         {
             try
             {
                 CodeProperty2 property = ctxClass.Children.OfType<CodeProperty2>()
-                    .Where(p => IsDbSetPropertyForClass(p.Type as CodeTypeRef2, classForRemoveProperty))
+                    .Where(p => IsDbSetPropertyForClass(p.Type as CodeTypeRef2, classNameForRemoveProperty))
                     .Single();
 
                 return property;
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindDbSetProperty, classForRemoveProperty.Name), e);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindDbSetProperty, classNameForRemoveProperty), e);
             }
         }
 
-        private bool IsDbSetPropertyForClass(CodeTypeRef2 codeTypeRef, ClassCodeModel classForRemoveProperty)
+        private bool IsDbSetPropertyForClass(CodeTypeRef2 codeTypeRef, string classNameForRemoveProperty)
         {
             if(codeTypeRef == null || !codeTypeRef.IsGeneric)
                 return false;
@@ -256,7 +252,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 genericTypeName = match.Groups[1].Value;
             }
 
-            string fullClassName = modelNamespace + "." + classForRemoveProperty.Name;
+            string fullClassName = modelNamespace + "." + classNameForRemoveProperty;
 
             if (fullClassName.EqualsOrdinal(genericTypeName))
                 return true;

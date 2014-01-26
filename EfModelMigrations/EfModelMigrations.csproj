@@ -103,14 +103,13 @@
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
+    <Compile Include="Mapping\DbSetPropertyInfo.cs" />
+    <Compile Include="Mapping\IMappingInformation.cs" />
     <Compile Include="ModelMigration.cs" />
     <Compile Include="ModelMigrationExtensions.cs" />
     <Compile Include="ModelMigrationIdAttribute.cs" />
     <Compile Include="Operations\AddPropertyToClassOperation.cs" />
     <Compile Include="Operations\CreateClassOperation.cs" />
-    <Compile Include="Operations\DbContext\AddDbSetPropertyOperation.cs" />
-    <Compile Include="Operations\DbContext\DbContextChangeOperation.cs" />
-    <Compile Include="Operations\DbContext\RemoveDbSetPropertyOperation.cs" />
     <Compile Include="Operations\ModelChangeOperation.cs" />
     <Compile Include="Operations\RemoveClassOperation.cs" />
     <Compile Include="Operations\RemovePropertyFromClassOperation.cs" />

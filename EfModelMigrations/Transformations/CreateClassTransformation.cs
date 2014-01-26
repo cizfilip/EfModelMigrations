@@ -2,7 +2,7 @@
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
-using EfModelMigrations.Operations.DbContext;
+using EfModelMigrations.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -31,7 +31,12 @@ namespace EfModelMigrations.Transformations
             {
                 yield return new AddPropertyToClassOperation(classModel, property);
             }
-            yield return new AddDbSetPropertyOperation(classModel);
+            
+        }
+
+        public override IEnumerable<IMappingInformation> GetMappingInformations(IClassModelProvider modelProvider)
+        {
+            yield return new DbSetPropertyInfo(ClassName);
         }
 
         public override ModelTransformation Inverse()

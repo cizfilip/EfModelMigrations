@@ -1,8 +1,8 @@
 ﻿using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.EntityFramework;
+using EfModelMigrations.Mapping;
 using EfModelMigrations.Operations;
-using EfModelMigrations.Operations.DbContext;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -33,12 +33,16 @@ namespace EfModelMigrations.Transformations
         {
             var classModel = modelProvider.GetClassCodeModel(ClassName);
 
-            yield return new RemoveDbSetPropertyOperation(classModel);
             foreach (var property in classModel.Properties)
             {
                 yield return new RemovePropertyFromClassOperation(classModel, property);
             }
             yield return new RemoveClassOperation(classModel);
+        }
+
+        public override IEnumerable<IMappingInformation> GetMappingInformations(IClassModelProvider modelProvider)
+        {
+            yield return new DbSetPropertyInfo(ClassName);
         }
 
         public override ModelTransformation Inverse()

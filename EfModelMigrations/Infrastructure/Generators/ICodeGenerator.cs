@@ -11,7 +11,7 @@ namespace EfModelMigrations.Infrastructure.Generators
     {
         string GenerateEmptyClass(ClassCodeModel classModel);
         string GenerateProperty(PropertyCodeModel propertyModel);
-        string GenerateDbSetProperty(ClassCodeModel classForAddProperty);
+        string GenerateDbSetProperty(string classNameForAddProperty);
 
         string GetFileExtensions();
     }

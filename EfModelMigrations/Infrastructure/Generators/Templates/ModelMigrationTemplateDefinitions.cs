@@ -35,14 +35,6 @@ namespace EfModelMigrations.Infrastructure.Generators.Templates
                     builder.Append(methodBodyLines[i]);
                 }
             }
-
-            foreach (var line in methodBodyLines)
-            {
-                
-            }
-
-            
-
             //TODO: Na konci metod jsou 2 prazdne radky
 
             return builder.ToString();

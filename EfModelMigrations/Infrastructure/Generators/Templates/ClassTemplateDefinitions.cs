@@ -13,9 +13,6 @@ namespace EfModelMigrations.Infrastructure.Generators.Templates
         public IEnumerable<string> Imports { get; set; }
         public Func<CodeModelVisibility, string> CodeModelVisibilityMapper { get; set; }
 
-
-       
-
         private string GetBasesListString()
         {
             if (string.IsNullOrEmpty(ClassModel.BaseType) && !ClassModel.ImplementedInterfaces.Any())

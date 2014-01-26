@@ -29,7 +29,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }.TransformText();
         }
 
-        public string GenerateDbSetProperty(ClassCodeModel classForAddProperty)
+        public string GenerateDbSetProperty(string classNameForAddProperty)
         {
             //TODO: Takhle jde delat dpset property bez public setteru
             //public DbSet<Blog> Blogs
@@ -43,8 +43,8 @@ namespace EfModelMigrations.Infrastructure.Generators
 
             return new DbSetPropertyTemplate()
             {
-                GenericType = classForAddProperty.Name,
-                Name = classForAddProperty.Name + "Set" //TODO: asi spis pluralizovat jmeno
+                GenericType = classNameForAddProperty,
+                Name = classNameForAddProperty + "Set" //TODO: asi spis pluralizovat jmeno
             }.TransformText();
         }
 
