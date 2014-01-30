@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Infrastructure.Generators.Templates;
+using Microsoft.CSharp.RuntimeBinder;
+using EfModelMigrations.Exceptions;
 
 
 namespace EfModelMigrations.Infrastructure.Generators
@@ -41,7 +43,15 @@ namespace EfModelMigrations.Infrastructure.Generators
 
             foreach (dynamic transformation in transformations)
             {
-                //TODO: Co kdyz prijde podtyp ModelTransformation pro ktery neni definovana metoda Generate? - nejak osetrit tuhle vyjimku
+                try
+                {
+                    Generate(transformation, builder);
+                }
+                catch (RuntimeBinderException e)
+                {
+                    //TODO: string do resourcu
+                    throw new ModelMigrationsException(string.Format("Cannot generate migration code for model transformation {0}. Generator implementation is missing.", transformation.GetType().Name), e);
+                }
                 Generate(transformation, builder);
             }
 
@@ -57,7 +67,7 @@ namespace EfModelMigrations.Infrastructure.Generators
         protected virtual void Generate(CreateClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.CreateClass(");
-            builder.Append(QuoteString(transformation.ClassName));
+            builder.Append(QuoteString(transformation.Name));
             builder.AppendLine(", new {");
 
             string indent = "    ";
@@ -76,7 +86,7 @@ namespace EfModelMigrations.Infrastructure.Generators
         protected virtual void Generate(RemoveClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.RemoveClass(");
-            builder.Append(QuoteString(transformation.ClassName));
+            builder.Append(QuoteString(transformation.Name));
             builder.AppendLine(");");
         }
 
@@ -89,9 +99,9 @@ namespace EfModelMigrations.Infrastructure.Generators
             string indent = "    ";
 
             builder.Append(indent);
-            builder.Append(transformation.PropertyModel.Name);
+            builder.Append(transformation.Model.Name);
             builder.Append(" = ");
-            builder.Append(QuoteString(transformation.PropertyModel.Type));
+            builder.Append(QuoteString(transformation.Model.Type));
             builder.AppendLine();
 
             builder.AppendLine("});");
@@ -102,7 +112,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append("this.RemoveProperty(");
             builder.Append(QuoteString(transformation.ClassName));
             builder.Append(", ");
-            builder.Append(QuoteString(transformation.PropertyName));
+            builder.Append(QuoteString(transformation.Name));
             builder.AppendLine(");");
         }
 
@@ -110,9 +120,9 @@ namespace EfModelMigrations.Infrastructure.Generators
         protected virtual void Generate(RenameClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.RenameClass(");
-            builder.Append(QuoteString(transformation.OldClassName));
+            builder.Append(QuoteString(transformation.OldName));
             builder.Append(", ");
-            builder.Append(QuoteString(transformation.NewClassName));
+            builder.Append(QuoteString(transformation.NewName));
             builder.AppendLine(");");
         }
 
@@ -122,9 +132,9 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append("this.RenameProperty(");
             builder.Append(QuoteString(transformation.ClassName));
             builder.Append(", ");
-            builder.Append(QuoteString(transformation.OldPropertyName));
+            builder.Append(QuoteString(transformation.OldName));
             builder.Append(", ");
-            builder.Append(QuoteString(transformation.NewPropertyName));
+            builder.Append(QuoteString(transformation.NewName));
             builder.AppendLine(");");
         }
 

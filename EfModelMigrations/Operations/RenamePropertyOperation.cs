@@ -8,35 +8,18 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations
 {
-    public class RenamePropertyOperation : ModelChangeOperation
+    public class RenamePropertyOperation : IModelChangeOperation
     {
-        private ClassCodeModel classModel;
-        private PropertyCodeModel propertyModel;
-        private string newName;
-
-        public RenamePropertyOperation(ClassCodeModel classModel, PropertyCodeModel propertyModel, string newName)
+        public string ClassName { get; private set; }
+        public string OldName { get; private set; }
+        public string NewName { get; private set; }
+        
+        public RenamePropertyOperation(string className, string oldName, string newName)
         {
-            this.classModel = classModel;
-            this.propertyModel = propertyModel;
-            this.newName = newName;
+            this.ClassName = className;
+            this.OldName = oldName;
+            this.NewName = newName;
         }
 
-        public override void ExecuteModelChanges(IModelChangesProvider provider)
-        {
-            provider.RenameProperty(classModel, propertyModel, newName);
-        }
-
-        public override ModelChangeOperation Inverse()
-        {
-            return new RenamePropertyOperation(classModel,
-                new PropertyCodeModel()
-                {
-                    Name = newName,
-                    IsSetterPrivate = propertyModel.IsSetterPrivate,
-                    Type = propertyModel.Type,
-                    Visibility = propertyModel.Visibility
-                },
-                propertyModel.Name);
-        }
     }
 }

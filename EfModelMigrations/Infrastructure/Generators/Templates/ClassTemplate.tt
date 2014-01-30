@@ -12,9 +12,9 @@ using <#= import #>;
 }
 #>
 
-namespace <#= ClassModel.Namespace #>
+namespace <#= Namespace #>
 {
-    <#= CodeModelVisibilityMapper(ClassModel.Visibility) #> class <#= ClassModel.Name #><#= GetBasesListString() #>
+    <#= CodeModelVisibilityMapper(Visibility) #> class <#= Name #><#= GetBasesListString() #>
     {
         
     }

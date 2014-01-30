@@ -10,11 +10,17 @@ namespace EfModelMigrations.Infrastructure.Generators
 {
     internal class CSharpCodeGenerator : ICodeGenerator
     {
-        public string GenerateEmptyClass(ClassCodeModel classModel)
+        public string GenerateEmptyClass(string name, string @namespace, 
+            CodeModelVisibility visibility, string baseType, 
+            IEnumerable<string> implementedInterfaces)
         {
             return new ClassTemplate()
             {
-                ClassModel = classModel,
+                Name = name,
+                Namespace = @namespace,
+                Visibility = visibility,
+                BaseType = baseType,
+                ImplementedInterfaces = implementedInterfaces,
                 Imports = GetDefaultImports(),
                 CodeModelVisibilityMapper = CodeModelVisibilityToString
             }.TransformText();

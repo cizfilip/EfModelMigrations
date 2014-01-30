@@ -12,49 +12,35 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
-    public class RemoveClassTransformation : ModelTransformation
+    public class RemoveClassTransformation : TransformationWithInverse
     {
-        private CreateClassTransformation inverse;
-
-        public string ClassName { get; private set; }
+        public string Name { get; private set; }
             
-
-        public RemoveClassTransformation(string className)
+        public RemoveClassTransformation(string name, ModelTransformation inverse) : base(inverse)
         {
-            this.ClassName = className;
+            this.Name = name;
         }
 
-        public RemoveClassTransformation(string className, CreateClassTransformation inverse) : this(className)
+        public RemoveClassTransformation(string name)
+            : this(name, null)
         {
-            this.inverse = inverse;
         }
 
-        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
+        public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            var classModel = modelProvider.GetClassCodeModel(ClassName);
-
-            foreach (var property in classModel.Properties)
-            {
-                yield return new RemovePropertyFromClassOperation(classModel, property);
-            }
-            yield return new RemoveClassOperation(classModel);
+            yield return new RemoveClassOperation(Name);
         }
 
-        public override IEnumerable<IMappingInformation> GetMappingInformations(IClassModelProvider modelProvider)
+        public override IEnumerable<IMappingInformation> GetMappingInformationsToRemove(IClassModelProvider modelProvider)
         {
-            yield return new DbSetPropertyInfo(ClassName);
-        }
-
-        public override ModelTransformation Inverse()
-        {
-            return inverse;
+            yield return new DbSetPropertyInfo(Name);
         }
 
         //TODO: pri dropu tabulky ci sloupecku se musi kontrolovat zda-li se s tim mazou nejaka data - a kdyby ano
         //tak operaci provést jenom pokud byl predan parameter -Force
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            return builder.DropTableOperation(ClassName);
+            return builder.DropTableOperation(Name);
         }
     }
 }

@@ -12,31 +12,29 @@ namespace EfModelMigrations.Transformations
 {
     public class RenameClassTransformation : ModelTransformation
     {
-        public string OldClassName { get; private set; }
-        public string NewClassName { get; private set; }
+        public string OldName { get; private set; }
+        public string NewName { get; private set; }
 
-        public RenameClassTransformation(string oldClassName, string newClassName)
+        public RenameClassTransformation(string oldName, string newName)
         {
-            this.OldClassName = oldClassName;
-            this.NewClassName = newClassName;
+            this.OldName = oldName;
+            this.NewName = newName;
         }
 
-        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
+        public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            var oldClassModel = modelProvider.GetClassCodeModel(OldClassName);
-
-            yield return new RenameClassOperation(oldClassModel, NewClassName);
+            yield return new RenameClassOperation(OldName, NewName);
         }
 
         //TODO: V DB by bylo treba prejmenovat i vsechny reference - napr. jmena cizich klicu atd... ??
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            return builder.RenameTableOperation(OldClassName, NewClassName);
+            return builder.RenameTableOperation(OldName, NewName);
         }
 
         public override ModelTransformation Inverse()
         {
-            return new RenameClassTransformation(NewClassName, OldClassName);
+            return new RenameClassTransformation(NewName, OldName);
         }
     }
 }

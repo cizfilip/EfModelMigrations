@@ -9,7 +9,7 @@ namespace EfModelMigrations.Runtime.Infrastructure
 {
     /// <summary>
     /// Helper class that execute Run method from BaseRunner subclasses in new appdomain.
-    /// Everything which need access to tzpes in project dll must be executed in new 
+    /// Everything which need access to types in project dll must be executed in new 
     /// appdomain using this class, because dll cannot be unloaded only appdomain can.
     /// </summary>
     internal class NewAppDomainExecutor : IDisposable

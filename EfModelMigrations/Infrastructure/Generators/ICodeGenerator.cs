@@ -9,7 +9,9 @@ namespace EfModelMigrations.Infrastructure.Generators
 {
     public interface ICodeGenerator
     {
-        string GenerateEmptyClass(ClassCodeModel classModel);
+        string GenerateEmptyClass(string name, string @namespace,
+            CodeModelVisibility visibility, string baseType,
+            IEnumerable<string> implementedInterfaces);
         string GenerateProperty(PropertyCodeModel propertyModel);
         string GenerateDbSetProperty(string classNameForAddProperty);
 

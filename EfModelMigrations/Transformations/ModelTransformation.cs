@@ -10,12 +10,18 @@ namespace EfModelMigrations.Transformations
 {
     public abstract class ModelTransformation
     {
-        public virtual IEnumerable<ModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
+        //TODO: mozna odstranit parametr modelProvider
+        public virtual IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            return Enumerable.Empty<ModelChangeOperation>();
+            return Enumerable.Empty<IModelChangeOperation>();
         }
 
-        public virtual IEnumerable<IMappingInformation> GetMappingInformations(IClassModelProvider modelProvider)
+        public virtual IEnumerable<IMappingInformation> GetMappingInformationsToAdd(IClassModelProvider modelProvider)
+        {
+            return Enumerable.Empty<IMappingInformation>();
+        }
+
+        public virtual IEnumerable<IMappingInformation> GetMappingInformationsToRemove(IClassModelProvider modelProvider)
         {
             return Enumerable.Empty<IMappingInformation>();
         }

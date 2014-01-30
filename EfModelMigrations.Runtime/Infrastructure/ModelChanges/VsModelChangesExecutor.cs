@@ -3,19 +3,22 @@ using EfModelMigrations.Extensions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.Generators;
+using EfModelMigrations.Operations;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers;
 using EfModelMigrations.Runtime.Properties;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft.CSharp.RuntimeBinder;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
-    internal class VsModelChangesProvider : IModelChangesProvider, IDbContextChangesProvider
+    internal class VsModelChangesExecutor : IModelChangesExecutor
     {
         private Project modelProject;
         //TODO: asi by stacilo aby ClassCodeModel mela property FullName (ale musim nejak zaridit aby mela modelnamespace)
@@ -25,8 +28,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private CodeClassFinder classFinder;
 
 
-        public VsModelChangesProvider(Project modelProject, 
-            string modelNamespace, 
+        public VsModelChangesExecutor(Project modelProject,
+            string modelNamespace,
             string dbContextFullName,
             ICodeGenerator codeGenerator)
         {
@@ -38,19 +41,32 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         }
 
 
-        public IDbContextChangesProvider ChangeDbContext
+        public void Execute(IEnumerable<IModelChangeOperation> operations)
         {
-            get { return this; }
+
+            foreach (dynamic operation in operations)
+            {
+                try
+                {
+                    ExecuteOperation(operation);
+                }
+                catch (RuntimeBinderException e)
+                {
+                    //TODO: string do resourcu
+                    throw new ModelMigrationsException(string.Format("Cannot execute model change operation {0}. Executor implementation is missing.", operation.GetType().Name), e);
+                }
+            }
+
         }
 
-        #region IModelChangesProvider Implementation
-        
 
-        public void CreateEmptyClass(ClassCodeModel classModel)
+        protected void ExecuteOperation(CreateEmptyClassOperation operation)
         {
             //TODO: ujistit se za pouzivam validni C# identifikatory - pomoci metody CodeModel.IsValidID
-            string classContent = codeGenerator.GenerateEmptyClass(classModel);
-            string filePath = Path.Combine(GetConventionPathFromNamespace(modelNamespace), classModel.Name + codeGenerator.GetFileExtensions());
+            //TODO: zde propagovat defaultni nastaveni pro tridy z configurace...
+            string classContent = codeGenerator.GenerateEmptyClass(operation.Name, modelNamespace, CodeModelVisibility.Public, null, null);
+
+            string filePath = Path.Combine(GetConventionPathFromNamespace(modelNamespace), operation.Name + codeGenerator.GetFileExtensions());
 
             try
             {
@@ -58,17 +74,16 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToCreateClass, classModel.Name), e);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToCreateClass, operation.Name), e);
             }
-
         }
 
         //TODO: resit partial tridy (pres CodeClass2.Parts)
         //TODO: metoda Remove odebira z projektu ale file zustava fyzicky na disku - slo by vyuzit pro revert, Delete metoda smaze i file
         //TODO: remove class vymaze vse, v pripade chyby a vraceni zpet nejsme schopni obnovit cely zdrojak tak jak byl 
-        public void RemoveClass(ClassCodeModel classModel)
+        protected void ExecuteOperation(RemoveClassOperation operation)
         {
-            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, classModel.Name);
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.Name);
 
             try
             {
@@ -77,28 +92,27 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveClass, classModel.Name), e);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveClass, operation.Name), e);
             }
         }
 
-
-        public void AddPropertyToClass(ClassCodeModel classModel, PropertyCodeModel propertyModel)
+        protected void ExecuteOperation(AddPropertyToClassOperation operation)
         {
-            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, classModel.Name);
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
 
-            AddPropertyToClassInternal(codeClass, 
-                codeGenerator.GenerateProperty(propertyModel), 
-                e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddProperty, 
-                    propertyModel.Name, 
-                    classModel.Name), e)
+            AddPropertyToClassInternal(codeClass,
+                codeGenerator.GenerateProperty(operation.Model),
+                e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddProperty,
+                    operation.Model.Name,
+                    operation.ClassName), e)
                 );
         }
 
-        public void RemovePropertyFromClass(ClassCodeModel classModel, PropertyCodeModel propertyModel)
+        protected void ExecuteOperation(RemovePropertyFromClassOperation operation)
         {
-            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, classModel.Name);
-
-            CodeProperty2 codeProperty = FindProperty(codeClass, propertyModel.Name);
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
+            
+            CodeProperty2 codeProperty = FindProperty(codeClass, operation.Name);
 
             try
             {
@@ -106,43 +120,43 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveProperty, propertyModel.Name, classModel.Name), e);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveProperty, operation.Name, operation.ClassName), e);
             }
         }
 
-        public void RenameClass(ClassCodeModel classModel, string newName)
+        protected void ExecuteOperation(RenameClassOperation operation)
         {
-            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, classModel.Name);
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.OldName);
 
             CodeElement2 classElement = codeClass as CodeElement2;
 
             try
             {
-                classElement.RenameSymbol(newName);
+                classElement.RenameSymbol(operation.NewName);
                 // Rename file with source code of class - not good what about partial classes etc...
                 // vyhazuje vyjímku když soubor s novým názvem existuje !!
-                classElement.ProjectItem.Name = newName + ".cs";
+                classElement.ProjectItem.Name = operation.NewName + ".cs";
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameClass, classModel.Name), e);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameClass, operation.OldName), e);
             }
         }
 
-        public void RenameProperty(ClassCodeModel classModel, PropertyCodeModel propertyModel, string newName)
+        protected void ExecuteOperation(RenamePropertyOperation operation)
         {
-            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, classModel.Name);
-            CodeElement2 property = FindProperty(codeClass, propertyModel.Name) as CodeElement2;
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
+            CodeElement2 property = FindProperty(codeClass, operation.OldName) as CodeElement2;
             try
             {
-                property.RenameSymbol(newName);
+                property.RenameSymbol(operation.NewName);
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameProperty, propertyModel.Name, classModel.Name), e);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameProperty, operation.OldName, operation.ClassName), e);
             }
         }
-        #endregion 
+
 
         #region IDbContextChangesProvider Implementation
 
@@ -162,7 +176,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             CodeClass2 contextClass = GetDbContextCodeClass();
 
             CodeProperty2 property = FindPropertyOnDbContext(contextClass, classNameForRemoveProperty);
-            
+
             try
             {
                 contextClass.RemoveMember(property);
@@ -190,7 +204,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 throw exceptionFactory(e);
             }
         }
-        
+
         private CodeProperty2 FindProperty(CodeClass2 codeClass, string propertyName)
         {
             try
@@ -240,7 +254,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         private bool IsDbSetPropertyForClass(CodeTypeRef2 codeTypeRef, string classNameForRemoveProperty)
         {
-            if(codeTypeRef == null || !codeTypeRef.IsGeneric)
+            if (codeTypeRef == null || !codeTypeRef.IsGeneric)
                 return false;
 
             string fullTypeName = codeTypeRef.AsFullName;
@@ -263,6 +277,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         #endregion
 
 
-        
+
+
     }
 }

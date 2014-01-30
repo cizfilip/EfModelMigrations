@@ -14,33 +14,29 @@ namespace EfModelMigrations.Transformations
     public class RenamePropertyTransformation : ModelTransformation
     {
         public string ClassName { get; private set; }
-        public string OldPropertyName { get; private set; }
-        public string NewPropertyName { get; private set; }
+        public string OldName { get; private set; }
+        public string NewName { get; private set; }
 
-        public RenamePropertyTransformation(string className, string oldPropertyName, string newPropertyName)
+        public RenamePropertyTransformation(string className, string oldName, string newName)
         {
             this.ClassName = className;
-            this.OldPropertyName = oldPropertyName;
-            this.NewPropertyName = newPropertyName;
+            this.OldName = oldName;
+            this.NewName = newName;
         }
 
-        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
+        public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            var classModel = modelProvider.GetClassCodeModel(ClassName);
-
-            var oldPropertyModel = classModel.Properties.Single(p => p.Name.EqualsOrdinalIgnoreCase(OldPropertyName));
-
-            yield return new RenamePropertyOperation(classModel, oldPropertyModel, NewPropertyName);
+            yield return new RenamePropertyOperation(ClassName, OldName, NewName);
         }
 
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            return builder.RenameColumnOperation(ClassName, OldPropertyName, NewPropertyName);
+            return builder.RenameColumnOperation(ClassName, OldName, NewName);
         }
 
         public override ModelTransformation Inverse()
         {
-            return new RenamePropertyTransformation(ClassName, NewPropertyName, OldPropertyName);
+            return new RenamePropertyTransformation(ClassName, NewName, OldName);
         }
     }
 }

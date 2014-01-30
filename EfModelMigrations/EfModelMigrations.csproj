@@ -97,8 +97,8 @@
     </Compile>
     <Compile Include="Infrastructure\Generators\Templates\PropertyTemplateDefinitions.cs" />
     <Compile Include="Infrastructure\IClassModelProvider.cs" />
-    <Compile Include="Infrastructure\IDbContextChangesProvider.cs" />
-    <Compile Include="Infrastructure\IModelChangesProvider.cs" />
+    <Compile Include="Infrastructure\IMappingInformationsProvider.cs" />
+    <Compile Include="Infrastructure\IModelChangesExecutor.cs" />
     <Compile Include="Infrastructure\ModelMigrationIdGenerator.cs" />
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
@@ -109,8 +109,8 @@
     <Compile Include="ModelMigrationExtensions.cs" />
     <Compile Include="ModelMigrationIdAttribute.cs" />
     <Compile Include="Operations\AddPropertyToClassOperation.cs" />
-    <Compile Include="Operations\CreateClassOperation.cs" />
-    <Compile Include="Operations\ModelChangeOperation.cs" />
+    <Compile Include="Operations\CreateEmptyClassOperation.cs" />
+    <Compile Include="Operations\IModelChangeOperation.cs" />
     <Compile Include="Operations\RemoveClassOperation.cs" />
     <Compile Include="Operations\RemovePropertyFromClassOperation.cs" />
     <Compile Include="Operations\RenameClassOperation.cs" />
@@ -128,6 +128,7 @@
     <Compile Include="Transformations\RemovePropertyTransformation.cs" />
     <Compile Include="Transformations\RenameClassTransformation.cs" />
     <Compile Include="Transformations\RenamePropertyTransformation.cs" />
+    <Compile Include="Transformations\TransformationWithInverse.cs" />
     <Compile Include="Utilities\TypeFinder.cs" />
   </ItemGroup>
   <ItemGroup>

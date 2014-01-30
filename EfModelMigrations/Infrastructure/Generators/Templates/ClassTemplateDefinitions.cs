@@ -9,13 +9,30 @@ namespace EfModelMigrations.Infrastructure.Generators.Templates
 {
     internal partial class ClassTemplate
     {
-        public ClassCodeModel ClassModel { get; set; }
+        public string Name { get; set; }
+        public string Namespace { get; set; }
+        public CodeModelVisibility Visibility { get; set; }
+        public string BaseType { get; set; }
+
+        private IEnumerable<string> implementedInterfaces;
+        public IEnumerable<string> ImplementedInterfaces
+        {
+            get
+            {
+                return implementedInterfaces;
+            }
+            set
+            {
+                implementedInterfaces = value ?? Enumerable.Empty<string>();
+            }
+        }
+
         public IEnumerable<string> Imports { get; set; }
         public Func<CodeModelVisibility, string> CodeModelVisibilityMapper { get; set; }
 
         private string GetBasesListString()
         {
-            if (string.IsNullOrEmpty(ClassModel.BaseType) && !ClassModel.ImplementedInterfaces.Any())
+            if (string.IsNullOrEmpty(BaseType) && !ImplementedInterfaces.Any())
             {
                 return "";
             }
@@ -27,12 +44,12 @@ namespace EfModelMigrations.Infrastructure.Generators.Templates
 
         private IEnumerable<string> GetBasesList()
         {
-            if (!string.IsNullOrEmpty(ClassModel.BaseType))
+            if (!string.IsNullOrEmpty(BaseType))
             {
-                yield return ClassModel.BaseType;
+                yield return BaseType;
             }
 
-            foreach (var @interface in ClassModel.ImplementedInterfaces)
+            foreach (var @interface in ImplementedInterfaces)
             {
                 yield return @interface;
             }

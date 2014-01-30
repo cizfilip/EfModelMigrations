@@ -1,4 +1,5 @@
-﻿using EfModelMigrations.Operations;
+﻿using EfModelMigrations.Exceptions;
+using EfModelMigrations.Operations;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Transformations;
 using EnvDTE;
@@ -24,13 +25,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
             var classModelProvider = GetClassModelProvider();
 
-            IEnumerable<ModelChangeOperation> operations = GetModelTransformations(IsRevert).SelectMany(t => t.GetModelChangeOperations(classModelProvider));
-
-            List<ModelChangeOperation> executedOperations = new List<ModelChangeOperation>();
-
+            IEnumerable<IModelChangeOperation> operations = GetModelTransformations(IsRevert).SelectMany(t => t.GetModelChangeOperations(classModelProvider));
+            
             string dbContextFullName = DbConfiguration.ContextType.FullName;         
 
-            var modelChangesProvider = new VsModelChangesProvider(ModelProject, 
+            var modelChangesExecutor = new VsModelChangesExecutor(ModelProject, 
                 Configuration.ModelNamespace, 
                 dbContextFullName,
                 Configuration.CodeGenerator
@@ -38,21 +37,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
             try
             {
-                foreach (var operation in operations)
-                {
-                    operation.ExecuteModelChanges(modelChangesProvider);
-
-                    executedOperations.Add(operation);
-                }
+                modelChangesExecutor.Execute(operations);    
             }
-            catch (Exception) //TODO: mozna catch jenom ModelMigrationsException
+            catch (Exception e) //TODO: mozna catch jenom ModelMigrationsException
             {
-                foreach (var operation in executedOperations.Select(o => o.Inverse()).Reverse())
-                {
-                    operation.ExecuteModelChanges(modelChangesProvider);
-                }
-
-                throw;
+                //TODO: dodelat revert provedenech zmen v pripade ze dojde k chybe
+                throw new ModelMigrationsException("Error during aplying model changes! See inner exception. (Note: temporary model is in broken state now)", e);
             }
             finally
             {

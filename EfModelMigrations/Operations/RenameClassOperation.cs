@@ -8,35 +8,16 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations
 {
-    public class RenameClassOperation : ModelChangeOperation
+    public class RenameClassOperation : IModelChangeOperation
     {
-        private ClassCodeModel classModel;
-        private string newName;
-
-        public RenameClassOperation(ClassCodeModel classModel, string newName)
+        public string OldName { get; private set; }
+        public string NewName { get; private set; }
+        
+        public RenameClassOperation(string oldName, string newName)
         {
-            this.classModel = classModel;
-            this.newName = newName;
+            this.OldName = oldName;
+            this.NewName = newName;
         }
-
-        public override void ExecuteModelChanges(IModelChangesProvider provider)
-        {
-            provider.RenameClass(classModel, newName);
-        }
-
-        //TODO: ne moc hezky jeste jednou poresit pouzivani CodeClassModelu napric projektem....
-        public override ModelChangeOperation Inverse()
-        {
-            return new RenameClassOperation(
-                new ClassCodeModel(
-                    classModel.Namespace,
-                    newName,
-                    classModel.Visibility,
-                    classModel.BaseType,
-                    classModel.ImplementedInterfaces,
-                    classModel.Properties
-                    ),
-                classModel.Name);
-        }
+       
     }
 }

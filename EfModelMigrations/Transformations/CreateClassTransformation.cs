@@ -11,42 +11,41 @@ namespace EfModelMigrations.Transformations
 {
     public class CreateClassTransformation : ModelTransformation
     {
-        public string ClassName { get; private set; }
+        public string Name { get; private set; }
         public IEnumerable<PropertyCodeModel> Properties { get; private set; }
 
         //TODO: Pridat ve vsech transformaci validace na parametry v konstruktoru - jako v commandech
-        public CreateClassTransformation(string className, IEnumerable<PropertyCodeModel> properties)
+        public CreateClassTransformation(string name, IEnumerable<PropertyCodeModel> properties)
         {
-            this.ClassName = className;
+            this.Name = name;
             this.Properties = properties;
         }
 
-        public override IEnumerable<ModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
+        public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            var classModel = modelProvider.CreateClassCodeModel(ClassName, null, null, null, Properties);
-
-            //TODO: vyhayovat vyjimky pokud trida jiz existuje... i jinde treba v addproperty pokud property jiz existuje atd..
-            yield return new CreateClassOperation(classModel);
+            //TODO: vyhazovat vyjimky pokud trida jiz existuje... i jinde treba v addproperty pokud property jiz existuje atd..
+            yield return new CreateEmptyClassOperation(Name);
             foreach (var property in Properties)
             {
-                yield return new AddPropertyToClassOperation(classModel, property);
+                yield return new AddPropertyToClassOperation(Name, property);
             }
             
         }
 
-        public override IEnumerable<IMappingInformation> GetMappingInformations(IClassModelProvider modelProvider)
+        public override IEnumerable<IMappingInformation> GetMappingInformationsToAdd(IClassModelProvider modelProvider)
         {
-            yield return new DbSetPropertyInfo(ClassName);
-        }
-
-        public override ModelTransformation Inverse()
-        {
-            return new RemoveClassTransformation(ClassName);
+            yield return new DbSetPropertyInfo(Name);
         }
 
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
         {
-            return builder.CreateTableOperation(ClassName);
+            return builder.CreateTableOperation(Name);
         }
+
+        public override ModelTransformation Inverse()
+        {
+            return new RemoveClassTransformation(Name, this);
+        }
+
     }
 }

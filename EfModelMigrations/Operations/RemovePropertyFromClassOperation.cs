@@ -8,25 +8,16 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations
 {
-    public class RemovePropertyFromClassOperation : ModelChangeOperation
+    public class RemovePropertyFromClassOperation : IModelChangeOperation
     {
-        private ClassCodeModel classModel;
-        private PropertyCodeModel propertyModel;
-
-        public RemovePropertyFromClassOperation(ClassCodeModel classModel, PropertyCodeModel propertyModel)
+        public string ClassName { get; private set; }
+        public string Name { get; private set; }
+        
+        public RemovePropertyFromClassOperation(string className, string name)
         {
-            this.classModel = classModel;
-            this.propertyModel = propertyModel;
+            this.ClassName = className;
+            this.Name = name;
         }
 
-        public override void ExecuteModelChanges(IModelChangesProvider provider)
-        {
-            provider.RemovePropertyFromClass(classModel, propertyModel);
-        }
-
-        public override ModelChangeOperation Inverse()
-        {
-            return new AddPropertyToClassOperation(classModel, propertyModel);
-        }
     }
 }
