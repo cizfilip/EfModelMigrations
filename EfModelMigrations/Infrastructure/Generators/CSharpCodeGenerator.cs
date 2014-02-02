@@ -10,6 +10,13 @@ namespace EfModelMigrations.Infrastructure.Generators
 {
     internal class CSharpCodeGenerator : ICodeGenerator
     {
+        private IMappingInformationsGenerator mappingGenerator;
+
+        public CSharpCodeGenerator(IMappingInformationsGenerator mappingGenerator)
+        {
+            this.mappingGenerator = mappingGenerator;
+        }
+
         public string GenerateEmptyClass(string name, string @namespace, 
             CodeModelVisibility visibility, string baseType, 
             IEnumerable<string> implementedInterfaces)
@@ -35,26 +42,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }.TransformText();
         }
 
-        public string GenerateDbSetProperty(string classNameForAddProperty)
-        {
-            //TODO: Takhle jde delat dpset property bez public setteru
-            //public DbSet<Blog> Blogs
-            //{
-            //    get { return Set<Blog>(); }
-            //}
-
-            //TODO: Pluralizovat jmeno pomoci EF
-            //private IPluralizationService _pluralizationService
-            //= DbConfiguration.DependencyResolver.GetService<IPluralizationService>();
-
-            return new DbSetPropertyTemplate()
-            {
-                GenericType = classNameForAddProperty,
-                Name = classNameForAddProperty + "Set" //TODO: asi spis pluralizovat jmeno
-            }.TransformText();
-        }
-
-
+        
         public string GetFileExtensions()
         {
             return ".cs";
@@ -88,6 +76,15 @@ namespace EfModelMigrations.Infrastructure.Generators
         }
 
 
-        
+
+
+
+        public IMappingInformationsGenerator MappingGenerator
+        {
+            get
+            {
+                return mappingGenerator;
+            }
+        }
     }
 }

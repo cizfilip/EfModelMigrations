@@ -2,10 +2,9 @@
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
-using EfModelMigrations.Mapping;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
+using EfModelMigrations.Operations.Mapping;
 
 namespace EfModelMigrations.Transformations
 {
@@ -29,12 +28,8 @@ namespace EfModelMigrations.Transformations
             {
                 yield return new AddPropertyToClassOperation(Name, property);
             }
-            
-        }
 
-        public override IEnumerable<IMappingInformation> GetMappingInformationsToAdd(IClassModelProvider modelProvider)
-        {
-            yield return new DbSetPropertyInfo(Name);
+            yield return new AddMappingInformationOperation(new DbSetPropertyInfo(Name));
         }
 
         public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)

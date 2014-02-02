@@ -1,6 +1,5 @@
 ﻿using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
-using EfModelMigrations.Mapping;
 using EfModelMigrations.Operations;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -14,16 +13,6 @@ namespace EfModelMigrations.Transformations
         public virtual IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
             return Enumerable.Empty<IModelChangeOperation>();
-        }
-
-        public virtual IEnumerable<IMappingInformation> GetMappingInformationsToAdd(IClassModelProvider modelProvider)
-        {
-            return Enumerable.Empty<IMappingInformation>();
-        }
-
-        public virtual IEnumerable<IMappingInformation> GetMappingInformationsToRemove(IClassModelProvider modelProvider)
-        {
-            return Enumerable.Empty<IMappingInformation>();
         }
 
         public virtual MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)

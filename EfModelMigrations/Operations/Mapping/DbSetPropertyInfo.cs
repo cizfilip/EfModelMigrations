@@ -1,5 +1,4 @@
-﻿
-namespace EfModelMigrations.Mapping
+﻿namespace EfModelMigrations.Operations.Mapping
 {
     public class DbSetPropertyInfo : IMappingInformation
     {

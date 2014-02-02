@@ -67,8 +67,11 @@
     <Compile Include="Infrastructure\EntityFramework\ExtendedCSharpMigrationCodeGenerator.cs" />
     <Compile Include="Infrastructure\EntityFramework\IDbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\Generators\CSharpCodeGenerator.cs" />
+    <Compile Include="Infrastructure\Generators\CSharpMappingInformationsGenerator.cs" />
+    <Compile Include="Infrastructure\Generators\GeneratedMappingInformation.cs" />
     <Compile Include="Infrastructure\Generators\GeneratedModelMigration.cs" />
     <Compile Include="Infrastructure\Generators\ICodeGenerator.cs" />
+    <Compile Include="Infrastructure\Generators\IMappingInformationsGenerator.cs" />
     <Compile Include="Infrastructure\Generators\IModelMigrationGenerator.cs" />
     <Compile Include="Infrastructure\Generators\CSharpModelMigrationGenerator.cs" />
     <Compile Include="Infrastructure\Generators\ModelMigrationGeneratorBase.cs" />
@@ -97,20 +100,22 @@
     </Compile>
     <Compile Include="Infrastructure\Generators\Templates\PropertyTemplateDefinitions.cs" />
     <Compile Include="Infrastructure\IClassModelProvider.cs" />
-    <Compile Include="Infrastructure\IMappingInformationsProvider.cs" />
     <Compile Include="Infrastructure\IModelChangesExecutor.cs" />
     <Compile Include="Infrastructure\ModelMigrationIdGenerator.cs" />
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
-    <Compile Include="Mapping\DbSetPropertyInfo.cs" />
-    <Compile Include="Mapping\IMappingInformation.cs" />
+    <Compile Include="Operations\Mapping\AddMappingInformationOperation.cs" />
+    <Compile Include="Operations\Mapping\DbSetPropertyInfo.cs" />
+    <Compile Include="Operations\Mapping\IMappingInformation.cs" />
     <Compile Include="ModelMigration.cs" />
     <Compile Include="ModelMigrationExtensions.cs" />
     <Compile Include="ModelMigrationIdAttribute.cs" />
     <Compile Include="Operations\AddPropertyToClassOperation.cs" />
     <Compile Include="Operations\CreateEmptyClassOperation.cs" />
     <Compile Include="Operations\IModelChangeOperation.cs" />
+    <Compile Include="Operations\Mapping\MappingInformationOperation.cs" />
+    <Compile Include="Operations\Mapping\RemoveMappingInformationOperation.cs" />
     <Compile Include="Operations\RemoveClassOperation.cs" />
     <Compile Include="Operations\RemovePropertyFromClassOperation.cs" />
     <Compile Include="Operations\RenameClassOperation.cs" />

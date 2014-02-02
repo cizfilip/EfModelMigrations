@@ -1,5 +1,5 @@
 ﻿
-namespace EfModelMigrations.Mapping
+namespace EfModelMigrations.Operations.Mapping
 {
     public interface IMappingInformation
     {

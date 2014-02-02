@@ -17,7 +17,7 @@ namespace EfModelMigrations.Configuration
         public ModelMigrationsConfigurationBase()
         {
             ModelMigrationGenerator = new CSharpModelMigrationGenerator();
-            CodeGenerator = new CSharpCodeGenerator();
+            CodeGenerator = new CSharpCodeGenerator(new CSharpMappingInformationsGenerator());
             ModelMigrationsNamespace = GetType().Namespace;
             ModelMigrationsAssembly = GetType().Assembly;
             ModelMigrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;

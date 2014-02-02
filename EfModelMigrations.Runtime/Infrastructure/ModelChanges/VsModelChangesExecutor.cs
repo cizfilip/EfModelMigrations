@@ -4,6 +4,7 @@ using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.Generators;
 using EfModelMigrations.Operations;
+using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers;
 using EfModelMigrations.Runtime.Properties;
@@ -111,7 +112,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         protected void ExecuteOperation(RemovePropertyFromClassOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
-            
+
             CodeProperty2 codeProperty = FindProperty(codeClass, operation.Name);
 
             try
@@ -157,35 +158,65 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
+        #region Mapping Informations
 
-        #region IDbContextChangesProvider Implementation
-
-        public void AddDbSetPropertyForClass(string classNameForAddProperty)
+        protected void ExecuteOperation(AddMappingInformationOperation operation)
         {
-            CodeClass2 contextClass = GetDbContextCodeClass();
-
-            AddPropertyToClassInternal(contextClass,
-                codeGenerator.GenerateDbSetProperty(classNameForAddProperty),
-                e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
-                    classNameForAddProperty), e)
-                );
+            throw new NotImplementedException();
+            //var generatedInfo = codeGenerator.MappingGenerator.Generate(operation.MappingInformation);
+            //HandleMappingInformation(generatedInfo, isAdding: true);
         }
 
-        public void RemoveDbSetPropertyForClass(string classNameForRemoveProperty)
+        protected void ExecuteOperation(RemoveMappingInformationOperation operation)
         {
-            CodeClass2 contextClass = GetDbContextCodeClass();
-
-            CodeProperty2 property = FindPropertyOnDbContext(contextClass, classNameForRemoveProperty);
-
-            try
-            {
-                contextClass.RemoveMember(property);
-            }
-            catch (Exception e)
-            {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveDbSetProperty, classNameForRemoveProperty), e);
-            }
+            throw new NotImplementedException();
+            //HandleMappingInformation(generatedInfo, isAdding: false);
         }
+
+        //private void HandleMappingInformation(GeneratedMappingInformation mappingInfo, bool isAdding)
+        //{
+        //    if (mappingInfo.Type == MappingInformationType.DbContextProperty)
+        //    {
+        //        if (isAdding)
+        //        {
+        //            AddDbSetPropertyForClass(mappingInfo.Value, )
+        //        }
+        //        else
+        //        {
+
+        //        }
+        //    }
+        //    else
+        //    {
+        //        throw new NotImplementedException();
+        //    }
+        //}
+
+        //public void AddDbSetPropertyForClass(string propertyString, string classNameForAddProperty)
+        //{
+        //    CodeClass2 contextClass = GetDbContextCodeClass();
+
+        //    AddPropertyToClassInternal(contextClass, propertyString,
+        //        e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
+        //            classNameForAddProperty), e)
+        //        );
+        //}
+
+        //public void RemoveDbSetPropertyForClass(string classNameForRemoveProperty)
+        //{
+        //    CodeClass2 contextClass = GetDbContextCodeClass();
+
+        //    CodeProperty2 property = FindPropertyOnDbContext(contextClass, classNameForRemoveProperty);
+
+        //    try
+        //    {
+        //        contextClass.RemoveMember(property);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveDbSetProperty, classNameForRemoveProperty), e);
+        //    }
+        //}
 
         #endregion
 
