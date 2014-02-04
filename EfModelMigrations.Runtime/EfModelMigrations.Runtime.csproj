@@ -67,6 +67,7 @@
     <Compile Include="Infrastructure\ModelChanges\Helpers\CodeClassFinder.cs" />
     <Compile Include="Infrastructure\ModelChanges\Helpers\VsCodeClassToClassCodeModelMapper.cs" />
     <Compile Include="Infrastructure\ModelChanges\VsClassModelProvider.cs" />
+    <Compile Include="Infrastructure\ModelChanges\VsMappingInformationRemover.cs" />
     <Compile Include="Infrastructure\ModelChanges\VsModelChangesExecutor.cs" />
     <Compile Include="Infrastructure\NewAppDomainExecutor.cs" />
     <Compile Include="Infrastructure\Runners\BaseRunner.cs" />

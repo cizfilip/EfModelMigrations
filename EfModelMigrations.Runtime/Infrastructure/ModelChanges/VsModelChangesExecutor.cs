@@ -27,6 +27,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private string dbContextFullName;
         private ICodeGenerator codeGenerator;
         private CodeClassFinder classFinder;
+        private IMappingInformationRemover mappingRemover;
 
 
         public VsModelChangesExecutor(Project modelProject,
@@ -39,6 +40,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             this.dbContextFullName = dbContextFullName;
             this.codeGenerator = codeGenerator;
             this.classFinder = new CodeClassFinder(modelProject);
+            this.mappingRemover = new VsMappingInformationRemover(modelNamespace, dbContextFullName, classFinder);
         }
 
 
@@ -162,61 +164,34 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         protected void ExecuteOperation(AddMappingInformationOperation operation)
         {
-            throw new NotImplementedException();
-            //var generatedInfo = codeGenerator.MappingGenerator.Generate(operation.MappingInformation);
-            //HandleMappingInformation(generatedInfo, isAdding: true);
+            var generatedInfo = codeGenerator.MappingGenerator.Generate(operation.MappingInformation);
+            switch (generatedInfo.Type)
+            {
+                case MappingInformationType.DbContextProperty:
+                    CodeClass2 contextClass = GetDbContextCodeClass();
+                    AddPropertyToClassInternal(contextClass, generatedInfo.Value,
+                        e => new ModelMigrationsException(
+                            string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
+                            (operation.MappingInformation as DbSetPropertyInfo).ClassName)
+                            , e)
+                        );
+                    break;
+                case MappingInformationType.EntityTypeConfiguration:
+
+                    break;
+                case MappingInformationType.CodeAttribute:
+                    throw new NotImplementedException();
+                default:
+                    //TODO: string do resourcu
+                    throw new ModelMigrationsException("Unknown generated mapping information type.");
+            }
         }
 
         protected void ExecuteOperation(RemoveMappingInformationOperation operation)
         {
-            throw new NotImplementedException();
-            //HandleMappingInformation(generatedInfo, isAdding: false);
+            mappingRemover.Remove(operation.MappingInformation);
         }
-
-        //private void HandleMappingInformation(GeneratedMappingInformation mappingInfo, bool isAdding)
-        //{
-        //    if (mappingInfo.Type == MappingInformationType.DbContextProperty)
-        //    {
-        //        if (isAdding)
-        //        {
-        //            AddDbSetPropertyForClass(mappingInfo.Value, )
-        //        }
-        //        else
-        //        {
-
-        //        }
-        //    }
-        //    else
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //}
-
-        //public void AddDbSetPropertyForClass(string propertyString, string classNameForAddProperty)
-        //{
-        //    CodeClass2 contextClass = GetDbContextCodeClass();
-
-        //    AddPropertyToClassInternal(contextClass, propertyString,
-        //        e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
-        //            classNameForAddProperty), e)
-        //        );
-        //}
-
-        //public void RemoveDbSetPropertyForClass(string classNameForRemoveProperty)
-        //{
-        //    CodeClass2 contextClass = GetDbContextCodeClass();
-
-        //    CodeProperty2 property = FindPropertyOnDbContext(contextClass, classNameForRemoveProperty);
-
-        //    try
-        //    {
-        //        contextClass.RemoveMember(property);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveDbSetProperty, classNameForRemoveProperty), e);
-        //    }
-        //}
+                
 
         #endregion
 
@@ -267,43 +242,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             return classFinder.FindCodeClassFromFullName(dbContextFullName);
         }
 
-        private CodeProperty2 FindPropertyOnDbContext(CodeClass2 ctxClass, string classNameForRemoveProperty)
-        {
-            try
-            {
-                CodeProperty2 property = ctxClass.Children.OfType<CodeProperty2>()
-                    .Where(p => IsDbSetPropertyForClass(p.Type as CodeTypeRef2, classNameForRemoveProperty))
-                    .Single();
+        
 
-                return property;
-            }
-            catch (Exception e)
-            {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindDbSetProperty, classNameForRemoveProperty), e);
-            }
-        }
-
-        private bool IsDbSetPropertyForClass(CodeTypeRef2 codeTypeRef, string classNameForRemoveProperty)
-        {
-            if (codeTypeRef == null || !codeTypeRef.IsGeneric)
-                return false;
-
-            string fullTypeName = codeTypeRef.AsFullName;
-
-            string genericTypeName = null;
-            Match match = Regex.Match(fullTypeName, @"[^<]+<(.+)>$", RegexOptions.None);
-            if (match.Success)
-            {
-                genericTypeName = match.Groups[1].Value;
-            }
-
-            string fullClassName = modelNamespace + "." + classNameForRemoveProperty;
-
-            if (fullClassName.EqualsOrdinal(genericTypeName))
-                return true;
-
-            return false;
-        }
+        
 
         #endregion
 

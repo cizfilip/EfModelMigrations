@@ -100,6 +100,7 @@
     </Compile>
     <Compile Include="Infrastructure\Generators\Templates\PropertyTemplateDefinitions.cs" />
     <Compile Include="Infrastructure\IClassModelProvider.cs" />
+    <Compile Include="Infrastructure\IMappingInformationRemover.cs" />
     <Compile Include="Infrastructure\IModelChangesExecutor.cs" />
     <Compile Include="Infrastructure\ModelMigrationIdGenerator.cs" />
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
