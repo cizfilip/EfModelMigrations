@@ -21,6 +21,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
     internal class VsModelChangesExecutor : IModelChangesExecutor
     {
+        private HistoryTracker historyTracker;
         private Project modelProject;
         //TODO: asi by stacilo aby ClassCodeModel mela property FullName (ale musim nejak zaridit aby mela modelnamespace)
         private string modelNamespace;
@@ -30,17 +31,19 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private IMappingInformationRemover mappingRemover;
 
 
-        public VsModelChangesExecutor(Project modelProject,
+        public VsModelChangesExecutor(HistoryTracker historyTracker,
+            Project modelProject,
             string modelNamespace,
             string dbContextFullName,
             ICodeGenerator codeGenerator)
         {
+            this.historyTracker = historyTracker;
             this.modelProject = modelProject;
             this.modelNamespace = modelNamespace;
             this.dbContextFullName = dbContextFullName;
             this.codeGenerator = codeGenerator;
             this.classFinder = new CodeClassFinder(modelProject);
-            this.mappingRemover = new VsMappingInformationRemover(modelNamespace, dbContextFullName, classFinder);
+            this.mappingRemover = new VsMappingInformationRemover(historyTracker, modelNamespace, dbContextFullName, classFinder);
         }
 
 
@@ -73,7 +76,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             try
             {
-                modelProject.AddContentToProject(filePath, classContent);
+                var newProjectItem = modelProject.AddContentToProject(filePath, classContent);
+                historyTracker.MarkItemAdded(newProjectItem);
             }
             catch (Exception e)
             {
@@ -91,6 +95,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             try
             {
                 var projectItem = codeClass.ProjectItem;
+                historyTracker.MarkItemDeleted(projectItem);
                 projectItem.Delete();
             }
             catch (Exception e)
@@ -103,6 +108,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
 
+            historyTracker.MarkItemModified(codeClass.ProjectItem);
+
             AddPropertyToClassInternal(codeClass,
                 codeGenerator.GenerateProperty(operation.Model),
                 e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddProperty,
@@ -114,6 +121,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         protected void ExecuteOperation(RemovePropertyFromClassOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
+
+            historyTracker.MarkItemModified(codeClass.ProjectItem);
 
             CodeProperty2 codeProperty = FindProperty(codeClass, operation.Name);
 
@@ -130,6 +139,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         protected void ExecuteOperation(RenameClassOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.OldName);
+
+            historyTracker.MarkItemModified(codeClass.ProjectItem);
 
             CodeElement2 classElement = codeClass as CodeElement2;
 
@@ -149,6 +160,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         protected void ExecuteOperation(RenamePropertyOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
+
+            historyTracker.MarkItemModified(codeClass.ProjectItem);
+
             CodeElement2 property = FindProperty(codeClass, operation.OldName) as CodeElement2;
             try
             {
@@ -169,6 +183,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             {
                 case MappingInformationType.DbContextProperty:
                     CodeClass2 contextClass = GetDbContextCodeClass();
+
+                    historyTracker.MarkItemModified(contextClass.ProjectItem);
+
                     AddPropertyToClassInternal(contextClass, generatedInfo.Value,
                         e => new ModelMigrationsException(
                             string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,

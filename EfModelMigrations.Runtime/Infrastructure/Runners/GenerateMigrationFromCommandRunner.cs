@@ -26,8 +26,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
         public override void Run()
         {
             //Initialize Command
-            //TODO: If Command not found Exception message from typefinder is too general, maybe rethrow here with better message
-
+            
             ModelMigrationsCommand command;
 
             try
@@ -66,12 +65,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
             Return(generatedMigration);
         }
-
-        private string GetConventionCommandName()
-        {
-            return CommandFullName + "Command";
-        }
-
+        
     
 
         

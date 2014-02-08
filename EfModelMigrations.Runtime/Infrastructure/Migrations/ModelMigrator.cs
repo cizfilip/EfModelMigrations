@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Runtime.Extensions;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Runtime.Infrastructure.Runners.Migrators;
 using EfModelMigrations.Runtime.Properties;
 using EnvDTE;
@@ -34,11 +35,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         private void Migrate(string migrationId, bool isRevert)
         {
             //apply model changes
+            HistoryTracker historyTracker = new HistoryTracker();
             string oldEdmxModel;
 
             using (var executor = executorFactory())
             {
-                oldEdmxModel = ExecuteApplyRunner(executor, migrationId, isRevert);
+                oldEdmxModel = ExecuteApplyRunner(executor, migrationId, isRevert, historyTracker);
             }
 
             ScaffoldedMigration scaffoldedMigration = null;
@@ -68,7 +70,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 //Ensure nothing from migration is added to project if error happen
                 RemoveDbMigration(scaffoldedMigration);
                                 
-                RevertModelChanges(migrationId, isRevert);
+                RevertModelChanges(historyTracker);
                 throw;
             }
 
@@ -101,28 +103,25 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             catch (Exception)
             {
                 RemoveDbMigration(scaffoldedMigration);
-                RevertModelChanges(migrationId, isRevert);
+                RevertModelChanges(historyTracker);
                 throw;
             }
         }
 
-        private string ExecuteApplyRunner(NewAppDomainExecutor executor, string migrationId, bool isRevert)
+        private string ExecuteApplyRunner(NewAppDomainExecutor executor, string migrationId, bool isRevert, HistoryTracker historyTracker)
         {
             return executor.ExecuteRunner<string>(new ApplyModelChangesRunner()
             {
+                HistoryTracker = historyTracker,
                 ModelProject = modelProject,
                 ModelMigrationId = migrationId,
                 IsRevert = isRevert
             });
         }
 
-        private void RevertModelChanges(string migrationId, bool isRevert)
+        private void RevertModelChanges(HistoryTracker historyTracker)
         {
-            //Run apply changes in oposite direction
-            using (var executor = executorFactory())
-            {
-                ExecuteApplyRunner(executor, migrationId, !isRevert);
-            }
+            historyTracker.Restore();
         }
 
         private void RemoveDbMigration(ScaffoldedMigration scaffoldedMigration)

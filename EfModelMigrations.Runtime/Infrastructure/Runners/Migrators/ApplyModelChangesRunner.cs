@@ -1,15 +1,10 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
-using EfModelMigrations.Transformations;
-using EnvDTE;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 {
@@ -17,6 +12,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
     [Serializable]
     internal class ApplyModelChangesRunner : MigratorBaseRunner
     {
+        public HistoryTracker HistoryTracker { get; set; }
         public bool IsRevert { get; set; }
 
         public override void Run()
@@ -29,7 +25,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
             
             string dbContextFullName = DbConfiguration.ContextType.FullName;         
 
-            var modelChangesExecutor = new VsModelChangesExecutor(ModelProject, 
+            var modelChangesExecutor = new VsModelChangesExecutor(HistoryTracker,
+                ModelProject, 
                 Configuration.ModelNamespace, 
                 dbContextFullName,
                 Configuration.CodeGenerator

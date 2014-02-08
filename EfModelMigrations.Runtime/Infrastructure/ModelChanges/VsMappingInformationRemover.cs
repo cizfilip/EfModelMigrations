@@ -17,12 +17,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
     internal class VsMappingInformationRemover : IMappingInformationRemover
     {
+        private HistoryTracker historyTracker;
         private string modelNamespace;
         private string dbContextFullName;
         private CodeClassFinder classFinder;
 
-        public VsMappingInformationRemover(string modelNamespace, string dbContextFullName, CodeClassFinder classFinder)
+        public VsMappingInformationRemover(HistoryTracker historyTracker, string modelNamespace, string dbContextFullName, CodeClassFinder classFinder)
         {
+            this.historyTracker = historyTracker;
             this.modelNamespace = modelNamespace;
             this.dbContextFullName = dbContextFullName;
             this.classFinder = classFinder;
@@ -45,6 +47,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private void RemoveMapping(DbSetPropertyInfo mappingInfo)
         {
             CodeClass2 contextClass = GetDbContextCodeClass();
+
+            historyTracker.MarkItemModified(contextClass.ProjectItem);
 
             CodeProperty2 property = FindPropertyOnDbContext(contextClass, mappingInfo.ClassName);
 

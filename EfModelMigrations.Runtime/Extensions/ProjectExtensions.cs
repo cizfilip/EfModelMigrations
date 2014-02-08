@@ -57,7 +57,7 @@ namespace EfModelMigrations.Runtime.Extensions
             return project.GetPropertyValue<string>("RootNamespace");
         }
 
-        public static void AddContentToProject(this Project project, string relativePath, string content)
+        public static ProjectItem AddContentToProject(this Project project, string relativePath, string content)
         {
             if (Path.IsPathRooted(relativePath))
                 throw new ArgumentException(Resources.ProjectExtensions_PathMustBeRelative, "relativePath");
@@ -66,12 +66,12 @@ namespace EfModelMigrations.Runtime.Extensions
 
             Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
             File.WriteAllText(absolutePath, content);
-            project.ProjectItems.AddFromFile(absolutePath);
+            return project.ProjectItems.AddFromFile(absolutePath);
         }
 
-        public static void AddFileToProject(this Project project, string path)
+        public static ProjectItem AddFileToProject(this Project project, string path)
         {
-            project.ProjectItems.AddFromFile(path);
+            return project.ProjectItems.AddFromFile(path);
         }
 
         private static T GetPropertyValue<T>(this Project project, string propertyName)
