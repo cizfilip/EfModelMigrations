@@ -121,7 +121,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
         private void RevertModelChanges(HistoryTracker historyTracker)
         {
-            historyTracker.Restore();
+            historyTracker.Restore(modelProject);
         }
 
         private void RemoveDbMigration(ScaffoldedMigration scaffoldedMigration)

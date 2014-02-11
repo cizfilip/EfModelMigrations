@@ -144,6 +144,9 @@
   <data name="NoMigrationsToApplyOrRevert" xml:space="preserve">
     <value>Unable to find any migration to apply or revert.</value>
   </data>
+  <data name="ProjectExtensions_PathMustBeAbsolute" xml:space="preserve">
+    <value>Specified path must be absolute.</value>
+  </data>
   <data name="ProjectExtensions_PathMustBeRelative" xml:space="preserve">
     <value>Specified path must be relative to project directory.</value>
   </data>

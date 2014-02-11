@@ -69,6 +69,16 @@ namespace EfModelMigrations.Runtime.Extensions
             return project.ProjectItems.AddFromFile(absolutePath);
         }
 
+        public static ProjectItem AddContentToProjectFromAbsolutePath(this Project project, string absolutePath, string content)
+        {
+            if (!Path.IsPathRooted(absolutePath))
+                throw new ArgumentException(Resources.ProjectExtensions_PathMustBeAbsolute, "absolutePath");
+
+            Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
+            File.WriteAllText(absolutePath, content);
+            return project.ProjectItems.AddFromFile(absolutePath);
+        }
+
         public static ProjectItem AddFileToProject(this Project project, string path)
         {
             return project.ProjectItems.AddFromFile(path);

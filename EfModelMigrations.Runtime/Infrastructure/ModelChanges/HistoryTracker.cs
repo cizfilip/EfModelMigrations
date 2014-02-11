@@ -1,6 +1,8 @@
 ﻿using EnvDTE;
 using System;
 using System.Collections.Generic;
+using EfModelMigrations.Runtime.Extensions;
+using System.IO;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
@@ -40,6 +42,94 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         }
 
 
+        public void Restore(Project modelProject)
+        {
+            try
+            {
+                foreach (var item in history)
+                {
+                    ProjectItem projectItem;
+                    if (TryFindProjectItem(modelProject, item.Key, out projectItem))
+                    {
+                        RestoreFoundHistoryItem(modelProject, projectItem, item.Value);
+                    }
+                    else
+                    {
+                        RestoreLostHistoryItem(modelProject, item.Key, item.Value);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                //TODO: wrap e in new FatalError exception?
+                throw;
+            }
+        }
+
+        private void RestoreLostHistoryItem(Project modelProject, string path, HistoryItem historyItem)
+        {
+            if (historyItem.Type == HistoryItemType.ModifiedOrDeleted)
+            {
+                modelProject.AddContentToProjectFromAbsolutePath(path, historyItem.Content);
+            }
+        }
+
+        private void RestoreFoundHistoryItem(Project modelProject, ProjectItem projectItem, HistoryItem historyItem)
+        {
+            switch (historyItem.Type)
+            {
+                case HistoryItemType.Added:
+                    projectItem.Delete();
+                    break;
+                case HistoryItemType.ModifiedOrDeleted:
+                    var document = GetProjectItemDocument(projectItem) as TextDocument;
+                    var endPoint = document.EndPoint;
+                    document.StartPoint.CreateEditPoint().ReplaceText(endPoint, historyItem.Content, (int)vsEPReplaceTextOptions.vsEPReplaceTextKeepMarkers);
+                    break;
+                default:
+                    throw new InvalidOperationException("Invalid history item type."); //TODO: string do resaurcu
+            }
+        }
+
+        private bool TryFindProjectItem(Project modelProject, string fullPath, out ProjectItem projectItem)
+        {
+            try
+            {
+                string[] relativePath = GetRelativePath(modelProject, fullPath)
+                    .Split(new char[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar },
+                            StringSplitOptions.RemoveEmptyEntries);
+
+
+                ProjectItems projectItems = modelProject.ProjectItems;
+
+                for (int i = 0; i < relativePath.Length - 1; i++)
+                {
+                    projectItems = projectItems.Item(relativePath[i]).ProjectItems;
+                }
+
+                ProjectItem itemToReturn = projectItems.Item(relativePath[relativePath.Length - 1]);
+                if (itemToReturn != null)
+                {
+                    projectItem = itemToReturn;
+                    return true;
+                }
+            }
+            catch (ArgumentException) //Cannot find (projectItems.Item() throws) 
+            {
+            }
+            projectItem = null;
+            return false;
+        }
+
+        private string GetRelativePath(Project modelProject, string fullPath)
+        {
+            string rootPath = modelProject.GetProjectDir();
+
+            return fullPath.Replace(rootPath, "");
+        }
+
+        #region Private methods
+
         private void MarkItemModifiedOrDeleted(ProjectItem item)
         {
             if (item == null)
@@ -57,7 +147,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         private string GetItemKey(ProjectItem item)
         {
-            var document = item.Document;
+            var document = GetProjectItemDocument(item);
             if (document != null)
             {
                 return document.FullName;
@@ -69,7 +159,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         private string GetItemContent(ProjectItem item)
         {
-            var textDocument = item.Document as TextDocument;
+            var textDocument = GetProjectItemDocument(item) as TextDocument;
             if (textDocument != null)
             {
                 var editPoint = textDocument.StartPoint.CreateEditPoint();
@@ -82,11 +172,18 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         }
 
 
-        public void Restore()
+        private Document GetProjectItemDocument(ProjectItem item)
         {
-
+            if (!item.get_IsOpen())
+            {
+                item.Open();
+            }
+            return item.Document;
         }
 
+        #endregion
+
+        #region Helper classes
         [Serializable]
         private class HistoryItem
         {
@@ -116,8 +213,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             Added,
             ModifiedOrDeleted
         }
+
+        #endregion
     }
 
-    
+
 
 }
