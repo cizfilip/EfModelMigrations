@@ -174,8 +174,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         private Document GetProjectItemDocument(ProjectItem item)
         {
+            
             if (!item.get_IsOpen())
             {
+                //TODO: nelze volat jelikoz to vraci object Window a ten neni serializovatelny - tudiz to spadne behem prenaseni mezi appdomenama
                 item.Open();
             }
             return item.Document;

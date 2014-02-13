@@ -45,6 +45,15 @@ namespace EfModelMigrations
             migration.AddTransformation(new RenamePropertyTransformation(className, oldPropertyName, newPropertyName));
         }
 
+        public static void ExtractComplexType(this ModelMigration migration, string className, string complexTypeName, string[] propertiesToExtract)
+        {
+            migration.AddTransformation(new ExtractComplexTypeTransformation(className, complexTypeName, propertiesToExtract, NavigationPropertyCodeModel.Default(complexTypeName)));
+        }
+
+        public static void JoinComplexType(this ModelMigration migration, string complexTypeName, string className)
+        {
+            migration.AddTransformation(new JoinComplexTypeTransformation(complexTypeName, className));
+        }
 
         private static IEnumerable<PropertyCodeModel> ConvertObjectToPropertyModel(object properties)
         {

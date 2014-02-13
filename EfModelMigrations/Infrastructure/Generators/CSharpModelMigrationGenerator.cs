@@ -52,7 +52,6 @@ namespace EfModelMigrations.Infrastructure.Generators
                     //TODO: string do resourcu
                     throw new ModelMigrationsException(string.Format("Cannot generate migration code for model transformation {0}. Generator implementation is missing.", transformation.GetType().Name), e);
                 }
-                Generate(transformation, builder);
             }
 
             //remove last new line
@@ -135,6 +134,33 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(QuoteString(transformation.OldName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.NewName));
+            builder.AppendLine(");");
+        }
+
+        protected virtual void Generate(ExtractComplexTypeTransformation transformation, StringBuilder builder)
+        {
+            builder.Append("this.ExtractComplexType(");
+            builder.Append(QuoteString(transformation.ClassName));
+            builder.Append(", ");
+            builder.Append(QuoteString(transformation.ComplexTypeName));
+            builder.Append(", ");
+            builder.Append("new string[] { ");
+            foreach (var property in transformation.PropertiesToExtract)
+            {
+                builder.Append(QuoteString(property));
+                builder.Append(", ");
+            }
+
+            builder.Append("}");
+            builder.AppendLine(");");
+        }
+
+        protected virtual void Generate(JoinComplexTypeTransformation transformation, StringBuilder builder)
+        {
+            builder.Append("this.JoinComplexType(");
+            builder.Append(QuoteString(transformation.ComplexTypeName));
+            builder.Append(", ");
+            builder.Append(QuoteString(transformation.ClassName));
             builder.AppendLine(");");
         }
 
