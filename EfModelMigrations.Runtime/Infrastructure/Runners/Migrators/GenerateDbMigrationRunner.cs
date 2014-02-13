@@ -27,7 +27,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
             var operationBuilder = new DbMigrationOperationBuilder(Configuration.ModelNamespace, LoadEdmxFromString(OldEdmxModel), GetEdmxModel());
 
             IEnumerable<MigrationOperation> dbMigrationOperations = GetModelTransformations(IsRevert)
-                .Select(t => t.GetDbMigrationOperation(operationBuilder));
+                .SelectMany(t => t.GetDbMigrationOperations(operationBuilder));
                         
 
             DbMigrationsConfiguration configuration = CreateInstance<DbMigrationsConfiguration>(Configuration.EfMigrationsConfigurationType);

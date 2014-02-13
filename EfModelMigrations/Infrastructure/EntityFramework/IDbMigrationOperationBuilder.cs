@@ -21,5 +21,11 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         //Rename operatoins
         RenameTableOperation RenameTableOperation(string oldClassName, string newClassName);
         RenameColumnOperation RenameColumnOperation(string className, string oldPropertyName, string newPropertyName);
+
+        IEnumerable<RenameColumnOperation> RenameColumnOperationsForJoinComplexType(string complexTypeName, string className);
+
+
+        //Relations
+        IEnumerable<MigrationOperation> OneToOneRelationOperations(string principalClassName, string dependentClassName);
     }
 }

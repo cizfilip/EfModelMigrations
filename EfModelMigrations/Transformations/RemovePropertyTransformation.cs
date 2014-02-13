@@ -35,10 +35,10 @@ namespace EfModelMigrations.Transformations
             yield return new RemovePropertyFromClassOperation(ClassName, Name);
         }
 
-        public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
+        public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.DropColumnOperation(ClassName, Name);
+            yield return builder.DropColumnOperation(ClassName, Name);
         }
-
+        
     }
 }

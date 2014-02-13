@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Commands\AddPropertiesCommand.cs" />
     <Compile Include="Commands\CreateClassCommand.cs" />
+    <Compile Include="Commands\ExtractComplexTypeCommand.cs" />
     <Compile Include="Commands\ModelMigrationsCommand.cs" />
     <Compile Include="Commands\ParametersParser.cs" />
     <Compile Include="Commands\RemoveClassCommand.cs" />
@@ -59,7 +60,9 @@
     <Compile Include="Exceptions\ModelMigrationsException.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Infrastructure\CodeModel\ClassMemberCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\CodeModelVisibility.cs" />
+    <Compile Include="Infrastructure\CodeModel\NavigationPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\EdmxNames.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\EdmxXmlExtensions.cs" />
@@ -116,7 +119,9 @@
     <Compile Include="Operations\CreateEmptyClassOperation.cs" />
     <Compile Include="Operations\IModelChangeOperation.cs" />
     <Compile Include="Operations\Mapping\MappingInformationOperation.cs" />
+    <Compile Include="Operations\Mapping\OneToOneAssociationInfo.cs" />
     <Compile Include="Operations\Mapping\RemoveMappingInformationOperation.cs" />
+    <Compile Include="Operations\MovePropertyOperation.cs" />
     <Compile Include="Operations\RemoveClassOperation.cs" />
     <Compile Include="Operations\RemovePropertyFromClassOperation.cs" />
     <Compile Include="Operations\RenameClassOperation.cs" />
@@ -127,8 +132,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Transformations\AddOneToOneAssociationTransformation.cs" />
     <Compile Include="Transformations\AddPropertyTransformation.cs" />
     <Compile Include="Transformations\CreateClassTransformation.cs" />
+    <Compile Include="Transformations\ExtractComplexTypeTransformation.cs" />
+    <Compile Include="Transformations\JoinComplexTypeTransformation.cs" />
     <Compile Include="Transformations\ModelTransformation.cs" />
     <Compile Include="Transformations\RemoveClassTransformation.cs" />
     <Compile Include="Transformations\RemovePropertyTransformation.cs" />

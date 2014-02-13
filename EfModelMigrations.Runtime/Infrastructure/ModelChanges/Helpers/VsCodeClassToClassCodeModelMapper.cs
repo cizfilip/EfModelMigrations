@@ -33,7 +33,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             return new PropertyCodeModel()
             {
                 Name = property.Name,
-                Type = property.Type.AsFullName,
+                Type = property.Type.AsString,
                 Visibility = MapVisibility(property.Access) ?? CodeModelVisibility.Public,
                 IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate
             };

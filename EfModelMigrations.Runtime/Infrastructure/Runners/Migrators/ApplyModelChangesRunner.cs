@@ -32,19 +32,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
                 Configuration.CodeGenerator
                 );
 
-            try
-            {
-                modelChangesExecutor.Execute(operations);    
-            }
-            catch (Exception e) //TODO: mozna catch jenom ModelMigrationsException
-            {
-                //TODO: dodelat revert provedenech zmen v pripade ze dojde k chybe
-                throw new ModelMigrationsException("Error during aplying model changes! See inner exception. (Note: temporary model is in broken state now)", e);
-            }
-            finally
-            {
-                Return(oldEdmxModel);
-            }
+            modelChangesExecutor.Execute(operations);    
+            
+            Return(oldEdmxModel);
         }
 
         private string GetEdmxModelAsString()

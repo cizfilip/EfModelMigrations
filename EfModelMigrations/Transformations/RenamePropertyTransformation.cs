@@ -29,9 +29,9 @@ namespace EfModelMigrations.Transformations
             yield return new RenamePropertyOperation(ClassName, OldName, NewName);
         }
 
-        public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
+        public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.RenameColumnOperation(ClassName, OldName, NewName);
+            yield return builder.RenameColumnOperation(ClassName, OldName, NewName);
         }
 
         public override ModelTransformation Inverse()

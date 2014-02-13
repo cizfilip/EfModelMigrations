@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure.Generators.Templates;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Transformations;
 using Microsoft.CSharp.RuntimeBinder;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,9 @@ namespace EfModelMigrations.Infrastructure.Generators
 {
     public class CSharpMappingInformationsGenerator : IMappingInformationsGenerator
     {
+        private static readonly string DbModelBuilderParameterName = "modelBuilder";
+        private static readonly string Indent = "    ";
+
         public virtual GeneratedMappingInformation Generate(IMappingInformation mappingInformation)
         {
             dynamic mappingInfo = mappingInformation;
@@ -55,6 +59,88 @@ namespace EfModelMigrations.Infrastructure.Generators
                 Type = MappingInformationType.DbContextProperty,
                 Value = generatedValue
             };
+        }
+
+
+        protected virtual GeneratedMappingInformation Generate(OneToOneAssociationInfo mappingInformation)
+        {
+            StringBuilder template = new StringBuilder();
+
+            AssociationMemberInfo startEntity;
+            AssociationMemberInfo endEntity;
+
+            if(mappingInformation.Principal.NavigationProperty == null)
+            {
+                startEntity = mappingInformation.Dependent;
+                endEntity = mappingInformation.Principal;
+            }
+            else
+            {
+                startEntity = mappingInformation.Principal;
+                endEntity = mappingInformation.Dependent;
+            }
+
+            template.Append(DbModelBuilderParameterName).Append(".")
+                .Append("Entity<")
+                .Append(startEntity.ClassName)
+                .Append(">()");
+            PrepareNewFluentApiCall(template);
+
+            if(endEntity.IsRequired)
+            {
+                template.Append("HasRequired(c => c.").Append(startEntity.NavigationProperty.Name).Append(")");
+            }
+            else
+            {
+                template.Append("HasOptional(c => c.").Append(startEntity.NavigationProperty.Name).Append(")");
+            }
+
+            PrepareNewFluentApiCall(template);
+
+            if(startEntity.IsRequired)
+            {
+                if(endEntity.IsRequired)
+                {
+                    if(startEntity.ClassName == mappingInformation.Principal.ClassName)
+                    {
+                        template.Append("WithRequiredPrincipal(c => c.").Append(endEntity.NavigationProperty.Name).Append(")");
+                        //WithRequiredPrincipal
+                    }
+                    else
+                    {
+
+                    }
+                    //WithRequiredPrincipal or dependent
+                }
+                else
+                {
+                    //WithRequired
+                }
+            }
+            else
+            {
+                if (endEntity.IsRequired)
+                {
+                    //WithOptional
+                }
+                else
+                {
+                    //WithOptionalPrincipal or dependent
+                }
+            }
+
+            template.Append(";");
+
+            return new GeneratedMappingInformation()
+            {
+                Value = template.ToString(),
+                Type = MappingInformationType.EntityTypeConfiguration
+            };
+        }
+
+        private void PrepareNewFluentApiCall(StringBuilder sb)
+        {
+            sb.AppendLine().Append(Indent).Append(".");
         }
     }
 }

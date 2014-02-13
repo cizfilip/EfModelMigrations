@@ -134,6 +134,29 @@ function Model-RenameProperty
 
 <#
 .SYNOPSIS
+    Model-ExtractComplexType command.
+
+.DESCRIPTION
+    Model-ExtractComplexType command.
+
+.PARAMETER command
+    Model-ExtractComplexType command.
+#>
+function Model-ExtractComplexType
+{
+    [CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+        [Parameter(Position = 1, Mandatory = $true)][string] $ComplexTypeName,
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+    )
+
+    Model-ExecuteCommand EfModelMigrations.Commands.ExtractComplexTypeCommand @( $ClassName, $ComplexTypeName, $Properties )
+}
+
+
+<#
+.SYNOPSIS
     Model-ExecuteCommand command.
 
 .DESCRIPTION
@@ -502,6 +525,6 @@ function Invoke-RunnerCommand($runner, $command, $parameters)
 
 
 # EXPORT ----------------------
-Export-ModuleMember @( 	'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
+Export-ModuleMember @( 	'Model-ExtractComplexType', 'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
                         'Model-RemoveProperties', 'Model-RenameClass', 'Model-RenameProperty', 
                         'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate' )

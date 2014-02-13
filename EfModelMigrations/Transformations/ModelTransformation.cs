@@ -15,9 +15,9 @@ namespace EfModelMigrations.Transformations
             return Enumerable.Empty<IModelChangeOperation>();
         }
 
-        public virtual MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
+        public virtual IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return null;
+            return Enumerable.Empty<MigrationOperation>(); ;
         }
 
         //Called only by Model Migration Generator

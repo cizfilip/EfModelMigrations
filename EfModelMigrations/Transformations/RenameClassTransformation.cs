@@ -27,9 +27,9 @@ namespace EfModelMigrations.Transformations
         }
 
         //TODO: V DB by bylo treba prejmenovat i vsechny reference - napr. jmena cizich klicu atd... ??
-        public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
+        public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.RenameTableOperation(OldName, NewName);
+            yield return builder.RenameTableOperation(OldName, NewName);
         }
 
         public override ModelTransformation Inverse()

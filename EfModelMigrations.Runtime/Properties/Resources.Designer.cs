@@ -61,6 +61,15 @@ namespace EfModelMigrations.Runtime.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot apply model migration. See inner exception for details..
+        /// </summary>
+        internal static string ApplyMigrationError {
+            get {
+                return ResourceManager.GetString("ApplyMigrationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not load assembly &apos;{0}&apos;. .
         /// </summary>
         internal static string BaseRunner_AssemblyNotFound {

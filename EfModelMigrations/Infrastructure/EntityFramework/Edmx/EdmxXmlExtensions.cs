@@ -82,7 +82,16 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
                     () => new ModelMigrationsException(string.Format("More than one scalar property with name {0} was found in entity type mapping for class {1}.", propertyName, classFullName)))
                 .ColumnNameAttribute();
         }
-                
+           
+        public static IEnumerable<string> GetComplexTypeProperties(this XDocument edmx, string complexTypeName)
+        {
+            return edmx.Descendants(EdmxNames.Csdl.ComplexTypeNames).Where(e => e.NameAttribute().EqualsOrdinalIgnoreCase(complexTypeName))
+                .SingleOrThrow(
+                    () => new ModelMigrationsException(string.Format("Cannot find complex type {0}.", complexTypeName)),
+                    () => new ModelMigrationsException(string.Format("More than one complex type {0} found.", complexTypeName)))
+                .Descendants(EdmxNames.Csdl.PropertyNames)
+                .Select(p => p.NameAttribute());
+        }
 
 
         #region Private Helper methods

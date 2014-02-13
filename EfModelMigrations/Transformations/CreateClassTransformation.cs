@@ -32,11 +32,11 @@ namespace EfModelMigrations.Transformations
             yield return new AddMappingInformationOperation(new DbSetPropertyInfo(Name));
         }
 
-        public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
+        public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.CreateTableOperation(Name);
+            yield return builder.CreateTableOperation(Name);
         }
-
+        
         public override ModelTransformation Inverse()
         {
             return new RemoveClassTransformation(Name, this);

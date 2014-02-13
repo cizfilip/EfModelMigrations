@@ -6,21 +6,15 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel
 {
-    public class PropertyCodeModel
+    public class PropertyCodeModel : ClassMemberCodeModel
     {
-
-        public PropertyCodeModel()
+        public PropertyCodeModel() 
+            :base()
         {
-            Name = null;
             Type = null;
-            Visibility = CodeModelVisibility.Public;
-            IsSetterPrivate = false;
         }
 
-        public string Name { get; set; }
         public string Type { get; set; }
-        public CodeModelVisibility Visibility { get; set; }
-        public bool IsSetterPrivate { get; set; }
                 
     }
 }

@@ -32,24 +32,32 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         }
 
 
+        //TODO: asi je zbytečný dělat každej krok v nové appdoméně - některé by to chtělo sloučit
         private void Migrate(string migrationId, bool isRevert)
         {
-            //apply model changes
             HistoryTracker historyTracker = new HistoryTracker();
             string oldEdmxModel;
-
-            using (var executor = executorFactory())
-            {
-                oldEdmxModel = ExecuteApplyRunner(executor, migrationId, isRevert, historyTracker);
-            }
-
             ScaffoldedMigration scaffoldedMigration = null;
-            //generate db migration            
+
             try
             {
+                //apply model changes
+                using (var executor = executorFactory())
+                {
+                    oldEdmxModel = executor.ExecuteRunner<string>(new ApplyModelChangesRunner()
+                    {
+                        HistoryTracker = historyTracker,
+                        ModelProject = modelProject,
+                        ModelMigrationId = migrationId,
+                        IsRevert = isRevert
+                    });
+                }
+
+
                 //build project
                 modelProject.Build(() => new ModelMigrationsException(Resources.CannotBuildProject));
 
+                //generate db migration    
                 using (var executor = executorFactory())
                 {
                     scaffoldedMigration = executor.ExecuteRunner<ScaffoldedMigration>(new GenerateDbMigrationRunner()
@@ -64,22 +72,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 //write migration
                 new DbMigrationWriter(modelProject).Write(scaffoldedMigration);
 
-            }
-            catch (Exception) //TODO: mozna jen ModelMigrationsException
-            {
-                //Ensure nothing from migration is added to project if error happen
-                RemoveDbMigration(scaffoldedMigration);
-                                
-                RevertModelChanges(historyTracker);
-                throw;
-            }
 
-            //update DB
-            try
-            {
                 //build project
                 modelProject.Build(() => new ModelMigrationsException(Resources.CannotBuildProject));
 
+                //update DB
                 using (var executor = executorFactory())
                 {
                     executor.ExecuteRunner(new UpdateDatabaseRunner()
@@ -100,32 +97,23 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                     });
                 }
             }
-            catch (Exception)
+            catch(ModelMigrationsException)
             {
-                RemoveDbMigration(scaffoldedMigration);
-                RevertModelChanges(historyTracker);
+                RollbackModelState(historyTracker, scaffoldedMigration);
                 throw;
+            }
+            catch (Exception e) 
+            {
+                RollbackModelState(historyTracker, scaffoldedMigration);
+                throw new ModelMigrationsException(Resources.ApplyMigrationError, e);
             }
         }
 
-        private string ExecuteApplyRunner(NewAppDomainExecutor executor, string migrationId, bool isRevert, HistoryTracker historyTracker)
-        {
-            return executor.ExecuteRunner<string>(new ApplyModelChangesRunner()
-            {
-                HistoryTracker = historyTracker,
-                ModelProject = modelProject,
-                ModelMigrationId = migrationId,
-                IsRevert = isRevert
-            });
-        }
-
-        private void RevertModelChanges(HistoryTracker historyTracker)
+        private void RollbackModelState(HistoryTracker historyTracker, ScaffoldedMigration scaffoldedMigration)
         {
             historyTracker.Restore(modelProject);
-        }
 
-        private void RemoveDbMigration(ScaffoldedMigration scaffoldedMigration)
-        {
+            //Ensure db migration is removed
             if (scaffoldedMigration != null)
             {
                 new DbMigrationWriter(modelProject).RemoveMigration(scaffoldedMigration);

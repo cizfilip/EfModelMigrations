@@ -24,9 +24,9 @@ namespace EfModelMigrations.Transformations
             yield return new AddPropertyToClassOperation(ClassName, Model);
         }
 
-        public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
+        public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.AddColumnOperation(ClassName, Model.Name);
+            yield return builder.AddColumnOperation(ClassName, Model.Name);
         }
 
         public override ModelTransformation Inverse()

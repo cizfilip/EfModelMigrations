@@ -30,9 +30,9 @@ namespace EfModelMigrations.Transformations
         
         //TODO: pri dropu tabulky ci sloupecku se musi kontrolovat zda-li se s tim mazou nejaka data - a kdyby ano
         //tak operaci provést jenom pokud byl predan parameter -Force
-        public override MigrationOperation GetDbMigrationOperation(IDbMigrationOperationBuilder builder)
+        public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.DropTableOperation(Name);
+            yield return builder.DropTableOperation(Name);
         }
     }
 }

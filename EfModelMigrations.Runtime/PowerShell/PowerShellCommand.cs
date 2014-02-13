@@ -69,6 +69,7 @@ namespace EfModelMigrations.Runtime.PowerShell
 
             try
             {
+                //Build project before executing command
                 BuildProject();
                 ExecuteCore();
             }

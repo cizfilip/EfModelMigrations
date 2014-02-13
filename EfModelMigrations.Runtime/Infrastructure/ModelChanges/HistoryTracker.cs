@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using EfModelMigrations.Runtime.Extensions;
 using System.IO;
+using EfModelMigrations.Exceptions;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
@@ -16,15 +17,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             this.history = new Dictionary<string, HistoryItem>();
         }
 
-        public void MarkItemAdded(ProjectItem item)
+        public void MarkItemAdded(string fullPath)
         {
-            if (item == null)
+            if (string.IsNullOrEmpty(fullPath))
             {
                 //TODO: mozna vyhodit vyjimku ne spokojene nic nepridat do historie....
                 return;
             }
-
-            string key = GetItemKey(item);
+            string key = fullPath;
             if (!history.ContainsKey(key))
             {
                 history.Add(key, HistoryItem.AddedItem());
@@ -62,7 +62,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             catch (Exception e)
             {
                 //TODO: wrap e in new FatalError exception?
-                throw;
+                throw new ModelMigrationsException("Error during reverting history! See inner exception", e); //TODO: string do resourcu
             }
         }
 

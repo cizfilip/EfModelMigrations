@@ -70,14 +70,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         {
             //TODO: ujistit se za pouzivam validni C# identifikatory - pomoci metody CodeModel.IsValidID
             //TODO: zde propagovat defaultni nastaveni pro tridy z configurace...
+            string fileFullPath = Path.Combine(modelProject.GetProjectDir(), GetConventionPathFromNamespace(modelNamespace), operation.Name + codeGenerator.GetFileExtensions());
+            historyTracker.MarkItemAdded(fileFullPath);
+
             string classContent = codeGenerator.GenerateEmptyClass(operation.Name, modelNamespace, CodeModelVisibility.Public, null, null);
-
-            string filePath = Path.Combine(GetConventionPathFromNamespace(modelNamespace), operation.Name + codeGenerator.GetFileExtensions());
-
             try
             {
-                var newProjectItem = modelProject.AddContentToProject(filePath, classContent);
-                historyTracker.MarkItemAdded(newProjectItem);
+                var newProjectItem = modelProject.AddContentToProjectFromAbsolutePath(fileFullPath, classContent);
             }
             catch (Exception e)
             {
@@ -172,6 +171,43 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             {
                 throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameProperty, operation.OldName, operation.ClassName), e);
             }
+        }
+
+
+        protected void ExecuteOperation(MovePropertyOperation operation)
+        {
+            CodeClass2 fromCodeClass = classFinder.FindCodeClass(modelNamespace, operation.FromClassName);
+            CodeClass2 toCodeClass = classFinder.FindCodeClass(modelNamespace, operation.ToClassName);
+
+            historyTracker.MarkItemModified(fromCodeClass.ProjectItem);
+            historyTracker.MarkItemModified(toCodeClass.ProjectItem);
+
+            try
+            {
+                CodeProperty2 property = FindProperty(fromCodeClass, operation.Name);
+                var endPoint = property.GetEndPoint();
+                var startEditPoint = property.GetStartPoint().CreateEditPoint();
+                string propertyString = startEditPoint.GetText(endPoint);
+                startEditPoint.Delete(endPoint);
+
+                AddPropertyToClassInternal(toCodeClass,
+                    propertyString,
+                    e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddProperty,
+                        operation.Name,
+                        operation.ToClassName), e)
+                    );
+                
+            }
+            catch (ModelMigrationsException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException("Failed to move property.", e); //TODO: string do resourcu
+            }
+
+            
         }
 
         #region Mapping Informations

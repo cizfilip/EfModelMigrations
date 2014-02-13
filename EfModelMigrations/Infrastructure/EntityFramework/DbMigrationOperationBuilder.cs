@@ -30,8 +30,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         }
 
         #region IDbMigrationOperationBuilder implementation
-        
-        //TODO: Co kdyz ma vytvarena trida nejake vazby?? - Momentalne neni podporovano
+
+        //TODO: Co kdyz ma vytvarena trida nejake vazby?? - Momentalne neni podporovano - a ani nebude ale musi se validovat ze zadne vazby nevzniknou
         public CreateTableOperation CreateTableOperation(string className)
         {
             return CreateTableOperationInternal(newModel, GetFullClassName(className));
@@ -45,7 +45,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
             var inverseOperation = CreateTableOperationInternal(oldModel, classFullName);
             var dropTableOperation = new DropTableOperation(tableName, inverseOperation);
-                      
+
             return dropTableOperation;
         }
 
@@ -95,6 +95,67 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return renameColumnOperation;
         }
 
+        public IEnumerable<RenameColumnOperation> RenameColumnOperationsForJoinComplexType(string complexTypeName, string className)
+        {
+            string tableName = newModel.GetTableName(GetFullClassName(className));
+
+            foreach (var property in oldModel.GetComplexTypeProperties(complexTypeName))
+            {
+                yield return RenameColumnOperation(className, property, property);
+            }
+        }
+
+       
+
+        //1:1, 1:0, 0:1
+        //TODO: pokud je nejaky konec required je treba v db dropovat identitu (pokud ji PK ma) !!!
+        public IEnumerable<MigrationOperation> OneToOneRelationOperations(string principalClassName, string dependentClassName)
+        {
+            string principalClassFullName = GetFullClassName(principalClassName);
+            string dependentClassFullName = GetFullClassName(dependentClassName);
+
+            string principalTableName = newModel.GetTableName(principalClassFullName);
+            string dependentTableName = newModel.GetTableName(dependentClassFullName);
+
+            //TODO: primarni klice musi byt stejne pokud se snazime o 1:1 kde je aspon jeden konec povinny
+            var principalPrimaryKeyColumns = newModel.GetTableKeyColumnNamesForClass(principalClassFullName);
+            var dependentPrimaryKeyColumns = newModel.GetTableKeyColumnNamesForClass(dependentClassFullName);
+
+            //CreateIndex operation
+            var createIndexOperation = new CreateIndexOperation()
+            {
+                Table = dependentTableName,
+                IsUnique = false,
+                IsClustered = false,
+                Name = null
+            };
+
+            foreach (var primaryKey in dependentPrimaryKeyColumns)
+            {
+                createIndexOperation.Columns.Add(primaryKey);
+            }
+            yield return createIndexOperation;    
+
+            //AddForeignKeyOperation
+            var addForeignKeyOperation = new AddForeignKeyOperation()
+            {
+                CascadeDelete = false, //TODO: umoznit specifikovat i cascade delete
+                Name = null,
+                DependentTable = dependentTableName,
+                PrincipalTable = principalTableName
+            };
+            foreach (var primaryKey in dependentPrimaryKeyColumns)
+            {
+                addForeignKeyOperation.DependentColumns.Add(primaryKey);
+            }
+            foreach (var primaryKey in principalPrimaryKeyColumns)
+            {
+                addForeignKeyOperation.PrincipalColumns.Add(primaryKey);
+            }
+
+            yield return addForeignKeyOperation;
+        }
+
         #endregion
 
         #region Private methods
@@ -139,5 +200,14 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         }
 
         #endregion
+
+
+
+
+
+
+
+
+        
     }
 }
