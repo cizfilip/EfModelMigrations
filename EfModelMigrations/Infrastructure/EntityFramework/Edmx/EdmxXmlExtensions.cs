@@ -62,6 +62,11 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
             }
         }
 
+        public static string GetColumnStorageType(this XDocument edmx, string tableFullName, string columnName)
+        {
+            return GetStorageEntityTypeFromTableName(edmx, tableFullName).FindColumnInStorageEntityType(columnName).TypeAttribute();
+        }
+
         public static IEnumerable<string> GetTableKeyColumnNamesForClass(this XDocument edmx, string classFullName)
         {
             var storageEntityType = GetStorageEntityTypeFromClassName(edmx, classFullName);
@@ -78,23 +83,98 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
             return mappingFragment.Descendants(EdmxNames.Msl.ScalarPropertyNames)
                 .Where(m => m.NameAttribute().EqualsOrdinalIgnoreCase(propertyName))
                 .SingleOrThrow(
-                    () => new ModelMigrationsException(string.Format("Cannot find scalar property with name {0} in entity type mapping for class {1}.", propertyName, classFullName)),
-                    () => new ModelMigrationsException(string.Format("More than one scalar property with name {0} was found in entity type mapping for class {1}.", propertyName, classFullName)))
+                    () => new DbMigrationBuilderException(string.Format("Cannot find scalar property with name {0} in entity type mapping for class {1}.", propertyName, classFullName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one scalar property with name {0} was found in entity type mapping for class {1}.", propertyName, classFullName)))
                 .ColumnNameAttribute();
         }
-           
+
+        
+
         public static IEnumerable<string> GetComplexTypeProperties(this XDocument edmx, string complexTypeName)
         {
             return edmx.Descendants(EdmxNames.Csdl.ComplexTypeNames).Where(e => e.NameAttribute().EqualsOrdinalIgnoreCase(complexTypeName))
                 .SingleOrThrow(
-                    () => new ModelMigrationsException(string.Format("Cannot find complex type {0}.", complexTypeName)),
-                    () => new ModelMigrationsException(string.Format("More than one complex type {0} found.", complexTypeName)))
+                    () => new DbMigrationBuilderException(string.Format("Cannot find complex type {0}.", complexTypeName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one complex type {0} found.", complexTypeName)))
                 .Descendants(EdmxNames.Csdl.PropertyNames)
                 .Select(p => p.NameAttribute());
         }
 
+        public static bool IsColumnIdentity(this XDocument edmx, string columnName, string tableFullName)
+        {
+            var storeGeneratedPatternAttribute = GetStorageEntityTypeFromTableName(edmx, tableFullName)
+                .FindColumnInStorageEntityType(columnName)
+                .StoreGeneratedPatternAttribute();
+
+            if (!string.IsNullOrEmpty(storeGeneratedPatternAttribute) && storeGeneratedPatternAttribute == "Identity")
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        //TODO stringy do resourcu
+        public static IEnumerable<Tuple<string, string>> GetDependentColumns(this XDocument edmx, string tableFullName, string columnName)
+        {
+            var storageEntityType = GetStorageEntityTypeFromTableName(edmx, tableFullName);
+            var storageEntityTypeName = storageEntityType.NameAttribute();
+
+            var associations = edmx.Descendants(EdmxNames.Ssdl.AssociationNames)
+                .Where(a => a.Descendants(EdmxNames.Ssdl.EndNames).Select(e => RemoveAliasFromName(e.TypeAttribute())).Contains(storageEntityTypeName));
+
+            foreach (var assoc in associations)
+            {
+                string roleName = assoc.Descendants(EdmxNames.Ssdl.EndNames).Single(e => RemoveAliasFromName(e.TypeAttribute()) == storageEntityTypeName).RoleAttribute();
+                
+                //TODO: Association element nemusí mít dle specifikace vždy potomka ReferentialConstraint - když není musíme se dívat do AssociationSetMapping (pozn. dá se předpokládat, že bude mít vždy jelikož tohle xml generuje ef - podívat do zdrojáků jak...)
+                var refConstraint = assoc.Descendants(EdmxNames.Ssdl.ReferentialConstraintNames).Single();
+                
+                if (refConstraint.Descendants(EdmxNames.Ssdl.PrincipalNames).Single().RoleAttribute() == roleName)
+                {
+                    var dependent = assoc.Descendants(EdmxNames.Ssdl.DependentNames).Single();
+
+                    var dependentStorageTypeName = RemoveAliasFromName(
+                                                assoc.Descendants(EdmxNames.Ssdl.EndNames).Single(e => e.RoleAttribute() == dependent.RoleAttribute()).TypeAttribute()
+                                             );
+
+                    var dependentStorageEntitySet = edmx.Descendants(EdmxNames.Ssdl.EntitySetNames).Where(e => e.EntityTypeAttribute().EqualsOrdinalIgnoreCase(dependentStorageTypeName))
+                        .SingleOrThrow(
+                            () => new DbMigrationBuilderException(string.Format("Cannot find Storage Entity Set information for storage entity type {0}.", dependentStorageTypeName)),
+                            () => new DbMigrationBuilderException(string.Format("More than one Storage Entity Set found for storage entity type {0}.", dependentStorageTypeName))
+                        );
+
+                    var dependentTableName = GetSchemaQualifiedTableName(dependentStorageEntitySet.SchemaAttribute(), dependentStorageEntitySet.TableAttribute());
+
+                    yield return Tuple.Create(dependentTableName, dependent.Descendants(EdmxNames.Ssdl.PropertyRefNames).Single().NameAttribute());
+                }
+            }
+        }
+
 
         #region Private Helper methods
+
+        //TODO: stringy do resourcu
+        private static XElement FindColumnInStorageEntityType(this XElement storageEntityType, string columnName)
+        {
+            return storageEntityType.Descendants(EdmxNames.Ssdl.PropertyNames)
+                .Where(p => p.NameAttribute().EqualsOrdinalIgnoreCase(columnName))
+                .SingleOrThrow(
+                    () => new DbMigrationBuilderException(string.Format("Cannot find column {0} in table {1}.", columnName, storageEntityType.NameAttribute())),
+                    () => new DbMigrationBuilderException(string.Format("More than one column {0} in table {1} found.", columnName, storageEntityType.NameAttribute())));
+        }
+
+
+        //TODO: stringy do resourcu
+        private static XElement GetStorageEntityTypeFromTableName(XDocument edmx, string tableFullName)
+        {
+            var parsedTableName = ParseTableFullName(tableFullName);
+            return edmx.Descendants(EdmxNames.Ssdl.EntitySetNames)
+                .Where(e => e.SchemaAttribute().EqualsOrdinalIgnoreCase(parsedTableName.Item1) && e.TableAttribute().EqualsOrdinalIgnoreCase(parsedTableName.Item2))
+                .SingleOrThrow(
+                    () => new DbMigrationBuilderException(string.Format("Cannot find storage entity type for table with name {0}.", tableFullName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one storage entity typs found for table with name {0}.", tableFullName)));
+        }
 
         //TODO: message do resourcu
         private static XElement GetEntityTypeMappingFragment(XDocument edmx, string classFullName)
@@ -102,12 +182,12 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
             return edmx.Descendants(EdmxNames.Msl.EntityTypeMappingNames)
                 .Where(e => e.TypeNameAttribute().EqualsOrdinal(classFullName))
                 .SingleOrThrow(
-                    () => new ModelMigrationsException(string.Format("Cannot find entity type mapping information for class {0}.", classFullName)),
-                    () => new ModelMigrationsException(string.Format("More than one entity type mapping find for class {0}.", classFullName)))
+                    () => new DbMigrationBuilderException(string.Format("Cannot find entity type mapping information for class {0}.", classFullName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one entity type mapping find for class {0}.", classFullName)))
                 .Descendants(EdmxNames.Msl.MappingFragmentNames)
                 .SingleOrThrow(
-                    () => new ModelMigrationsException(string.Format("No mapping fragments found in entity type mapping for class {0}.", classFullName)),
-                    () => new ModelMigrationsException(string.Format("Class {0} is mapped to more than one table.", classFullName)));
+                    () => new DbMigrationBuilderException(string.Format("No mapping fragments found in entity type mapping for class {0}.", classFullName)),
+                    () => new DbMigrationBuilderException(string.Format("Class {0} is mapped to more than one table.", classFullName)));
         }
 
         //TODO: message do resourcu
@@ -120,28 +200,36 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
             var storageEntitySet = edmx.Descendants(EdmxNames.Ssdl.EntitySetNames)
                 .Where(e => e.NameAttribute().EqualsOrdinal(storeSet))
                 .SingleOrThrow(
-                    () => new ModelMigrationsException(string.Format("Cannot find Storage Entity Set information for class {0}.", classFullName)),
-                    () => new ModelMigrationsException(string.Format("More than one Storage Entity Set found for class {0}.", classFullName)));
+                    () => new DbMigrationBuilderException(string.Format("Cannot find Storage Entity Set information for class {0}.", classFullName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one Storage Entity Set found for class {0}.", classFullName)));
 
             return storageEntitySet;
         }
 
-        
 
+        //TODO: message do resourcu
         private static XElement GetStorageEntityTypeFromClassName(XDocument edmx, string classFullName)
         {
             string storageEntityTypeName = RemoveAliasFromName(GetStorageEntitySetFromClassName(edmx, classFullName).EntityTypeAttribute());
 
             var storageEntityType = edmx.Descendants(EdmxNames.Ssdl.EntityTypeNames)
                 .Where(e => e.NameAttribute().EqualsOrdinal(storageEntityTypeName))
-                .Single();
+                .SingleOrThrow(
+                    () => new DbMigrationBuilderException(string.Format("Cannot find Storage Entity Type information for class {0}.", classFullName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one Storage Entity Type found for class {0}.", classFullName)));
 
             return storageEntityType;
         }
-        
+
         private static string GetSchemaQualifiedTableName(string schema, string table)
         {
             return schema + "." + table;
+        }
+
+        private static Tuple<string, string> ParseTableFullName(string tablefullName)
+        {
+            var splitted = tablefullName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            return Tuple.Create(splitted.First(), splitted.Last());
         }
 
         private static string RemoveAliasFromName(string name)
@@ -154,7 +242,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 
 
         #region BuilColumnModel Methods
-        
+
         private static ColumnModel BuildColumnModel(XDocument edmx,
             XElement property, string entitySetName)
         {

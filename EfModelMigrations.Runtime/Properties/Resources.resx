@@ -156,6 +156,9 @@
   <data name="VsCodeModel_FailedToAddDbSetProperty" xml:space="preserve">
     <value>Cannot add DbSet property to DbContext for class {0} in model project.</value>
   </data>
+  <data name="VsCodeModel_FailedToAddMappingInformation" xml:space="preserve">
+    <value>Cannot add mapping information of type {0}. See inner exception.</value>
+  </data>
   <data name="VsCodeModel_FailedToAddProperty" xml:space="preserve">
     <value>Cannot add property {0} to class {1} in model project.</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="VsCodeModel_FailedToFindDbSetProperty" xml:space="preserve">
     <value>Cannot find DbSet property for class {0} in DbContext.</value>
+  </data>
+  <data name="VsCodeModel_FailedToFindMethod" xml:space="preserve">
+    <value>Cannot find method {0} in class {1}.</value>
   </data>
   <data name="VsCodeModel_FailedToFindProperty" xml:space="preserve">
     <value>Cannot find property {0} in class {1}.</value>

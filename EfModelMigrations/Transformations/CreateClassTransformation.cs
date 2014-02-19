@@ -29,7 +29,7 @@ namespace EfModelMigrations.Transformations
                 yield return new AddPropertyToClassOperation(Name, property);
             }
 
-            yield return new AddMappingInformationOperation(new DbSetPropertyInfo(Name));
+            yield return new AddDbSetPropertyOperation(Name);
         }
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)

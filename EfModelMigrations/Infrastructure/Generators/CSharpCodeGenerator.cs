@@ -42,6 +42,15 @@ namespace EfModelMigrations.Infrastructure.Generators
             }.TransformText();
         }
 
+        public string GenerateDbSetProperty(string className)
+        {
+            return new DbSetPropertyTemplate()
+            {
+                GenericType = className,
+                Name = className + "Set" //TODO: asi spis pluralizovat jmeno
+            }.TransformText();
+        }
+
         
         public string GetFileExtensions()
         {
@@ -86,5 +95,8 @@ namespace EfModelMigrations.Infrastructure.Generators
                 return mappingGenerator;
             }
         }
+
+
+        
     }
 }

@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure.Generators.Templates;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Operations.Mapping.Model;
 using EfModelMigrations.Transformations;
 using Microsoft.CSharp.RuntimeBinder;
 using System;
@@ -13,134 +14,93 @@ namespace EfModelMigrations.Infrastructure.Generators
 {
     public class CSharpMappingInformationsGenerator : IMappingInformationsGenerator
     {
-        private static readonly string DbModelBuilderParameterName = "modelBuilder";
         private static readonly string Indent = "    ";
+        private static readonly string ModelBuilderParameterName = "    ";
 
-        public virtual GeneratedMappingInformation Generate(IMappingInformation mappingInformation)
+        public string GetPrefixForOnModelCreatingUse(string entityName)
         {
-            dynamic mappingInfo = mappingInformation;
+            return string.Format("{0}.Entity<{1}>().", ModelBuilderParameterName, entityName);
+        }
 
+        public GeneratedFluetApiCall GenerateFluentApiCall(EfFluentApiCallChain callChain)
+        {
+            var generatedMethodCalls = callChain.FluentApiCalls.Select(m => GenerateOneFluentApiCall(m));
+            var result = string.Join(GetMethodCallSeparator(), generatedMethodCalls);
+
+            return new GeneratedFluetApiCall()
+            {
+                Content = result,
+                TargetType = callChain.EntityType
+            };
+        }
+
+        protected virtual string GenerateOneFluentApiCall(EfFluetApiCall fluentApiCall)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(GenerateMethodName(fluentApiCall.Method))
+                    .Append("(");
+
+            foreach (var param in fluentApiCall.Parameters)
+            {
+                GenerateParameter(param, sb);
+                sb.Append(", ");
+            }
+            sb.Length--;
+
+            sb.Append(")");
+
+            return sb.ToString();
+        }
+
+        protected virtual void GenerateParameter(IEfFluentApiMethodParameter parameter, StringBuilder sb)
+        {
             try
             {
-                var result = Generate(mappingInfo);
-                return result;
+                dynamic param = parameter;
+
+                GenerateParameter(param, sb);
             }
             catch (RuntimeBinderException e)
             {
                 //TODO: string do resourcu
-                throw new ModelMigrationsException(string.Format("Cannot generate code for mapping information {0}. Generator implementation is missing.", mappingInfo.GetType().Name), e);
+                throw new ModelMigrationsException(string.Format("Cannot generate mapping information, because parameter of type {0} is not supported", parameter.GetType().Name), e);
             }
         }
 
-
-        protected virtual GeneratedMappingInformation Generate(DbSetPropertyInfo mappingInformation)
+        protected virtual void GenerateParameter(PropertySelectorParameter parameter, StringBuilder sb)
         {
-            //TODO: Takhle jde delat dbset property bez public setteru
-            //public DbSet<Blog> Blogs
-            //{
-            //    get { return Set<Blog>(); }
-            //}
-
-            //TODO: Pluralizovat jmeno pomoci EF
-            //private IPluralizationService _pluralizationService
-            //= DbConfiguration.DependencyResolver.GetService<IPluralizationService>();
-
-            //TODO: do DbSetPropertyInfo pridat property i pro nazev generované dbset property - defaultně do ní 
-            //v transformaci create class dávat pluralizované jméno třídy
-
-            string generatedValue = new DbSetPropertyTemplate()
-            {
-                GenericType = mappingInformation.ClassName,
-                Name = mappingInformation.ClassName + "Set" //TODO: asi spis pluralizovat jmeno
-            }.TransformText();
-
-            return new GeneratedMappingInformation()
-            {
-                Type = MappingInformationType.DbContextProperty,
-                Value = generatedValue
-            };
+            var lambdaParameterName = GetLambdaParameterName(parameter.ClassName);
+            sb.Append(lambdaParameterName)
+                .Append(" => ")
+                .Append(lambdaParameterName)
+                .Append(".")
+                .Append(parameter.PropertyName);
         }
 
-
-        protected virtual GeneratedMappingInformation Generate(OneToOneAssociationInfo mappingInformation)
+        protected virtual void GenerateParameter(ValueParameter parameter, StringBuilder sb)
         {
-            StringBuilder template = new StringBuilder();
-
-            AssociationMemberInfo startEntity;
-            AssociationMemberInfo endEntity;
-
-            if(mappingInformation.Principal.NavigationProperty == null)
-            {
-                startEntity = mappingInformation.Dependent;
-                endEntity = mappingInformation.Principal;
-            }
-            else
-            {
-                startEntity = mappingInformation.Principal;
-                endEntity = mappingInformation.Dependent;
-            }
-
-            template.Append(DbModelBuilderParameterName).Append(".")
-                .Append("Entity<")
-                .Append(startEntity.ClassName)
-                .Append(">()");
-            PrepareNewFluentApiCall(template);
-
-            if(endEntity.IsRequired)
-            {
-                template.Append("HasRequired(c => c.").Append(startEntity.NavigationProperty.Name).Append(")");
-            }
-            else
-            {
-                template.Append("HasOptional(c => c.").Append(startEntity.NavigationProperty.Name).Append(")");
-            }
-
-            PrepareNewFluentApiCall(template);
-
-            if(startEntity.IsRequired)
-            {
-                if(endEntity.IsRequired)
-                {
-                    if(startEntity.ClassName == mappingInformation.Principal.ClassName)
-                    {
-                        template.Append("WithRequiredPrincipal(c => c.").Append(endEntity.NavigationProperty.Name).Append(")");
-                        //WithRequiredPrincipal
-                    }
-                    else
-                    {
-
-                    }
-                    //WithRequiredPrincipal or dependent
-                }
-                else
-                {
-                    //WithRequired
-                }
-            }
-            else
-            {
-                if (endEntity.IsRequired)
-                {
-                    //WithOptional
-                }
-                else
-                {
-                    //WithOptionalPrincipal or dependent
-                }
-            }
-
-            template.Append(";");
-
-            return new GeneratedMappingInformation()
-            {
-                Value = template.ToString(),
-                Type = MappingInformationType.EntityTypeConfiguration
-            };
+            sb.Append(parameter.Value.ToString());
         }
 
-        private void PrepareNewFluentApiCall(StringBuilder sb)
+
+        protected virtual string GetLambdaParameterName(string className)
         {
-            sb.AppendLine().Append(Indent).Append(".");
+            return className.Take(1).Single().ToString().ToLower();
         }
+
+        private string GetMethodCallSeparator()
+        {
+            return new StringBuilder().AppendLine().Append(Indent).Append(".").ToString();
+        }
+
+
+        protected virtual string GenerateMethodName(EfFluentApiMethods method)
+        {
+            return Enum.GetName(typeof(EfFluentApiMethods), method);
+        }
+
+
+        
     }
 }

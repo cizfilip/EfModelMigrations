@@ -278,6 +278,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
             public static readonly IEnumerable<XName> PropertyNames = Names("Property");
             public static readonly IEnumerable<XName> PropertyRefNames = Names("PropertyRef");
             public static readonly IEnumerable<XName> SchemaNames = Names("Schema");
+            public static readonly IEnumerable<XName> ReferentialConstraintNames = Names("ReferentialConstraint");
 
             private static IEnumerable<XName> Names(string elementName)
             {

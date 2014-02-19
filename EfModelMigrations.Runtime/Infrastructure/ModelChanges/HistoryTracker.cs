@@ -31,14 +31,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
-        public void MarkItemDeleted(ProjectItem item)
+        public void MarkItemDeleted(string fullPath, string oldContent)
         {
-            MarkItemModifiedOrDeleted(item);
+            MarkItemModifiedOrDeleted(fullPath, oldContent);
         }
 
-        public void MarkItemModified(ProjectItem item)
+        public void MarkItemModified(string fullPath, string oldContent)
         {
-            MarkItemModifiedOrDeleted(item);
+            MarkItemModifiedOrDeleted(fullPath, oldContent);
         }
 
 
@@ -84,7 +84,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 case HistoryItemType.ModifiedOrDeleted:
                     var document = GetProjectItemDocument(projectItem) as TextDocument;
                     var endPoint = document.EndPoint;
-                    document.StartPoint.CreateEditPoint().ReplaceText(endPoint, historyItem.Content, (int)vsEPReplaceTextOptions.vsEPReplaceTextKeepMarkers);
+                    document.StartPoint.CreateEditPoint().ReplaceText(endPoint, historyItem.Content, (int)(vsEPReplaceTextOptions.vsEPReplaceTextAutoformat | vsEPReplaceTextOptions.vsEPReplaceTextNormalizeNewlines | vsEPReplaceTextOptions.vsEPReplaceTextTabsSpaces | vsEPReplaceTextOptions.vsEPReplaceTextKeepMarkers));
+                    //TODO: po pridani mozna pouzivat metodu .SmartFormat na editPointu, která snad dela to co ctrl+k,d
                     break;
                 default:
                     throw new InvalidOperationException("Invalid history item type."); //TODO: string do resaurcu
@@ -130,54 +131,29 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         #region Private methods
 
-        private void MarkItemModifiedOrDeleted(ProjectItem item)
+        private void MarkItemModifiedOrDeleted(string fullPath, string oldContent)
         {
-            if (item == null)
+            if (string.IsNullOrEmpty(fullPath))
+            {
+                //TODO: mozna vyhodit vyjimku ne spokojene nic nepridat do historie....
+                return;
+            }
+            if (string.IsNullOrEmpty(oldContent))
             {
                 //TODO: mozna vyhodit vyjimku ne spokojene nic nepridat do historie....
                 return;
             }
 
-            string key = GetItemKey(item);
-            if (!history.ContainsKey(key))
+            if (!history.ContainsKey(fullPath))
             {
-                history.Add(key, HistoryItem.ModifiedOrDeletedItem(GetItemContent(item)));
+                history.Add(fullPath, HistoryItem.ModifiedOrDeletedItem(oldContent));
             }
         }
-
-        private string GetItemKey(ProjectItem item)
-        {
-            var document = GetProjectItemDocument(item);
-            if (document != null)
-            {
-                return document.FullName;
-            }
-
-            //TODO: asi spis vyhazovat vyjimku
-            return null;
-        }
-
-        private string GetItemContent(ProjectItem item)
-        {
-            var textDocument = GetProjectItemDocument(item) as TextDocument;
-            if (textDocument != null)
-            {
-                var editPoint = textDocument.StartPoint.CreateEditPoint();
-                var content = editPoint.GetText(textDocument.EndPoint);
-
-                return content;
-            }
-
-            return null;
-        }
-
 
         private Document GetProjectItemDocument(ProjectItem item)
         {
-            
             if (!item.get_IsOpen())
             {
-                //TODO: nelze volat jelikoz to vraci object Window a ten neni serializovatelny - tudiz to spadne behem prenaseni mezi appdomenama
                 item.Open();
             }
             return item.Document;

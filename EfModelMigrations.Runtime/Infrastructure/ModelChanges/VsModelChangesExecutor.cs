@@ -21,7 +21,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
     internal class VsModelChangesExecutor : IModelChangesExecutor
     {
-        private HistoryTracker historyTracker;
+        private HistoryTrackerWrapper historyTracker;
         private Project modelProject;
         //TODO: asi by stacilo aby ClassCodeModel mela property FullName (ale musim nejak zaridit aby mela modelnamespace)
         private string modelNamespace;
@@ -37,17 +37,17 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             string dbContextFullName,
             ICodeGenerator codeGenerator)
         {
-            this.historyTracker = historyTracker;
+            this.historyTracker = new HistoryTrackerWrapper(historyTracker);
             this.modelProject = modelProject;
             this.modelNamespace = modelNamespace;
             this.dbContextFullName = dbContextFullName;
             this.codeGenerator = codeGenerator;
             this.classFinder = new CodeClassFinder(modelProject);
-            this.mappingRemover = new VsMappingInformationRemover(historyTracker, modelNamespace, dbContextFullName, classFinder);
+            this.mappingRemover = new VsMappingInformationRemover(this.historyTracker, modelNamespace, dbContextFullName, classFinder);
         }
 
 
-        public void Execute(IEnumerable<IModelChangeOperation> operations)
+        public virtual void Execute(IEnumerable<IModelChangeOperation> operations)
         {
 
             foreach (dynamic operation in operations)
@@ -66,7 +66,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         }
 
 
-        protected void ExecuteOperation(CreateEmptyClassOperation operation)
+        protected virtual void ExecuteOperation(CreateEmptyClassOperation operation)
         {
             //TODO: ujistit se za pouzivam validni C# identifikatory - pomoci metody CodeModel.IsValidID
             //TODO: zde propagovat defaultni nastaveni pro tridy z configurace...
@@ -87,7 +87,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         //TODO: resit partial tridy (pres CodeClass2.Parts)
         //TODO: metoda Remove odebira z projektu ale file zustava fyzicky na disku - slo by vyuzit pro revert, Delete metoda smaze i file
         //TODO: remove class vymaze vse, v pripade chyby a vraceni zpet nejsme schopni obnovit cely zdrojak tak jak byl 
-        protected void ExecuteOperation(RemoveClassOperation operation)
+        protected virtual void ExecuteOperation(RemoveClassOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.Name);
 
@@ -103,7 +103,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
-        protected void ExecuteOperation(AddPropertyToClassOperation operation)
+        protected virtual void ExecuteOperation(AddPropertyToClassOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
 
@@ -117,7 +117,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 );
         }
 
-        protected void ExecuteOperation(RemovePropertyFromClassOperation operation)
+        protected virtual void ExecuteOperation(RemovePropertyFromClassOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
 
@@ -135,7 +135,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
-        protected void ExecuteOperation(RenameClassOperation operation)
+        protected virtual void ExecuteOperation(RenameClassOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.OldName);
 
@@ -156,7 +156,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
-        protected void ExecuteOperation(RenamePropertyOperation operation)
+        protected virtual void ExecuteOperation(RenamePropertyOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ClassName);
 
@@ -174,7 +174,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         }
 
 
-        protected void ExecuteOperation(MovePropertyOperation operation)
+        protected virtual void ExecuteOperation(MovePropertyOperation operation)
         {
             CodeClass2 fromCodeClass = classFinder.FindCodeClass(modelNamespace, operation.FromClassName);
             CodeClass2 toCodeClass = classFinder.FindCodeClass(modelNamespace, operation.ToClassName);
@@ -212,39 +212,78 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         #region Mapping Informations
 
-        protected void ExecuteOperation(AddMappingInformationOperation operation)
+        protected virtual void ExecuteOperation(AddMappingInformationOperation operation)
         {
-            var generatedInfo = codeGenerator.MappingGenerator.Generate(operation.MappingInformation);
-            switch (generatedInfo.Type)
+                        
+            var mappingGenerator = codeGenerator.MappingGenerator;
+
+            var generatedInfo = mappingGenerator.GenerateFluentApiCall(operation.MappingInformation.BuildEfFluentApiCallChain());
+            var prefixForOnModelCreating = mappingGenerator.GetPrefixForOnModelCreatingUse(generatedInfo.TargetType);
+            
+
+            CodeClass2 contextClass = GetDbContextCodeClass();
+            historyTracker.MarkItemModified(contextClass.ProjectItem);
+
+            CodeFunction2 onModelCreatingMethod = FindMethod(contextClass, "OnModelCreating");
+
+
+            try
             {
-                case MappingInformationType.DbContextProperty:
-                    CodeClass2 contextClass = GetDbContextCodeClass();
+                var editPoint = onModelCreatingMethod.GetEndPoint(vsCMPart.vsCMPartBody).CreateEditPoint();
 
-                    historyTracker.MarkItemModified(contextClass.ProjectItem);
+                editPoint.Insert(string.Concat(prefixForOnModelCreating, generatedInfo.Content));
+                editPoint.Insert(Environment.NewLine);
 
-                    AddPropertyToClassInternal(contextClass, generatedInfo.Value,
-                        e => new ModelMigrationsException(
-                            string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
-                            (operation.MappingInformation as DbSetPropertyInfo).ClassName)
-                            , e)
-                        );
-                    break;
-                case MappingInformationType.EntityTypeConfiguration:
-
-                    break;
-                case MappingInformationType.CodeAttribute:
-                    throw new NotImplementedException();
-                default:
-                    //TODO: string do resourcu
-                    throw new ModelMigrationsException("Unknown generated mapping information type.");
+                //Format inserted mapping
+                onModelCreatingMethod.StartPoint.CreateEditPoint().SmartFormat(onModelCreatingMethod.EndPoint);
             }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddMappingInformation, operation.GetType().Name), e);
+            }
+            
         }
 
-        protected void ExecuteOperation(RemoveMappingInformationOperation operation)
+        protected virtual void ExecuteOperation(RemoveMappingInformationOperation operation)
         {
             mappingRemover.Remove(operation.MappingInformation);
         }
-                
+
+        protected virtual void ExecuteOperation(AddDbSetPropertyOperation operation)
+        {
+            CodeClass2 contextClass = GetDbContextCodeClass();
+
+            historyTracker.MarkItemModified(contextClass.ProjectItem);
+
+            string propertyString = codeGenerator.GenerateDbSetProperty(operation.ClassName);
+
+            AddPropertyToClassInternal(contextClass, propertyString,
+                e => new ModelMigrationsException(
+                    string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
+                    operation.ClassName)
+                    , e)
+                );
+        }
+
+        protected virtual void ExecuteOperation(RemoveDbSetPropertyOperation operation)
+        {
+            CodeClass2 contextClass = GetDbContextCodeClass();
+
+            historyTracker.MarkItemModified(contextClass.ProjectItem);
+
+            CodeProperty2 property = FindPropertyOnDbContext(contextClass, operation.ClassName);
+
+            try
+            {
+                contextClass.RemoveMember(property);
+            }
+            catch (Exception e)
+            {
+                //TODO: přeorganizovat resource stringy pro add/remove db set property
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveDbSetProperty, operation.ClassName), e);
+            }
+        }
+
 
         #endregion
 
@@ -256,7 +295,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             {
                 CodeVariable tempVar = codeClass.AddVariable("__EFMODELMIGRATIONS_TEMP_VAR__", vsCMTypeRef.vsCMTypeRefInt, -1); // -1 znamena na konec
                 var startPoint = tempVar.GetStartPoint();
-                startPoint.CreateEditPoint().ReplaceText(tempVar.GetEndPoint(), propertyString, (int)vsEPReplaceTextOptions.vsEPReplaceTextAutoformat);
+                startPoint.CreateEditPoint().ReplaceText(tempVar.GetEndPoint(), propertyString, (int)(vsEPReplaceTextOptions.vsEPReplaceTextAutoformat | vsEPReplaceTextOptions.vsEPReplaceTextNormalizeNewlines | vsEPReplaceTextOptions.vsEPReplaceTextTabsSpaces | vsEPReplaceTextOptions.vsEPReplaceTextKeepMarkers));
+
+                //TODO: po pridani mozna pouzivat metodu .SmartFormat na editPointu, která snad dela to co ctrl+k,d
             }
             catch (Exception e)
             {
@@ -274,6 +315,20 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             {
                 throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindProperty, propertyName, codeClass.Name), e);
             }
+        }
+
+        public CodeFunction2 FindMethod(CodeClass2 codeClass, string methodName)
+        {
+            try
+            {
+                return (CodeFunction2)codeClass.Members.Item(methodName);
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindMethod, methodName, codeClass.Name), e);
+            }
+
+
         }
 
         private string GetConventionPathFromNamespace(string @namespace)
@@ -295,7 +350,45 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             return classFinder.FindCodeClassFromFullName(dbContextFullName);
         }
 
-        
+        private CodeProperty2 FindPropertyOnDbContext(CodeClass2 ctxClass, string classNameForRemoveProperty)
+        {
+            try
+            {
+                CodeProperty2 property = ctxClass.Children.OfType<CodeProperty2>()
+                    .Where(p => IsDbSetPropertyForClass(p.Type as CodeTypeRef2, classNameForRemoveProperty))
+                    .Single();
+
+                return property;
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindDbSetProperty, classNameForRemoveProperty), e);
+            }
+        }
+
+
+
+        private bool IsDbSetPropertyForClass(CodeTypeRef2 codeTypeRef, string classNameForRemoveProperty)
+        {
+            if (codeTypeRef == null || !codeTypeRef.IsGeneric)
+                return false;
+
+            string fullTypeName = codeTypeRef.AsFullName;
+
+            string genericTypeName = null;
+            Match match = Regex.Match(fullTypeName, @"[^<]+<(.+)>$", RegexOptions.None);
+            if (match.Success)
+            {
+                genericTypeName = match.Groups[1].Value;
+            }
+
+            string fullClassName = modelNamespace + "." + classNameForRemoveProperty;
+
+            if (fullClassName.EqualsOrdinal(genericTypeName))
+                return true;
+
+            return false;
+        }
 
         
 

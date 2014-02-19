@@ -6,17 +6,11 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.Generators
 {
-    public class GeneratedMappingInformation
+    public class GeneratedFluetApiCall
     {
-        public MappingInformationType Type { get; set; }
+        public string TargetType { get; set; }
 
-        public string Value { get; set; }
+        public string Content { get; set; }
     }
 
-    public enum MappingInformationType
-    {
-        DbContextProperty,
-        EntityTypeConfiguration,
-        CodeAttribute
-    }
 }

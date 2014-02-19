@@ -32,7 +32,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 
             DbMigrationsConfiguration configuration = CreateInstance<DbMigrationsConfiguration>(Configuration.EfMigrationsConfigurationType);
 
+            //TODO: idealni by bylo aby byl nas generator migraci i generator sql rovnou v configuracnim filu v projektu
             configuration.CodeGenerator = new ExtendedCSharpMigrationCodeGenerator(dbMigrationOperations);
+            configuration.SetSqlGenerator("System.Data.SqlClient", new ExtendedSqlServerMigrationSqlGenerator());
 
             MigrationScaffolder scaffolder = new MigrationScaffolder(configuration);
 

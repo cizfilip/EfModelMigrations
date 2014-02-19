@@ -12,6 +12,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity.Core.Common;
 using System.Xml.Linq;
+using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
+using EfModelMigrations.Exceptions;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
@@ -95,6 +97,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return renameColumnOperation;
         }
 
+
+        //TODO: predelat tak aby se nemuselo vracet vic operaci
         public IEnumerable<RenameColumnOperation> RenameColumnOperationsForJoinComplexType(string complexTypeName, string className)
         {
             string tableName = newModel.GetTableName(GetFullClassName(className));
@@ -105,11 +109,11 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
         }
 
-       
+
 
         //1:1, 1:0, 0:1
-        //TODO: pokud je nejaky konec required je treba v db dropovat identitu (pokud ji PK ma) !!!
-        public IEnumerable<MigrationOperation> OneToOneRelationOperations(string principalClassName, string dependentClassName)
+        //TODO: stringy do resourcu
+        public IEnumerable<MigrationOperation> OneToOneRelationOperations(string principalClassName, string dependentClassName, bool willCascadeOnDelete)
         {
             string principalClassFullName = GetFullClassName(principalClassName);
             string dependentClassFullName = GetFullClassName(dependentClassName);
@@ -117,9 +121,62 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             string principalTableName = newModel.GetTableName(principalClassFullName);
             string dependentTableName = newModel.GetTableName(dependentClassFullName);
 
-            //TODO: primarni klice musi byt stejne pokud se snazime o 1:1 kde je aspon jeden konec povinny
-            var principalPrimaryKeyColumns = newModel.GetTableKeyColumnNamesForClass(principalClassFullName);
-            var dependentPrimaryKeyColumns = newModel.GetTableKeyColumnNamesForClass(dependentClassFullName);
+
+            var principalPrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(principalClassFullName).ToList();
+            var dependentPrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(dependentClassFullName).ToList();
+
+            //Primary keys validation
+            if(principalPrimaryKeyColumnsNames.Count != dependentPrimaryKeyColumnsNames.Count) //Same count
+            {
+                throw new DbMigrationBuilderException(string.Format("Cannot create One to One relation between {0} and {1}, because they does not have same count of primary key columns", principalClassName, dependentClassName));
+            }
+
+            //same storage types
+            if(principalPrimaryKeyColumnsNames.Select(k => newModel.GetColumnStorageType(principalTableName, k))
+                .SequenceEqual(dependentPrimaryKeyColumnsNames.Select(k => newModel.GetColumnStorageType(dependentTableName, k))))
+            {
+                throw new DbMigrationBuilderException(string.Format("Cannot create One to One relation between {0} and {1}, because their primary keys do not have same storage types", principalClassName, dependentClassName));
+            }
+
+            //Drop Identity operations
+            if (dependentPrimaryKeyColumnsNames.Where(c => oldModel.IsColumnIdentity(c, dependentTableName)).Any())
+            {
+                //Validace pokud je treba dropovat identitu:
+                //  1 - jen pokud jsou primarni klice jednoduche (nepodporuji zatim slozene klice ve vazbe)
+                //  2 - jen pokud jsou oba klice typu int
+                //  oboji plyne z toho ze neumim dropovat identitu pokud vyse uvedene neni splneno
+
+                if(dependentPrimaryKeyColumnsNames.Count != 1)
+                {
+                    throw new DbMigrationBuilderException(string.Format("Cannot create One to One relation between {0} and {1}, because composite key is used and that is not suported yet.", principalClassName, dependentClassName));
+                }
+
+                var dependentPrimaryKeyColumnName = newModel.GetTableKeyColumnNamesForClass(dependentClassFullName).Single();
+                if (newModel.GetColumnStorageType(dependentTableName, dependentPrimaryKeyColumnName) != "int")
+                {
+                    throw new DbMigrationBuilderException("Cannot create One to One relation between {0} and {1}, because primary keys are not int type. Only int primary keys are supported.");
+                }
+
+                var dropIdentityOperation = new DropIdentityOperation()
+                {
+                    PrincipalColumn = dependentPrimaryKeyColumnName,
+                    PrincipalTable = dependentTableName
+                };
+
+                //TODO: vsechno ziskavam z newmodelu ale dependt columy z oldmodelu.. je to ok ???
+                foreach (var dependentColumn in oldModel.GetDependentColumns(dependentTableName, dependentPrimaryKeyColumnName))
+                {
+                    dropIdentityOperation.DependentColumns.Add(new DependentColumn()
+                    {
+                        DependentTable = dependentColumn.Item1,
+                        ForeignKeyColumn = dependentColumn.Item2
+                    });
+
+                }
+
+                yield return dropIdentityOperation;
+
+            }
 
             //CreateIndex operation
             var createIndexOperation = new CreateIndexOperation()
@@ -130,29 +187,31 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 Name = null
             };
 
-            foreach (var primaryKey in dependentPrimaryKeyColumns)
+            foreach (var column in dependentPrimaryKeyColumnsNames)
             {
-                createIndexOperation.Columns.Add(primaryKey);
+                createIndexOperation.Columns.Add(column);
             }
-            yield return createIndexOperation;    
+            
+            yield return createIndexOperation;
 
             //AddForeignKeyOperation
             var addForeignKeyOperation = new AddForeignKeyOperation()
             {
-                CascadeDelete = false, //TODO: umoznit specifikovat i cascade delete
+                CascadeDelete = willCascadeOnDelete,
                 Name = null,
                 DependentTable = dependentTableName,
                 PrincipalTable = principalTableName
             };
-            foreach (var primaryKey in dependentPrimaryKeyColumns)
-            {
-                addForeignKeyOperation.DependentColumns.Add(primaryKey);
-            }
-            foreach (var primaryKey in principalPrimaryKeyColumns)
-            {
-                addForeignKeyOperation.PrincipalColumns.Add(primaryKey);
-            }
 
+            foreach (var column in dependentPrimaryKeyColumnsNames)
+            {
+                addForeignKeyOperation.DependentColumns.Add(column);
+            }
+            foreach (var column in principalPrimaryKeyColumnsNames)
+            {
+                addForeignKeyOperation.PrincipalColumns.Add(column);
+            }
+            
             yield return addForeignKeyOperation;
         }
 
@@ -208,6 +267,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
 
 
-        
+
     }
 }

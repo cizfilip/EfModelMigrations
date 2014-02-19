@@ -10,6 +10,8 @@ namespace EfModelMigrations.Infrastructure.Generators
             IEnumerable<string> implementedInterfaces);
         string GenerateProperty(PropertyCodeModel propertyModel);
 
+        string GenerateDbSetProperty(string className);
+
         string GetFileExtensions();
 
         IMappingInformationsGenerator MappingGenerator { get; }

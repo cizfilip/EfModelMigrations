@@ -77,6 +77,8 @@ namespace EfModelMigrations.Runtime.Extensions
             Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
             File.WriteAllText(absolutePath, content);
             return project.ProjectItems.AddFromFile(absolutePath);
+
+            //TODO: po pridani mozna pouzivat metodu .SmartFormat na editPointu, která snad dela to co ctrl+k,d
         }
 
         public static ProjectItem AddFileToProject(this Project project, string path)

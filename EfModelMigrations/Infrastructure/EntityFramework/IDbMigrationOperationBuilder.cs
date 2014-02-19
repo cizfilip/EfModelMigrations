@@ -26,6 +26,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
 
         //Relations
-        IEnumerable<MigrationOperation> OneToOneRelationOperations(string principalClassName, string dependentClassName);
+        IEnumerable<MigrationOperation> OneToOneRelationOperations(string principalClassName, string dependentClassName, bool willCascadeOnDelete);
     }
 }

@@ -25,7 +25,7 @@ namespace EfModelMigrations.Transformations
         {
             yield return new RemoveClassOperation(Name);
 
-            yield return new RemoveMappingInformationOperation(new DbSetPropertyInfo(Name));
+            yield return new RemoveDbSetPropertyOperation(Name);
         }
         
         //TODO: pri dropu tabulky ci sloupecku se musi kontrolovat zda-li se s tim mazou nejaka data - a kdyby ano
