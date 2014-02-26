@@ -24,6 +24,7 @@ namespace EfModelMigrations.Operations.Mapping.Model
             return this;
         }
 
+        //TODO: u vsech "fluent api" implementaci napric projektem pouzivat IFluentInterface trik - https://github.com/clariuslabs/IFluentInterface
         public EfFluentApiCallChain AddMethodCall(EfFluentApiMethods method, IEfFluentApiMethodParameter parameter = null)
         {
             var methodCall = new EfFluetApiCall(method);

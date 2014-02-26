@@ -8,7 +8,6 @@ using System.Linq;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 {
-    //TODO: aplikovat i mapping change operace!
     [Serializable]
     internal class ApplyModelChangesRunner : MigratorBaseRunner
     {

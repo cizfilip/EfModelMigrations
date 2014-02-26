@@ -26,6 +26,10 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
 
         //Relations
-        IEnumerable<MigrationOperation> OneToOneRelationOperations(string principalClassName, string dependentClassName, bool willCascadeOnDelete);
+        IEnumerable<MigrationOperation> OneToOnePrimaryKeyRelationOperations(string principalClassName, string dependentClassName, bool willCascadeOnDelete);
+        IEnumerable<MigrationOperation> OneToOneForeignKeyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete);
+        IEnumerable<MigrationOperation> OneToManyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete);
+        IEnumerable<MigrationOperation> ManyToManyRelationOperations(string principalClassName, string dependentClassName, string tableName, string[] leftKeyColumnNames, string[] rightKeyColumnNames);
+
     }
 }

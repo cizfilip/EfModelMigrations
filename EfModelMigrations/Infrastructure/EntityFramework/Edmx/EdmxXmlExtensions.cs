@@ -49,6 +49,17 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
             return entitySet.TableAttribute();
         }
 
+        public static string GetTableFullNameForTable(this XDocument edmx, string tableName)
+        {
+            var storageEntitySet = edmx.Descendants(EdmxNames.Ssdl.EntitySetNames)
+                .Where(e => e.TableAttribute().EqualsOrdinalIgnoreCase(tableName))
+                .SingleOrThrow(
+                    () => new DbMigrationBuilderException(string.Format("Cannot find storage entity set for table with name {0}.", tableName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one storage entity set found for table with name {0}.", tableName)));
+
+            return GetSchemaQualifiedTableName(storageEntitySet.SchemaAttribute(), storageEntitySet.TableAttribute());
+        }
+
         //TODO: EF predpoklada ze ve Storage modeluje EntitySet name stejne jako EntityType name, ja to nepredpokladam a mozna zbytecne hledam v edmx porad dokola....
         public static IEnumerable<ColumnModel> GetColumnModelsForClass(this XDocument edmx, string classFullName)
         {
@@ -61,6 +72,16 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
                 yield return BuildColumnModel(edmx, prop, storageEntitySetName);
             }
         }
+
+        public static ColumnModel GetColumnModel(this XDocument edmx, string tableFullName, string columnName)
+        {
+            var columnProperty = GetStorageEntityTypeFromTableName(edmx, tableFullName).FindColumnInStorageEntityType(columnName);
+
+            var storageEntitySetName = GetStorageEntitySetFromTableName(edmx, tableFullName).NameAttribute();
+
+            return BuildColumnModel(edmx, columnProperty, storageEntitySetName);
+        }
+        
 
         public static string GetColumnStorageType(this XDocument edmx, string tableFullName, string columnName)
         {
@@ -138,7 +159,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
                                                 assoc.Descendants(EdmxNames.Ssdl.EndNames).Single(e => e.RoleAttribute() == dependent.RoleAttribute()).TypeAttribute()
                                              );
 
-                    var dependentStorageEntitySet = edmx.Descendants(EdmxNames.Ssdl.EntitySetNames).Where(e => e.EntityTypeAttribute().EqualsOrdinalIgnoreCase(dependentStorageTypeName))
+                    var dependentStorageEntitySet = edmx.Descendants(EdmxNames.Ssdl.EntitySetNames).Where(e => RemoveAliasFromName(e.EntityTypeAttribute()).EqualsOrdinalIgnoreCase(dependentStorageTypeName))
                         .SingleOrThrow(
                             () => new DbMigrationBuilderException(string.Format("Cannot find Storage Entity Set information for storage entity type {0}.", dependentStorageTypeName)),
                             () => new DbMigrationBuilderException(string.Format("More than one Storage Entity Set found for storage entity type {0}.", dependentStorageTypeName))
@@ -168,12 +189,24 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
         //TODO: stringy do resourcu
         private static XElement GetStorageEntityTypeFromTableName(XDocument edmx, string tableFullName)
         {
+            var storageEntityTypeName = RemoveAliasFromName(GetStorageEntitySetFromTableName(edmx, tableFullName).EntityTypeAttribute());
+
+            return edmx.Descendants(EdmxNames.Ssdl.EntityTypeNames)
+                .Where(e => e.NameAttribute().EqualsOrdinalIgnoreCase(storageEntityTypeName))
+                .SingleOrThrow(
+                    () => new DbMigrationBuilderException(string.Format("Cannot find storage entity type for table with name {0}.", tableFullName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one storage entity type found for table with name {0}.", tableFullName)));
+        }
+
+        //TODO: stringy do resourcu
+        private static XElement GetStorageEntitySetFromTableName(XDocument edmx, string tableFullName)
+        {
             var parsedTableName = ParseTableFullName(tableFullName);
             return edmx.Descendants(EdmxNames.Ssdl.EntitySetNames)
                 .Where(e => e.SchemaAttribute().EqualsOrdinalIgnoreCase(parsedTableName.Item1) && e.TableAttribute().EqualsOrdinalIgnoreCase(parsedTableName.Item2))
                 .SingleOrThrow(
-                    () => new DbMigrationBuilderException(string.Format("Cannot find storage entity type for table with name {0}.", tableFullName)),
-                    () => new DbMigrationBuilderException(string.Format("More than one storage entity typs found for table with name {0}.", tableFullName)));
+                    () => new DbMigrationBuilderException(string.Format("Cannot find storage entity set for table with name {0}.", tableFullName)),
+                    () => new DbMigrationBuilderException(string.Format("More than one storage entity set found for table with name {0}.", tableFullName)));
         }
 
         //TODO: message do resourcu

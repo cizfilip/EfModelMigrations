@@ -118,10 +118,14 @@
     <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
     <Compile Include="Operations\Mapping\AddDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\AddMappingInformationOperation.cs" />
-    <Compile Include="Operations\Mapping\Associations\AssociationMappingInformation.cs" />
-    <Compile Include="Operations\Mapping\Associations\HasOptionalWithRequiredInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\HasRequiredWithOptionalInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\HasRequiredWithRequiredDependentInfo.cs" />
+    <Compile Include="Operations\Mapping\Associations\AssociationInfo.cs" />
+    <Compile Include="Operations\Mapping\Associations\AssociationWithCascadeDeleteInfo.cs" />
+    <Compile Include="Operations\Mapping\Associations\ManyToManyAssociationInfo.cs" />
+    <Compile Include="Operations\Mapping\Associations\OneToManyAssociationInfo.cs" />
+    <Compile Include="Operations\Mapping\Associations\OneToManyWithForeignKeyColumnsAssociationInfo.cs" />
+    <Compile Include="Operations\Mapping\Associations\OneToManyWithForeignKeyPropertiesAssociationInfo.cs" />
+    <Compile Include="Operations\Mapping\Associations\OneToOneAssociationInfo.cs" />
+    <Compile Include="Operations\Mapping\Associations\OneToOneWithForeignKeysAssociationInfo.cs" />
     <Compile Include="Operations\Mapping\DbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\IMappingInformation.cs" />
     <Compile Include="ModelMigration.cs" />
@@ -131,12 +135,13 @@
     <Compile Include="Operations\CreateEmptyClassOperation.cs" />
     <Compile Include="Operations\IModelChangeOperation.cs" />
     <Compile Include="Operations\Mapping\MappingInformationOperation.cs" />
-    <Compile Include="Operations\Mapping\Associations\HasRequiredWithRequiredPrincipalInfo.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluentApiCallChain.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluentApiMethods.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluetApiCall.cs" />
     <Compile Include="Operations\Mapping\Model\IEfFluentApiMethodParameter.cs" />
+    <Compile Include="Operations\Mapping\Model\MapMethodParameter.cs" />
     <Compile Include="Operations\Mapping\Model\PropertySelectorParameter.cs" />
+    <Compile Include="Operations\Mapping\Model\StringParameter.cs" />
     <Compile Include="Operations\Mapping\Model\ValueParameter.cs" />
     <Compile Include="Operations\Mapping\RemoveDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\RemoveMappingInformationOperation.cs" />
@@ -151,12 +156,21 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Transformations\AddAssociationWithCascadeDeleteTransformation.cs" />
+    <Compile Include="Transformations\AddManyToManyAssociationTransformation.cs" />
+    <Compile Include="Transformations\AddOneToManyAssociationTransformation.cs" />
+    <Compile Include="Transformations\AddAssociationTransformation.cs" />
     <Compile Include="Transformations\AddOneToOneAssociationTransformation.cs" />
+    <Compile Include="Transformations\AddOneToOneForeignKeyAssociationTransformation.cs" />
+    <Compile Include="Transformations\AddOneToOnePrimaryKeyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddPropertyTransformation.cs" />
     <Compile Include="Transformations\CreateClassTransformation.cs" />
     <Compile Include="Transformations\ExtractComplexTypeTransformation.cs" />
     <Compile Include="Transformations\JoinComplexTypeTransformation.cs" />
     <Compile Include="Transformations\ModelTransformation.cs" />
+    <Compile Include="Transformations\Model\AssociationMemberInfo.cs" />
+    <Compile Include="Transformations\Model\ManyToManyJoinTable.cs" />
+    <Compile Include="Transformations\Model\OneToOneAssociationType.cs" />
     <Compile Include="Transformations\RemoveClassTransformation.cs" />
     <Compile Include="Transformations\RemovePropertyTransformation.cs" />
     <Compile Include="Transformations\RenameClassTransformation.cs" />

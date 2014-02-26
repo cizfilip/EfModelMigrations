@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
+    //TODO: tohle mozna sloučit primo do abstraktni modelTransformation 
     public abstract class TransformationWithInverse : ModelTransformation
     {
         protected ModelTransformation inverse;

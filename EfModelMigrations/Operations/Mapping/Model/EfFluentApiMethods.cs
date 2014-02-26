@@ -16,7 +16,22 @@ namespace EfModelMigrations.Operations.Mapping.Model
         WithRequiredDependent,
         WithOptionalPrincipal,
         WithOptionalDependent,
+        HasMany,
+        WithMany,
+
+
 
         WillCascadeOnDelete,
+
+
+        //Map method
+        Map,
+        MapKey,
+        //Map for many to many
+        MapLeftKey,
+        MapRightKey,
+        ToTable,
+
+        HasForeignKey,
     }
 }

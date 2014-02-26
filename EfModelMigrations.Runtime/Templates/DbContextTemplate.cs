@@ -26,8 +26,7 @@ namespace EfModelMigrations.Runtime.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using System;\r\nusing System.Collections.Generic;\r\nusing System.Data.Entity;\r\n\r\nna" +
-                    "mespace ");
+            this.Write("using System;\r\nusing System.Data.Entity;\r\nusing System.Linq;\r\n\r\nnamespace ");
             
             #line 8 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Namespace));

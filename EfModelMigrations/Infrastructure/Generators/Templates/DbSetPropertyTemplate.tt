@@ -3,4 +3,4 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-public IDbSet<<#= GenericType #>> <#= Name #> { get; set; }
+public virtual IDbSet<<#= GenericType #>> <#= Name #> { get; set; }

@@ -46,7 +46,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
 
         //TODO: dodelat removing mapovacich informaci pro asociace
-        protected virtual void RemoveMapping(AssociationMappingInformation mappingInformation)
+        protected virtual void RemoveMapping(AssociationInfo mappingInformation)
         {
 
         }

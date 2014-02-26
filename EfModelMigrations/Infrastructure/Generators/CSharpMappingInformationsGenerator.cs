@@ -15,17 +15,24 @@ namespace EfModelMigrations.Infrastructure.Generators
     public class CSharpMappingInformationsGenerator : IMappingInformationsGenerator
     {
         private static readonly string Indent = "    ";
-        private static readonly string ModelBuilderParameterName = "    ";
+        private static readonly string ModelBuilderParameterName = "modelBuilder";
 
         public string GetPrefixForOnModelCreatingUse(string entityName)
         {
-            return string.Format("{0}.Entity<{1}>().", ModelBuilderParameterName, entityName);
+            StringBuilder sb = new StringBuilder();
+            sb.Append(ModelBuilderParameterName)
+                .Append(".Entity<")
+                .Append(entityName)
+                .Append(">()");
+            AppendIndentedNewLine(sb);
+            sb.Append(".");
+            return sb.ToString();
         }
 
         public GeneratedFluetApiCall GenerateFluentApiCall(EfFluentApiCallChain callChain)
         {
             var generatedMethodCalls = callChain.FluentApiCalls.Select(m => GenerateOneFluentApiCall(m));
-            var result = string.Join(GetMethodCallSeparator(), generatedMethodCalls);
+            var result = string.Join(GetMethodCallSeparator(), generatedMethodCalls) + ";";
 
             return new GeneratedFluetApiCall()
             {
@@ -72,15 +79,74 @@ namespace EfModelMigrations.Infrastructure.Generators
         {
             var lambdaParameterName = GetLambdaParameterName(parameter.ClassName);
             sb.Append(lambdaParameterName)
-                .Append(" => ")
-                .Append(lambdaParameterName)
-                .Append(".")
-                .Append(parameter.PropertyName);
+                .Append(" => ");
+
+            if(parameter.PropertyNames.Length == 1)
+            {
+                sb.Append(lambdaParameterName)
+                    .Append(".")
+                    .Append(parameter.PropertyNames[0]);
+            }
+            else
+            {
+                sb.Append("new { ");
+                foreach (var property in parameter.PropertyNames)
+                {
+                    sb.Append(lambdaParameterName)
+                        .Append(".")
+                        .Append(parameter)
+                        .Append(", ");
+                }
+                sb.Length = sb.Length - 2;
+                sb.Append(" }");
+            }
         }
 
         protected virtual void GenerateParameter(ValueParameter parameter, StringBuilder sb)
         {
             sb.Append(parameter.Value.ToString());
+        }
+
+        protected virtual void GenerateParameter(StringParameter parameter, StringBuilder sb)
+        {
+            sb.Append("\"")
+                .Append(parameter.Value)
+                .Append("\"");
+        }
+
+        protected virtual void GenerateParameter(MapMethodParameter parameter, StringBuilder sb)
+        {
+            var lambdaParameterName = GetLambdaParameterNameForMapMethod();
+            sb.Append(lambdaParameterName)
+                .Append(" => ");
+
+            int mapMethodCallsCount = parameter.MapCalls.Count;
+
+            if(mapMethodCallsCount == 0)
+            {
+                sb.Append("{ }");
+            }
+            else if (mapMethodCallsCount == 1)
+            {
+                sb.Append(lambdaParameterName)
+                    .Append(".")
+                    .Append(GenerateOneFluentApiCall(parameter.MapCalls[0]));
+            }
+            else
+            {
+                AppendIndentedNewLine(sb);
+                sb.Append("{");
+                foreach (var mapMethodCall in parameter.MapCalls)
+                {
+                    AppendIndentedNewLine(sb, 2);
+                    sb.Append(lambdaParameterName)
+                        .Append(".")
+                        .Append(GenerateOneFluentApiCall(mapMethodCall))
+                        .Append(";");
+                }
+                AppendIndentedNewLine(sb);
+                sb.Append("}");
+            }
         }
 
 
@@ -89,18 +155,28 @@ namespace EfModelMigrations.Infrastructure.Generators
             return className.Take(1).Single().ToString().ToLower();
         }
 
+        protected virtual string GetLambdaParameterNameForMapMethod()
+        {
+            return "m";
+        }
+
         private string GetMethodCallSeparator()
         {
             return new StringBuilder().AppendLine().Append(Indent).Append(".").ToString();
         }
 
+        private void AppendIndentedNewLine(StringBuilder sb, int indent = 1)
+        {
+            sb.AppendLine();
+            for (int i = 0; i < indent; i++)
+            {
+                sb.Append(Indent);
+            }
+        }
 
         protected virtual string GenerateMethodName(EfFluentApiMethods method)
         {
             return Enum.GetName(typeof(EfFluentApiMethods), method);
-        }
-
-
-        
+        }        
     }
 }

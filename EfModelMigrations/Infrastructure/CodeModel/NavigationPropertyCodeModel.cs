@@ -6,12 +6,22 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel
 {
+    //TODO: pri pridavani navigacni property by se melo do konstruktoru tridy pridat jeji inicializace napr:
+    //public class Person
+    //{
+    //    public Person()
+    //    {
+    //        Addresses = new HashSet<Address>();
+    //    }
+
+    //    public virtual HashSet<Address> Addresses { get; set; }
+    //}
     public class NavigationPropertyCodeModel : ClassMemberCodeModel
     {
         public NavigationPropertyCodeModel() : base()
         {
             this.IsCollection = false;
-
+            this.IsVirtual = true;
         }
 
         public string TargetClass { get; set; }
@@ -27,7 +37,8 @@ namespace EfModelMigrations.Infrastructure.CodeModel
                 IsSetterPrivate = this.IsSetterPrivate,
                 Name = this.Name,
                 Visibility = this.Visibility,
-                Type = GetPropertyType()
+                Type = GetPropertyType(),
+                IsVirtual = this.IsVirtual
             };
         }
 

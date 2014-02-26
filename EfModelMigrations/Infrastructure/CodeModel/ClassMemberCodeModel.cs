@@ -13,10 +13,13 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             this.Name = null;
             this.Visibility = CodeModelVisibility.Public;
             this.IsSetterPrivate = false;
+            this.IsVirtual = false;
         }
 
         public string Name { get; set; }
         public CodeModelVisibility Visibility { get; set; }
         public bool IsSetterPrivate { get; set; }
+
+        public bool IsVirtual { get; set; }
     }
 }

@@ -24,5 +24,15 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
             return this;
         }
+
+        public EfFluetApiCall AddParameters(IEnumerable<IEfFluentApiMethodParameter> parameters)
+        {
+            foreach (var param in parameters)
+            {
+                Parameters.Add(param);
+            }
+
+            return this;
+        }
     }
 }

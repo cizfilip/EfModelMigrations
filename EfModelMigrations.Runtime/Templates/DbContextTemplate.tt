@@ -2,8 +2,8 @@
 <#@ assembly name="System.Core" #>
 <#@ import namespace="System.Collections.Generic" #>
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 
 namespace <#= Namespace #>
 {
