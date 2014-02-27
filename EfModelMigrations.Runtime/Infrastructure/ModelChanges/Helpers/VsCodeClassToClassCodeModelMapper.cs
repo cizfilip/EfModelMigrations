@@ -35,7 +35,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 Name = property.Name,
                 Type = property.Type.AsString,
                 Visibility = MapVisibility(property.Access) ?? CodeModelVisibility.Public,
-                IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate
+                IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate,
+                IsVirtual = property.OverrideKind == vsCMOverrideKind.vsCMOverrideKindVirtual ? true : false
             };
         }
 

@@ -186,7 +186,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             {
                 CodeProperty2 property = FindProperty(fromCodeClass, operation.Name);
                 var endPoint = property.GetEndPoint();
-                var startEditPoint = property.GetStartPoint().CreateEditPoint();
+                var startEditPoint = property.GetStartPoint(vsCMPart.vsCMPartWholeWithAttributes).CreateEditPoint();
                 string propertyString = startEditPoint.GetText(endPoint);
                 startEditPoint.Delete(endPoint);
 
