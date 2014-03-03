@@ -28,7 +28,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private string dbContextFullName;
         private ICodeGenerator codeGenerator;
         private CodeClassFinder classFinder;
-        private IMappingInformationRemover mappingRemover;
+        private VsMappingInformationRemover mappingRemover;
 
 
         public VsModelChangesExecutor(HistoryTracker historyTracker,
@@ -109,8 +109,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             historyTracker.MarkItemModified(codeClass.ProjectItem);
 
+            string propertyName;
+            string propertyString = codeGenerator.GenerateDbSetProperty(operation.ClassName, out propertyName);
+
             AddPropertyToClassInternal(codeClass,
-                codeGenerator.GenerateProperty(operation.Model),
+                propertyName,
+                propertyString,
                 e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddProperty,
                     operation.Model.Name,
                     operation.ClassName), e)
@@ -191,6 +195,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 startEditPoint.Delete(endPoint);
 
                 AddPropertyToClassInternal(toCodeClass,
+                    operation.Name,
                     propertyString,
                     e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddProperty,
                         operation.Name,
@@ -224,7 +229,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             CodeClass2 contextClass = GetDbContextCodeClass();
             historyTracker.MarkItemModified(contextClass.ProjectItem);
 
-            CodeFunction2 onModelCreatingMethod = FindMethod(contextClass, "OnModelCreating");
+            CodeFunction2 onModelCreatingMethod = FindOnModelCreatingMethod(contextClass);
 
 
             try
@@ -246,6 +251,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         protected virtual void ExecuteOperation(RemoveMappingInformationOperation operation)
         {
+            CodeClass2 contextClass = GetDbContextCodeClass();
+            historyTracker.MarkItemModified(contextClass.ProjectItem);
+
+            CodeFunction2 onModelCreatingMethod = FindOnModelCreatingMethod(contextClass);
+
+            string oldCode = GetMethodCode(onModelCreatingMethod);
+
+            //TODO: dodelat remove mapovani
+
             mappingRemover.Remove(operation.MappingInformation);
         }
 
@@ -255,9 +269,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             historyTracker.MarkItemModified(contextClass.ProjectItem);
 
-            string propertyString = codeGenerator.GenerateDbSetProperty(operation.ClassName);
+            string dbSetPropertyName;
+            string propertyString = codeGenerator.GenerateDbSetProperty(operation.ClassName, out dbSetPropertyName);
 
-            AddPropertyToClassInternal(contextClass, propertyString,
+            AddPropertyToClassInternal(contextClass, dbSetPropertyName, propertyString,
                 e => new ModelMigrationsException(
                     string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
                     operation.ClassName)
@@ -289,7 +304,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         #region Helper private methods
 
-        private void AddPropertyToClassInternal(CodeClass2 codeClass, string propertyString, Func<Exception, ModelMigrationsException> exceptionFactory)
+        private void AddPropertyToClassInternal(CodeClass2 codeClass, string propertyName, string propertyString, Func<Exception, ModelMigrationsException> exceptionFactory)
         {
             try
             {
@@ -297,7 +312,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 var startPoint = tempVar.GetStartPoint();
                 startPoint.CreateEditPoint().ReplaceText(tempVar.GetEndPoint(), propertyString, (int)(vsEPReplaceTextOptions.vsEPReplaceTextAutoformat | vsEPReplaceTextOptions.vsEPReplaceTextNormalizeNewlines | vsEPReplaceTextOptions.vsEPReplaceTextTabsSpaces | vsEPReplaceTextOptions.vsEPReplaceTextKeepMarkers));
 
-                //TODO: po pridani mozna pouzivat metodu .SmartFormat na editPointu, která snad dela to co ctrl+k,d
+                //Format inserted property
+                var property = FindProperty(codeClass, propertyName);
+                property.StartPoint.CreateEditPoint().SmartFormat(property.EndPoint);
             }
             catch (Exception e)
             {
@@ -317,7 +334,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
-        public CodeFunction2 FindMethod(CodeClass2 codeClass, string methodName)
+        private CodeFunction2 FindMethod(CodeClass2 codeClass, string methodName)
         {
             try
             {
@@ -327,8 +344,31 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             {
                 throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindMethod, methodName, codeClass.Name), e);
             }
+        }
 
+        private CodeFunction2 FindOnModelCreatingMethod(CodeClass2 contextClass = null)
+        {
+            if(contextClass == null)
+            {
+                contextClass = GetDbContextCodeClass();
+            }
 
+            return FindMethod(contextClass, "OnModelCreating");
+        }
+
+        private string GetMethodCode(CodeFunction2 method)
+        {
+            try
+            {
+                var startPoint = method.GetStartPoint(vsCMPart.vsCMPartBody).CreateEditPoint();
+                var endPoint = method.GetEndPoint(vsCMPart.vsCMPartBody);
+
+                return startPoint.GetText(endPoint);
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format("Cannot retrieve method code from method {0}", method.Name), e); //TODO: string do resourcu
+            }
         }
 
         private string GetConventionPathFromNamespace(string @namespace)
@@ -365,8 +405,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindDbSetProperty, classNameForRemoveProperty), e);
             }
         }
-
-
 
         private bool IsDbSetPropertyForClass(CodeTypeRef2 codeTypeRef, string classNameForRemoveProperty)
         {

@@ -33,8 +33,10 @@ namespace EfModelMigrations.Infrastructure.Generators
             }.TransformText();
         }
 
-        public string GenerateProperty(PropertyCodeModel propertyModel)
+        public string GenerateProperty(PropertyCodeModel propertyModel, out string propertyName)
         {
+            propertyName = propertyModel.Name;
+
             return new PropertyTemplate()
             {
                 PropertyModel = propertyModel,
@@ -42,12 +44,13 @@ namespace EfModelMigrations.Infrastructure.Generators
             }.TransformText();
         }
 
-        public string GenerateDbSetProperty(string className)
+        public string GenerateDbSetProperty(string className, out string dbSetPropertyName)
         {
+            dbSetPropertyName = className + "Set"; //TODO: asi spis pluralizovat jmeno
             return new DbSetPropertyTemplate()
             {
                 GenericType = className,
-                Name = className + "Set" //TODO: asi spis pluralizovat jmeno
+                Name = dbSetPropertyName 
             }.TransformText();
         }
 
@@ -84,10 +87,6 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
         }
 
-
-
-
-
         public IMappingInformationsGenerator MappingGenerator
         {
             get
@@ -95,8 +94,5 @@ namespace EfModelMigrations.Infrastructure.Generators
                 return mappingGenerator;
             }
         }
-
-
-        
     }
 }

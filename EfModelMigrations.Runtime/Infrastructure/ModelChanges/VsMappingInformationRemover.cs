@@ -15,7 +15,7 @@ using EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
-    internal class VsMappingInformationRemover : IMappingInformationRemover
+    internal class VsMappingInformationRemover 
     {
         private HistoryTrackerWrapper historyTracker;
         private string modelNamespace;
