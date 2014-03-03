@@ -42,7 +42,7 @@ namespace EfModelMigrations.Infrastructure.Generators.Templates
             
             #line default
             #line hidden
-            this.Write(" { get; set; }\r\n");
+            this.Write(" { get; set; }");
             return this.GenerationEnvironment.ToString();
         }
     }

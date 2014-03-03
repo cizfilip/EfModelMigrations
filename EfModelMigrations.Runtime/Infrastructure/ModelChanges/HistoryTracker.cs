@@ -8,7 +8,7 @@ using EfModelMigrations.Exceptions;
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
     [Serializable]
-    internal class HistoryTracker
+    internal class HistoryTracker : MarshalByRefObject
     {
         private IDictionary<string, HistoryItem> history;
 
@@ -31,14 +31,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
-        public void MarkItemDeleted(string fullPath, string oldContent)
+        //TODO: ted se nejspis cely ProjectItem serializuje protoze jsme marshalbyref
+        public void MarkItemDeleted(ProjectItem item)
         {
-            MarkItemModifiedOrDeleted(fullPath, oldContent);
+            MarkItemModifiedOrDeleted(item);
         }
 
-        public void MarkItemModified(string fullPath, string oldContent)
+        public void MarkItemModified(ProjectItem item)
         {
-            MarkItemModifiedOrDeleted(fullPath, oldContent);
+            MarkItemModifiedOrDeleted(item);
         }
 
 
@@ -82,10 +83,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                     projectItem.Delete();
                     break;
                 case HistoryItemType.ModifiedOrDeleted:
-                    var document = GetProjectItemDocument(projectItem) as TextDocument;
+                    var document = GetProjectItemTextDocument(projectItem);
                     var endPoint = document.EndPoint;
                     document.StartPoint.CreateEditPoint().ReplaceText(endPoint, historyItem.Content, (int)(vsEPReplaceTextOptions.vsEPReplaceTextAutoformat | vsEPReplaceTextOptions.vsEPReplaceTextNormalizeNewlines | vsEPReplaceTextOptions.vsEPReplaceTextTabsSpaces | vsEPReplaceTextOptions.vsEPReplaceTextKeepMarkers));
-                    //TODO: po pridani mozna pouzivat metodu .SmartFormat na editPointu, která snad dela to co ctrl+k,d
                     break;
                 default:
                     throw new InvalidOperationException("Invalid history item type."); //TODO: string do resaurcu
@@ -131,32 +131,44 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         #region Private methods
 
-        private void MarkItemModifiedOrDeleted(string fullPath, string oldContent)
+        private void MarkItemModifiedOrDeleted(ProjectItem item)
         {
-            if (string.IsNullOrEmpty(fullPath))
-            {
-                //TODO: mozna vyhodit vyjimku ne spokojene nic nepridat do historie....
-                return;
-            }
-            if (string.IsNullOrEmpty(oldContent))
-            {
-                //TODO: mozna vyhodit vyjimku ne spokojene nic nepridat do historie....
-                return;
-            }
+            string key = GetItemFullPath(item);
 
-            if (!history.ContainsKey(fullPath))
+            if (!history.ContainsKey(key))
             {
-                history.Add(fullPath, HistoryItem.ModifiedOrDeletedItem(oldContent));
+                string oldContent = GetItemContent(key);
+                history.Add(key, HistoryItem.ModifiedOrDeletedItem(oldContent));
             }
         }
 
-        private Document GetProjectItemDocument(ProjectItem item)
+        private string GetItemFullPath(ProjectItem item)
+        {
+            if (item.FileCount != 1)
+                throw new InvalidOperationException(string.Format("Project item {0} contains more than one file!", item.Name)); //TODO: string do resourcu
+
+            return item.FileNames[1];
+        }
+
+        private string GetItemContent(string fullPath)
+        {
+            try
+            {
+                return File.ReadAllText(fullPath);
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(string.Format("Cannot retrieve old content for file {0}! See inner exception", fullPath), e); //TODO: string do resourcu
+            }
+        }
+
+        private TextDocument GetProjectItemTextDocument(ProjectItem item)
         {
             if (!item.get_IsOpen())
             {
                 item.Open();
             }
-            return item.Document;
+            return (TextDocument)item.Document.Object("TextDocument");
         }
 
         #endregion

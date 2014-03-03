@@ -21,7 +21,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
     internal class VsModelChangesExecutor : IModelChangesExecutor
     {
-        private HistoryTrackerWrapper historyTracker;
+        private HistoryTracker historyTracker;
         private Project modelProject;
         //TODO: asi by stacilo aby ClassCodeModel mela property FullName (ale musim nejak zaridit aby mela modelnamespace)
         private string modelNamespace;
@@ -37,13 +37,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             string dbContextFullName,
             ICodeGenerator codeGenerator)
         {
-            this.historyTracker = new HistoryTrackerWrapper(historyTracker);
+            this.historyTracker = historyTracker;
             this.modelProject = modelProject;
             this.modelNamespace = modelNamespace;
             this.dbContextFullName = dbContextFullName;
             this.codeGenerator = codeGenerator;
             this.classFinder = new CodeClassFinder(modelProject);
-            this.mappingRemover = new VsMappingInformationRemover(this.historyTracker, modelNamespace, dbContextFullName, classFinder);
+            this.mappingRemover = new VsMappingInformationRemover(historyTracker, modelNamespace, dbContextFullName, classFinder);
         }
 
 
@@ -110,7 +110,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             historyTracker.MarkItemModified(codeClass.ProjectItem);
 
             string propertyName;
-            string propertyString = codeGenerator.GenerateDbSetProperty(operation.ClassName, out propertyName);
+            string propertyString = codeGenerator.GenerateProperty(operation.Model, out propertyName);
 
             AddPropertyToClassInternal(codeClass,
                 propertyName,

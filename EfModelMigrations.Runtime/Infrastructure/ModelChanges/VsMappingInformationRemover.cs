@@ -17,12 +17,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
     internal class VsMappingInformationRemover 
     {
-        private HistoryTrackerWrapper historyTracker;
+        private HistoryTracker historyTracker;
         private string modelNamespace;
         private string dbContextFullName;
         private CodeClassFinder classFinder;
 
-        public VsMappingInformationRemover(HistoryTrackerWrapper historyTracker, string modelNamespace, string dbContextFullName, CodeClassFinder classFinder)
+        public VsMappingInformationRemover(HistoryTracker historyTracker, string modelNamespace, string dbContextFullName, CodeClassFinder classFinder)
         {
             this.historyTracker = historyTracker;
             this.modelNamespace = modelNamespace;

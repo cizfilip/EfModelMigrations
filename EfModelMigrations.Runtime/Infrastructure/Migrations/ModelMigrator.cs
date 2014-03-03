@@ -97,7 +97,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                     });
                 }
             }
-            catch(ModelMigrationsException)
+            //TODO: Pokud dojde k vyjimce v restore na historyTrackeru tak se vyhodi jen ta a my zapomeneme duvod proc jsme vubec restorovali
+            //idealni vypis:
+            // 1) message vyjimky ktera zpusobila nutnost restoru!
+            // 2) pokud se restore provedl ok vypsat: vsechny zmeny pred chybou byli vraceny, pokud je vyjimka i v restoru napsat ze je to uplne v haji a at si uzivatel poradi sam :)
+            catch (ModelMigrationsException)
             {
                 RollbackModelState(historyTracker, scaffoldedMigration);
                 throw;
