@@ -14,6 +14,13 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             Type = null;
         }
 
+        public PropertyCodeModel(string name, string type)
+            : base()
+        {
+            Name = name;
+            Type = type;
+        }
+
         public string Type { get; set; }
                 
     }

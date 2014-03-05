@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Transformations;
+using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,17 @@ namespace EfModelMigrations
             migration.AddTransformation(new JoinComplexTypeTransformation(complexTypeName, className));
         }
 
+
+        //Associations
+        public static AssociationBuilder Association(this ModelMigration migration)
+        {
+            return new AssociationBuilder(migration);
+        }
+
+
+        
+        
+
         private static IEnumerable<PropertyCodeModel> ConvertObjectToPropertyModel(object properties)
         {
             foreach (var property in properties.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
@@ -68,4 +80,7 @@ namespace EfModelMigrations
             }
         }
     }
+
+
+   
 }

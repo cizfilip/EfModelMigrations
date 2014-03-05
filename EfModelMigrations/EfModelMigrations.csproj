@@ -115,6 +115,7 @@
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
+    <Compile Include="ModelTransformationBuilders.cs" />
     <Compile Include="Operations\Mapping\AddDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\AddMappingInformationOperation.cs" />
     <Compile Include="Operations\Mapping\Associations\AssociationInfo.cs" />
@@ -164,6 +165,7 @@
     <Compile Include="Transformations\AddOneToOnePrimaryKeyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddPropertyTransformation.cs" />
     <Compile Include="Transformations\CreateClassTransformation.cs" />
+    <Compile Include="Transformations\ExtractClassTransformation.cs" />
     <Compile Include="Transformations\ExtractComplexTypeTransformation.cs" />
     <Compile Include="Transformations\JoinComplexTypeTransformation.cs" />
     <Compile Include="Transformations\ModelTransformation.cs" />

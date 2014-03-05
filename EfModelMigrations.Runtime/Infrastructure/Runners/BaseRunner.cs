@@ -61,7 +61,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
 
 
-        private static Assembly LoadAssembly(string assemblyPath)
+        private Assembly LoadAssembly(string assemblyPath)
         {
             try
             {

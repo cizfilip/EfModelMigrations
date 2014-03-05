@@ -7,7 +7,6 @@ using EfModelMigrations.Exceptions;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
-    [Serializable]
     internal class HistoryTracker : MarshalByRefObject
     {
         private IDictionary<string, HistoryItem> history;
@@ -174,7 +173,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         #endregion
 
         #region Helper classes
-        [Serializable]
         private class HistoryItem
         {
             public HistoryItemType Type { get; set; }
