@@ -44,20 +44,20 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
             return new IdentityOperationWrapper(operation);
         }
 
-        public class IdentityOperationWrapper
+        public class IdentityOperationWrapper : IFluentInterface
         {
-            private IdentityOperation _operation;
+            private IdentityOperation operation;
 
             public IdentityOperationWrapper(IdentityOperation operation)
             {
-                _operation = operation;
+                this.operation = operation;
             }
 
             public IdentityOperationWrapper WithDependentColumn(
                 string table,
                 string foreignKeyColumn)
             {
-                _operation.DependentColumns.Add(new DependentColumn
+                operation.DependentColumns.Add(new DependentColumn
                 {
                     DependentTable = table,
                     ForeignKeyColumn = foreignKeyColumn
@@ -67,5 +67,38 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
             }
         }
 
+
+        public static MoveDataOperationWrapper MoveData(this DbMigration migration)
+        {
+            var operation = new MoveDataOperation();
+            ((IDbMigration)migration).AddOperation(operation);
+            return new MoveDataOperationWrapper(operation);
+        }
+
+        public class MoveDataOperationWrapper : IFluentInterface
+        {
+            private MoveDataOperation operation;
+
+            public MoveDataOperationWrapper(MoveDataOperation operation)
+            {
+                this.operation = operation;
+            }
+
+            public MoveDataOperationWrapper FromTable(
+                string table,
+                string[] columns)
+            {
+                operation.From = new MoveDataModel(table, columns);
+                return this;
+            }
+
+            public MoveDataOperationWrapper ToTable(
+                string table,
+                string[] columns)
+            {
+                operation.To = new MoveDataModel(table, columns);
+                return this;
+            }
+        }
     }
 }

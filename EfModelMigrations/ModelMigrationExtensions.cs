@@ -61,6 +61,10 @@ namespace EfModelMigrations
             migration.AddTransformation(new JoinComplexTypeTransformation(complexTypeName, className));
         }
 
+        public static void ExtractClass(this ModelMigration migration, string newClassName, string fromClassName, string[] propertiesToExtract, string[] foreignKeyColumns)
+        {
+            migration.AddTransformation(new ExtractClassTransformation(fromClassName, propertiesToExtract, newClassName, foreignKeyColumns));
+        }
 
         //Associations
         public static AssociationBuilder Association(this ModelMigration migration)

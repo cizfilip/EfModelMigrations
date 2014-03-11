@@ -33,6 +33,36 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return base.GetNamespaces(operations).Concat(addedNamespaces);
         }
 
+        protected virtual void Generate(MoveDataOperation moveDataOperation, IndentedTextWriter writer)
+        {
+            writer.Write("this.");
+            writer.Write("MoveData");
+            writer.WriteLine("()");
+
+            writer.Indent++;
+
+            GenerateMoveDataFluentCall("FromTable", moveDataOperation.From, writer);
+            writer.WriteLine();
+            GenerateMoveDataFluentCall("ToTable", moveDataOperation.From, writer);
+            writer.WriteLine(";");
+        }
+
+        private void GenerateMoveDataFluentCall(string methodName, MoveDataModel model, IndentedTextWriter writer)
+        {
+            writer.Write(".");
+            writer.Write(methodName);
+            writer.Write("(");
+            writer.Write(Quote(model.TableName));
+            writer.Write(", new[] { ");
+
+            foreach (var column in model.ColumnNames)
+            {
+                writer.Write(Quote(column));
+                writer.Write(", ");
+            }
+
+            writer.Write("})");
+        }
 
         protected virtual void Generate(AddIdentityOperation addIdentityOperation, IndentedTextWriter writer)
         {

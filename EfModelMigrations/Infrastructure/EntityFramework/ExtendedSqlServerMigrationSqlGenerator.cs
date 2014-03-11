@@ -17,7 +17,26 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             if (migrationOperation is IdentityOperation)
             {
                 Generate((IdentityOperation)migrationOperation);
-            }    
+            }
+            if (migrationOperation is MoveDataOperation)
+            {
+                Generate((MoveDataOperation)migrationOperation);
+            }
+        }
+
+
+        protected virtual void Generate(MoveDataOperation migrationOperation)
+        {
+            var from = migrationOperation.From;
+            var to = migrationOperation.To;
+
+            var toColumns = string.Join(", ", to.ColumnNames);
+            var fromColumns = string.Join(", ", from.ColumnNames);
+
+            Generate(new SqlOperation(
+                "INSERT INTO " + to.TableName + " (" + toColumns + ") " +
+                    "SELECT " + fromColumns + " FROM " + from.TableName
+                ));
         }
 
         protected virtual void Generate(IdentityOperation migrationOperation)

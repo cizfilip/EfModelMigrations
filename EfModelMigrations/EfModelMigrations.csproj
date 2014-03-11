@@ -83,6 +83,7 @@
     <Compile Include="Infrastructure\EntityFramework\MigrationOperations\AddIdentityOperation.cs" />
     <Compile Include="Infrastructure\EntityFramework\MigrationOperations\DropIdentityOperation.cs" />
     <Compile Include="Infrastructure\EntityFramework\MigrationOperations\IdentityOperation.cs" />
+    <Compile Include="Infrastructure\EntityFramework\MigrationOperations\MoveDataOperation.cs" />
     <Compile Include="Infrastructure\Generators\CSharpCodeGenerator.cs" />
     <Compile Include="Infrastructure\Generators\CSharpMappingInformationsGenerator.cs" />
     <Compile Include="Infrastructure\Generators\GeneratedMappingInformation.cs" />

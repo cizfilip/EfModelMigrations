@@ -252,7 +252,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 yield return op;
             }
 
-            //TODO: move data
+            yield return MoveDataOperation(fromClass, newClass, properties, foreignKeyNames);
 
             foreach (var property in properties)
             {
@@ -264,6 +264,30 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
         #region Private methods
 
+        private MoveDataOperation MoveDataOperation(string fromClass, string toClass, string[] properties, string[] foreignKeyNames)
+        {
+            string fromClassFullName = GetFullClassName(fromClass);
+            string toClassFullName = GetFullClassName(toClass);
+
+            string fromTableName = newModel.GetTableName(fromClassFullName);
+            string toTableName = newModel.GetTableName(toClassFullName);
+
+            var fromTablePrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(fromClassFullName);
+            var fromColumnNames = properties.Select(p => newModel.GetColumnName(fromClassFullName, p));
+            var fromColumns = fromTablePrimaryKeyColumnsNames.Concat(fromColumnNames).ToArray();
+
+            var fromModel = new MoveDataModel(fromTableName, fromColumns);
+
+            var toColumnNames = properties.Select(p => newModel.GetColumnName(toClassFullName, p));
+            var toColumns = foreignKeyNames.Concat(toColumnNames).ToArray();
+
+            var toModel = new MoveDataModel(toTableName, toColumns);
+
+            var operation = new MoveDataOperation();
+            operation.From = fromModel;
+
+            return operation;
+        }
 
         private IEnumerable<MigrationOperation> RelationWithForeignKeysOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete, bool isIndexUnique, bool includeAddColumnsForForeignKey = true)
         {
