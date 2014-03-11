@@ -17,9 +17,9 @@ namespace EfModelMigrations.Transformations
         public string ComplexTypeName { get; private set; }
         public IEnumerable<string> PropertiesToExtract { get; private set; }
 
-        public NavigationPropertyCodeModel NavigationProperty { get; set; }
+        public NavigationProperty NavigationProperty { get; set; }
 
-        public ExtractComplexTypeTransformation(string className, string complexTypeName, IEnumerable<string> propertiesToExtract, NavigationPropertyCodeModel navigationProperty)
+        public ExtractComplexTypeTransformation(string className, string complexTypeName, IEnumerable<string> propertiesToExtract, NavigationProperty navigationProperty)
         {
             this.ClassName = className;
             this.ComplexTypeName = complexTypeName;
@@ -39,7 +39,7 @@ namespace EfModelMigrations.Transformations
                 yield return new MovePropertyOperation(ClassName, ComplexTypeName, property);
             }            
 
-            yield return new AddPropertyToClassOperation(ClassName, NavigationProperty.ToPropertyCodeModel());
+            yield return new AddPropertyToClassOperation(ClassName, NavigationProperty);
         }
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)

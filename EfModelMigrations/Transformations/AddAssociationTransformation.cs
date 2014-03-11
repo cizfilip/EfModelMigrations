@@ -39,12 +39,12 @@ namespace EfModelMigrations.Transformations
         {
             if (Principal.NavigationProperty != null)
             {
-                yield return new AddPropertyToClassOperation(Principal.ClassName, Principal.NavigationProperty.ToPropertyCodeModel());
+                yield return new AddPropertyToClassOperation(Principal.ClassName, Principal.NavigationProperty);
             }
 
             if (Dependent.NavigationProperty != null)
             {
-                yield return new AddPropertyToClassOperation(Dependent.ClassName, Dependent.NavigationProperty.ToPropertyCodeModel());
+                yield return new AddPropertyToClassOperation(Dependent.ClassName, Dependent.NavigationProperty);
             }
         }
 

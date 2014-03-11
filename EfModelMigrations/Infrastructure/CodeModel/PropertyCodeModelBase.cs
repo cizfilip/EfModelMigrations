@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel
 {
-    public abstract class ClassMemberCodeModel
+    public abstract class PropertyCodeModelBase
     {
-        public ClassMemberCodeModel()
+        public PropertyCodeModelBase()
         {
             this.Name = null;
             this.Visibility = CodeModelVisibility.Public;
@@ -18,8 +18,12 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
         public string Name { get; set; }
         public CodeModelVisibility Visibility { get; set; }
+        //TODO: moznost privatniho setteru mozna zrusit - pokud se rozhodnu zachovat -> dodelat property buildery
         public bool IsSetterPrivate { get; set; }
 
         public bool IsVirtual { get; set; }
+
+
+        public abstract CodeModelType GetType();
     }
 }

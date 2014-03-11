@@ -8,7 +8,7 @@ namespace EfModelMigrations.Infrastructure.Generators
         string GenerateEmptyClass(string name, string @namespace,
             CodeModelVisibility visibility, string baseType,
             IEnumerable<string> implementedInterfaces);
-        string GenerateProperty(PropertyCodeModel propertyModel, out string propertyName);
+        string GenerateProperty(PropertyCodeModelBase propertyModel, out string propertyName);
 
         string GenerateDbSetProperty(string className, out string dbSetPropertyName);
 

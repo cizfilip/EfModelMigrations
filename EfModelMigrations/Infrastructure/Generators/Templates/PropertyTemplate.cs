@@ -43,7 +43,7 @@ namespace EfModelMigrations.Infrastructure.Generators.Templates
             #line hidden
             
             #line 6 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(PropertyModel.Type));
+            this.Write(this.ToStringHelper.ToStringWithCulture(CodeModelTypeMapper(PropertyModel.GetType())));
             
             #line default
             #line hidden

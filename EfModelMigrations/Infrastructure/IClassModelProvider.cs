@@ -16,7 +16,7 @@ namespace EfModelMigrations.Infrastructure
             CodeModelVisibility? visibility, 
             string baseType, 
             IEnumerable<string> implementedInterfaces,
-            IEnumerable<PropertyCodeModel> properties);
+            IEnumerable<ScalarProperty> properties);
 
         
     }

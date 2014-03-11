@@ -17,12 +17,12 @@ namespace EfModelMigrations.Transformations
     public class AddOneToManyAssociationTransformation : AddAssociationWithCascadeDeleteTransformation
     {
         public string[] ForeignKeyColumnNames { get; private set; }
-        public PropertyCodeModel[] ForeignKeyProperties { get; private set; }
+        public ScalarProperty[] ForeignKeyProperties { get; private set; }
 
         public bool IsDependentRequired { get; private set; }
 
 
-        public AddOneToManyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, PropertyCodeModel[] foreignKeyProperties, bool isDependentRequired, bool willCascadeOnDelete)
+        public AddOneToManyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, ScalarProperty[] foreignKeyProperties, bool isDependentRequired, bool willCascadeOnDelete)
             : this(principal, dependent, foreignKeyProperties, null, isDependentRequired, willCascadeOnDelete)
         {
         }
@@ -32,7 +32,7 @@ namespace EfModelMigrations.Transformations
         {
         }
 
-        private AddOneToManyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, PropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool isDependentRequired, bool willCascadeOnDelete)
+        private AddOneToManyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, ScalarProperty[] foreignKeyProperties, string[] foreignKeyColumnNames, bool isDependentRequired, bool willCascadeOnDelete)
             :base(principal, dependent, willCascadeOnDelete)
         {
             this.IsDependentRequired = isDependentRequired;
@@ -40,7 +40,7 @@ namespace EfModelMigrations.Transformations
             this.ForeignKeyProperties = foreignKeyProperties;
 
             //TODO: stringy do resourců
-            if (principal.NavigationProperty != null && !principal.NavigationProperty.IsCollection)
+            if (principal.NavigationProperty != null && !principal.NavigationProperty.Type.IsCollection)
             {
                 throw new ModelTransformationValidationException("Principal navigation property in one to many association must be have IsCollection set to true.");
             }

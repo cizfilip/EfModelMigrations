@@ -7,12 +7,16 @@ using System.Threading.Tasks;
 using EfModelMigrations.Infrastructure.Generators.Templates;
 using Microsoft.CSharp.RuntimeBinder;
 using EfModelMigrations.Exceptions;
+using EfModelMigrations.Infrastructure.CodeModel;
+using System.Data.Entity.Core.Metadata.Edm;
 
 
 namespace EfModelMigrations.Infrastructure.Generators
 {
     public class CSharpModelMigrationGenerator : ModelMigrationGeneratorBase
     {
+        protected static readonly string Indent = "    ";
+
         public override GeneratedModelMigration GenerateMigration(string migrationId, IEnumerable<ModelTransformation> transformations, string @namespace, string className)
         {
             string upMethodBody = GenerateMethodBody(transformations);
@@ -65,17 +69,26 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void Generate(CreateClassTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.CreateClass(");
-            builder.Append(QuoteString(transformation.Name));
-            builder.AppendLine(", new {");
+            builder.AppendLine("this.CreateClass(");
+            AppendIndent(builder);
+            builder.Append(QuoteString(transformation.Name))
+                .AppendLine(",");
+            AppendIndent(builder);
+            builder.AppendLine("p => new");
+            AppendIndent(builder, 2);
+            builder.AppendLine("{");
+                        
 
-            string indent = "    ";
+            
             foreach (var property in transformation.Properties)
             {
-                builder.Append(indent);
-                builder.Append(property.Name);
-                builder.Append(" = ");
-                builder.Append(QuoteString(property.Type));
+                AppendIndent(builder, 3);
+                builder.Append(property.Name)
+                    .Append(" = ")
+                    .Append("p.");
+
+                Generate(property, builder);
+
                 builder.AppendLine(",");
             }
 
@@ -91,19 +104,16 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void Generate(AddPropertyTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.AddProperty(");
-            builder.Append(QuoteString(transformation.ClassName));
-            builder.AppendLine(", new {");
+            builder.Append("this.AddProperty(")
+                .Append(QuoteString(transformation.ClassName))
+                .Append(", ")
+                .Append(QuoteString(transformation.Model.Name))
+                .Append(", ")
+                .Append("p => p.");
 
-            string indent = "    ";
-
-            builder.Append(indent);
-            builder.Append(transformation.Model.Name);
-            builder.Append(" = ");
-            builder.Append(QuoteString(transformation.Model.Type));
-            builder.AppendLine();
-
-            builder.AppendLine("});");
+            Generate(transformation.Model, builder);
+            
+            builder.AppendLine(");");
         }
 
         protected virtual void Generate(RemovePropertyTransformation transformation, StringBuilder builder)
@@ -165,9 +175,96 @@ namespace EfModelMigrations.Infrastructure.Generators
         }
 
 
-        protected string QuoteString(string str)
+        protected virtual void Generate(ScalarProperty property, StringBuilder builder)
+        {
+            builder.Append(TranslatePrimitiveTypeToBuilderMethodName(property.Type.Type))
+                .Append("(");
+
+            //TODO: tyhle kontroly by meli byt oproti defaultum z konfigurace....
+            if(property.Visibility != CodeModelVisibility.Public)
+            {
+                builder.Append("visibility: ")
+                    .Append("CodeModelVisibility.Public");
+            }
+            if(property.IsVirtual == true)
+            {
+                builder.Append(", ")
+                    .Append("isVirtual: ")
+                    .Append("true");
+            }
+
+            builder.Append(")");
+        }
+
+        protected virtual string TranslatePrimitiveTypeToBuilderMethodName(PrimitiveTypeKind type)
+        {
+            switch (type)
+            {
+                case PrimitiveTypeKind.Binary:
+                    return "Binary";
+                case PrimitiveTypeKind.Boolean:
+                    return "Boolean";
+                case PrimitiveTypeKind.Byte:
+                    return "Byte";
+                case PrimitiveTypeKind.DateTime:
+                    return "DateTime";
+                case PrimitiveTypeKind.Time:
+                    return "Time";
+                case PrimitiveTypeKind.DateTimeOffset:
+                    return "DateTimeOffset";
+                case PrimitiveTypeKind.Decimal:
+                    return "Decimal";
+                case PrimitiveTypeKind.Double:
+                    return "Double";
+                case PrimitiveTypeKind.Geography:
+                case PrimitiveTypeKind.GeographyPoint:
+                case PrimitiveTypeKind.GeographyLineString:
+                case PrimitiveTypeKind.GeographyPolygon:
+                case PrimitiveTypeKind.GeographyMultiPoint:
+                case PrimitiveTypeKind.GeographyMultiLineString:
+                case PrimitiveTypeKind.GeographyMultiPolygon:
+                case PrimitiveTypeKind.GeographyCollection:
+                    return "Geography"; 
+                case PrimitiveTypeKind.Geometry:
+                case PrimitiveTypeKind.GeometryPoint:
+                case PrimitiveTypeKind.GeometryLineString:
+                case PrimitiveTypeKind.GeometryPolygon:
+                case PrimitiveTypeKind.GeometryMultiPoint:
+                case PrimitiveTypeKind.GeometryMultiLineString:
+                case PrimitiveTypeKind.GeometryMultiPolygon:
+                case PrimitiveTypeKind.GeometryCollection:
+                    return "Geometry";
+                case PrimitiveTypeKind.Guid:
+                    return "Guid";
+                case PrimitiveTypeKind.Single:
+                    return "Single";
+                case PrimitiveTypeKind.SByte:
+                    throw new InvalidOperationException("PrimitiveTypeKind.SByte not supported yet."); //TODO: string do resourcu
+                case PrimitiveTypeKind.Int16:
+                    return "Short";
+                case PrimitiveTypeKind.Int32:
+                    return "Int";
+                case PrimitiveTypeKind.Int64:
+                    return "Long";
+                case PrimitiveTypeKind.String:
+                    return "String";
+                default:
+                    throw new InvalidOperationException("Invalid PrimitiveTypeKind."); //TODO: string do resourcu
+            }
+        }
+
+        protected virtual string QuoteString(string str)
         {
             return "\"" + str + "\"";
+        }
+
+        //TODO: refaktorovat a udelat si tridu IndentedWriter po vzore EF a tu pak pouzivat ve vsech generatorech (anebo pouzivat primo tu z EF...)
+        protected virtual void AppendIndent(StringBuilder builder, int count = 1)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                builder.Append(Indent);
+            }
         }
     }
 }

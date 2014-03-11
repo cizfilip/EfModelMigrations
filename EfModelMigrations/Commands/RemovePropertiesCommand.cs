@@ -42,7 +42,7 @@ namespace EfModelMigrations.Commands
             }
         }
 
-        private PropertyCodeModel GetPropertyModel(string property, IClassModelProvider modelProvider)
+        private ScalarProperty GetPropertyModel(string property, IClassModelProvider modelProvider)
         {
             var classModel = modelProvider.GetClassCodeModel(className);
             //TODO: vracet hezci vyjimku kdyz se property nenajde

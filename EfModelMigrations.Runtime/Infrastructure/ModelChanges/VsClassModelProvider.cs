@@ -35,8 +35,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         public ClassCodeModel CreateClassCodeModel(string name, 
             CodeModelVisibility? visibility, 
             string baseType, 
-            IEnumerable<string> implementedInterfaces, 
-            IEnumerable<PropertyCodeModel> properties)
+            IEnumerable<string> implementedInterfaces,
+            IEnumerable<ScalarProperty> properties)
         {
             return new ClassCodeModel(configuration.ModelNamespace, name, visibility, baseType, implementedInterfaces, properties);
         }

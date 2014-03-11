@@ -11,10 +11,10 @@ namespace EfModelMigrations.Transformations
     public class CreateClassTransformation : ModelTransformation
     {
         public string Name { get; private set; }
-        public IEnumerable<PropertyCodeModel> Properties { get; private set; }
+        public IEnumerable<ScalarProperty> Properties { get; private set; }
 
         //TODO: Pridat ve vsech transformaci validace na parametry v konstruktoru - jako v commandech
-        public CreateClassTransformation(string name, IEnumerable<PropertyCodeModel> properties)
+        public CreateClassTransformation(string name, IEnumerable<ScalarProperty> properties)
         {
             this.Name = name;
             this.Properties = properties;

@@ -12,7 +12,7 @@ namespace EfModelMigrations.Commands
     public class CreateClassCommand : ModelMigrationsCommand
     {
         private string className;
-        private IEnumerable<PropertyCodeModel> properties;
+        private IEnumerable<ScalarProperty> properties;
 
         //TODO: Dat stringy vyjimek do resourcu
         public CreateClassCommand(string className, string[] properties)

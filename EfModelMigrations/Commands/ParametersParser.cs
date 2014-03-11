@@ -11,7 +11,7 @@ namespace EfModelMigrations.Commands
     internal class ParametersParser
     {
         //TODO: Dat stringy vyjimek do resourcu
-        public static IEnumerable<PropertyCodeModel> ParseProperties(IEnumerable<string> parameters)
+        public static IEnumerable<ScalarProperty> ParseProperties(IEnumerable<string> parameters)
         {
             foreach (var param in parameters)
             {
@@ -20,7 +20,7 @@ namespace EfModelMigrations.Commands
         }
 
         //TODO: Dat stringy vyjimek do resourcu
-        private static PropertyCodeModel ParsePropertyModel(string param)
+        private static ScalarProperty ParsePropertyModel(string param)
         {
             var splitted = param.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -29,12 +29,16 @@ namespace EfModelMigrations.Commands
                 throw new ModelMigrationsException("Wrong property format, use [PropertyName]:[PropertyType], example: Name:string ");
             }
 
-            return new PropertyCodeModel()
+            ScalarType property;
+            if (!ScalarType.TryParseScalar(splitted[1], out property))
             {
-                Name = splitted[0],
-                Type = splitted[1]
-            };
+                throw new ModelMigrationsException(string.Format("Unknown scalar property type {0}", splitted[1]));
+            }
+
+            return new ScalarProperty(splitted[0], property);
 
         }
+
+
     }
 }

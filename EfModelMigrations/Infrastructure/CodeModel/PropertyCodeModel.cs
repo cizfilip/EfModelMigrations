@@ -6,22 +6,25 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel
 {
-    public class PropertyCodeModel : ClassMemberCodeModel
+    public abstract class PropertyCodeModel<PropertyType> : PropertyCodeModelBase where PropertyType : CodeModelType 
     {
-        public PropertyCodeModel() 
-            :base()
-        {
-            Type = null;
-        }
-
-        public PropertyCodeModel(string name, string type)
+        public PropertyCodeModel(PropertyType type)
             : base()
         {
-            Name = name;
-            Type = type;
+            this.Type = type;
         }
 
-        public string Type { get; set; }
-                
+        public PropertyCodeModel(string name, PropertyType type)
+            : this(type)
+        {
+            this.Name = name;
+        }
+
+        public PropertyType Type { get; private set; }
+
+        public override CodeModelType GetType()
+        {
+            return Type;
+        }
     }
 }

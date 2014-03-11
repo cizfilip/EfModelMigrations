@@ -1,8 +1,10 @@
-﻿using EfModelMigrations.Infrastructure.CodeModel;
+﻿using EfModelMigrations.Commands;
+using EfModelMigrations.Infrastructure.CodeModel;
 using EnvDTE;
 using EnvDTE80;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,23 +24,28 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 );
         }
 
-        private IEnumerable<PropertyCodeModel> MapProperties(IEnumerable<CodeProperty2> codeProperties)
+        private IEnumerable<ScalarProperty> MapProperties(IEnumerable<CodeProperty2> codeProperties)
         {
-            return codeProperties.Select(p => MapProperty(p)).ToList();
+            return codeProperties.Select(p => MapProperty(p)).Where(p => p != null).ToList();
         }
 
-        private PropertyCodeModel MapProperty(CodeProperty2 property)
+        private ScalarProperty MapProperty(CodeProperty2 property)
         {
-            //TODO: u Type bych mel vracet zkracene nazvy pro primitivni typy (int misto System.Int32)....
-            return new PropertyCodeModel()
+            ScalarType type;
+            if(ScalarType.TryParseScalar(property.Type.AsString, out type))
             {
-                Name = property.Name,
-                Type = property.Type.AsString,
-                Visibility = MapVisibility(property.Access) ?? CodeModelVisibility.Public,
-                IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate,
-                IsVirtual = property.OverrideKind == vsCMOverrideKind.vsCMOverrideKindVirtual ? true : false
-            };
+                return new ScalarProperty(property.Name, type)
+                {
+                    Visibility = MapVisibility(property.Access) ?? CodeModelVisibility.Public,
+                    IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate,
+                    IsVirtual = property.OverrideKind == vsCMOverrideKind.vsCMOverrideKindVirtual ? true : false
+                };
+            }
+
+            return null;
         }
+
+        
 
         private IEnumerable<string> MapImplementedInterfaces(CodeElements codeElements)
         {

@@ -62,9 +62,15 @@
     <Compile Include="Exceptions\ModelTransformationValidationException.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Infrastructure\CodeModel\ClassMemberCodeModel.cs" />
+    <Compile Include="IFluentInterface.cs" />
+    <Compile Include="Infrastructure\CodeModel\Builders\ScalarPropertyBuilder.cs" />
+    <Compile Include="Infrastructure\CodeModel\NavigationType.cs" />
+    <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\CodeModelVisibility.cs" />
-    <Compile Include="Infrastructure\CodeModel\NavigationPropertyCodeModel.cs" />
+    <Compile Include="Infrastructure\CodeModel\NavigationProperty.cs" />
+    <Compile Include="Infrastructure\CodeModel\CodeModelType.cs" />
+    <Compile Include="Infrastructure\CodeModel\PropertyCodeModelBase.cs" />
+    <Compile Include="Infrastructure\CodeModel\ScalarType.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationExtensions\DbMigrationExtensions.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\EdmxNames.cs" />
@@ -114,7 +120,7 @@
     <Compile Include="Infrastructure\ModelMigrationIdGenerator.cs" />
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
-    <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
+    <Compile Include="Infrastructure\CodeModel\ScalarProperty.cs" />
     <Compile Include="ModelTransformationBuilders.cs" />
     <Compile Include="Operations\Mapping\AddDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\AddMappingInformationOperation.cs" />

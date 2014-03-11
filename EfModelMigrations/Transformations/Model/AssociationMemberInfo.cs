@@ -9,14 +9,14 @@ namespace EfModelMigrations.Transformations.Model
 {
     public sealed class AssociationMemberInfo
     {
-        public AssociationMemberInfo(string className, NavigationPropertyCodeModel navigationProperty)
+        public AssociationMemberInfo(string className, NavigationProperty navigationProperty)
         {
             this.ClassName = className;
             this.NavigationProperty = navigationProperty;
         }
 
         public string ClassName { get; private set; }
-        public NavigationPropertyCodeModel NavigationProperty { get; private set; }
+        public NavigationProperty NavigationProperty { get; private set; }
 
         public string NavigationPropertyName
         {

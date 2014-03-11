@@ -15,7 +15,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             CodeModelVisibility? visibility,
             string baseType,
             IEnumerable<string> implementedInterfaces,
-            IEnumerable<PropertyCodeModel> properties)
+            IEnumerable<ScalarProperty> properties)
         {
             //TODO: defaults must be supplied from configuration
             //TODO: throw if name, namespace or model is null !!!!!
@@ -24,7 +24,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             Visibility = visibility ?? CodeModelVisibility.Public;
             BaseType = baseType;
             ImplementedInterfaces = implementedInterfaces ?? Enumerable.Empty<string>();
-            Properties = properties ?? Enumerable.Empty<PropertyCodeModel>();
+            Properties = properties ?? Enumerable.Empty<ScalarProperty>();
         }
 
         public string Namespace { get; private set; }
@@ -33,7 +33,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         public string BaseType { get; private set; }
         public IEnumerable<string> ImplementedInterfaces { get; private set; }
 
-        public IEnumerable<PropertyCodeModel> Properties { get; private set; }
+        public IEnumerable<ScalarProperty> Properties { get; private set; }
 
         public string FullName
         {

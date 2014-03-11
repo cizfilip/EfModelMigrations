@@ -9,7 +9,9 @@ namespace EfModelMigrations.Infrastructure.Generators.Templates
 {
     internal partial class PropertyTemplate
     {
-        public PropertyCodeModel PropertyModel { get; set; }
+        public PropertyCodeModelBase PropertyModel { get; set; }
         public Func<CodeModelVisibility, string> CodeModelVisibilityMapper { get; set; }
+
+        public Func<CodeModelType, string> CodeModelTypeMapper { get; set; }
     }
 }

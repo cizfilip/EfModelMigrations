@@ -10,45 +10,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations
 {
-    /// <summary>
-    /// Interface that is used to build fluent interfaces and hides methods declared by <see cref="object"/> from IntelliSense.
-    /// </summary>
-    /// <remarks>
-    /// Code that consumes implementations of this interface should expect one of two things:
-    /// <list type = "number">
-    ///   <item>When referencing the interface from within the same solution (project reference), you will still see the methods this interface is meant to hide.</item>
-    ///   <item>When referencing the interface through the compiled output assembly (external reference), the standard Object methods will be hidden as intended.</item>
-    /// </list>
-    /// See http://bit.ly/ifluentinterface for more information.
-    /// </remarks>
-    [EditorBrowsable(EditorBrowsableState.Never)]
-    public interface IFluentInterface
-    {
-        /// <summary>
-        /// Redeclaration that hides the <see cref="object.GetType()"/> method from IntelliSense.
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        Type GetType();
-
-        /// <summary>
-        /// Redeclaration that hides the <see cref="object.GetHashCode()"/> method from IntelliSense.
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        int GetHashCode();
-
-        /// <summary>
-        /// Redeclaration that hides the <see cref="object.ToString()"/> method from IntelliSense.
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        string ToString();
-
-        /// <summary>
-        /// Redeclaration that hides the <see cref="object.Equals(object)"/> method from IntelliSense.
-        /// </summary>
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        bool Equals(object obj);
-    }
-    
+    //TODO: refaktorovat fluent api pro associace
     public abstract class ModelTransformationBuilderBase : IFluentInterface
     {
         protected ModelMigration migration;
@@ -70,7 +32,7 @@ namespace EfModelMigrations
             return new AssociationBuilderOneTo(migration, new AssociationMemberInfo(className, null));
         }
 
-        public AssociationBuilderOneTo2 One(string className, NavigationPropertyCodeModel navigationProperty)
+        public AssociationBuilderOneTo2 One(string className, NavigationProperty navigationProperty)
         {
             return new AssociationBuilderOneTo2(migration, new AssociationMemberInfo(className, navigationProperty));
         }
@@ -81,7 +43,7 @@ namespace EfModelMigrations
             return new AssociationBuilderManyTo(migration, new AssociationMemberInfo(className, null));
         }
 
-        public AssociationBuilderManyTo2 Many(string className, NavigationPropertyCodeModel navigationProperty)
+        public AssociationBuilderManyTo2 Many(string className, NavigationProperty navigationProperty)
         {
             return new AssociationBuilderManyTo2(migration, new AssociationMemberInfo(className, navigationProperty));
         }
@@ -96,7 +58,7 @@ namespace EfModelMigrations
             this.principal = principal;
         }
 
-        public JoinTableBuilder ToMany(string className, NavigationPropertyCodeModel navigationProperty)
+        public JoinTableBuilder ToMany(string className, NavigationProperty navigationProperty)
         {
             return new JoinTableBuilder(migration, principal, new AssociationMemberInfo(className, navigationProperty));
         }
@@ -124,23 +86,23 @@ namespace EfModelMigrations
             this.principal = principal;
         }
 
-        public AssociationBuilderOneToOnePkFinisher ToOne(string className, NavigationPropertyCodeModel navigationProperty)
+        public AssociationBuilderOneToOnePkFinisher ToOne(string className, NavigationProperty navigationProperty)
         {
             return new AssociationBuilderOneToOnePkFinisher(migration, principal, new AssociationMemberInfo(className, navigationProperty));
         }
 
-        public AssociationBuilderOneToOneFkFinisher ToOneWithExplicitForeignKey(string className, NavigationPropertyCodeModel navigationProperty, string[] foreignKeyColumns)
+        public AssociationBuilderOneToOneFkFinisher ToOneWithExplicitForeignKey(string className, NavigationProperty navigationProperty, string[] foreignKeyColumns)
         {
             return new AssociationBuilderOneToOneFkFinisher(migration, principal, new AssociationMemberInfo(className, navigationProperty), foreignKeyColumns);
         }
 
 
-        public AssociationBuilderOneToManyFinisher ToMany(string className, NavigationPropertyCodeModel navigationProperty, string[] foreignKeyColumns)
+        public AssociationBuilderOneToManyFinisher ToMany(string className, NavigationProperty navigationProperty, string[] foreignKeyColumns)
         {
             return new AssociationBuilderOneToManyFinisher(migration, principal, new AssociationMemberInfo(className, navigationProperty), foreignKeyColumns);
         }
 
-        public AssociationBuilderOneToManyFinisher ToManyWithForeignKeyInClass(string className, NavigationPropertyCodeModel navigationProperty, PropertyCodeModel[] foreignKeyProperties)
+        public AssociationBuilderOneToManyFinisher ToManyWithForeignKeyInClass(string className, NavigationProperty navigationProperty, ScalarProperty[] foreignKeyProperties)
         {
             return new AssociationBuilderOneToManyFinisher(migration, principal, new AssociationMemberInfo(className, navigationProperty), foreignKeyProperties);
         }
@@ -168,7 +130,7 @@ namespace EfModelMigrations
             return new AssociationBuilderOneToManyFinisher(migration, principal, new AssociationMemberInfo(className, null), foreignKeyColumns);
         }
 
-        public AssociationBuilderOneToManyFinisher ToManyWithForeignKeyInClass(string className, PropertyCodeModel[] foreignKeyProperties)
+        public AssociationBuilderOneToManyFinisher ToManyWithForeignKeyInClass(string className, ScalarProperty[] foreignKeyProperties)
         {
             return new AssociationBuilderOneToManyFinisher(migration, principal, new AssociationMemberInfo(className, null), foreignKeyProperties);
         }
@@ -260,7 +222,7 @@ namespace EfModelMigrations
     public class AssociationBuilderOneToManyFinisher : AssociationBuilderFinisher
     {
         private string[] foreignKeyColumnNames;
-        private PropertyCodeModel[] foreignKeyProperties;
+        private ScalarProperty[] foreignKeyProperties;
         private bool isDependentRequired;
 
         public AssociationBuilderOneToManyFinisher(ModelMigration migration, AssociationMemberInfo principal, AssociationMemberInfo dependent, string[] foreignKeyColumns)
@@ -271,7 +233,7 @@ namespace EfModelMigrations
             this.isDependentRequired = false;
         }
 
-        public AssociationBuilderOneToManyFinisher(ModelMigration migration, AssociationMemberInfo principal, AssociationMemberInfo dependent, PropertyCodeModel[] foreignKeyProperties)
+        public AssociationBuilderOneToManyFinisher(ModelMigration migration, AssociationMemberInfo principal, AssociationMemberInfo dependent, ScalarProperty[] foreignKeyProperties)
             : base(migration, principal, dependent)
         {
             this.foreignKeyProperties = foreignKeyProperties;
@@ -340,6 +302,7 @@ namespace EfModelMigrations
         {
             this.principal = principal;
             this.dependent = dependent;
+            this.joinTable = joinTable;
         }
 
 

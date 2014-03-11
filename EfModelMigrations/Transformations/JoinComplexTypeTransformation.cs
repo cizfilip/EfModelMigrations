@@ -39,12 +39,14 @@ namespace EfModelMigrations.Transformations
 
             yield return new RemoveClassOperation(ComplexTypeName);
 
-            var navigationProperties = modelProvider.GetClassCodeModel(ClassName).Properties.Where(p => p.Type.Contains(ComplexTypeName));
 
-            foreach (var navigationProperty in navigationProperties)
-            {
-                yield return new RemovePropertyFromClassOperation(ClassName, navigationProperty.Name);
-            }
+            //TODO: dodelat mazani navigacni property!
+            //var navigationProperties = modelProvider.GetClassCodeModel(ClassName).Properties.Where(p => p.Type.Contains(ComplexTypeName));
+
+            //foreach (var navigationProperty in navigationProperties)
+            //{
+            //    yield return new RemovePropertyFromClassOperation(ClassName, navigationProperty.Name);
+            //}
         }
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)

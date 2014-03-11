@@ -1,4 +1,6 @@
-﻿using EfModelMigrations.Infrastructure.CodeModel;
+﻿using EfModelMigrations.Exceptions;
+using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Infrastructure.CodeModel.Builders;
 using EfModelMigrations.Transformations;
 using EfModelMigrations.Transformations.Model;
 using System;
@@ -12,11 +14,11 @@ namespace EfModelMigrations
 {
     public static class ModelMigrationExtensions
     {
-        public static void CreateClass(this ModelMigration migration, string className, object properties)
+        public static void CreateClass<TProps>(this ModelMigration migration, string className, Func<ScalarPropertyBuilder, TProps> propertiesAction)
         {
             //TODO: Dat do classcodemodelu namespace atd....
             migration.AddTransformation(
-                new CreateClassTransformation(className, ConvertObjectToPropertyModel(properties))
+                new CreateClassTransformation(className, ConvertObjectToPropertyModel(propertiesAction(new ScalarPropertyBuilder())))
                 );
         }
 
@@ -26,9 +28,12 @@ namespace EfModelMigrations
         }
 
 
-        public static void AddProperty(this ModelMigration migration, string className, object property)
+        public static void AddProperty(this ModelMigration migration, string className, string propertyName, Func<ScalarPropertyBuilder, ScalarProperty> propertyAction)
         {
-            migration.AddTransformation(new AddPropertyTransformation(className, ConvertObjectToPropertyModel(property).Single()));
+            var scalarProperty = propertyAction(new ScalarPropertyBuilder());
+
+            scalarProperty.Name = propertyName;
+            migration.AddTransformation(new AddPropertyTransformation(className, scalarProperty));
         }
 
         public static void RemoveProperty(this ModelMigration migration, string className, string propertyName)
@@ -48,7 +53,7 @@ namespace EfModelMigrations
 
         public static void ExtractComplexType(this ModelMigration migration, string className, string complexTypeName, string[] propertiesToExtract)
         {
-            migration.AddTransformation(new ExtractComplexTypeTransformation(className, complexTypeName, propertiesToExtract, NavigationPropertyCodeModel.Default(complexTypeName)));
+            migration.AddTransformation(new ExtractComplexTypeTransformation(className, complexTypeName, propertiesToExtract, NavigationProperty.Default(complexTypeName)));
         }
 
         public static void JoinComplexType(this ModelMigration migration, string complexTypeName, string className)
@@ -66,17 +71,25 @@ namespace EfModelMigrations
 
         
         
-
-        private static IEnumerable<PropertyCodeModel> ConvertObjectToPropertyModel(object properties)
+        
+        private static IEnumerable<ScalarProperty> ConvertObjectToPropertyModel<TProps>(TProps properties)
         {
-            foreach (var property in properties.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            var propertiesOnObject = properties.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(
+                p => !p.GetIndexParameters().Any());
+
+            foreach (var property in propertiesOnObject)
             {
-                yield return new PropertyCodeModel()
+                var scalarProperty = property.GetValue(properties) as ScalarProperty;
+
+                if (scalarProperty == null)
+                    throw new ModelMigrationsException("Cannot retrieve property definition from migration!"); // TODO: string do resourcu
+
+                if (string.IsNullOrWhiteSpace(scalarProperty.Name))
                 {
-                    Name = property.Name,
-                    Type = property.GetGetMethod().Invoke(properties, new object[] { }) as string,
-                    Visibility = CodeModelVisibility.Public
-                };
+                    scalarProperty.Name = property.Name;
+                }
+
+                yield return scalarProperty;
             }
         }
     }

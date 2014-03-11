@@ -13,7 +13,7 @@ namespace EfModelMigrations.Commands
     public class AddPropertiesCommand : ModelMigrationsCommand
     {
         private string className;
-        private IEnumerable<PropertyCodeModel> propertiesToAdd;
+        private IEnumerable<ScalarProperty> propertiesToAdd;
 
         //TODO: Dat stringy vyjimek do resourcu
         public AddPropertiesCommand(string className, string[] propertiesToAdd)

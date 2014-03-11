@@ -5,6 +5,7 @@ using EfModelMigrations.Operations;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
@@ -32,7 +33,7 @@ namespace EfModelMigrations.Transformations
         {
             yield return new CreateEmptyClassOperation(NewClass);
 
-            yield return new AddPropertyToClassOperation(NewClass, new PropertyCodeModel("Id", "int"));
+            yield return new AddPropertyToClassOperation(NewClass, new ScalarProperty("Id", new ScalarType(PrimitiveTypeKind.Int32)));
             
             foreach (var prop in Properties)
             {
