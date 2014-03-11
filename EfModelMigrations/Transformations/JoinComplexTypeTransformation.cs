@@ -54,6 +54,10 @@ namespace EfModelMigrations.Transformations
             return builder.RenameColumnOperationsForJoinComplexType(ComplexTypeName, ClassName);
         }
 
+        public override bool IsDestructiveChange
+        {
+            get { return false; }
+        }
     }
 
 }

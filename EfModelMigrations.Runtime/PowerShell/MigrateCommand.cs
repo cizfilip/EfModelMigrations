@@ -12,10 +12,12 @@ namespace EfModelMigrations.Runtime.PowerShell
     class MigrateCommand : PowerShellCommand
     {
         private string targetModelMigrationId;
+        private bool force;
 
-        public MigrateCommand(string targetModelMigrationId) : base()
+        public MigrateCommand(string targetModelMigrationId, bool force) : base()
         {
             this.targetModelMigrationId = targetModelMigrationId;
+            this.force = force;
 
             Execute();
         }
@@ -35,7 +37,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             if (result.ModelMigrationsIds.Any())
             {
                 var migrator = new ModelMigrator(Project, CreateExecutor);
-                migrator.Migrate(result.ModelMigrationsIds, result.IsRevert);
+                migrator.Migrate(result.ModelMigrationsIds, result.IsRevert, force);
             }
             else
             {

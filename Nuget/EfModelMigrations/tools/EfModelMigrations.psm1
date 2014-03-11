@@ -255,7 +255,8 @@ function Model-Migrate
 {
     [CmdletBinding()] 
     param (
-        [Parameter(Position = 0, Mandatory = $false)][string] $TargetModelMigrationId
+        [string] $TargetModelMigrationId,
+        [switch] $Force
     )
 
     #TODO: $ProjectName predavat ve vsech prikazech jako optional parametr??
@@ -263,9 +264,7 @@ function Model-Migrate
 
     try
     {	
-        #TODO: Not Funny ... http://stackoverflow.com/questions/11138288/how-to-create-array-of-arrays-in-powershell
-        #magic comma strikes back...
-        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( ,$TargetModelMigrationId )
+        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( $TargetModelMigrationId, $Force.IsPresent )
     
         $error = Get-RunnerError $runner                    
         if ($error)

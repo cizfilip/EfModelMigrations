@@ -34,5 +34,10 @@ namespace EfModelMigrations.Transformations
         {
             yield return builder.DropTableOperation(Name);
         }
+
+        public override bool IsDestructiveChange
+        {
+            get { return true; }
+        }
     }
 }

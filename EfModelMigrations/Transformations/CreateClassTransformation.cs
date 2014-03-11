@@ -42,5 +42,9 @@ namespace EfModelMigrations.Transformations
             return new RemoveClassTransformation(Name, this);
         }
 
+        public override bool IsDestructiveChange
+        {
+            get { return false; }
+        }
     }
 }

@@ -22,5 +22,7 @@ namespace EfModelMigrations.Transformations
 
         //Called only by Model Migration Generator
         public abstract ModelTransformation Inverse();
+
+        public abstract bool IsDestructiveChange { get; }
     }
 }

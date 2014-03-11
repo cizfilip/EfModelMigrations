@@ -51,5 +51,10 @@ namespace EfModelMigrations.Transformations
         protected abstract AssociationInfo CreateMappingInformation();
        
         public abstract override ModelTransformation Inverse();
+
+        public override bool IsDestructiveChange
+        {
+            get { return false; }
+        }
     }
 }

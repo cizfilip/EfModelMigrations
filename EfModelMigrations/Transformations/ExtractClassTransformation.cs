@@ -70,5 +70,10 @@ namespace EfModelMigrations.Transformations
 
             //return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, OneToOneAssociationType.BothEndsRequired, ,);
         }
+
+        public override bool IsDestructiveChange
+        {
+            get { return false; }
+        }
     }
 }

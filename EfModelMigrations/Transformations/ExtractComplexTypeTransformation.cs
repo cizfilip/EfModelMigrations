@@ -54,6 +54,11 @@ namespace EfModelMigrations.Transformations
         {
             return new JoinComplexTypeTransformation(ComplexTypeName, ClassName);
         }
+
+        public override bool IsDestructiveChange
+        {
+            get { return false; }
+        }
     }
 
 }

@@ -22,18 +22,18 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             this.modelProject = modelProject;
         }
 
-        public void Migrate(IEnumerable<string> migrationIds, bool isRevert)
+        public void Migrate(IEnumerable<string> migrationIds, bool isRevert, bool force)
         {
             //TODO: vracet jiz hotove migrace v pripade chyby!
             foreach (var migrationId in migrationIds)
             {
-                Migrate(migrationId, isRevert);
+                Migrate(migrationId, isRevert, force);
             }
         }
 
 
         //TODO: asi je zbytečný dělat každej krok v nové appdoméně - některé by to chtělo sloučit
-        private void Migrate(string migrationId, bool isRevert)
+        private void Migrate(string migrationId, bool isRevert, bool force)
         {
             HistoryTracker historyTracker = new HistoryTracker();
             string oldEdmxModel;
@@ -49,7 +49,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                         HistoryTracker = historyTracker,
                         ModelProject = modelProject,
                         ModelMigrationId = migrationId,
-                        IsRevert = isRevert
+                        IsRevert = isRevert,
+                        Force = force
                     });
                 }
 

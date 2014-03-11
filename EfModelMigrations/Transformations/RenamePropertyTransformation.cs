@@ -38,5 +38,10 @@ namespace EfModelMigrations.Transformations
         {
             return new RenamePropertyTransformation(ClassName, NewName, OldName);
         }
+
+        public override bool IsDestructiveChange
+        {
+            get { return false; }
+        }
     }
 }
