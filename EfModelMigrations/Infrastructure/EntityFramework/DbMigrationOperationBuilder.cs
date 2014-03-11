@@ -241,12 +241,31 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             yield return AddForeignKeyOperation(dependentTableName, fullTableName, dependentPrimaryKeyColumnsNames, rightKeyColumnNames, true);
         }
 
+
+        public IEnumerable<MigrationOperation> ExtractTable(string fromClass, string newClass, string[] properties, string[] foreignKeyNames, bool willCascadeOnDelete)
+        {
+            yield return CreateTableOperationInternal(newModel, GetFullClassName(newClass));
+
+            var relationOperations = RelationWithForeignKeysOperations(fromClass, newClass, true, foreignKeyNames, willCascadeOnDelete, true, false);
+            foreach (var op in relationOperations)
+            {
+                yield return op;
+            }
+
+            //TODO: move data
+
+            foreach (var property in properties)
+            {
+                yield return DropColumnOperation(fromClass, property);
+            }
+        }
+
         #endregion
 
         #region Private methods
 
 
-        private IEnumerable<MigrationOperation> RelationWithForeignKeysOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete, bool isIndexUnique)
+        private IEnumerable<MigrationOperation> RelationWithForeignKeysOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete, bool isIndexUnique, bool includeAddColumnsForForeignKey = true)
         {
             string principalClassFullName = GetFullClassName(principalClassName);
             string dependentClassFullName = GetFullClassName(dependentClassName);
@@ -263,13 +282,16 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
 
             //Add foreign key columns
-            for (int i = 0; i < foreignKeyColumnNames.Length; i++)
+            if (includeAddColumnsForForeignKey)
             {
-                var columnModel = newModel.GetColumnModel(principalTableName, principalPrimaryKeyColumnsNames[i]);
-                columnModel.Name = foreignKeyColumnNames[i];
-                columnModel.IsNullable = !isDependentRequired;
+                for (int i = 0; i < foreignKeyColumnNames.Length; i++)
+                {
+                    var columnModel = newModel.GetColumnModel(principalTableName, principalPrimaryKeyColumnsNames[i]);
+                    columnModel.Name = foreignKeyColumnNames[i];
+                    columnModel.IsNullable = !isDependentRequired;
 
-                yield return new AddColumnOperation(dependentTableName, columnModel);
+                    yield return new AddColumnOperation(dependentTableName, columnModel);
+                }
             }
 
             //CreateIndex operation
@@ -350,6 +372,9 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         }
 
         #endregion
+
+
+
 
 
 

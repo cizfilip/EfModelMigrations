@@ -1,11 +1,11 @@
 ﻿using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Infrastructure.CodeModel.Builders;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
-    class ExtractClassTransformation : ModelTransformation
+    public class ExtractClassTransformation : ModelTransformation
     {
         public string FromClass { get; private set; }
 
@@ -21,19 +21,22 @@ namespace EfModelMigrations.Transformations
 
         public string NewClass { get; private set; }
 
+        public string[] ForeignKeyColumns { get; private set; }
 
-        public ExtractClassTransformation(string fromClass, string[] properties, string newClass)
+
+        public ExtractClassTransformation(string fromClass, string[] properties, string newClass, string[] foreignKeyColumns)
         {
             this.FromClass = fromClass;
             this.Properties = properties;
             this.NewClass = newClass;
+            this.ForeignKeyColumns = foreignKeyColumns;
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
             yield return new CreateEmptyClassOperation(NewClass);
 
-            yield return new AddPropertyToClassOperation(NewClass, new ScalarProperty("Id", new ScalarType(PrimitiveTypeKind.Int32)));
+            yield return new AddPropertyToClassOperation(NewClass, GetPrimaryKeyForNewClass());
             
             foreach (var prop in Properties)
             {
@@ -50,7 +53,7 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return base.GetDbMigrationOperations(builder);
+            return builder.ExtractTable(FromClass, NewClass, Properties, ForeignKeyColumns, true);
         }
 
 
@@ -62,13 +65,18 @@ namespace EfModelMigrations.Transformations
 
         private AddOneToOneForeignKeyAssociationTransformation GetAssociationTransformation()
         {
-            throw new NotImplementedException();
+            var principal = new AssociationMemberInfo(FromClass, NavigationProperty.Default(NewClass));
+            var dependent = new AssociationMemberInfo(NewClass, NavigationProperty.Default(FromClass));
 
-            //var principal = new AssociationMemberInfo(FromClass);
+            return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent,
+                OneToOneAssociationType.BothEndsRequired, ForeignKeyColumns, true);
+        }
 
-            //var dependent = new AssociationMemberInfo(FromClass);
-
-            //return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, OneToOneAssociationType.BothEndsRequired, ,);
+        private ScalarProperty GetPrimaryKeyForNewClass()
+        {
+            var prop = new ScalarPropertyBuilder().Int();
+            prop.Name = "Id";
+            return prop;
         }
 
         public override bool IsDestructiveChange

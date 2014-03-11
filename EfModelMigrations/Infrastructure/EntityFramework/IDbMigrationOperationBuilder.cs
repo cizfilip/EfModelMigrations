@@ -31,5 +31,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         IEnumerable<MigrationOperation> OneToManyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete);
         IEnumerable<MigrationOperation> ManyToManyRelationOperations(string principalClassName, string dependentClassName, string tableName, string[] leftKeyColumnNames, string[] rightKeyColumnNames);
 
+
+        //Extract
+        IEnumerable<MigrationOperation> ExtractTable(string fromClass, string newClass, string[] properties, string[] foreignKeyNames, bool willCascadeOnDelete);
     }
 }

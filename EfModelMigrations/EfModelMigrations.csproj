@@ -63,6 +63,7 @@
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IFluentInterface.cs" />
+    <Compile Include="Infrastructure\CodeModel\Builders\NavigationPropertyBuilder.cs" />
     <Compile Include="Infrastructure\CodeModel\Builders\ScalarPropertyBuilder.cs" />
     <Compile Include="Infrastructure\CodeModel\NavigationType.cs" />
     <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />

@@ -66,6 +66,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
         public static NavigationProperty DefaultCollection(string targetClass)
         {
+            //TODO: pluralize targetClass
             return new NavigationProperty(targetClass, new NavigationType(targetClass, true));
         }
     }

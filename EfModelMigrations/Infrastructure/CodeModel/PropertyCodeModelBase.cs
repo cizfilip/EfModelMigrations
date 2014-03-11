@@ -25,5 +25,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
 
         public abstract CodeModelType GetType();
+
+        
     }
 }

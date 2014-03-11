@@ -16,6 +16,8 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         public ScalarProperty(string name, ScalarType type)
             : base(name, type)
         {
-        }  
+        }
+
+       
     }
 }
