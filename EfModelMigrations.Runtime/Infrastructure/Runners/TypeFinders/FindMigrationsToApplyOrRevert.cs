@@ -8,33 +8,41 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
 {
-    //TODO: porovnavam migrationID s migration name !!! Fail
     [Serializable]
     internal class FindMigrationsToApplyOrRevert : BaseRunner
     {
-        public string TargetMigrationId { get; set; }
+        public string TargetMigration { get; set; }
 
         public override void Run()
         {
             var locator = new ModelMigrationsLocator(Configuration);
 
+            string targetMigrationId = locator.GetMigrationId(TargetMigration);
+
             //if target not specified return all pending migrations
-            if (string.IsNullOrEmpty(TargetMigrationId))
+            if (string.IsNullOrEmpty(targetMigrationId))
             {
                 Return(new MigrationsToApplyOrRevertResult(locator.GetPendingMigrationsIds().ToList(), isRevert: false));
                 return;
             }
 
+            //if target is InitialModel
+            if(targetMigrationId == ModelMigrationIdGenerator.InitialModel)
+            {
+                Return(new MigrationsToApplyOrRevertResult(locator.GetAppliedMigrationsIds().Reverse().ToList(), isRevert: true));
+                return;
+            }
+
             var appliedModelMigrations = locator.GetAppliedMigrationsIds();
             //check if fromMigration is same as last appliedMigrations
-            if (TargetMigrationId.EqualsOrdinal(appliedModelMigrations.LastOrDefault()))
+            if (targetMigrationId.EqualsOrdinal(appliedModelMigrations.LastOrDefault()))
             {
                 Return(MigrationsToApplyOrRevertResult.Empty);
                 return;
             }
 
             //see if fromMigration is in applied migrations
-            var migrationsToUnapply = appliedModelMigrations.SkipWhile(m => !m.EqualsOrdinal(TargetMigrationId));
+            var migrationsToUnapply = appliedModelMigrations.SkipWhile(m => !m.EqualsOrdinal(targetMigrationId));
             if (migrationsToUnapply.Any())
             {
                 Return(new MigrationsToApplyOrRevertResult(migrationsToUnapply.Reverse().ToList(), isRevert: true));
@@ -43,18 +51,18 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
 
             //see if fromMigration is in pending migrations
             var pendingMigrations = locator.GetPendingMigrationsIds();
-            if (pendingMigrations.Contains(TargetMigrationId, StringComparer.Ordinal))
+            if (pendingMigrations.Contains(targetMigrationId, StringComparer.Ordinal))
             {
                 //return all pending migration including from migration
                 Return(new MigrationsToApplyOrRevertResult(
-                    pendingMigrations.TakeWhile(m => !m.EqualsOrdinal(TargetMigrationId))
-                        .Concat(new[] { TargetMigrationId })
+                    pendingMigrations.TakeWhile(m => !m.EqualsOrdinal(targetMigrationId))
+                        .Concat(new[] { targetMigrationId })
                         .ToList(),
                     isRevert: true));
                 return;
             }
 
-            //if we reach here there is nothing to apply
+            //if we reach here there is nothing to apply or revert
             Return(MigrationsToApplyOrRevertResult.Empty);
         }
     }
@@ -75,7 +83,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
         {
             get
             {
-                return new MigrationsToApplyOrRevertResult(new string[] { }, false);
+                return new MigrationsToApplyOrRevertResult(Enumerable.Empty<string>(), false);
             }
         }
     }

@@ -1,3 +1,5 @@
+$InitialModel = '0'
+
 <#
 .SYNOPSIS
     Model-AddProperties command.
@@ -526,4 +528,4 @@ function Invoke-RunnerCommand($runner, $command, $parameters)
 # EXPORT ----------------------
 Export-ModuleMember @( 	'Model-ExtractComplexType', 'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
                         'Model-RemoveProperties', 'Model-RenameClass', 'Model-RenameProperty', 
-                        'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate' )
+                        'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate' ) -Variable InitialModel

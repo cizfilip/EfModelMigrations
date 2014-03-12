@@ -52,6 +52,27 @@ namespace EfModelMigrations.Infrastructure
             }
         }
 
+        public string GetMigrationId(string migrationName)
+        {
+            if (ModelMigrationIdGenerator.IsValidId(migrationName))
+            {
+                return migrationName;
+            }
+
+            var possibleMigrationIds = GetModelMigrationsIds().Where(m => ModelMigrationIdGenerator.GetNameFromId(m).EqualsOrdinalIgnoreCase(migrationName)).ToArray();
+
+            if(possibleMigrationIds.Length != 1)
+            {
+                throw new ModelMigrationsException(string.Format(Resources.CannotFindMigration, migrationName));
+            }
+            if (possibleMigrationIds.Length > 1)
+            {
+                throw new ModelMigrationsException(string.Format("Multiple migrations with name {0} was found.", migrationName)); //String do resourcu
+            }
+
+            return possibleMigrationIds.Single();
+        }
+
         public IEnumerable<string> GetPendingMigrationsIds()
         {
             return GetModelMigrationsIds().Except(appliedModelMigrations, StringComparer.Ordinal);

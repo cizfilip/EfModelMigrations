@@ -11,6 +11,8 @@ namespace EfModelMigrations.Infrastructure
     
     public class ModelMigrationIdGenerator
     {
+        public const string InitialModel = "0";
+
         private static readonly Regex migrationIdPattern = new Regex(@"\d{15}_.+");
         private static readonly string migrationIdFormat = "yyyyMMddHHmmssf";
 
@@ -24,7 +26,7 @@ namespace EfModelMigrations.Infrastructure
 
         public static bool IsValidId(string migrationId)
         {
-            return migrationIdPattern.IsMatch(migrationId);
+            return migrationIdPattern.IsMatch(migrationId) || migrationId == InitialModel;
         }
 
         public static string GetNameFromId(string migrationId)
