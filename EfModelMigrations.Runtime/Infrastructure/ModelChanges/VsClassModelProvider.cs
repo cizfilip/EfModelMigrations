@@ -16,19 +16,21 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private Project modelProject;
         private ModelMigrationsConfigurationBase configuration;
         private CodeClassFinder classFinder;
+        private VsCodeClassToClassCodeModelMapper mapper;
 
         public VsClassModelProvider(Project modelProject, ModelMigrationsConfigurationBase configuration)
         {
             this.modelProject = modelProject;
             this.configuration = configuration;
             this.classFinder = new CodeClassFinder(modelProject);
+            this.mapper = new VsCodeClassToClassCodeModelMapper(configuration.GeneratorDefaults);
         }
 
         public ClassCodeModel GetClassCodeModel(string className)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(configuration.ModelNamespace, className);
 
-            return new VsCodeClassToClassCodeModelMapper().MapToClassCodeModel(codeClass);
+            return mapper.MapToClassCodeModel(codeClass);
         }
 
         //TODO: pri vytvareni classcodemodelu handlovat defaultni hodnoty z configurace

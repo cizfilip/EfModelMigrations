@@ -28,7 +28,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private string dbContextFullName;
         private ICodeGenerator codeGenerator;
         private CodeClassFinder classFinder;
-        private VsMappingInformationRemover mappingRemover;
+        private CSharpRegexMappingGenerator regexMappingGenerator;
 
 
         public VsModelChangesExecutor(HistoryTracker historyTracker,
@@ -43,7 +43,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             this.dbContextFullName = dbContextFullName;
             this.codeGenerator = codeGenerator;
             this.classFinder = new CodeClassFinder(modelProject);
-            this.mappingRemover = new VsMappingInformationRemover(historyTracker, modelNamespace, dbContextFullName, classFinder);
+            this.regexMappingGenerator = new CSharpRegexMappingGenerator();
         }
 
 
@@ -258,9 +258,23 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             string oldCode = GetMethodCode(onModelCreatingMethod);
 
-            //TODO: dodelat remove mapovani
+            //TODO: dodelat remove mapovani i v jinych castech (EntityTypeConfiguration ... attributy u trid...)
+            var generatedInfo = regexMappingGenerator.GenerateFluentApiCall(operation.MappingInformation.BuildEfFluentApiCallChain());
+            var prefixForOnModelCreating = regexMappingGenerator.GetPrefixForOnModelCreatingUse(generatedInfo.TargetType);
 
-            mappingRemover.Remove(operation.MappingInformation);
+            var matches = Regex.Matches(oldCode, string.Concat(prefixForOnModelCreating, generatedInfo.Content), RegexOptions.None);
+
+            if(matches.Count > 1)
+            {
+                throw new ModelMigrationsException("More than one mapping information found in OnModelCreating"); //TODO: string do resourcu
+            }
+
+            if (matches.Count == 1)
+            {
+                var match = matches[0];
+                string newCode = oldCode.Remove(match.Index, match.Length);
+                SetMethodCode(onModelCreatingMethod, newCode);
+            }
         }
 
         protected virtual void ExecuteOperation(AddDbSetPropertyOperation operation)
@@ -310,7 +324,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             {
                 CodeVariable tempVar = codeClass.AddVariable("__EFMODELMIGRATIONS_TEMP_VAR__", vsCMTypeRef.vsCMTypeRefInt, -1); // -1 znamena na konec
                 var startPoint = tempVar.GetStartPoint();
-                startPoint.CreateEditPoint().ReplaceText(tempVar.GetEndPoint(), propertyString, (int)(vsEPReplaceTextOptions.vsEPReplaceTextAutoformat | vsEPReplaceTextOptions.vsEPReplaceTextNormalizeNewlines | vsEPReplaceTextOptions.vsEPReplaceTextTabsSpaces | vsEPReplaceTextOptions.vsEPReplaceTextKeepMarkers));
+                startPoint.CreateEditPoint().ReplaceText(tempVar.GetEndPoint(), propertyString, EnvDteExtensions.AllvsEPReplaceTextOptionsFlags());
 
                 //Format inserted property
                 var property = FindProperty(codeClass, propertyName);
@@ -368,6 +382,21 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             catch (Exception e)
             {
                 throw new ModelMigrationsException(string.Format("Cannot retrieve method code from method {0}", method.Name), e); //TODO: string do resourcu
+            }
+        }
+
+        private void SetMethodCode(CodeFunction2 method, string code)
+        {
+            try
+            {
+                var startPoint = method.GetStartPoint(vsCMPart.vsCMPartBody).CreateEditPoint();
+                var endPoint = method.GetEndPoint(vsCMPart.vsCMPartBody);
+
+                startPoint.ReplaceText(endPoint, code, EnvDteExtensions.AllvsEPReplaceTextOptionsFlags());
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format("Cannot update method code in method {0}", method.Name), e); //TODO: string do resourcu
             }
         }
 

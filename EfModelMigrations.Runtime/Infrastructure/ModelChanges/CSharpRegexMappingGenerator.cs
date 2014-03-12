@@ -10,8 +10,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
     internal class CSharpRegexMappingGenerator : CSharpMappingInformationsGenerator
     {
         private static readonly string AllowWhiteSpaceToken = @"\s*";
-        
 
+        
         protected override string GetSyntaxToken(CSharpTokenType type)
         {
             if(type == CSharpTokenType.StatementSeparator)

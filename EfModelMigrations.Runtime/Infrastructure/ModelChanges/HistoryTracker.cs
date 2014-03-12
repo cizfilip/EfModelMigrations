@@ -84,7 +84,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 case HistoryItemType.ModifiedOrDeleted:
                     var document = GetProjectItemTextDocument(projectItem);
                     var endPoint = document.EndPoint;
-                    document.StartPoint.CreateEditPoint().ReplaceText(endPoint, historyItem.Content, (int)(vsEPReplaceTextOptions.vsEPReplaceTextAutoformat | vsEPReplaceTextOptions.vsEPReplaceTextNormalizeNewlines | vsEPReplaceTextOptions.vsEPReplaceTextTabsSpaces | vsEPReplaceTextOptions.vsEPReplaceTextKeepMarkers));
+                    document.StartPoint.CreateEditPoint().ReplaceText(endPoint, historyItem.Content, EnvDteExtensions.AllvsEPReplaceTextOptionsFlags());
                     break;
                 default:
                     throw new InvalidOperationException("Invalid history item type."); //TODO: string do resaurcu

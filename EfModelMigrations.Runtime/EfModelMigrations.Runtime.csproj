@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\ProjectExtensions.cs" />
+    <Compile Include="Extensions\EnvDteExtensions.cs" />
     <Compile Include="Infrastructure\Migrations\DbMigrationWriter.cs" />
     <Compile Include="Infrastructure\Migrations\ModelMigrationsConfigurationUpdater.cs" />
     <Compile Include="Infrastructure\Migrations\ModelMigrator.cs" />
@@ -69,7 +70,6 @@
     <Compile Include="Infrastructure\ModelChanges\Helpers\VsCodeClassToClassCodeModelMapper.cs" />
     <Compile Include="Infrastructure\ModelChanges\HistoryTracker.cs" />
     <Compile Include="Infrastructure\ModelChanges\VsClassModelProvider.cs" />
-    <Compile Include="Infrastructure\ModelChanges\VsMappingInformationRemover.cs" />
     <Compile Include="Infrastructure\ModelChanges\VsModelChangesExecutor.cs" />
     <Compile Include="Infrastructure\NewAppDomainExecutor.cs" />
     <Compile Include="Infrastructure\Runners\BaseRunner.cs" />

@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Commands;
 using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Infrastructure.Generators;
 using EnvDTE;
 using EnvDTE80;
 using System;
@@ -13,11 +14,18 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 {
     internal class VsCodeClassToClassCodeModelMapper
     {
+        private CodeGeneratorDefaults defaults;
+
+        public VsCodeClassToClassCodeModelMapper(CodeGeneratorDefaults defaults)
+        {
+            this.defaults = defaults;
+        }
+
         public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass)
         {
             return new ClassCodeModel(codeClass.Namespace.FullName,
                 codeClass.Name,
-                MapVisibility(codeClass.Access),
+                MapVisibility(codeClass.Access, defaults.Class.Visibility),
                 MapBaseType(codeClass.Bases),
                 MapImplementedInterfaces(codeClass.ImplementedInterfaces),
                 MapProperties(codeClass.Children.OfType<CodeProperty2>())
@@ -37,9 +45,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 return null;
             }
 
-            scalar.Visibility = MapVisibility(property.Access);
-            scalar.IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate;
-            scalar.IsVirtual = property.OverrideKind == vsCMOverrideKind.vsCMOverrideKindVirtual ? true : false;
+            scalar.Visibility = MapVisibility(property.Access, defaults.Property.Visibility);
+
+            var setterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate;
+            scalar.IsSetterPrivate = setterPrivate == defaults.Property.IsSetterPrivate ? (bool?)null : setterPrivate;
+            var isVirtual = property.OverrideKind == vsCMOverrideKind.vsCMOverrideKindVirtual ? true : false;
+            scalar.IsVirtual = isVirtual == defaults.Property.IsVirtual ? (bool?)null : isVirtual;
 
             return scalar;
         }
@@ -68,27 +79,45 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             }
         }
 
-        private CodeModelVisibility MapVisibility(vsCMAccess access)
+        private CodeModelVisibility? MapVisibility(vsCMAccess access, CodeModelVisibility defaultVisibility)
         {
+            CodeModelVisibility visibility;
+
             switch (access)
             {
                 case vsCMAccess.vsCMAccessDefault:
-                    return CodeModelVisibility.Public;
+                    visibility = CodeModelVisibility.Public;
+                    break;
                 case vsCMAccess.vsCMAccessPrivate:
-                    return CodeModelVisibility.Private;
+                    visibility = CodeModelVisibility.Private;
+                    break;
                 case vsCMAccess.vsCMAccessProject:
-                    return CodeModelVisibility.Internal;
+                    visibility = CodeModelVisibility.Internal;
+                    break;
                 case vsCMAccess.vsCMAccessProjectOrProtected:
-                    return CodeModelVisibility.ProtectedInternal;
+                    visibility = CodeModelVisibility.ProtectedInternal;
+                    break;
                 case vsCMAccess.vsCMAccessProtected:
-                    return CodeModelVisibility.Protected;
+                    visibility = CodeModelVisibility.Protected;
+                    break;
                 case vsCMAccess.vsCMAccessPublic:
-                    return CodeModelVisibility.Public;
+                    visibility = CodeModelVisibility.Public;
+                    break;
                 //TODO: Co s temahle dvema??
                 case vsCMAccess.vsCMAccessWithEvents:
                 case vsCMAccess.vsCMAccessAssemblyOrFamily:
                 default:
-                    return CodeModelVisibility.Public;;
+                    visibility = CodeModelVisibility.Public;
+                    break;
+            }
+
+            if(visibility == defaultVisibility)
+            { 
+                return null;
+            }
+            else
+            {
+                return visibility;
             }
         }
     }

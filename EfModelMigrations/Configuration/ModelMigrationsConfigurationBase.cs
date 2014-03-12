@@ -1,11 +1,8 @@
 ﻿using EfModelMigrations.Infrastructure.Generators;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EfModelMigrations.Configuration
 {
