@@ -1,21 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Entity;
+using System.Data.Entity.Infrastructure.Pluralization;
+using System.Data.Entity.Infrastructure.DependencyResolution;
 
 namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 {
     public class NavigationPropertyBuilder : IFluentInterface
     {
-        public NavigationProperty ToOne(string targetClassName)
+        public NavigationProperty One(string targetClassName)
         {
-            return NavigationProperty.Default(targetClassName);
+            return new NavigationProperty(targetClassName, targetClassName, false);
         }
 
-        public NavigationProperty ToMany(string targetClassName)
+        public NavigationProperty One(string name, string targetClassName)
         {
-            return NavigationProperty.DefaultCollection(targetClassName);
+            return new NavigationProperty(name, targetClassName, false);
         }
+
+        public NavigationProperty Many(string targetClassName)
+        {
+            var propertyName = DbConfiguration.DependencyResolver.GetService<IPluralizationService>().Pluralize(targetClassName);
+            return new NavigationProperty(propertyName, targetClassName, true);
+        }
+
+        public NavigationProperty Many(string name, string targetClassName)
+        {
+            return new NavigationProperty(name, targetClassName, true);
+        }
+        
     }
 }

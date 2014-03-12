@@ -53,7 +53,7 @@ namespace EfModelMigrations
 
         public static void ExtractComplexType(this ModelMigration migration, string className, string complexTypeName, string[] propertiesToExtract)
         {
-            migration.AddTransformation(new ExtractComplexTypeTransformation(className, complexTypeName, propertiesToExtract, NavigationProperty.Default(complexTypeName)));
+            migration.AddTransformation(new ExtractComplexTypeTransformation(className, complexTypeName, propertiesToExtract, new NavigationPropertyBuilder().One(complexTypeName)));
         }
 
         public static void JoinComplexType(this ModelMigration migration, string complexTypeName, string className)

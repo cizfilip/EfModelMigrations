@@ -31,18 +31,17 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 
         private ScalarProperty MapProperty(CodeProperty2 property)
         {
-            ScalarType type;
-            if(ScalarType.TryParseScalar(property.Type.AsString, out type))
+            ScalarProperty scalar;
+            if (!ScalarProperty.TryParseScalar(property.Type.AsString, out scalar))
             {
-                return new ScalarProperty(property.Name, type)
-                {
-                    Visibility = MapVisibility(property.Access) ?? CodeModelVisibility.Public,
-                    IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate,
-                    IsVirtual = property.OverrideKind == vsCMOverrideKind.vsCMOverrideKindVirtual ? true : false
-                };
+                return null;
             }
 
-            return null;
+            scalar.Visibility = MapVisibility(property.Access);
+            scalar.IsSetterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate;
+            scalar.IsVirtual = property.OverrideKind == vsCMOverrideKind.vsCMOverrideKindVirtual ? true : false;
+
+            return scalar;
         }
 
         
@@ -69,7 +68,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             }
         }
 
-        private CodeModelVisibility? MapVisibility(vsCMAccess access)
+        private CodeModelVisibility MapVisibility(vsCMAccess access)
         {
             switch (access)
             {
@@ -89,7 +88,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 case vsCMAccess.vsCMAccessWithEvents:
                 case vsCMAccess.vsCMAccessAssemblyOrFamily:
                 default:
-                    return null;
+                    return CodeModelVisibility.Public;;
             }
         }
     }

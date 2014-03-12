@@ -13,7 +13,7 @@ namespace EfModelMigrations.Operations
 
         //TODO: Podporovat i nasledujici property pri vytvareni tridy
         public string Namespace { get; private set; }
-        public CodeModelVisibility Visibility { get; private set; }
+        public CodeModelVisibility? Visibility { get; private set; }
         public IEnumerable<string> ImplementedInterfaces { get; private set; }
 
 

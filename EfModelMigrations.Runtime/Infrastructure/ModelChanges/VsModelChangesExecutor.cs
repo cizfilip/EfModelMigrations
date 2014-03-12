@@ -73,7 +73,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             string fileFullPath = Path.Combine(modelProject.GetProjectDir(), GetConventionPathFromNamespace(modelNamespace), operation.Name + codeGenerator.GetFileExtensions());
             historyTracker.MarkItemAdded(fileFullPath);
 
-            string classContent = codeGenerator.GenerateEmptyClass(operation.Name, modelNamespace, CodeModelVisibility.Public, null, null);
+            string classContent = codeGenerator.GenerateEmptyClass(operation.Name, modelNamespace, operation.Visibility, null, null);
             try
             {
                 var newProjectItem = modelProject.AddContentToProjectFromAbsolutePath(fileFullPath, classContent);

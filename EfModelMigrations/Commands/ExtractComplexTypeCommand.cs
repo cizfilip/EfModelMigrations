@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Infrastructure.CodeModel.Builders;
 using EfModelMigrations.Transformations;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace EfModelMigrations.Commands
             this.className = className;
             this.complexTypeName = complexTypeName;
             this.propertiesToExtract = properties;
-            this.navigationProperty = NavigationProperty.Default(complexTypeName);
+            this.navigationProperty = new NavigationPropertyBuilder().One(complexTypeName);
         }
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)

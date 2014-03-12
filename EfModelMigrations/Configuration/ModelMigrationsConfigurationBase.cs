@@ -17,7 +17,8 @@ namespace EfModelMigrations.Configuration
         public ModelMigrationsConfigurationBase()
         {
             ModelMigrationGenerator = new CSharpModelMigrationGenerator();
-            CodeGenerator = new CSharpCodeGenerator(new CSharpMappingInformationsGenerator());
+            GeneratorDefaults = CodeGeneratorDefaults.Create();
+            CodeGenerator = new CSharpCodeGenerator(GeneratorDefaults, new CSharpMappingInformationsGenerator());
             ModelMigrationsNamespace = GetType().Namespace;
             ModelMigrationsAssembly = GetType().Assembly;
             ModelMigrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
@@ -26,6 +27,8 @@ namespace EfModelMigrations.Configuration
         //Generators
         public IModelMigrationGenerator ModelMigrationGenerator { get; set; }
         public ICodeGenerator CodeGenerator { get; set; }
+
+        public CodeGeneratorDefaults GeneratorDefaults { get; set; }
 
         public string ModelMigrationsNamespace { get; set; }
         //TODO: Kontrola zdali se nezadava rooted path

@@ -40,7 +40,7 @@ namespace EfModelMigrations.Transformations
             this.ForeignKeyProperties = foreignKeyProperties;
 
             //TODO: stringy do resourců
-            if (principal.NavigationProperty != null && !principal.NavigationProperty.Type.IsCollection)
+            if (principal.NavigationProperty != null && !principal.NavigationProperty.IsCollection)
             {
                 throw new ModelTransformationValidationException("Principal navigation property in one to many association must be have IsCollection set to true.");
             }

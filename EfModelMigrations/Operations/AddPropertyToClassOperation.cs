@@ -11,9 +11,9 @@ namespace EfModelMigrations.Operations
     public class AddPropertyToClassOperation : IModelChangeOperation
     {
         public string ClassName { get; private set; }
-        public PropertyCodeModelBase Model { get; private set; }
+        public PropertyCodeModel Model { get; private set; }
 
-        public AddPropertyToClassOperation(string className, PropertyCodeModelBase model)
+        public AddPropertyToClassOperation(string className, PropertyCodeModel model)
         {
             this.ClassName = className;
             this.Model = model;

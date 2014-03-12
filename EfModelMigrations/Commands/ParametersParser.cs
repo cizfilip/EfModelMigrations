@@ -29,14 +29,15 @@ namespace EfModelMigrations.Commands
                 throw new ModelMigrationsException("Wrong property format, use [PropertyName]:[PropertyType], example: Name:string ");
             }
 
-            ScalarType property;
-            if (!ScalarType.TryParseScalar(splitted[1], out property))
+            ScalarProperty property;
+            if (!ScalarProperty.TryParseScalar(splitted[1], out property))
             {
                 throw new ModelMigrationsException(string.Format("Unknown scalar property type {0}", splitted[1]));
             }
 
-            return new ScalarProperty(splitted[0], property);
+            property.Name = splitted[0];
 
+            return property;
         }
 
 

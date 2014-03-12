@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel
 {
-    //TODO: jak to bude s defaultnima hodnotama pro nove tridy/property?
     public class ClassCodeModel
     {
         //TODO: change to internal - az bude InternalsVisibleTo
@@ -18,10 +17,10 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             IEnumerable<ScalarProperty> properties)
         {
             //TODO: defaults must be supplied from configuration
-            //TODO: throw if name, namespace or model is null !!!!!
+            //TODO: throw if name, namespace is null !!!!!
             Namespace = @namespace;
             Name = name;
-            Visibility = visibility ?? CodeModelVisibility.Public;
+            Visibility = visibility;
             BaseType = baseType;
             ImplementedInterfaces = implementedInterfaces ?? Enumerable.Empty<string>();
             Properties = properties ?? Enumerable.Empty<ScalarProperty>();
@@ -29,19 +28,13 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
         public string Namespace { get; private set; }
         public string Name { get; private set; }
-        public CodeModelVisibility Visibility { get; private set; }
+        public CodeModelVisibility? Visibility { get; private set; }
         public string BaseType { get; private set; }
         public IEnumerable<string> ImplementedInterfaces { get; private set; }
 
         public IEnumerable<ScalarProperty> Properties { get; private set; }
 
-        public string FullName
-        {
-            get
-            {
-                return Namespace + "." + Name;
-            }
-        }
+        
     }
 
     

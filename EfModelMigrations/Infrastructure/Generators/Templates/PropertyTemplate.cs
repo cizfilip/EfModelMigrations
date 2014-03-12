@@ -30,34 +30,34 @@ namespace EfModelMigrations.Infrastructure.Generators.Templates
         {
             
             #line 6 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(CodeModelVisibilityMapper(PropertyModel.Visibility)));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Visibility));
             
             #line default
             #line hidden
             this.Write(" ");
             
             #line 6 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
- if(PropertyModel.IsVirtual) { Write("virtual "); } 
+ if(IsVirtual) { Write("virtual "); } 
             
             #line default
             #line hidden
             
             #line 6 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(CodeModelTypeMapper(PropertyModel.GetType())));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Type));
             
             #line default
             #line hidden
             this.Write(" ");
             
             #line 6 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(PropertyModel.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(Name));
             
             #line default
             #line hidden
             this.Write(" { get; ");
             
             #line 6 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations\Infrastructure\Generators\Templates\PropertyTemplate.tt"
- if(PropertyModel.IsSetterPrivate) { Write("private "); }
+ if(IsSetterPrivate) { Write("private "); }
             
             #line default
             #line hidden

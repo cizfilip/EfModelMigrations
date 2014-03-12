@@ -2,34 +2,39 @@
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.Generators.Templates;
 using Microsoft.CSharp.RuntimeBinder;
-using System.Data.Entity.Core.Metadata.Edm;
+using Edm = System.Data.Entity.Core.Metadata.Edm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure.Pluralization;
+using System.Data.Entity.Infrastructure.DependencyResolution;
+using EfModelMigrations.Configuration;
 
 
 namespace EfModelMigrations.Infrastructure.Generators
 {
-    internal class CSharpCodeGenerator : ICodeGenerator
+    public class CSharpCodeGenerator : CodeGenerator
     {
-        private IMappingInformationsGenerator mappingGenerator;
+        protected IPluralizationService pluralizationService;
 
-        public CSharpCodeGenerator(IMappingInformationsGenerator mappingGenerator)
+        public CSharpCodeGenerator(CodeGeneratorDefaults defaults, IMappingInformationsGenerator mappingGenerator)
+            :base(defaults, mappingGenerator)
         {
-            this.mappingGenerator = mappingGenerator;
+            this.pluralizationService = DbConfiguration.DependencyResolver.GetService<IPluralizationService>();
         }
-
-        public string GenerateEmptyClass(string name, string @namespace, 
-            CodeModelVisibility visibility, string baseType, 
+        
+        public override string GenerateEmptyClass(string name, string @namespace, 
+            CodeModelVisibility? visibility, string baseType, 
             IEnumerable<string> implementedInterfaces)
         {
             return new ClassTemplate()
             {
                 Name = name,
                 Namespace = @namespace,
-                Visibility = visibility,
+                Visibility = visibility ?? defaults.Class.Visibility,
                 BaseType = baseType,
                 ImplementedInterfaces = implementedInterfaces,
                 Imports = GetDefaultImports(),
@@ -37,21 +42,23 @@ namespace EfModelMigrations.Infrastructure.Generators
             }.TransformText();
         }
 
-        public string GenerateProperty(PropertyCodeModelBase propertyModel, out string propertyName)
+        public override string GenerateProperty(PropertyCodeModel propertyModel, out string propertyName)
         {
             propertyName = propertyModel.Name;
 
             return new PropertyTemplate()
             {
-                PropertyModel = propertyModel,
-                CodeModelVisibilityMapper = CodeModelVisibilityToString,
-                CodeModelTypeMapper = CodeModelTypeToString
+                Name = propertyModel.Name,
+                Type = GetPropertyType(propertyModel),
+                Visibility = CodeModelVisibilityToString(propertyModel.Visibility ?? defaults.Property.Visibility),
+                IsVirtual = propertyModel.IsVirtual ?? defaults.Property.IsVirtual,
+                IsSetterPrivate = propertyModel.IsSetterPrivate ?? defaults.Property.IsSetterPrivate
             }.TransformText();
         }
 
-        public string GenerateDbSetProperty(string className, out string dbSetPropertyName)
+        public override string GenerateDbSetProperty(string className, out string dbSetPropertyName)
         {
-            dbSetPropertyName = className + "Set"; //TODO: asi spis pluralizovat jmeno
+            dbSetPropertyName = pluralizationService.Pluralize(className);
             return new DbSetPropertyTemplate()
             {
                 GenericType = className,
@@ -59,21 +66,21 @@ namespace EfModelMigrations.Infrastructure.Generators
             }.TransformText();
         }
 
-        
-        public string GetFileExtensions()
+
+        public override string GetFileExtensions()
         {
             return ".cs";
         }
 
 
-        private IEnumerable<string> GetDefaultImports()
+        protected virtual IEnumerable<string> GetDefaultImports()
         {
             yield return "System";
             yield return "System.Collections.Generic";
             yield return "System.Linq";
         }
 
-        private string CodeModelVisibilityToString(CodeModelVisibility visibility)
+        protected virtual string CodeModelVisibilityToString(CodeModelVisibility visibility)
         {
             switch (visibility)
             {
@@ -92,97 +99,91 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
         }
 
-        private string CodeModelTypeToString(CodeModelType type)
+        private string GetPropertyType(PropertyCodeModel property)
         {
             try
             {
-                dynamic dynamicType = type;
+                dynamic dynamicType = property;
 
-                return MapCodeModelType(dynamicType);
+                return GetPropertyTypeAsString(dynamicType);
             }
             catch (RuntimeBinderException e)
             {
                 //TODO: string do resourcu
-                throw new ModelMigrationsException(string.Format("Cannot generate property, because property type {0} is not supported", type.GetType().Name), e);
+                throw new ModelMigrationsException(string.Format("Cannot generate property, because property type {0} is not supported", property.GetType().Name), e);
             }
         }
 
-        protected virtual string MapCodeModelType(ScalarType type)
+        protected virtual string GetPropertyTypeAsString(ScalarProperty property)
         {
-            switch (type.Type)
+            switch (property.Type)
             {
-                case PrimitiveTypeKind.Binary:
+                case Edm.PrimitiveTypeKind.Binary:
                     return "byte[]";
-                case PrimitiveTypeKind.Boolean:
+                case Edm.PrimitiveTypeKind.Boolean:
                     return "bool";
-                case PrimitiveTypeKind.Byte:
+                case Edm.PrimitiveTypeKind.Byte:
                     return "byte";
-                case PrimitiveTypeKind.DateTime:
+                case Edm.PrimitiveTypeKind.DateTime:
                     return "DateTime";
-                case PrimitiveTypeKind.Time:
+                case Edm.PrimitiveTypeKind.Time:
                     return "TimeSpan";
-                case PrimitiveTypeKind.DateTimeOffset:
+                case Edm.PrimitiveTypeKind.DateTimeOffset:
                     return "DateTimeOffset";
-                case PrimitiveTypeKind.Decimal:
+                case Edm.PrimitiveTypeKind.Decimal:
                     return "decimal";
-                case PrimitiveTypeKind.Double:
+                case Edm.PrimitiveTypeKind.Double:
                     return "double";
-                case PrimitiveTypeKind.Geography:
-                case PrimitiveTypeKind.GeographyPoint:
-                case PrimitiveTypeKind.GeographyLineString:
-                case PrimitiveTypeKind.GeographyPolygon:
-                case PrimitiveTypeKind.GeographyMultiPoint:
-                case PrimitiveTypeKind.GeographyMultiLineString:
-                case PrimitiveTypeKind.GeographyMultiPolygon:
-                case PrimitiveTypeKind.GeographyCollection:
+                case Edm.PrimitiveTypeKind.Geography:
+                case Edm.PrimitiveTypeKind.GeographyPoint:
+                case Edm.PrimitiveTypeKind.GeographyLineString:
+                case Edm.PrimitiveTypeKind.GeographyPolygon:
+                case Edm.PrimitiveTypeKind.GeographyMultiPoint:
+                case Edm.PrimitiveTypeKind.GeographyMultiLineString:
+                case Edm.PrimitiveTypeKind.GeographyMultiPolygon:
+                case Edm.PrimitiveTypeKind.GeographyCollection:
                     return "System.Data.Entity.Spatial.DbGeography"; //TODO: mozna ne fullname ale pak musi byt using ve tride....
-                case PrimitiveTypeKind.Geometry:
-                case PrimitiveTypeKind.GeometryPoint:
-                case PrimitiveTypeKind.GeometryLineString:
-                case PrimitiveTypeKind.GeometryPolygon:
-                case PrimitiveTypeKind.GeometryMultiPoint:
-                case PrimitiveTypeKind.GeometryMultiLineString:
-                case PrimitiveTypeKind.GeometryMultiPolygon:
-                case PrimitiveTypeKind.GeometryCollection:
+                case Edm.PrimitiveTypeKind.Geometry:
+                case Edm.PrimitiveTypeKind.GeometryPoint:
+                case Edm.PrimitiveTypeKind.GeometryLineString:
+                case Edm.PrimitiveTypeKind.GeometryPolygon:
+                case Edm.PrimitiveTypeKind.GeometryMultiPoint:
+                case Edm.PrimitiveTypeKind.GeometryMultiLineString:
+                case Edm.PrimitiveTypeKind.GeometryMultiPolygon:
+                case Edm.PrimitiveTypeKind.GeometryCollection:
                     return "System.Data.Entity.Spatial.DbGeometry";
-                case PrimitiveTypeKind.Guid:
+                case Edm.PrimitiveTypeKind.Guid:
                     return "Guid";
-                case PrimitiveTypeKind.Single:
+                case Edm.PrimitiveTypeKind.Single:
                     return "float";
-                case PrimitiveTypeKind.SByte:
+                case Edm.PrimitiveTypeKind.SByte:
                     return "sbyte";
-                case PrimitiveTypeKind.Int16:
+                case Edm.PrimitiveTypeKind.Int16:
                     return "short";
-                case PrimitiveTypeKind.Int32:
+                case Edm.PrimitiveTypeKind.Int32:
                     return "int";
-                case PrimitiveTypeKind.Int64:
+                case Edm.PrimitiveTypeKind.Int64:
                     return "long";
-                case PrimitiveTypeKind.String:
+                case Edm.PrimitiveTypeKind.String:
                     return "string";
                 default:
                     throw new InvalidOperationException("Invalid PrimitiveTypeKind."); //TODO: string do resourcu
             }
         }
 
-        protected virtual string MapCodeModelType(NavigationType type)
+        protected virtual string GetPropertyTypeAsString(NavigationProperty property)
         {
-            if(type.IsCollection)
+            if (property.IsCollection)
             {
-                return string.Format("ICollection<{0}>", type.TargetClass);
+                return string.Format("ICollection<{0}>", property.TargetClass);
             }
             else
             {
-                return type.TargetClass;
+                return property.TargetClass;
             }
         }
 
-        public IMappingInformationsGenerator MappingGenerator
-        {
-            get
-            {
-                return mappingGenerator;
-            }
-        }
+        
 
 
         

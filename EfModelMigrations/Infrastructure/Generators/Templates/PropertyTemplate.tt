@@ -3,4 +3,4 @@
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
-<#= CodeModelVisibilityMapper(PropertyModel.Visibility) #> <# if(PropertyModel.IsVirtual) { Write("virtual "); } #><#= CodeModelTypeMapper(PropertyModel.GetType()) #> <#= PropertyModel.Name #> { get; <# if(PropertyModel.IsSetterPrivate) { Write("private "); }#>set; }
+<#= Visibility #> <# if(IsVirtual) { Write("virtual "); } #><#= Type #> <#= Name #> { get; <# if(IsSetterPrivate) { Write("private "); }#>set; }

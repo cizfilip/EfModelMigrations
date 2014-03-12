@@ -16,58 +16,29 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
     //    public virtual HashSet<Address> Addresses { get; set; }
     //}
-    public class NavigationProperty : PropertyCodeModel<NavigationType>
+    public sealed class NavigationProperty : PropertyCodeModel
     {
-        public NavigationProperty(NavigationType type) 
-            : base(type)
+        public string TargetClass { get; set; }
+
+        public bool IsCollection { get; set; }
+
+
+        public NavigationProperty(string name, string targetClass, bool isCollection)
+            :base(name)
+        {
+            this.TargetClass = targetClass;
+            this.IsCollection = isCollection;
+        }
+
+        internal NavigationProperty(string targetClass, bool isCollection)
+            : this(null, targetClass, isCollection)
         {
         }
 
-        public NavigationProperty(string name, NavigationType type)
-            : base(name, type)
+        internal NavigationProperty(string targetClass)
+            : this(null, targetClass, false)
         {
         }
 
-        
-
-
-
-        //public ScalarProperty ToPropertyCodeModel()
-        //{
-        //    return new ScalarProperty()
-        //    {
-        //        IsSetterPrivate = this.IsSetterPrivate,
-        //        Name = this.Name,
-        //        Visibility = this.Visibility,
-        //        Type = GetPropertyType(),
-        //        IsVirtual = this.IsVirtual
-        //    };
-        //}
-
-        //private string GetPropertyType()
-        //{
-        //    if(IsCollection)
-        //    {
-        //        //TODO: zrefaktorovat nekam jinam jelikoz je to C# specifik generovani. a melo by byt nastavitelne zda budou nav properties ICollection, IList, List atd...
-        //        return string.Format("ICollection<{0}>", TargetClass);
-        //    }
-        //    else
-        //    {
-        //        return TargetClass;
-        //    }
-        //}
-
-
-
-        public static NavigationProperty Default(string targetClass)
-        {
-            return new NavigationProperty(targetClass, new NavigationType(targetClass, false));
-        }
-
-        public static NavigationProperty DefaultCollection(string targetClass)
-        {
-            //TODO: pluralize targetClass
-            return new NavigationProperty(targetClass, new NavigationType(targetClass, true));
-        }
     }
 }

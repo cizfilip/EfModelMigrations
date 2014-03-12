@@ -177,7 +177,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void Generate(ScalarProperty property, StringBuilder builder)
         {
-            builder.Append(TranslatePrimitiveTypeToBuilderMethodName(property.Type.Type))
+            builder.Append(TranslatePrimitiveTypeToBuilderMethodName(property.Type))
                 .Append("(");
 
             //TODO: tyhle kontroly by meli byt oproti defaultum z konfigurace....
