@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
@@ -16,11 +17,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         {
             if(type == CSharpTokenType.StatementSeparator)
             {
-                return AllowWhiteSpaceToken + base.GetSyntaxToken(type);
+                return AllowWhiteSpaceToken + Regex.Escape(base.GetSyntaxToken(type));
             }
             else
             {
-                return AllowWhiteSpaceToken + base.GetSyntaxToken(type) + AllowWhiteSpaceToken;
+                return AllowWhiteSpaceToken + Regex.Escape(base.GetSyntaxToken(type)) + AllowWhiteSpaceToken;
             }
         }
 

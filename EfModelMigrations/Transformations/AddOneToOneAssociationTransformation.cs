@@ -18,10 +18,7 @@ namespace EfModelMigrations.Transformations
             this.Type = type;
         }
         
-        protected override AssociationInfo CreateMappingInformation()
-        {
-            return new OneToOneAssociationInfo(Principal, Dependent, Type, WillCascadeOnDelete);
-        }
+        
 
     }
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations.Mapping.Model
 {
-    public class EfFluetApiCall
+    public class EfFluetApiCall : IFluentInterface
     {
         public EfFluentApiMethods Method { get; private set; }
 

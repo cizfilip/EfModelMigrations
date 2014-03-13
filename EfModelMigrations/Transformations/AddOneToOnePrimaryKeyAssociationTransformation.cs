@@ -24,6 +24,11 @@ namespace EfModelMigrations.Transformations
             return builder.OneToOnePrimaryKeyRelationOperations(Principal.ClassName, Dependent.ClassName, WillCascadeOnDelete);
         }
 
+        protected override AssociationInfo CreateMappingInformation()
+        {
+            return new OneToOneAssociationInfo(Principal, Dependent, Type, WillCascadeOnDelete);
+        }
+
         public override ModelTransformation Inverse()
         {
             return null;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations.Mapping.Model
 {
-    public class EfFluentApiCallChain
+    public class EfFluentApiCallChain : IFluentInterface
     {
         public string EntityType { get; private set; }
         public IList<EfFluetApiCall> FluentApiCalls { get; private set; }
@@ -24,7 +24,6 @@ namespace EfModelMigrations.Operations.Mapping.Model
             return this;
         }
 
-        //TODO: u vsech "fluent api" implementaci napric projektem pouzivat IFluentInterface trik - https://github.com/clariuslabs/IFluentInterface
         public EfFluentApiCallChain AddMethodCall(EfFluentApiMethods method, IEfFluentApiMethodParameter parameter = null)
         {
             var methodCall = new EfFluetApiCall(method);
