@@ -496,6 +496,9 @@ function New-AppDomainSetup($Project, $InstallPath)
     #Write-Host $info.ApplicationBase
     #Write-Host $info.PrivateBinPath
 
+
+    $info.ShadowCopyDirectories = $Project.Properties.Item('FullPath').Value + ";" + $info.ApplicationBase + ";" + $info.PrivateBinPath;
+
     return $info
 }
 

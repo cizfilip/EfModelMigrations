@@ -24,7 +24,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
 
 
-        public static bool TryParseScalar(string type, out ScalarProperty parsedProperty)
+        public static bool TryParse(string type, out ScalarProperty parsedProperty)
         {
             string lowerType = type.ToLowerInvariant();
             PrimitiveTypeKind primitiveType;

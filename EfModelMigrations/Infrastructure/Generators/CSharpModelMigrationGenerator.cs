@@ -92,6 +92,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 builder.AppendLine(",");
             }
 
+            AppendIndent(builder, 3);
             builder.AppendLine("});");
         }
 
@@ -180,20 +181,45 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(TranslatePrimitiveTypeToBuilderMethodName(property.Type))
                 .Append("(");
 
-            //TODO: tyhle kontroly by meli byt oproti defaultum z konfigurace....
-            if(property.Visibility != CodeModelVisibility.Public)
+            bool includeComma = false;
+            if(property.Visibility.HasValue)
             {
                 builder.Append("visibility: ")
-                    .Append("CodeModelVisibility.Public");
+                    .Append(TranslateCodeModelVisbility(property.Visibility.Value));
+                includeComma = true;
             }
-            if(property.IsVirtual == true)
+
+            if(property.IsVirtual.HasValue)
             {
-                builder.Append(", ")
-                    .Append("isVirtual: ")
-                    .Append("true");
+                if(includeComma)
+                {
+                    builder.Append(", ");
+                }
+                
+                builder.Append("isVirtual: ")
+                    .Append(property.IsVirtual.Value.ToString());
             }
 
             builder.Append(")");
+        }
+
+        private string TranslateCodeModelVisbility(CodeModelVisibility codeModelVisibility)
+        {
+            switch (codeModelVisibility)
+            {
+                case CodeModelVisibility.Public:
+                    return "CodeModelVisibility.Public";
+                case CodeModelVisibility.Private:
+                    return "CodeModelVisibility.Private";
+                case CodeModelVisibility.Protected:
+                    return "CodeModelVisibility.Protected";
+                case CodeModelVisibility.Internal:
+                    return "CodeModelVisibility.Internal";
+                case CodeModelVisibility.ProtectedInternal:
+                    return "CodeModelVisibility.ProtectedInternal";
+                default:
+                    throw new InvalidOperationException("Invalid CodeModelVisibility."); //TODO: string do resourcu
+            }
         }
 
         protected virtual string TranslatePrimitiveTypeToBuilderMethodName(PrimitiveTypeKind type)

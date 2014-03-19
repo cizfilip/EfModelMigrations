@@ -83,9 +83,14 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         protected abstract void ExecuteCore();
 
-        protected NewAppDomainExecutor CreateExecutor()
+        protected virtual NewAppDomainExecutor CreateExecutor()
         {
             return new NewAppDomainExecutor(Project.GetAssemblyPath());
+        }
+
+        protected virtual CommandFacade CreateFacade()
+        {
+            return new CommandFacade(Project.GetAssemblyPath());
         }
 
         public virtual void WriteLine(string message)

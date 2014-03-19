@@ -54,6 +54,7 @@ namespace EfModelMigrations.Infrastructure
 
         public string GetMigrationId(string migrationName)
         {
+
             if (ModelMigrationIdGenerator.IsValidId(migrationName))
             {
                 return migrationName;

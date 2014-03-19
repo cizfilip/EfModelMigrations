@@ -54,9 +54,9 @@ namespace EfModelMigrations.Runtime.Templates
             
             #line default
             #line hidden
-            this.Write(">(null);\r\n        }\r\n\r\n\r\n        protected override void OnModelCreating(DbModelB" +
-                    "uilder modelBuilder)\r\n        {\r\n            base.OnModelCreating(modelBuilder);" +
-                    "\r\n        }\r\n    }\r\n}\r\n");
+            this.Write(">(null);\r\n        }\r\n\r\n        protected override void OnModelCreating(DbModelBui" +
+                    "lder modelBuilder)\r\n        {\r\n            base.OnModelCreating(modelBuilder);\r\n" +
+                    "        }\r\n    }\r\n}\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }

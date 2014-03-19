@@ -14,7 +14,6 @@ namespace <#= Namespace #>
             Database.SetInitializer<<#= ContextName #>>(null);
         }
 
-
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

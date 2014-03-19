@@ -40,7 +40,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
         private ScalarProperty MapProperty(CodeProperty2 property)
         {
             ScalarProperty scalar;
-            if (!ScalarProperty.TryParseScalar(property.Type.AsString, out scalar))
+            if (!ScalarProperty.TryParse(property.Type.AsString, out scalar))
             {
                 return null;
             }

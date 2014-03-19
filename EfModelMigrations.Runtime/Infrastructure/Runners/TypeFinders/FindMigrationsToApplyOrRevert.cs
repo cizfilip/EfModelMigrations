@@ -17,14 +17,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
         {
             var locator = new ModelMigrationsLocator(Configuration);
 
-            string targetMigrationId = locator.GetMigrationId(TargetMigration);
-
             //if target not specified return all pending migrations
-            if (string.IsNullOrEmpty(targetMigrationId))
+            if (string.IsNullOrEmpty(TargetMigration))
             {
                 Return(new MigrationsToApplyOrRevertResult(locator.GetPendingMigrationsIds().ToList(), isRevert: false));
                 return;
             }
+
+            string targetMigrationId = locator.GetMigrationId(TargetMigration);
 
             //if target is InitialModel
             if(targetMigrationId == ModelMigrationIdGenerator.InitialModel)

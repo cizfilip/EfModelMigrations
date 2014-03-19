@@ -16,7 +16,6 @@ namespace <#= Namespace #>
 {
     <#= CodeModelVisibilityMapper(Visibility) #> class <#= Name #><#= GetBasesListString() #>
     {
-        
     }
 }
 

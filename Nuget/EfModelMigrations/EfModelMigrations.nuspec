@@ -8,7 +8,7 @@
 
     <description>Framework for model migrations</description>
     <dependencies>
-      <dependency id="EntityFramework" version="6.0.1" />
+      <dependency id="EntityFramework" version="6.1.0" />
     </dependencies>
     <references>
       <reference file="EfModelMigrations.dll" />

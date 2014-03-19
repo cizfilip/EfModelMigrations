@@ -30,7 +30,7 @@ namespace EfModelMigrations.Commands
             }
 
             ScalarProperty property;
-            if (!ScalarProperty.TryParseScalar(splitted[1], out property))
+            if (!ScalarProperty.TryParse(splitted[1], out property))
             {
                 throw new ModelMigrationsException(string.Format("Unknown scalar property type {0}", splitted[1]));
             }
