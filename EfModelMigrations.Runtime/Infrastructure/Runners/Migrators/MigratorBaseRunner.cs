@@ -13,6 +13,7 @@ using System.Data.Entity.Infrastructure;
 using System.Xml.Linq;
 using System.IO;
 using System.Xml;
+using EfModelMigrations.Runtime.Infrastructure.Migrations;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
 {
@@ -63,6 +64,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
             }
         }
 
+        
+
         protected IEnumerable<ModelTransformation> GetModelTransformations(bool isRevert)
         {
             ModelMigration.Reset();
@@ -105,7 +108,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
         }
 
         public override abstract void Run();
-        
+
 
         
     }

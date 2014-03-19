@@ -14,16 +14,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
         {
             var typeFinder = new TypeFinder();
 
-            bool dbConfigurationExists = false;
             Type foundType;
 
             if (typeFinder.TryFindDbMigrationsConfigurationType(ProjectAssembly, out foundType))
             {
-                dbConfigurationExists = true;
+                Return(foundType.FullName);
             }
 
             
-            Return(dbConfigurationExists);
+            Return((string)null);
         }
     }
 }

@@ -1,6 +1,8 @@
-﻿using EfModelMigrations.Exceptions;
+﻿using EfModelMigrations.Configuration;
+using EfModelMigrations.Exceptions;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
+using EfModelMigrations.Runtime.Infrastructure.Runners;
 using EfModelMigrations.Runtime.Infrastructure.Runners.Migrators;
 using EfModelMigrations.Runtime.Properties;
 using EnvDTE;
@@ -13,13 +15,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 {
     internal class ModelMigrator
     {
-        private Func<NewAppDomainExecutor> executorFactory;
+        Func<NewAppDomainExecutor> executorFactory;
         private Project modelProject;
+
 
         public ModelMigrator(Project modelProject, Func<NewAppDomainExecutor> executorFactory)
         {
-            this.executorFactory = executorFactory;
             this.modelProject = modelProject;
+            this.executorFactory = executorFactory;
+
         }
 
         public void Migrate(IEnumerable<string> migrationIds, bool isRevert, bool force)
@@ -41,10 +45,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
             try
             {
+                oldEdmxModel = GetEdmxModel();
+
                 //apply model changes
                 using (var executor = executorFactory())
                 {
-                    oldEdmxModel = executor.ExecuteRunner<string>(new ApplyModelChangesRunner()
+                    executor.ExecuteRunner(new ApplyModelChangesRunner()
                     {
                         HistoryTracker = historyTracker,
                         ModelProject = modelProject,
@@ -55,8 +61,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 }
 
 
+
                 //build project
                 modelProject.Build(() => new ModelMigrationsException(Resources.CannotBuildProject));
+
+                string newEdmxModel = GetEdmxModel();
 
                 //generate db migration    
                 using (var executor = executorFactory())
@@ -66,6 +75,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                         ModelProject = modelProject,
                         ModelMigrationId = migrationId,
                         OldEdmxModel = oldEdmxModel,
+                        NewEdmxModel = newEdmxModel,
                         IsRevert = isRevert
                     });
                 }
@@ -107,7 +117,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 RollbackModelState(historyTracker, scaffoldedMigration);
                 throw;
             }
-            catch (Exception e) 
+            catch (Exception e)
             {
                 RollbackModelState(historyTracker, scaffoldedMigration);
                 throw new ModelMigrationsException(Resources.ApplyMigrationError, e);
@@ -122,6 +132,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             if (scaffoldedMigration != null)
             {
                 new DbMigrationWriter(modelProject).RemoveMigration(scaffoldedMigration);
+            }
+        }
+
+        private string GetEdmxModel()
+        {
+            using (var executor = executorFactory())
+            {
+                return executor.ExecuteRunner<string>(new GetEdmxRunner());
             }
         }
     }

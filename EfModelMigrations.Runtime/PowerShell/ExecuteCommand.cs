@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Runtime.Extensions;
 using System.IO;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
@@ -37,14 +38,9 @@ namespace EfModelMigrations.Runtime.PowerShell
             }
 
             GeneratedModelMigration migration = null;
-            using (var executor = CreateExecutor())
+            using(var facade = CreateFacade())
             {
-                migration = executor.ExecuteRunner<GeneratedModelMigration>(new GenerateMigrationFromCommandRunner() 
-                        { 
-                            ModelProject = Project,
-                            CommandFullName = this.commandFullName,
-                            Parameters = this.parameters
-                        });
+                migration = facade.GenerateMigration(commandFullName, parameters);
             }
 
             if (migration != null)

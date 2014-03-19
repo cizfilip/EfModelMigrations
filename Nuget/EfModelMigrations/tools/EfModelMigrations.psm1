@@ -302,7 +302,6 @@ function New-EfModelMigrationsRunner($ProjectName)
 
     $domain = [AppDomain]::CreateDomain('EfModelMigrations', $null, $info)
     $domain.SetData('project', $project)
-    #$domain.SetData('efDllPath', $efDllPath)
     #$domain.SetData('startUpProject', $startUpProject)
     #$domain.SetData('configurationTypeName', $ConfigurationTypeName)
     #$domain.SetData('connectionStringName', $ConnectionStringName)
@@ -495,10 +494,7 @@ function New-AppDomainSetup($Project, $InstallPath)
     $info.PrivateBinPath += ';' + $packageName + '\lib'
     #Write-Host $info.ApplicationBase
     #Write-Host $info.PrivateBinPath
-
-
-    $info.ShadowCopyDirectories = $Project.Properties.Item('FullPath').Value + ";" + $info.ApplicationBase + ";" + $info.PrivateBinPath;
-
+    
     return $info
 }
 

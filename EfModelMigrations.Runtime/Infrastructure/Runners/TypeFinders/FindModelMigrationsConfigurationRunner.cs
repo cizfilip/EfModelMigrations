@@ -15,16 +15,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
         {
             var typeFinder = new TypeFinder();
 
-            bool modelConfigurationExists = false;
             Type foundType;
 
             if (typeFinder.TryFindModelMigrationsConfigurationType(ProjectAssembly, out foundType))
             {
-                modelConfigurationExists = true;
+                Return(foundType.FullName);
             }
 
 
-            Return(modelConfigurationExists);
+            Return((string)null);
         }
     }
 }

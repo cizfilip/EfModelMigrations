@@ -22,9 +22,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
         public bool IsRevert { get; set; }
         public string OldEdmxModel { get; set; }
 
+        public string NewEdmxModel { get; set; }
+
         public override void Run()
         {
-            var operationBuilder = new DbMigrationOperationBuilder(Configuration.ModelNamespace, LoadEdmxFromString(OldEdmxModel), GetEdmxModel());
+            var operationBuilder = new DbMigrationOperationBuilder(Configuration.ModelNamespace, LoadEdmxFromString(OldEdmxModel), LoadEdmxFromString(NewEdmxModel));
 
             IEnumerable<MigrationOperation> dbMigrationOperations = GetModelTransformations(IsRevert)
                 .SelectMany(t => t.GetDbMigrationOperations(operationBuilder));

@@ -92,7 +92,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 builder.AppendLine(",");
             }
 
-            AppendIndent(builder, 3);
+            AppendIndent(builder, 2);
             builder.AppendLine("});");
         }
 

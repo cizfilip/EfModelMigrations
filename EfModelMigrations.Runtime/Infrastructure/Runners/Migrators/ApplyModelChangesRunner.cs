@@ -24,7 +24,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
                 throw new ModelMigrationsException(string.Format("Some operations in migration {0} may cause data loss in database! If you really want to execute this migration rerun the migrate command with -Force parameter.")); //TODO: string do resourcu
             }
             
-            string oldEdmxModel = GetEdmxModelAsString();
             var classModelProvider = GetClassModelProvider();
 
             IEnumerable<IModelChangeOperation> operations = transformations.SelectMany(t => t.GetModelChangeOperations(classModelProvider));
@@ -39,17 +38,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.Migrators
                 );
 
             modelChangesExecutor.Execute(operations);    
-            
-            Return(oldEdmxModel);
-        }
-
-        private string GetEdmxModelAsString()
-        {
-            using (var writer = new StringWriter())
-            {
-                GetEdmxModel().Save(writer);
-                return writer.ToString();
-            }
         }
     }
 }

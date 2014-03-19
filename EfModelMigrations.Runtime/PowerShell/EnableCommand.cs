@@ -25,11 +25,11 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         protected override void ExecuteCore()
         {
-            using (var executor = CreateExecutor())
+            using (var facade = CreateFacade())
             {
                 //find model migration configuration
-                bool configurationExists = executor.ExecuteRunner<bool>(new FindModelMigrationsConfigurationRunner());
-                if (configurationExists)
+                string configurationType = facade.FindModelMigrationsConfiguration();
+                if (!string.IsNullOrEmpty(configurationType))
                 {
                     WriteLine(Resources.ModelMigrationsAlreadyEnabled);
                     return;

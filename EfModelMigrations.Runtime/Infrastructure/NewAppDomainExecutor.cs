@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,12 +15,15 @@ namespace EfModelMigrations.Runtime.Infrastructure
     /// </summary>
     internal class NewAppDomainExecutor : IDisposable
     {
-        private AppDomain newDomain;
+        internal AppDomain newDomain;
 
         private string projectAssemblyPath;
+        
+        private RunnerLogger logger;
 
-        public NewAppDomainExecutor(string projectAssemblyPath)
+        public NewAppDomainExecutor(string workingDirectory, string configurationFilePath, string projectAssemblyPath, RunnerLogger logger)
         {
+            this.logger = logger;
             this.projectAssemblyPath = projectAssemblyPath;
 
             var baseDomainSetup = AppDomain.CurrentDomain.SetupInformation;
@@ -28,14 +32,15 @@ namespace EfModelMigrations.Runtime.Infrastructure
             {
                 ApplicationBase = baseDomainSetup.ApplicationBase,
                 PrivateBinPath = baseDomainSetup.PrivateBinPath,
-                ShadowCopyFiles = "true"
+                ConfigurationFile = configurationFilePath,
+                ShadowCopyFiles = "true",
+                ShadowCopyDirectories = baseDomainSetup.ApplicationBase + ";" + baseDomainSetup.PrivateBinPath + ";" + workingDirectory
             };
 
             
             var friendlyName = "EfModelMigrationsNewDomain" + Convert.ToBase64String(Guid.NewGuid().ToByteArray());
 
             newDomain = AppDomain.CreateDomain(friendlyName, null, setup);
-
         }
 
         ~NewAppDomainExecutor()
@@ -62,6 +67,7 @@ namespace EfModelMigrations.Runtime.Infrastructure
         private void ConfigureRunner(BaseRunner runner)
         {
             runner.ProjectAssemblyPath = projectAssemblyPath;
+            runner.Log = logger;
         }
 
 

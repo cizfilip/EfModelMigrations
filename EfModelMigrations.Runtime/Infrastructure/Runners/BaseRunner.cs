@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Runtime.Infrastructure.Migrations;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Runtime.Properties;
 using EfModelMigrations.Utilities;
@@ -19,8 +20,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
     internal abstract class BaseRunner
     {
         public static readonly string ResultKey = "result";
-        
 
+        public RunnerLogger Log { get; set; }
         public string ProjectAssemblyPath { get; set; }
 
         private Assembly projectAssembly;
@@ -30,7 +31,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             {
                 if (projectAssembly == null)
                 {
-                    projectAssembly = LoadAssembly(ProjectAssemblyPath);
+                    projectAssembly = LoadAssemblyFromPath(ProjectAssemblyPath);
                 }
                 return projectAssembly;
             }
@@ -48,9 +49,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 return configuration;
             }
         }
-
                 
-
+        
         public abstract void Run();
 
 
@@ -60,8 +60,23 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
         }
 
 
+        private Assembly LoadAssembly(string name)
+        {
+            try
+            {
+                return Assembly.Load(name);
+            }
+            catch (FileNotFoundException ex)
+            {
+                throw new ModelMigrationsException(
+                    //TODO: Zlepšit formátování stringů z resourců
+                    String.Format(Resources.BaseRunner_AssemblyNotFound, ex.FileName),
+                    ex);
+            }
+        }
 
-        private Assembly LoadAssembly(string assemblyPath)
+
+        private Assembly LoadAssemblyFromPath(string assemblyPath)
         {
             try
             {

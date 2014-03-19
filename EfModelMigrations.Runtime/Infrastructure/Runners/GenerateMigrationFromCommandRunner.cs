@@ -44,7 +44,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 throw new ModelMigrationsException("Cannot create command instance!", e);
             }
 
-            
+
             //TODO: vytvareni class model provideru je zde i v MigratorBaseRunner - nejak poresit
             var classModelProvider = new VsClassModelProvider(ModelProject, Configuration);
             var transformations = command.GetTransformations(classModelProvider);

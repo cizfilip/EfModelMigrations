@@ -24,26 +24,10 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         protected override void ExecuteCore()
         {
-            MigrationsToApplyOrRevertResult result;
-            using (var executor = CreateExecutor())
+            using(var facade = CreateFacade())
             {
-                result = executor.ExecuteRunner<MigrationsToApplyOrRevertResult>(new FindMigrationsToApplyOrRevert()
-                {
-                    TargetMigration = targetModelMigration
-                });
+                facade.Migrate(targetModelMigration, force);
             }
-
-
-            if (result.ModelMigrationsIds.Any())
-            {
-                var migrator = new ModelMigrator(Project, CreateExecutor);
-                migrator.Migrate(result.ModelMigrationsIds, result.IsRevert, force);
-            }
-            else
-            {
-                WriteLine(Resources.NoMigrationsToApplyOrRevert);
-            }
-
         }
     }
 }
