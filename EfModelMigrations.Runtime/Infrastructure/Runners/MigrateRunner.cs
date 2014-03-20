@@ -1,5 +1,8 @@
 ﻿using EfModelMigrations.Runtime.Infrastructure.Migrations;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Runtime.Infrastructure.Runners.Migrators;
+using EfModelMigrations.Runtime.Extensions;
+using EnvDTE;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +18,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
         public bool Force { get; set; }
 
+        public Project ModelProject { get; set; }
+
         public EdmxModelProvider EdmxProvider { get; set; }
+
+        public HistoryTracker HistoryTracker { get; set; }
+
+        public VsProjectBuilder ProjectBuilder { get; set; }
 
         private ModelMigrator migrator;
         public ModelMigrator Migrator
@@ -24,7 +33,17 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             {
                 if(migrator == null)
                 {
-                    //migrator = new ModelMigrator();
+                    //TODO: vytvorit decorator migratoru ktery bude vypisovat uzivateli pomoci RunnerLogger
+                    migrator = new ModelMigrator(
+                        HistoryTracker,
+                        EdmxProvider,
+                        new VsClassModelProvider(ModelProject, Configuration),
+                        new VsModelChangesExecutor(HistoryTracker, ModelProject, Configuration),
+                        Configuration,
+                        ProjectBuilder,
+                        new DbMigrationWriter(ModelProject),
+                        ModelProject.GetProjectDir()
+                        );
                 }
                 return migrator;
             }

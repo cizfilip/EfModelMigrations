@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders;
 using EfModelMigrations.Runtime.Infrastructure.Migrations;
 using EfModelMigrations.Runtime.Properties;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 
 namespace EfModelMigrations.Runtime.Infrastructure
 {
@@ -63,7 +64,11 @@ namespace EfModelMigrations.Runtime.Infrastructure
             executor.ExecuteRunner(new MigrateRunner()
             {
                 TargetMigration = targetModelMigration,
-                Force = force
+                Force = force,
+                EdmxProvider = new EdmxModelProvider(executor),
+                HistoryTracker = new HistoryTracker(modelProject),
+                ModelProject = modelProject,
+                ProjectBuilder = new VsProjectBuilder(modelProject)
             });
         }
 

@@ -51,17 +51,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 return configuration;
             }
         }
-
-        private DbMigrationsConfiguration dbConfiguration;
         protected DbMigrationsConfiguration DbConfiguration
         {
             get
             {
-                if (dbConfiguration == null)
-                {
-                    dbConfiguration = CreateInstance<DbMigrationsConfiguration>(Configuration.EfMigrationsConfigurationType);
-                }
-                return dbConfiguration;
+                return Configuration.DbMigrationsConfiguration;
             }
         }
 

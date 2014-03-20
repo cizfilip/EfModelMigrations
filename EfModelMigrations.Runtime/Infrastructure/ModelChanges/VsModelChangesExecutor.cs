@@ -1,4 +1,5 @@
-﻿using EfModelMigrations.Exceptions;
+﻿using EfModelMigrations.Configuration;
+using EfModelMigrations.Exceptions;
 using EfModelMigrations.Extensions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
@@ -33,15 +34,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         public VsModelChangesExecutor(HistoryTracker historyTracker,
             Project modelProject,
-            string modelNamespace,
-            string dbContextFullName,
-            ICodeGenerator codeGenerator)
+            ModelMigrationsConfigurationBase configuration)
         {
             this.historyTracker = historyTracker;
             this.modelProject = modelProject;
-            this.modelNamespace = modelNamespace;
-            this.dbContextFullName = dbContextFullName;
-            this.codeGenerator = codeGenerator;
+            this.modelNamespace = configuration.ModelNamespace;
+            this.dbContextFullName = configuration.DbMigrationsConfiguration.ContextType.FullName;
+            this.codeGenerator = configuration.CodeGenerator;
             this.classFinder = new CodeClassFinder(modelProject);
             this.regexMappingGenerator = new CSharpRegexMappingGenerator();
         }

@@ -10,7 +10,7 @@ namespace EfModelMigrations.Configuration
     {
         public ModelMigrationsConfiguration()
         {
-            EfMigrationsConfigurationType = typeof(TEfMigrationsConfiguration);
+            DbMigrationsConfigurationType = typeof(TEfMigrationsConfiguration);
         }
     }
 }

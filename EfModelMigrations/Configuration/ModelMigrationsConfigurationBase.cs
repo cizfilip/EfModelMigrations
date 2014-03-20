@@ -1,6 +1,8 @@
 ﻿using EfModelMigrations.Infrastructure.Generators;
+using EfModelMigrations.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Reflection;
 using System.Resources;
 
@@ -34,8 +36,26 @@ namespace EfModelMigrations.Configuration
 
         public string ModelNamespace { get; set; }
 
-        public Type EfMigrationsConfigurationType { get; set; }
+        public Type DbMigrationsConfigurationType { get; set; }
 
+        private DbMigrationsConfiguration dbMigrationsConfiguration;
+        public DbMigrationsConfiguration DbMigrationsConfiguration
+        {
+            get
+            {
+                if(dbMigrationsConfiguration == null)
+                {
+                    if(DbMigrationsConfigurationType == null)
+                    {
+                        throw new InvalidOperationException("Cannot create db migrations configuration, DbMigrationsConfigurationType was not specified."); //TODO: string do resourcu
+                    }
+
+                    dbMigrationsConfiguration = DbMigrationsConfigurationType.CreateInstance<DbMigrationsConfiguration>();
+                }
+                return dbMigrationsConfiguration;
+            }
+        }
+        
         //TODO: Prepsat az bude hotova komopnenta pro update resource souboru s jiz aplikovanymi migracemi
         public IEnumerable<string> GetAppliedMigrations()
         {

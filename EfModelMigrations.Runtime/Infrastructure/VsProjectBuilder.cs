@@ -10,7 +10,7 @@ using EfModelMigrations.Runtime.Properties;
 
 namespace EfModelMigrations.Runtime.Infrastructure
 {
-    internal class VsProjectBuilder
+    internal class VsProjectBuilder : MarshalByRefObject
     {
         private Project modelProject;
 

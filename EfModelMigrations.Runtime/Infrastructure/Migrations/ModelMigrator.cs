@@ -41,7 +41,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             {
                 if(dbConfiguration == null)
                 {
-                    dbConfiguration = configuration.EfMigrationsConfigurationType.CreateInstance<DbMigrationsConfiguration>();
+                    dbConfiguration = configuration.DbMigrationsConfigurationType.CreateInstance<DbMigrationsConfiguration>();
 
                     //TODO: idealni by bylo aby byl nas generator migraci i generator sql rovnou v configuracnim filu v projektu
                     dbConfiguration.CodeGenerator = new ExtendedCSharpMigrationCodeGenerator();
