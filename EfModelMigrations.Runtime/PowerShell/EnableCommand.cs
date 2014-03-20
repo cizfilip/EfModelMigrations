@@ -56,6 +56,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             //create configuration
             string configurationFile = "Configuration";
             string configurationFileName = configurationFile + ".cs";
+            string configurationFilePath = Path.Combine(migrationsDirectory, configurationFileName);
 
             string migrationsNamespace = Project.GetRootNamespace() + "." + migrationsDirectory;
             string configuration = new ModelMigrationsConfigurationTemplate()
@@ -65,7 +66,7 @@ namespace EfModelMigrations.Runtime.PowerShell
                 EfMigrationsConfigurationFullName = efMigrationsConfigTypeName
             }
                 .TransformText();
-            Project.AddContentToProject(Path.Combine(migrationsDirectory, configurationFileName), configuration);
+            Project.AddContentToProject(configurationFilePath, configuration);
             //TODO: Zajistit aby byl resource soubor checknut do source control (je to jenom zamek pro TFS) - btw mozna zarucit pro vsechny nove pridane soubory!
             string resourceFileName = configurationFile + ".resx";
             string resourcePath = Path.Combine(migrationsDirectory, resourceFileName);
@@ -131,6 +132,8 @@ namespace EfModelMigrations.Runtime.PowerShell
             //    }
 
             //}
+
+            OpenFile(Path.Combine(Project.GetProjectDir(), configurationFilePath));
 
             WriteLine(Resources.ModelEnableSuccessfull);
         }

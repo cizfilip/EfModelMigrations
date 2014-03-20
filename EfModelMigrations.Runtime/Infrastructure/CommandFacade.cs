@@ -65,9 +65,10 @@ namespace EfModelMigrations.Runtime.Infrastructure
             {
                 TargetMigration = targetModelMigration,
                 Force = force,
-                EdmxProvider = new EdmxModelProvider(executor),
+                EdmxProvider = new EdmxModelProvider(CreateExecutor),
                 HistoryTracker = new HistoryTracker(modelProject),
                 ModelProject = modelProject,
+                DatabaseUpdater = new DatabaseUpdater(CreateExecutor),
                 ProjectBuilder = new VsProjectBuilder(modelProject)
             });
         }

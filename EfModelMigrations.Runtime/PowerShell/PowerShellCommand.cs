@@ -119,6 +119,11 @@ namespace EfModelMigrations.Runtime.PowerShell
             dispatcher.WriteVerbose(message);
         }
 
+        public void OpenFile(string absolutePath)
+        {
+            dispatcher.OpenFile(absolutePath);
+        }
+
         public void InvokeScript(string script)
         {
             dispatcher.InvokeScript(script);

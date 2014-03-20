@@ -45,10 +45,17 @@ namespace EfModelMigrations.Infrastructure.Generators
         {
             StringBuilder builder = new StringBuilder();
 
+            bool prependLine = true;
+
             foreach (dynamic transformation in transformations)
             {
                 try
                 {
+                    if(prependLine)
+                    {
+                        builder.AppendLine();
+                        prependLine = false;
+                    }
                     Generate(transformation, builder);
                 }
                 catch (RuntimeBinderException e)
@@ -57,13 +64,6 @@ namespace EfModelMigrations.Infrastructure.Generators
                     throw new ModelMigrationsException(string.Format("Cannot generate migration code for model transformation {0}. Generator implementation is missing.", transformation.GetType().Name), e);
                 }
             }
-
-            //remove last new line
-            if (builder.Length > 0)
-            {
-                builder.Length = builder.Length - 1;
-            }
-
             return builder.ToString();
         }
 
@@ -93,14 +93,14 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
 
             AppendIndent(builder, 2);
-            builder.AppendLine("});");
+            builder.Append("});");
         }
 
         protected virtual void Generate(RemoveClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("this.RemoveClass(");
             builder.Append(QuoteString(transformation.Name));
-            builder.AppendLine(");");
+            builder.Append(");");
         }
 
         protected virtual void Generate(AddPropertyTransformation transformation, StringBuilder builder)
@@ -114,7 +114,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
             Generate(transformation.Model, builder);
             
-            builder.AppendLine(");");
+            builder.Append(");");
         }
 
         protected virtual void Generate(RemovePropertyTransformation transformation, StringBuilder builder)
@@ -123,7 +123,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(QuoteString(transformation.ClassName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.Name));
-            builder.AppendLine(");");
+            builder.Append(");");
         }
 
         //TODO: generovat pomoci named parametru aby vysledek byl: this.RenameClass(oldName: name, newName: name)
@@ -133,7 +133,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(QuoteString(transformation.OldName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.NewName));
-            builder.AppendLine(");");
+            builder.Append(");");
         }
 
         //TODO: generovat pomoci named parametru aby vysledek byl: this.RenameProperty(className: name, oldName: name, newName: name)
@@ -145,7 +145,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(QuoteString(transformation.OldName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.NewName));
-            builder.AppendLine(");");
+            builder.Append(");");
         }
 
         protected virtual void Generate(ExtractComplexTypeTransformation transformation, StringBuilder builder)
@@ -163,7 +163,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
 
             builder.Append("}");
-            builder.AppendLine(");");
+            builder.Append(");");
         }
 
         protected virtual void Generate(JoinComplexTypeTransformation transformation, StringBuilder builder)
@@ -172,7 +172,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(QuoteString(transformation.ComplexTypeName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.ClassName));
-            builder.AppendLine(");");
+            builder.Append(");");
         }
 
 

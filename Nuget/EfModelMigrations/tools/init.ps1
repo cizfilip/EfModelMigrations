@@ -5,5 +5,5 @@ if (Get-Module | ?{ $_.Name -eq 'EfModelMigrations' })
     Remove-Module EfModelMigrations
 }
 
-Import-Module (Join-Path $toolsPath EfModelMigrations.psd1)
+Import-Module (Join-Path $toolsPath EfModelMigrations.psd1) -DisableNameChecking 
 

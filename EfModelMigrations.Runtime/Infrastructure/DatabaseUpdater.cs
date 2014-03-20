@@ -7,20 +7,23 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure
 {
-    internal sealed class EdmxModelProvider : MarshalByRefObject
+    internal class DatabaseUpdater : MarshalByRefObject
     {
         private Func<NewAppDomainExecutor> executorFactory;
 
-        public EdmxModelProvider(Func<NewAppDomainExecutor> executorFactory)
+        public DatabaseUpdater(Func<NewAppDomainExecutor> executorFactory)
         {
             this.executorFactory = executorFactory;
         }
 
-        public string GetEdmxModel()
+        public void Update(string targetDbMigration)
         {
             using (var executor = executorFactory())
             {
-                return executor.ExecuteRunner<string>(new GetEdmxRunner());
+                executor.ExecuteRunner(new UpdateDatabaseRunner()
+                    {
+                        TargetDbMigration = targetDbMigration
+                    });
             }
         }
     }

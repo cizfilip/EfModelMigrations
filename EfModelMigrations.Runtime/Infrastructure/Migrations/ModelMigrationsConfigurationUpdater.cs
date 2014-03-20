@@ -32,7 +32,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             WriteResource(appliedMigrationsValue, dbMigrationId);
         }
 
-        //TODO: co takhle menit i last applied db migration id ?? 
+
         public void RemoveLastAppliedMigration(string dbMigrationId)
         {
             string oldAppliedMigrationsValue = ReadResource()[AppliedMigrationsKey];

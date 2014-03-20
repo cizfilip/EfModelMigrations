@@ -4,13 +4,9 @@ using EfModelMigrations.Extensions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
-using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
-using EfModelMigrations.Runtime.Infrastructure.Runners;
-using EfModelMigrations.Runtime.Infrastructure.Runners.Migrators;
 using EfModelMigrations.Runtime.Properties;
 using EfModelMigrations.Transformations;
-using EnvDTE;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
@@ -31,6 +27,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         private ModelMigrationsConfigurationBase configuration;
         private ModelMigrationsLocator locator;
         private VsProjectBuilder projectBuilder;
+        private DatabaseUpdater dbUpdater;
         private DbMigrationWriter dbMigrationWriter;
         private string migrationProjectPath;
 
@@ -57,6 +54,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             IModelChangesExecutor modelChangesExecutor,
             ModelMigrationsConfigurationBase configuration,
             VsProjectBuilder projectBuilder,
+            DatabaseUpdater dbUpdater,
             DbMigrationWriter dbMigrationWriter,
             string migrationProjectPath)
         {
@@ -67,6 +65,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             this.configuration = configuration;
             this.locator = new ModelMigrationsLocator(configuration);
             this.projectBuilder = projectBuilder;
+            this.dbUpdater = dbUpdater;
             this.dbMigrationWriter = dbMigrationWriter;
             this.migrationProjectPath = migrationProjectPath;
         }
@@ -123,7 +122,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 projectBuilder.BuildModelProject();
 
                 //update DB
-                UpdateDatabase(scaffoldedMigration.MigrationId);
+                dbUpdater.Update(scaffoldedMigration.MigrationId);
                
                 //update applied migration in configuration 
                 UpdateConfiguration(migrationId, scaffoldedMigration.MigrationId, isRevert);                
@@ -165,13 +164,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             return scaffoldedMigration;
         }
 
-        protected virtual void UpdateDatabase(string targetDbMigration)
-        {
-            DbMigrator dbMigrator = new DbMigrator(DbConfiguration);
-
-            dbMigrator.Update(targetDbMigration);
-        }
-
         protected virtual void UpdateConfiguration(string appliedModelMigrationId, string appliedDbMigrationId, bool isRevert)
         {
             //TODO: updatovat na projekt kde jsou migrace ne modelProject - az budu podporovat vicero projektu
@@ -184,7 +176,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             }
             else
             {
-                updater.RemoveLastAppliedMigration(appliedModelMigrationId);
+                updater.RemoveLastAppliedMigration(appliedDbMigrationId);
             }
         }
         

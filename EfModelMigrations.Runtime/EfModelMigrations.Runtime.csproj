@@ -66,6 +66,7 @@
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Extensions\EnvDteExtensions.cs" />
     <Compile Include="Infrastructure\CommandFacade.cs" />
+    <Compile Include="Infrastructure\DatabaseUpdater.cs" />
     <Compile Include="Infrastructure\EdmxModelProvider.cs" />
     <Compile Include="Infrastructure\Migrations\DbMigrationWriter.cs" />
     <Compile Include="Infrastructure\Migrations\ModelMigrationsConfigurationUpdater.cs" />
@@ -81,11 +82,11 @@
     <Compile Include="Infrastructure\Runners\BaseRunner.cs" />
     <Compile Include="Infrastructure\Runners\GetEdmxRunner.cs" />
     <Compile Include="Infrastructure\Runners\MigrateRunner.cs" />
-    <Compile Include="Infrastructure\Runners\UpdateConfigurationRunner.cs" />
     <Compile Include="Infrastructure\Runners\GenerateMigrationFromCommandRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindDbContextRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindDbMigrationsConfigurationRunner.cs" />
     <Compile Include="Infrastructure\Runners\TypeFinders\FindModelMigrationsConfigurationRunner.cs" />
+    <Compile Include="Infrastructure\Runners\UpdateDatabaseRunner.cs" />
     <Compile Include="Infrastructure\VsProjectBuilder.cs" />
     <Compile Include="PowerShell\MigrateCommand.cs" />
     <Compile Include="PowerShell\ExecuteCommand.cs" />

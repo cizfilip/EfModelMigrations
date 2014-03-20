@@ -1,6 +1,5 @@
 ﻿using EfModelMigrations.Runtime.Infrastructure.Migrations;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
-using EfModelMigrations.Runtime.Infrastructure.Runners.Migrators;
 using EfModelMigrations.Runtime.Extensions;
 using EnvDTE;
 using System;
@@ -21,6 +20,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
         public Project ModelProject { get; set; }
 
         public EdmxModelProvider EdmxProvider { get; set; }
+        public DatabaseUpdater DatabaseUpdater { get; set; }
 
         public HistoryTracker HistoryTracker { get; set; }
 
@@ -41,6 +41,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                         new VsModelChangesExecutor(HistoryTracker, ModelProject, Configuration),
                         Configuration,
                         ProjectBuilder,
+                        DatabaseUpdater,
                         new DbMigrationWriter(ModelProject),
                         ModelProject.GetProjectDir()
                         );
