@@ -52,7 +52,57 @@ namespace EfModelMigrations.Infrastructure
             }
         }
 
-        public string GetMigrationId(string migrationName)
+        public IEnumerable<string> FindModelMigrationsToApplyOrRevert(string targetMigration, out bool isRevert)
+        {
+            //if target not specified return all pending migrations
+            if (string.IsNullOrEmpty(targetMigration))
+            {
+                isRevert = false;
+                return GetPendingMigrationsIds().ToList();
+            }
+
+            string targetMigrationId = GetMigrationId(targetMigration);
+
+            //if target is InitialModel
+            if (targetMigrationId == ModelMigrationIdGenerator.InitialModel)
+            {
+                isRevert = true;
+                return GetAppliedMigrationsIds().Reverse().ToList();
+            }
+
+            var appliedModelMigrations = GetAppliedMigrationsIds();
+            //check if fromMigration is same as last appliedMigrations
+            if (targetMigrationId.EqualsOrdinal(appliedModelMigrations.LastOrDefault()))
+            {
+                isRevert = false;
+                return Enumerable.Empty<string>();
+            }
+
+            //see if fromMigration is in applied migrations
+            var migrationsToUnapply = appliedModelMigrations.SkipWhile(m => !m.EqualsOrdinal(targetMigrationId));
+            if (migrationsToUnapply.Any())
+            {
+                isRevert = true;
+                return migrationsToUnapply.Reverse().ToList();
+            }
+
+            //see if fromMigration is in pending migrations
+            var pendingMigrations = GetPendingMigrationsIds();
+            if (pendingMigrations.Contains(targetMigrationId, StringComparer.Ordinal))
+            {
+                //return all pending migration including from migration
+                isRevert = true;
+                return pendingMigrations.TakeWhile(m => !m.EqualsOrdinal(targetMigrationId))
+                        .Concat(new[] { targetMigrationId })
+                        .ToList();
+            }
+
+            //if we reach here there is nothing to apply or revert
+            isRevert = false;
+            return Enumerable.Empty<string>();
+        }
+
+        private string GetMigrationId(string migrationName)
         {
 
             if (ModelMigrationIdGenerator.IsValidId(migrationName))
@@ -74,18 +124,18 @@ namespace EfModelMigrations.Infrastructure
             return possibleMigrationIds.Single();
         }
 
-        public IEnumerable<string> GetPendingMigrationsIds()
+        private IEnumerable<string> GetPendingMigrationsIds()
         {
             return GetModelMigrationsIds().Except(appliedModelMigrations, StringComparer.Ordinal);
         }
 
-        public IEnumerable<string> GetAppliedMigrationsIds()
+        private IEnumerable<string> GetAppliedMigrationsIds()
         {
             return appliedModelMigrations;
         }
-        
 
-        public IEnumerable<string> GetModelMigrationsIds()
+
+        private IEnumerable<string> GetModelMigrationsIds()
         {
             return modelMigrations.Keys;
         }

@@ -8,6 +8,8 @@ using EfModelMigrations.Utilities;
 using EnvDTE;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -49,7 +51,32 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 return configuration;
             }
         }
-                
+
+        private DbMigrationsConfiguration dbConfiguration;
+        protected DbMigrationsConfiguration DbConfiguration
+        {
+            get
+            {
+                if (dbConfiguration == null)
+                {
+                    dbConfiguration = CreateInstance<DbMigrationsConfiguration>(Configuration.EfMigrationsConfigurationType);
+                }
+                return dbConfiguration;
+            }
+        }
+
+        private DbContext dbContext;
+        protected DbContext DbContext
+        {
+            get
+            {
+                if (dbContext == null)
+                {
+                    dbContext = CreateInstance<DbContext>(DbConfiguration.ContextType);
+                }
+                return dbContext;
+            }
+        }
         
         public abstract void Run();
 

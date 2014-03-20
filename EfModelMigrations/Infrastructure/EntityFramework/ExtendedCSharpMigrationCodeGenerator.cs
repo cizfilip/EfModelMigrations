@@ -9,16 +9,13 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 {
     public class ExtendedCSharpMigrationCodeGenerator : CSharpMigrationCodeGenerator
     {
-        private IEnumerable<MigrationOperation> newOperations;
+        public IEnumerable<MigrationOperation> NewOperations { get; set; }
 
-        public ExtendedCSharpMigrationCodeGenerator(IEnumerable<MigrationOperation> operations)
-        {
-            this.newOperations = operations;
-        }
+        
 
         public override ScaffoldedMigration Generate(string migrationId, IEnumerable<MigrationOperation> operations, string sourceModel, string targetModel, string @namespace, string className)
         {
-            return base.Generate(migrationId, newOperations, sourceModel, targetModel, @namespace, className);
+            return base.Generate(migrationId, NewOperations, sourceModel, targetModel, @namespace, className);
         }
        
         

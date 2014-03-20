@@ -55,6 +55,7 @@
     <Compile Include="Commands\RemovePropertiesCommand.cs" />
     <Compile Include="Commands\RenameClassCommand.cs" />
     <Compile Include="Commands\RenamePropertyCommand.cs" />
+    <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Infrastructure\Generators\CodeGeneratorDefaults.cs" />
     <Compile Include="Configuration\ModelMigrationsConfiguration.cs" />
     <Compile Include="Configuration\ModelMigrationsConfigurationBase.cs" />

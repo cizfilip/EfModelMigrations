@@ -17,7 +17,6 @@ namespace EfModelMigrations.Runtime.Infrastructure
     internal sealed class CommandFacade : IDisposable
     {
         private NewAppDomainExecutor executor;
-        private string runtimeAssemblyPath;
         private Project modelProject;
         private string configurationFilePath;
         private string applicationBase;
@@ -61,33 +60,22 @@ namespace EfModelMigrations.Runtime.Infrastructure
 
         public void Migrate(string targetModelMigration, bool force)
         {
-            
-            MigrationsToApplyOrRevertResult result = executor.ExecuteRunner<MigrationsToApplyOrRevertResult>(new FindMigrationsToApplyOrRevert()
-                {
-                    TargetMigration = targetModelMigration
-                });
-
-
-            if (result.ModelMigrationsIds.Any())
+            executor.ExecuteRunner(new MigrateRunner()
             {
-                var migrator = new ModelMigrator(modelProject, CreateExecutor);
-                migrator.Migrate(result.ModelMigrationsIds, result.IsRevert, force);
-            }
-            else
-            {
-                LogInfo(Resources.NoMigrationsToApplyOrRevert);
-            }
+                TargetMigration = targetModelMigration,
+                Force = force
+            });
         }
 
 
         public string FindModelMigrationsConfiguration()
         {
 
-            LogInfo(string.Join(Environment.NewLine, AppDomain.CurrentDomain.GetAssemblies().Select(a => a.FullName)));
+            //LogInfo(string.Join(Environment.NewLine, AppDomain.CurrentDomain.GetAssemblies().Select(a => a.FullName)));
 
-            LogInfo("-------------------------------------");
+            //LogInfo("-------------------------------------");
 
-            LogInfo(string.Join(Environment.NewLine, executor.newDomain.GetAssemblies().Select(a => a.FullName)));
+            //LogInfo(string.Join(Environment.NewLine, executor.newDomain.GetAssemblies().Select(a => a.FullName)));
 
 
             return executor.ExecuteRunner<string>(new FindModelMigrationsConfigurationRunner());

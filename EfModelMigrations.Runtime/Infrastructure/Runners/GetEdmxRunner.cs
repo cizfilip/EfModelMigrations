@@ -14,38 +14,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 {
     [Serializable]
     internal class GetEdmxRunner : BaseRunner
-    {
-           
-
-        private DbMigrationsConfiguration dbConfiguration;
-        protected DbMigrationsConfiguration DbConfiguration
+    {      
+        public override void Run()
         {
-            get
-            {
-                if (dbConfiguration == null)
-                {
-                    dbConfiguration = CreateInstance<DbMigrationsConfiguration>(Configuration.EfMigrationsConfigurationType);
-                }
-                return dbConfiguration;
-            }
+            Return(GetEdmxModelAsString());
         }
 
-        private DbContext dbContext;
-        protected DbContext DbContext
-        {
-            get
-            {
-                if (dbContext == null)
-                {
-                    dbContext = CreateInstance<DbContext>(DbConfiguration.ContextType);
-                }
-                return dbContext;
-            }
-        }
-
-       
-
-        protected XDocument GetEdmxModel()
+        private XDocument GetEdmxModel()
         {
             XDocument doc;
             using (var memoryStream = new MemoryStream())
@@ -73,11 +48,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 GetEdmxModel().Save(writer);
                 return writer.ToString();
             }
-        }
-
-        public override void Run()
-        {
-            Return(GetEdmxModelAsString());
         }
     }
 }

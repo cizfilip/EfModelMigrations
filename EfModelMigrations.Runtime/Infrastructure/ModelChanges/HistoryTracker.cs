@@ -9,11 +9,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
     internal class HistoryTracker : MarshalByRefObject
     {
+        private Project modelProject;
         private IDictionary<string, HistoryItem> history;
 
-        public HistoryTracker()
+        public HistoryTracker(Project modelProject)
         {
             this.history = new Dictionary<string, HistoryItem>();
+            this.modelProject = modelProject;
         }
 
         public void MarkItemAdded(string fullPath)
@@ -41,8 +43,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             MarkItemModifiedOrDeleted(item);
         }
 
+        public void Reset()
+        {
+            history.Clear();
+        }
 
-        public void Restore(Project modelProject)
+        public void Restore()
         {
             try
             {

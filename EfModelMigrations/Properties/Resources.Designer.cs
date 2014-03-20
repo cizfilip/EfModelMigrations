@@ -61,6 +61,15 @@ namespace EfModelMigrations.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot create instance of type {0}..
+        /// </summary>
+        internal static string CannotCreateInstance {
+            get {
+                return ResourceManager.GetString("CannotCreateInstance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot find migration {0}..
         /// </summary>
         internal static string CannotFindMigration {
