@@ -10,15 +10,36 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
     public class ExtendedCSharpMigrationCodeGenerator : CSharpMigrationCodeGenerator
     {
         public IEnumerable<MigrationOperation> NewOperations { get; set; }
-
         
-
         public override ScaffoldedMigration Generate(string migrationId, IEnumerable<MigrationOperation> operations, string sourceModel, string targetModel, string @namespace, string className)
         {
-            return base.Generate(migrationId, NewOperations, sourceModel, targetModel, @namespace, className);
+            //Hax used because of dynamic dispatch from base generator not work in derived generator, so we pretending with PlaceholderOperation that all new operations is SqlOperation
+            var newOperations = NewOperations.ToList();
+            for (int i = 0; i < newOperations.Count; i++)
+            {
+                var operation = newOperations[i];
+                if(operation is AddIdentityOperation ||
+                    operation is DropIdentityOperation ||
+                    operation is MoveDataOperation)
+                {
+                    newOperations[i] = new PlaceholderOperation(operation);
+                }
+            }
+            return base.Generate(migrationId, newOperations, sourceModel, targetModel, @namespace, className);
         }
-       
-        
+
+        protected override void Generate(SqlOperation sqlOperation, IndentedTextWriter writer)
+        {
+            if(sqlOperation is PlaceholderOperation)
+            {
+                dynamic opToGenerate = ((PlaceholderOperation)sqlOperation).UnderlayingOperation;
+                Generate(opToGenerate, writer);
+            }
+            else
+            {
+                base.Generate(sqlOperation, writer);
+            }
+        }
 
         protected override IEnumerable<string> GetNamespaces(IEnumerable<MigrationOperation> operations)
         {
@@ -29,6 +50,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             //TODO: pridat namespacy s extension metodama pro nove databazove migracni operace
             return base.GetNamespaces(operations).Concat(addedNamespaces);
         }
+
 
         protected virtual void Generate(MoveDataOperation moveDataOperation, IndentedTextWriter writer)
         {

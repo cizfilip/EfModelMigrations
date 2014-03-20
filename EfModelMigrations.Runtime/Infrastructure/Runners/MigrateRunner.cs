@@ -19,8 +19,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
         public Project ModelProject { get; set; }
 
-        public EdmxModelProvider EdmxProvider { get; set; }
-        public DatabaseUpdater DatabaseUpdater { get; set; }
+        public ModelMigratorHelper MigratorHelper { get; set; }
 
         public HistoryTracker HistoryTracker { get; set; }
 
@@ -33,18 +32,20 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             {
                 if(migrator == null)
                 {
-                    //TODO: vytvorit decorator migratoru ktery bude vypisovat uzivateli pomoci RunnerLogger
-                    migrator = new ModelMigrator(
+                    //TODO: vytvorit decorator migratoru ktery bude vypisovat uzivateli pomoci RunnerLogger - Ne tohle fakt decorator...
+                    migrator = new LoggingModelMigrator(
                         HistoryTracker,
-                        EdmxProvider,
+                        MigratorHelper,
                         new VsClassModelProvider(ModelProject, Configuration),
                         new VsModelChangesExecutor(HistoryTracker, ModelProject, Configuration),
                         Configuration,
                         ProjectBuilder,
-                        DatabaseUpdater,
                         new DbMigrationWriter(ModelProject),
                         ModelProject.GetProjectDir()
-                        );
+                        )
+                        {
+                            Logger = Log
+                        };
                 }
                 return migrator;
             }

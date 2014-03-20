@@ -64,7 +64,10 @@ namespace EfModelMigrations.Infrastructure.Generators
                 GenerateParameter(param, sb);
                 sb.Append(parameterSeparator);
             }
-            sb.Length = sb.Length - parameterSeparator.Length;
+            if (fluentApiCall.Parameters.Count > 0)
+            {
+                sb.Length = sb.Length - parameterSeparator.Length;
+            }
 
             sb.Append(GetSyntaxToken(CSharpTokenType.ParameterListEnd));
 
@@ -122,7 +125,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void GenerateParameter(ValueParameter parameter, StringBuilder sb)
         {
-            sb.Append(parameter.Value.ToString());
+            sb.Append(parameter.Value.ToString().ToLower());
         }
 
         protected virtual void GenerateParameter(StringParameter parameter, StringBuilder sb)

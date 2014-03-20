@@ -83,7 +83,8 @@ namespace EfModelMigrations.Infrastructure
             if (migrationsToUnapply.Any())
             {
                 isRevert = true;
-                return migrationsToUnapply.Reverse().ToList();
+                //Skip target migration
+                return migrationsToUnapply.Skip(1).Reverse().ToList();
             }
 
             //see if fromMigration is in pending migrations
@@ -91,7 +92,7 @@ namespace EfModelMigrations.Infrastructure
             if (pendingMigrations.Contains(targetMigrationId, StringComparer.Ordinal))
             {
                 //return all pending migration including from migration
-                isRevert = true;
+                isRevert = false;
                 return pendingMigrations.TakeWhile(m => !m.EqualsOrdinal(targetMigrationId))
                         .Concat(new[] { targetMigrationId })
                         .ToList();

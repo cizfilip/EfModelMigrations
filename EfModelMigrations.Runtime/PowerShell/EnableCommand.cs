@@ -23,6 +23,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             Execute();
         }
 
+        //TODO: mel bych kontrolovat zarucit ze DB bude sqlserver pro jin0 db nem8m gener8tor sql pro migrace...
         protected override void ExecuteCore()
         {
             using (var facade = CreateFacade())
@@ -54,7 +55,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             InvokeScript("Enable-Migrations -MigrationsDirectory " + efMigrationsFullDirectory);
 
             //create configuration
-            string configurationFile = "Configuration";
+            string configurationFile = "ModelConfiguration";
             string configurationFileName = configurationFile + ".cs";
             string configurationFilePath = Path.Combine(migrationsDirectory, configurationFileName);
 

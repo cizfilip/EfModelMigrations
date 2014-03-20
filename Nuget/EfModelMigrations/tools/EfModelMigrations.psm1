@@ -257,7 +257,7 @@ function Model-Migrate
 {
     [CmdletBinding()] 
     param (
-        [string] $TargetModelMigrationId,
+        [string] $TargetModelMigration,
         [switch] $Force
     )
 
@@ -266,7 +266,7 @@ function Model-Migrate
 
     try
     {	
-        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( $TargetModelMigrationId, $Force.IsPresent )
+        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.MigrateCommand @( $TargetModelMigration, $Force.IsPresent )
     
         $error = Get-RunnerError $runner                    
         if ($error)

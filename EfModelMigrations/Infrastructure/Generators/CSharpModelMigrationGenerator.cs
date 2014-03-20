@@ -45,7 +45,7 @@ namespace EfModelMigrations.Infrastructure.Generators
         {
             StringBuilder builder = new StringBuilder();
 
-            bool prependLine = true;
+            bool prependLine = false;
 
             foreach (dynamic transformation in transformations)
             {
@@ -54,8 +54,8 @@ namespace EfModelMigrations.Infrastructure.Generators
                     if(prependLine)
                     {
                         builder.AppendLine();
-                        prependLine = false;
                     }
+                    prependLine = true;
                     Generate(transformation, builder);
                 }
                 catch (RuntimeBinderException e)

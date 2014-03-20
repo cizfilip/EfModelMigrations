@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations
 {
+    //TODO: fluent interface nefunguje nefunguje....
+
     /// <summary>
     /// Interface that is used to build fluent interfaces and hides methods declared by <see cref="object"/> from IntelliSense.
     /// </summary>

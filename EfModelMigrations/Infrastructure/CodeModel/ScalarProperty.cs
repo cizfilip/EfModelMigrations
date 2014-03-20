@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,12 +10,26 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 {
     public sealed class ScalarProperty : PropertyCodeModel
     {
-        public PrimitiveTypeKind Type { get; set; }
+        private ColumnModel columnModel;
+        public ColumnModel ColumnModel { 
+            get
+            {
+                return columnModel;
+            }
+         }
+
+        public PrimitiveTypeKind Type
+        {
+            get
+            {
+                return columnModel.Type;
+            }
+        }
 
         public ScalarProperty(string name, PrimitiveTypeKind type)
             : base(name)
         {
-            this.Type = type;
+            this.columnModel = new ColumnModel(type);
         }
 
         internal ScalarProperty(PrimitiveTypeKind type)
@@ -22,6 +37,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         {
         }
 
+
+        public ColumnModel GetColumnModel()
+        {
+            return columnModel;
+        }
 
 
         public static bool TryParse(string type, out ScalarProperty parsedProperty)

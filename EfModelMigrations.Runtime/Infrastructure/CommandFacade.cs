@@ -65,10 +65,9 @@ namespace EfModelMigrations.Runtime.Infrastructure
             {
                 TargetMigration = targetModelMigration,
                 Force = force,
-                EdmxProvider = new EdmxModelProvider(CreateExecutor),
+                MigratorHelper = new ModelMigratorHelper(CreateExecutor),
                 HistoryTracker = new HistoryTracker(modelProject),
                 ModelProject = modelProject,
-                DatabaseUpdater = new DatabaseUpdater(CreateExecutor),
                 ProjectBuilder = new VsProjectBuilder(modelProject)
             });
         }
@@ -94,7 +93,7 @@ namespace EfModelMigrations.Runtime.Infrastructure
             return new NewAppDomainExecutor( 
                 applicationBase,
                 configurationFilePath, 
-                projectAssemblyPath, 
+                projectAssemblyPath,
                 new RunnerLogger(this));
         }
 

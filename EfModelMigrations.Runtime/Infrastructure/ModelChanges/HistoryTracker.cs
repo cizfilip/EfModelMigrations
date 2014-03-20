@@ -88,13 +88,26 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                     projectItem.Delete();
                     break;
                 case HistoryItemType.ModifiedOrDeleted:
-                    var document = GetProjectItemTextDocument(projectItem);
-                    var endPoint = document.EndPoint;
-                    document.StartPoint.CreateEditPoint().ReplaceText(endPoint, historyItem.Content, EnvDteExtensions.AllvsEPReplaceTextOptionsFlags());
+                    RestoreContentOfProjectItem(projectItem, historyItem.Content);
                     break;
                 default:
                     throw new InvalidOperationException("Invalid history item type."); //TODO: string do resaurcu
             }
+        }
+
+        private void RestoreContentOfProjectItem(ProjectItem projectItem, string content)
+        {
+            if (!projectItem.get_IsOpen())
+            {
+                File.WriteAllText(GetItemFullPath(projectItem), content);
+            }
+            else
+            {
+                var document = (TextDocument)projectItem.Document.Object("TextDocument");
+                var endPoint = document.EndPoint;
+                document.StartPoint.CreateEditPoint().ReplaceText(endPoint, content, EnvDteExtensions.AllvsEPReplaceTextOptionsFlags());
+                projectItem.Save();
+            }        
         }
 
         private bool TryFindProjectItem(Project modelProject, string fullPath, out ProjectItem projectItem)
@@ -166,16 +179,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 throw new InvalidOperationException(string.Format("Cannot retrieve old content for file {0}! See inner exception", fullPath), e); //TODO: string do resourcu
             }
         }
-
-        private TextDocument GetProjectItemTextDocument(ProjectItem item)
-        {
-            if (!item.get_IsOpen())
-            {
-                item.Open();
-            }
-            return (TextDocument)item.Document.Object("TextDocument");
-        }
-
+        
         #endregion
 
         #region Helper classes

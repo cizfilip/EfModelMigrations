@@ -66,11 +66,11 @@
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Extensions\EnvDteExtensions.cs" />
     <Compile Include="Infrastructure\CommandFacade.cs" />
-    <Compile Include="Infrastructure\DatabaseUpdater.cs" />
-    <Compile Include="Infrastructure\EdmxModelProvider.cs" />
     <Compile Include="Infrastructure\Migrations\DbMigrationWriter.cs" />
+    <Compile Include="Infrastructure\Migrations\LoggingModelMigrator.cs" />
     <Compile Include="Infrastructure\Migrations\ModelMigrationsConfigurationUpdater.cs" />
     <Compile Include="Infrastructure\Migrations\ModelMigrator.cs" />
+    <Compile Include="Infrastructure\Migrations\ModelMigratorHelper.cs" />
     <Compile Include="Infrastructure\ModelChanges\CSharpRegexMappingGenerator.cs" />
     <Compile Include="Infrastructure\ModelChanges\Helpers\CodeClassFinder.cs" />
     <Compile Include="Infrastructure\ModelChanges\Helpers\VsCodeClassToClassCodeModelMapper.cs" />

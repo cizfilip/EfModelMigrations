@@ -44,7 +44,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             {
                 return null;
             }
-
+            scalar.Name = property.Name;
             scalar.Visibility = MapVisibility(property.Access, defaults.Property.Visibility);
 
             var setterPrivate = property.Setter.Access == vsCMAccess.vsCMAccessPrivate;

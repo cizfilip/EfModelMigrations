@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 {
-    internal static class EdmxNames
+    internal static class EdmXNames
     {
         private static readonly XNamespace _csdlNamespaceV2
             = XNamespace.Get("http://schemas.microsoft.com/ado/2008/09/edm");

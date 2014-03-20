@@ -132,7 +132,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
 
             //same storage types
-            if(principalPrimaryKeyColumnsNames.Select(k => newModel.GetColumnStorageType(principalTableName, k))
+            if(!principalPrimaryKeyColumnsNames.Select(k => newModel.GetColumnStorageType(principalTableName, k))
                 .SequenceEqual(dependentPrimaryKeyColumnsNames.Select(k => newModel.GetColumnStorageType(dependentTableName, k))))
             {
                 throw new DbMigrationBuilderException(string.Format("Cannot create One to One relation between {0} and {1}, because their primary keys do not have same storage types", principalClassName, dependentClassName));

@@ -7,9 +7,9 @@ using EfModelMigrations.Configuration;
 
 namespace <#= Namespace #>
 {
-    internal sealed class Configuration : ModelMigrationsConfiguration<<#= EfMigrationsConfigurationFullName #>>
+    internal sealed class ModelConfiguration : ModelMigrationsConfiguration<<#= EfMigrationsConfigurationFullName #>>
     {
-        public Configuration()
+        public ModelConfiguration()
         {
             ModelNamespace = "<#= ModelNamespace #>";
         }

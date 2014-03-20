@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Reflection;
 using System.Resources;
+using EfModelMigrations.Infrastructure.EntityFramework;
 
 namespace EfModelMigrations.Configuration
 {
@@ -51,6 +52,9 @@ namespace EfModelMigrations.Configuration
                     }
 
                     dbMigrationsConfiguration = DbMigrationsConfigurationType.CreateInstance<DbMigrationsConfiguration>();
+
+                    dbMigrationsConfiguration.CodeGenerator = new ExtendedCSharpMigrationCodeGenerator();
+                    dbMigrationsConfiguration.SetSqlGenerator("System.Data.SqlClient", new ExtendedSqlServerMigrationSqlGenerator());
                 }
                 return dbMigrationsConfiguration;
             }
