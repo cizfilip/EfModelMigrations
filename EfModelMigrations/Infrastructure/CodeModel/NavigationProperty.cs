@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure.Pluralization;
+using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,12 +36,26 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         internal NavigationProperty(string targetClass, bool isCollection)
             : this(null, targetClass, isCollection)
         {
+            SetDefaultName();
         }
 
         internal NavigationProperty(string targetClass)
             : this(null, targetClass, false)
         {
+            SetDefaultName();
         }
 
+
+        public void SetDefaultName()
+        {
+            if(IsCollection)
+            {
+                var propertyName = DbConfiguration.DependencyResolver.GetService<IPluralizationService>().Pluralize(TargetClass);
+            }
+            else
+            {
+                Name = TargetClass;
+            }
+        }
     }
 }

@@ -39,7 +39,7 @@ namespace EfModelMigrations.Commands
             this.className = className;
             this.complexTypeName = complexTypeName;
             this.propertiesToExtract = properties;
-            this.navigationProperty = new NavigationPropertyBuilder().One(complexTypeName);
+            this.navigationProperty = new NavigationProperty(complexTypeName);
         }
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)

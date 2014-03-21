@@ -62,8 +62,12 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
             GenerateMoveDataFluentCall("FromTable", moveDataOperation.From, writer);
             writer.WriteLine();
-            GenerateMoveDataFluentCall("ToTable", moveDataOperation.From, writer);
+            GenerateMoveDataFluentCall("ToTable", moveDataOperation.To, writer);
             writer.WriteLine(";");
+
+            writer.Indent--;
+
+            writer.WriteLine();
         }
 
         private void GenerateMoveDataFluentCall(string methodName, MoveDataModel model, IndentedTextWriter writer)

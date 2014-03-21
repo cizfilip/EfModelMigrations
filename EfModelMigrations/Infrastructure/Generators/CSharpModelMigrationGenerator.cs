@@ -69,7 +69,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void Generate(CreateClassTransformation transformation, StringBuilder builder)
         {
-            builder.AppendLine("this.CreateClass(");
+            builder.AppendLine("Model.CreateClass(");
             AppendIndent(builder);
             builder.Append(QuoteString(transformation.Name))
                 .AppendLine(",");
@@ -98,14 +98,14 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void Generate(RemoveClassTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.RemoveClass(");
+            builder.Append("Model.RemoveClass(");
             builder.Append(QuoteString(transformation.Name));
             builder.Append(");");
         }
 
         protected virtual void Generate(AddPropertyTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.AddProperty(")
+            builder.Append("Model.AddProperty(")
                 .Append(QuoteString(transformation.ClassName))
                 .Append(", ")
                 .Append(QuoteString(transformation.Model.Name))
@@ -119,27 +119,27 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void Generate(RemovePropertyTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.RemoveProperty(");
+            builder.Append("Model.RemoveProperty(");
             builder.Append(QuoteString(transformation.ClassName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.Name));
             builder.Append(");");
         }
 
-        //TODO: generovat pomoci named parametru aby vysledek byl: this.RenameClass(oldName: name, newName: name)
+        //TODO: generovat pomoci named parametru aby vysledek byl: Model.RenameClass(oldName: name, newName: name)
         protected virtual void Generate(RenameClassTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.RenameClass(");
+            builder.Append("Model.RenameClass(");
             builder.Append(QuoteString(transformation.OldName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.NewName));
             builder.Append(");");
         }
 
-        //TODO: generovat pomoci named parametru aby vysledek byl: this.RenameProperty(className: name, oldName: name, newName: name)
+        //TODO: generovat pomoci named parametru aby vysledek byl: Model.RenameProperty(className: name, oldName: name, newName: name)
         protected virtual void Generate(RenamePropertyTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.RenameProperty(");
+            builder.Append("Model.RenameProperty(");
             builder.Append(QuoteString(transformation.ClassName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.OldName));
@@ -150,7 +150,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void Generate(ExtractComplexTypeTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.ExtractComplexType(");
+            builder.Append("Model.ExtractComplexType(");
             builder.Append(QuoteString(transformation.ClassName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.ComplexTypeName));
@@ -168,7 +168,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual void Generate(JoinComplexTypeTransformation transformation, StringBuilder builder)
         {
-            builder.Append("this.JoinComplexType(");
+            builder.Append("Model.JoinComplexType(");
             builder.Append(QuoteString(transformation.ComplexTypeName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.ClassName));

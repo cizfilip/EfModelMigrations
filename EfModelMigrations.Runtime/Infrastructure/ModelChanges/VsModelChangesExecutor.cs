@@ -29,7 +29,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private string dbContextFullName;
         private ICodeGenerator codeGenerator;
         private CodeClassFinder classFinder;
-        private CSharpRegexMappingGenerator regexMappingGenerator;
+        private VsMappingInformationsRemover mappingRemover;
 
 
         public VsModelChangesExecutor(HistoryTracker historyTracker,
@@ -42,7 +42,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             this.dbContextFullName = configuration.DbMigrationsConfiguration.ContextType.FullName;
             this.codeGenerator = configuration.CodeGenerator;
             this.classFinder = new CodeClassFinder(modelProject);
-            this.regexMappingGenerator = new CSharpRegexMappingGenerator();
+
+            this.mappingRemover = new VsMappingInformationsRemover(new CSharpRegexMappingGenerator());
         }
 
 
@@ -258,8 +259,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             string oldCode = GetMethodCode(onModelCreatingMethod);
 
             //TODO: dodelat remove mapovani i v jinych castech (EntityTypeConfiguration ... attributy u trid...)
-            var generatedInfo = regexMappingGenerator.GenerateFluentApiCall(operation.MappingInformation.BuildEfFluentApiCallChain());
-            var prefixForOnModelCreating = regexMappingGenerator.GetPrefixForOnModelCreatingUse(generatedInfo.TargetType);
+            var generatedInfo = mappingRemover.GetRegex(operation.MappingInformation);
+            var prefixForOnModelCreating = mappingRemover.GetRegexPrefix(generatedInfo.TargetType);
 
             var matches = Regex.Matches(oldCode, string.Concat(prefixForOnModelCreating, generatedInfo.Content), RegexOptions.None);
 

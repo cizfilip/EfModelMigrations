@@ -48,10 +48,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSharpRegexMappingGeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\EfModelMigrations.Runtime\EfModelMigrations.Runtime.csproj">
+      <Project>{e3c1f0ff-93bf-4a98-98a1-23804b5178b9}</Project>
+      <Name>EfModelMigrations.Runtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\EfModelMigrations\EfModelMigrations.csproj">
+      <Project>{b1bbe8eb-8f96-4f0d-b20a-350f10c28e9b}</Project>
+      <Name>EfModelMigrations</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

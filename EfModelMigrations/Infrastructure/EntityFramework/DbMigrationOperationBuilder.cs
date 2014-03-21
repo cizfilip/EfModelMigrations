@@ -273,7 +273,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             string toTableName = newModel.GetTableName(toClassFullName);
 
             var fromTablePrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(fromClassFullName);
-            var fromColumnNames = properties.Select(p => newModel.GetColumnName(fromClassFullName, p));
+            var fromColumnNames = properties.Select(p => oldModel.GetColumnName(fromClassFullName, p)); //from columns se musi brat ze stareho modelu - v novem uz nejsou
             var fromColumns = fromTablePrimaryKeyColumnsNames.Concat(fromColumnNames).ToArray();
 
             var fromModel = new MoveDataModel(fromTableName, fromColumns);
@@ -285,6 +285,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
             var operation = new MoveDataOperation();
             operation.From = fromModel;
+            operation.To = toModel;
 
             return operation;
         }

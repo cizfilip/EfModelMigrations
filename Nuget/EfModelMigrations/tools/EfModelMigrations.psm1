@@ -2,6 +2,28 @@ $InitialModel = '0'
 
 <#
 .SYNOPSIS
+    Model-EmptyMigration command.
+
+.DESCRIPTION
+    Model-EmptyMigration command.
+
+.PARAMETER command
+    Model-EmptyMigration command.
+#>
+function Model-EmptyMigration
+{
+    [CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $true, HelpMessage="TODO")]
+        [string]
+        $MigrationName
+    )
+
+    Model-ExecuteCommand EfModelMigrations.Commands.EmptyMigrationCommand @( ,$MigrationName )
+}
+
+<#
+.SYNOPSIS
     Model-AddProperties command.
 
 .DESCRIPTION
@@ -527,4 +549,4 @@ function Invoke-RunnerCommand($runner, $command, $parameters)
 # EXPORT ----------------------
 Export-ModuleMember @( 	'Model-ExtractComplexType', 'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
                         'Model-RemoveProperties', 'Model-RenameClass', 'Model-RenameProperty', 
-                        'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate' ) -Variable InitialModel
+                        'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate', 'Model-EmptyMigration' ) -Variable InitialModel

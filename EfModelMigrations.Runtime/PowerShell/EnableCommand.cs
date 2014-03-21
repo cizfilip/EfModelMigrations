@@ -23,6 +23,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             Execute();
         }
 
+        //TODO: hlasky pro uzivatele do resourcu;
         //TODO: mel bych kontrolovat zarucit ze DB bude sqlserver pro jin0 db nem8m gener8tor sql pro migrace...
         protected override void ExecuteCore()
         {
@@ -37,16 +38,21 @@ namespace EfModelMigrations.Runtime.PowerShell
                 }
             }
 
+            
+
             //create db context
             //TODO: musime zajistit ze DBContext (at jiz vytvorenz zde nebo pozdeji jiz existujici ma v sobe using na namespace modelu) - tak abz se zkompiloval kod napr. IDbSet<Person>
             string contextName = Project.Name + "Context";
+
+            WriteLine(string.Format("Creating new DbContext: {0}.", contextName));
+
             string contextFileName = contextName + ".cs";
             string contextNamespace = Project.GetRootNamespace();
             string context = new DbContextTemplate() { ContextName = contextName, Namespace = contextNamespace }.TransformText();
 
             Project.AddContentToProject(contextFileName, context);
 
-
+            WriteLine("Enabling Entity Framework migrations...");
             string migrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
             //Enable ef migrations
             string efMigrationsDirectory = "DbMigrations";
@@ -54,6 +60,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             string efMigrationsConfigTypeName = efMigrationsDirectory + ".Configuration";
             InvokeScript("Enable-Migrations -MigrationsDirectory " + efMigrationsFullDirectory);
 
+            WriteLine("Creating ModelConfiguration");
             //create configuration
             string configurationFile = "ModelConfiguration";
             string configurationFileName = configurationFile + ".cs";

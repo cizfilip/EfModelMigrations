@@ -11,7 +11,7 @@ namespace EfModelMigrations.Operations.Mapping
     public class ManyToManyAssociationInfo : AssociationInfo
     {
         public ManyToManyJoinTable JoinTable { get; private set; }
-        
+
         public ManyToManyAssociationInfo(AssociationMemberInfo principal, AssociationMemberInfo dependent, ManyToManyJoinTable joinTable)
             : base(principal, dependent)
         {
@@ -33,7 +33,7 @@ namespace EfModelMigrations.Operations.Mapping
             string[] leftKeys;
             string[] rightKeys;
 
-            if(Principal.NavigationProperty != null)
+            if (Principal.NavigationProperty != null)
             {
                 leftKeys = JoinTable.PrincipalForeignKeyColumns;
                 rightKeys = JoinTable.DependentForeignKeyColumns;
@@ -44,12 +44,13 @@ namespace EfModelMigrations.Operations.Mapping
                 rightKeys = JoinTable.PrincipalForeignKeyColumns;
             }
 
-            callChain.AddMethodCall(EfFluentApiMethods.Map, 
+            callChain.AddMethodCall(EfFluentApiMethods.Map,
                 new MapMethodParameter()
                     .ToTable(JoinTable.TableName)
                     .MapLeftKey(leftKeys)
                     .MapRightKey(rightKeys)
                 );
+
         }
 
 

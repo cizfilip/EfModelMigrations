@@ -11,9 +11,17 @@ using System.Threading.Tasks;
 namespace EfModelMigrations
 {
     //TODO: definovat metody ktere vraci nazvy DB migraci (jak pro up tak down) mozna by primo up a down metoda mohla vracet string
-    public abstract class ModelMigration
+    public abstract class ModelMigration : IModelMigration
     {
         private List<ModelTransformation> transformations = new List<ModelTransformation>();
+
+        public IModelMigration Model
+        {
+            get
+            {
+                return this;
+            }
+        }
 
         //TODO: udelat internal az bude kod z runneru ve vlastnich tridach v hlavnich projektu
         public IEnumerable<ModelTransformation> Transformations
@@ -26,7 +34,7 @@ namespace EfModelMigrations
         {
             get
             {
-                if( id == null)
+                if (id == null)
                 {
                     id = ModelMigrationsLocator.GetModelMigrationIdFromType(GetType());
                 }
@@ -41,7 +49,7 @@ namespace EfModelMigrations
                 return ModelMigrationIdGenerator.GetNameFromId(Id);
             }
         }
-        
+
 
         public abstract void Up();
         public abstract void Down();

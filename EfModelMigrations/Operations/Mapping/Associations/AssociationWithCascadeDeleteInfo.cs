@@ -13,7 +13,7 @@ namespace EfModelMigrations.Operations.Mapping
         public bool WillCascadeOnDelete { get; private set; }
 
         public AssociationWithCascadeDeleteInfo(AssociationMemberInfo principal, AssociationMemberInfo dependent, bool willCascadeOnDelete)
-            :base(principal, dependent)
+            : base(principal, dependent)
         {
             this.WillCascadeOnDelete = willCascadeOnDelete;
         }

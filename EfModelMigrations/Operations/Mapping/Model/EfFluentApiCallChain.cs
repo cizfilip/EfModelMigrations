@@ -9,7 +9,7 @@ namespace EfModelMigrations.Operations.Mapping.Model
     public class EfFluentApiCallChain : IFluentInterface
     {
         public string EntityType { get; private set; }
-        public IList<EfFluetApiCall> FluentApiCalls { get; private set; }
+        public IList<EfFluetApiCall> FluentApiCalls { get; set; }
 
         public EfFluentApiCallChain(string entityType)
         {

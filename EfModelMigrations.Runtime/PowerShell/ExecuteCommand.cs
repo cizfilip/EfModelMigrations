@@ -37,6 +37,7 @@ namespace EfModelMigrations.Runtime.PowerShell
                 throw new ModelMigrationsException(Resources.CommandNameNotSpecified);
             }
 
+            WriteLine(string.Format("Scaffolding migration from command {0} ...", commandFullName));
             GeneratedModelMigration migration = null;
             using(var facade = CreateFacade())
             {
@@ -45,7 +46,11 @@ namespace EfModelMigrations.Runtime.PowerShell
 
             if (migration != null)
             {
-                Project.AddContentToProject(Path.Combine(migration.MigrationDirectory, migration.MigrationId + ".cs"), migration.SourceCode);
+                var migrationPath = Path.Combine(migration.MigrationDirectory, migration.MigrationId + ".cs");
+                Project.AddContentToProject(migrationPath, migration.SourceCode);
+                WriteLine(string.Format("Migration {0} was succesfully scaffolded.", migration.MigrationId));
+
+                OpenFile(Path.Combine(Project.GetProjectDir(), migrationPath));
             }
         }
     }

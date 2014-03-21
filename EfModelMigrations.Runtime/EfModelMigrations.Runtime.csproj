@@ -76,6 +76,7 @@
     <Compile Include="Infrastructure\ModelChanges\Helpers\VsCodeClassToClassCodeModelMapper.cs" />
     <Compile Include="Infrastructure\ModelChanges\HistoryTracker.cs" />
     <Compile Include="Infrastructure\ModelChanges\VsClassModelProvider.cs" />
+    <Compile Include="Infrastructure\ModelChanges\VsMappingInformationsRemover.cs" />
     <Compile Include="Infrastructure\ModelChanges\VsModelChangesExecutor.cs" />
     <Compile Include="Infrastructure\NewAppDomainExecutor.cs" />
     <Compile Include="Infrastructure\RunnerLogger.cs" />
@@ -93,6 +94,7 @@
     <Compile Include="PowerShell\EnableCommand.cs" />
     <Compile Include="PowerShell\PowerShellCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\InternalsVisibleTo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <DependentUpon>Resources.resx</DependentUpon>
       <AutoGen>True</AutoGen>
