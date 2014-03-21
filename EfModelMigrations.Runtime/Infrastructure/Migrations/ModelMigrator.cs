@@ -103,7 +103,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 projectBuilder.BuildModelProject();
 
                 //update DB
-                migratorHelper.UpdateDatabase(scaffoldedMigration.MigrationId);
+                UpdateDatabase(scaffoldedMigration.MigrationId);
                
                 //update applied migration in configuration 
                 UpdateConfiguration(migrationId, scaffoldedMigration.MigrationId, isRevert);                
@@ -143,6 +143,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             var scaffoldedMigration = scaffolder.Scaffold(dbMigrationName, ignoreChanges: true);
 
             return scaffoldedMigration;
+        }
+
+        internal virtual void UpdateDatabase(string dbMigrationId)
+        {
+            migratorHelper.UpdateDatabase(dbMigrationId);
         }
 
         internal virtual void UpdateConfiguration(string appliedModelMigrationId, string appliedDbMigrationId, bool isRevert)

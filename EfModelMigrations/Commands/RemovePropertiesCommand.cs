@@ -45,8 +45,15 @@ namespace EfModelMigrations.Commands
         private ScalarProperty GetPropertyModel(string property, IClassModelProvider modelProvider)
         {
             var classModel = modelProvider.GetClassCodeModel(className);
-            //TODO: vracet hezci vyjimku kdyz se property nenajde
-            return classModel.Properties.Single(p => p.Name.EqualsOrdinalIgnoreCase(property));
+            
+            var propertyModel = classModel.Properties.FirstOrDefault(p => p.Name.EqualsOrdinalIgnoreCase(property));
+
+            if(propertyModel == null)
+            {
+                throw new ModelMigrationsException(string.Format("Cannot remove property {0} from class {1}, property does not exist.", property, classModel.Name)); //TODO: string do resourcu
+            }
+
+            return propertyModel;
         }
 
         public override string GetMigrationName()

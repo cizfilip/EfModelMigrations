@@ -55,10 +55,32 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         internal override void MigrateOne(string migrationId, bool isRevert, bool force)
         {
             string direction = isRevert ? "Reverting" : "Applying";
+            
 
             Logger.Info(string.Format("{0} migration: {1}.", direction, migrationId));
 
             base.MigrateOne(migrationId, isRevert, force);
+
+            string direction2 = isRevert ? "reverted" : "applied";
+            Logger.Info(string.Format("Migration {0} was succesfully {1}.", migrationId, direction2));
+        }
+
+        internal override void ApplyModelChanges(IEnumerable<Transformations.ModelTransformation> transformations)
+        {
+            Logger.Info("Applying model changes...");
+            base.ApplyModelChanges(transformations);
+        }
+
+        internal override System.Data.Entity.Migrations.Design.ScaffoldedMigration GenerateDbMigration(IEnumerable<Transformations.ModelTransformation> transformations, string oldEdmxModel, string newEdmxModel, string dbMigrationName)
+        {
+            Logger.Info("Generating Db migration...");
+            return base.GenerateDbMigration(transformations, oldEdmxModel, newEdmxModel, dbMigrationName);
+        }
+
+        internal override void UpdateDatabase(string dbMigrationId)
+        {
+            Logger.Info("Updating database...");
+            base.UpdateDatabase(dbMigrationId);
         }
 
     }
