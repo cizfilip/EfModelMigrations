@@ -34,27 +34,25 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         }
 
         internal NavigationProperty(string targetClass, bool isCollection)
-            : this(null, targetClass, isCollection)
+            : this(GetDefaultNameFromTarget(targetClass, isCollection), targetClass, isCollection)
         {
-            SetDefaultName();
         }
 
         internal NavigationProperty(string targetClass)
-            : this(null, targetClass, false)
+            : this(GetDefaultNameFromTarget(targetClass, false), targetClass, false)
         {
-            SetDefaultName();
         }
 
 
-        public void SetDefaultName()
+        public static string GetDefaultNameFromTarget(string targetClass, bool isCollection)
         {
-            if(IsCollection)
+            if (isCollection)
             {
-                var propertyName = DbConfiguration.DependencyResolver.GetService<IPluralizationService>().Pluralize(TargetClass);
+                return DbConfiguration.DependencyResolver.GetService<IPluralizationService>().Pluralize(targetClass);
             }
             else
             {
-                Name = TargetClass;
+                return targetClass;
             }
         }
     }

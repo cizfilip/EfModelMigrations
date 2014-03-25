@@ -8,17 +8,23 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 {
     public abstract class PropertyCodeModel
     {
-        public virtual string Name { get; set; }
+        private string name;
+        public virtual string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                Check.NotEmpty(value, "Name");
+                name = value;
+            }
+        }
         public virtual CodeModelVisibility? Visibility { get; set; }
         public virtual bool? IsSetterPrivate { get; set; }
         public virtual bool? IsVirtual { get; set; }
         
-        
-        internal PropertyCodeModel()
-        {
-            this.Name = null;
-        }
-
         public PropertyCodeModel(string name)
         {
             this.Name = name;

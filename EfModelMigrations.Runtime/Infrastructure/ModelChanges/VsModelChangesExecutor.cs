@@ -24,7 +24,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
     {
         private HistoryTracker historyTracker;
         private Project modelProject;
-        //TODO: asi by stacilo aby ClassCodeModel mela property FullName (ale musim nejak zaridit aby mela modelnamespace)
         private string modelNamespace;
         private string dbContextFullName;
         private ICodeGenerator codeGenerator;
@@ -49,7 +48,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         public virtual void Execute(IEnumerable<IModelChangeOperation> operations)
         {
-
             foreach (dynamic operation in operations)
             {
                 try
@@ -338,26 +336,22 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         private CodeProperty2 FindProperty(CodeClass2 codeClass, string propertyName)
         {
-            try
+            var property = codeClass.FindProperty(propertyName);
+            if(property == null)
             {
-                return (CodeProperty2)codeClass.Members.Item(propertyName);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindProperty, propertyName, codeClass.Name));
             }
-            catch (Exception e)
-            {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindProperty, propertyName, codeClass.Name), e);
-            }
+            return property;
         }
 
         private CodeFunction2 FindMethod(CodeClass2 codeClass, string methodName)
         {
-            try
+            var method = codeClass.FindMethod(methodName);
+            if (method == null)
             {
-                return (CodeFunction2)codeClass.Members.Item(methodName);
+                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindMethod, methodName, codeClass.Name));
             }
-            catch (Exception e)
-            {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindMethod, methodName, codeClass.Name), e);
-            }
+            return method;
         }
 
         private CodeFunction2 FindOnModelCreatingMethod(CodeClass2 contextClass = null)

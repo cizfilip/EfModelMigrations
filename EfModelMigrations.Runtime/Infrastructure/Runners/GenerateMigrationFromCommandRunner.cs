@@ -11,6 +11,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EfModelMigrations.Infrastructure.EntityFramework;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners
 {
@@ -44,9 +45,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 throw new ModelMigrationsException("Cannot create command instance!", e);
             }
 
-
-            //TODO: vytvareni class model provideru je zde i v MigratorBaseRunner - nejak poresit
-            var classModelProvider = new VsClassModelProvider(ModelProject, Configuration);
+            var edmxModel = new EdmxModelExtractor().GetEdmxModelAsString(DbContext);
+            var classModelProvider = new VsClassModelProvider(ModelProject, Configuration, edmxModel);
             var transformations = command.GetTransformations(classModelProvider);
 
 

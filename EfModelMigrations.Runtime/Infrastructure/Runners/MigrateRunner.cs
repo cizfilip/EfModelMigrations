@@ -36,7 +36,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                     migrator = new LoggingModelMigrator(
                         HistoryTracker,
                         MigratorHelper,
-                        new VsClassModelProvider(ModelProject, Configuration),
+                        edmx => new VsClassModelProvider(ModelProject, Configuration, edmx),
                         new VsModelChangesExecutor(HistoryTracker, ModelProject, Configuration),
                         Configuration,
                         ProjectBuilder,

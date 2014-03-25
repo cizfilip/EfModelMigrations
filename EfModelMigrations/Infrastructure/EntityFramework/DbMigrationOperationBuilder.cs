@@ -24,11 +24,11 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         private XDocument oldModel;
         private XDocument newModel;
 
-        public DbMigrationOperationBuilder(string modelNamespace, XDocument oldModel, XDocument newModel)
+        public DbMigrationOperationBuilder(string modelNamespace, string oldModel, string newModel)
         {
             this.modelNamespace = modelNamespace;
-            this.oldModel = oldModel;
-            this.newModel = newModel;
+            this.oldModel = XDocument.Parse(oldModel);
+            this.newModel = XDocument.Parse(newModel);
         }
 
         #region IDbMigrationOperationBuilder implementation

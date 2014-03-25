@@ -3,6 +3,8 @@ using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations.Design;
+using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +18,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
         public LoggingModelMigrator(HistoryTracker historyTracker, 
             ModelMigratorHelper migratorHelper,
-            IClassModelProvider classModelProvider, 
+            Func<string, IClassModelProvider> classModelProviderFactory, 
             IModelChangesExecutor modelChangesExecutor,
             ModelMigrationsConfigurationBase configuration,
             VsProjectBuilder projectBuilder,
@@ -26,7 +28,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         :base(
             historyTracker,
             migratorHelper,
-            classModelProvider,
+            classModelProviderFactory,
             modelChangesExecutor,
             configuration,
             projectBuilder,
@@ -58,6 +60,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             
 
             Logger.Info(string.Format("{0} migration: {1}.", direction, migrationId));
+            Logger.Info("Applying model changes...");
 
             base.MigrateOne(migrationId, isRevert, force);
 
@@ -65,16 +68,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             Logger.Info(string.Format("Migration {0} was succesfully {1}.", migrationId, direction2));
         }
 
-        internal override void ApplyModelChanges(IEnumerable<Transformations.ModelTransformation> transformations)
-        {
-            Logger.Info("Applying model changes...");
-            base.ApplyModelChanges(transformations);
-        }
-
-        internal override System.Data.Entity.Migrations.Design.ScaffoldedMigration GenerateDbMigration(IEnumerable<Transformations.ModelTransformation> transformations, string oldEdmxModel, string newEdmxModel, string dbMigrationName)
+        internal virtual ScaffoldedMigration GenerateDbMigration(IEnumerable<MigrationOperation> operations, string dbMigrationName)
         {
             Logger.Info("Generating Db migration...");
-            return base.GenerateDbMigration(transformations, oldEdmxModel, newEdmxModel, dbMigrationName);
+            return base.GenerateDbMigration(operations, dbMigrationName);
         }
 
         internal override void UpdateDatabase(string dbMigrationId)
