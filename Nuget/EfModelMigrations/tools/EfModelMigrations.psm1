@@ -213,7 +213,7 @@ function Model-ExecuteCommand
             throw $error.Message
         }
 
-        #$(Get-VSComponentModel).GetService([NuGetConsole.IPowerConsoleWindow]).Show()           
+        $(Get-VSComponentModel).GetService([NuGetConsole.IPowerConsoleWindow]).Show()      
     }
     finally
     {               
@@ -256,7 +256,7 @@ function Model-Enable
             throw $error.Message
         }
 
-        #$(Get-VSComponentModel).GetService([NuGetConsole.IPowerConsoleWindow]).Show()           
+        $(Get-VSComponentModel).GetService([NuGetConsole.IPowerConsoleWindow]).Show()           
     }
     finally
     {               
@@ -298,7 +298,7 @@ function Model-Migrate
             throw $error.Message
         }
 
-        #$(Get-VSComponentModel).GetService([NuGetConsole.IPowerConsoleWindow]).Show()           
+        $(Get-VSComponentModel).GetService([NuGetConsole.IPowerConsoleWindow]).Show()           
     }
     finally
     {               

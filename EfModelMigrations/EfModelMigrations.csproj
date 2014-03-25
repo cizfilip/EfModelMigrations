@@ -60,6 +60,7 @@
     <Compile Include="Commands\RenamePropertyCommand.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IModelMigration.cs" />
+    <Compile Include="Infrastructure\EntityFramework\Edmx\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\EntityFramework\MigrationOperations\PlaceholderOperation.cs" />
     <Compile Include="Infrastructure\Generators\CodeGeneratorDefaults.cs" />
     <Compile Include="Configuration\ModelMigrationsConfiguration.cs" />

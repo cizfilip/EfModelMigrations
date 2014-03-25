@@ -8,8 +8,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 {
     public class ClassCodeModel
     {
-        //TODO: change to internal - az bude InternalsVisibleTo
-        public ClassCodeModel(string @namespace,
+        internal ClassCodeModel(string @namespace,
             string name,
             CodeModelVisibility? visibility,
             string baseType,

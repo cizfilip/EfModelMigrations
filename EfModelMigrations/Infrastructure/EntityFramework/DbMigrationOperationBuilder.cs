@@ -163,6 +163,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                     PrincipalTable = dependentTableName
                 };
 
+                //TODO: pomoci ef metadat se tohle da nejspise krasne delat pomoci ForeignKeyDependents property na EntitySet :)
                 foreach (var dependentColumn in newModel.GetDependentColumns(dependentTableName, dependentPrimaryKeyColumnName))
                 {
                     dropIdentityOperation.DependentColumns.Add(new DependentColumn()

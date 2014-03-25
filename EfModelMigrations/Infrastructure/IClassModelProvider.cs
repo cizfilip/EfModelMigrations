@@ -12,12 +12,6 @@ namespace EfModelMigrations.Infrastructure
     {
         ClassCodeModel GetClassCodeModel(string className);
 
-        ClassCodeModel CreateClassCodeModel(string name, 
-            CodeModelVisibility? visibility, 
-            string baseType, 
-            IEnumerable<string> implementedInterfaces,
-            IEnumerable<ScalarProperty> properties);
-
         
     }
 }

@@ -32,15 +32,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             return mapper.MapToClassCodeModel(codeClass);
         }
-
-        //TODO: pri vytvareni classcodemodelu handlovat defaultni hodnoty z configurace
-        public ClassCodeModel CreateClassCodeModel(string name, 
-            CodeModelVisibility? visibility, 
-            string baseType, 
-            IEnumerable<string> implementedInterfaces,
-            IEnumerable<ScalarProperty> properties)
-        {
-            return new ClassCodeModel(configuration.ModelNamespace, name, visibility, baseType, implementedInterfaces, properties);
-        }
+        
     }
 }

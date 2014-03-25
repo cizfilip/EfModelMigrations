@@ -442,18 +442,21 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             string fullTypeName = codeTypeRef.AsFullName;
 
+            //TODO: nebude fungovat pokud je sama trida genericka tedy typ dbsetu je napr DbSet<Person<int>> - otazka je jestli to vadi
             string genericTypeName = null;
-            Match match = Regex.Match(fullTypeName, @"[^<]+<(.+)>$", RegexOptions.None);
+            Match match = Regex.Match(fullTypeName, @"^System\.Data\.Entity\.[I]*DbSet<(.+)>$", RegexOptions.None);
             if (match.Success)
             {
                 genericTypeName = match.Groups[1].Value;
+
+                //remove namespace from parsed type name
+                genericTypeName = genericTypeName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries).Last();
+
+                if (classNameForRemoveProperty.EqualsOrdinal(genericTypeName))
+                {
+                    return true;
+                }
             }
-
-            string fullClassName = modelNamespace + "." + classNameForRemoveProperty;
-
-            if (fullClassName.EqualsOrdinal(genericTypeName))
-                return true;
-
             return false;
         }
 
