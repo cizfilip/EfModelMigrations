@@ -181,8 +181,10 @@
     <Compile Include="Transformations\ExtractComplexTypeTransformation.cs" />
     <Compile Include="Transformations\JoinComplexTypeTransformation.cs" />
     <Compile Include="Transformations\ModelTransformation.cs" />
-    <Compile Include="Transformations\Model\AssociationMemberInfo.cs" />
+    <Compile Include="Transformations\Model\AssociationEnd.cs" />
     <Compile Include="Transformations\Model\ManyToManyJoinTable.cs" />
+    <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />
+    <Compile Include="Transformations\RemoveAssociationTransformation.cs" />
     <Compile Include="Transformations\RemoveClassTransformation.cs" />
     <Compile Include="Transformations\RemovePropertyTransformation.cs" />
     <Compile Include="Transformations\RenameClassTransformation.cs" />

@@ -13,9 +13,9 @@ namespace EfModelMigrations.Operations.Mapping
     public class AddAssociationMapping : IAddMappingInformation
     {
         //Principal
-        public AssociationMemberInfo Source { get; private set; }
+        public AssociationEnd Source { get; private set; }
         //Dependent
-        public AssociationMemberInfo Target { get; private set; }
+        public AssociationEnd Target { get; private set; }
 
         public bool? WillCascadeOnDelete { get; set; }
 
@@ -25,7 +25,7 @@ namespace EfModelMigrations.Operations.Mapping
 
         public string[] ForeignKeyProperties { get; set; }
 
-        public AddAssociationMapping(AssociationMemberInfo source, AssociationMemberInfo target)
+        public AddAssociationMapping(AssociationEnd source, AssociationEnd target)
         {
             this.Source = source;
             this.Target = target;

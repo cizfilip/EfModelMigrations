@@ -13,7 +13,7 @@ namespace EfModelMigrations.Transformations
     {   
         public string[] ForeignKeyColumnNames { get; private set; }
 
-        public AddOneToOneForeignKeyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, string[] foreignKeyColumnNames, bool? willCascadeOnDelete = null)
+        public AddOneToOneForeignKeyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, string[] foreignKeyColumnNames, bool? willCascadeOnDelete = null)
             :base(principal, dependent, willCascadeOnDelete)
         {
             this.ForeignKeyColumnNames = foreignKeyColumnNames;

@@ -21,17 +21,17 @@ namespace EfModelMigrations.Transformations
         public ScalarPropertyCodeModel[] ForeignKeyProperties { get; private set; }
 
 
-        public AddOneToManyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, ScalarPropertyCodeModel[] foreignKeyProperties, bool? willCascadeOnDelete = null)
+        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ScalarPropertyCodeModel[] foreignKeyProperties, bool? willCascadeOnDelete = null)
             : this(principal, dependent, foreignKeyProperties, null, willCascadeOnDelete)
         {
         }
 
-        public AddOneToManyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, string[] foreignKeyColumnNames, bool? willCascadeOnDelete = null)
+        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, string[] foreignKeyColumnNames, bool? willCascadeOnDelete = null)
             : this(principal, dependent, null, foreignKeyColumnNames, willCascadeOnDelete)
         {
         }
 
-        private AddOneToManyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, ScalarPropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool? willCascadeOnDelete)
+        private AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ScalarPropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool? willCascadeOnDelete)
             :base(principal, dependent, willCascadeOnDelete)
         {
             this.ForeignKeyColumnNames = foreignKeyColumnNames;

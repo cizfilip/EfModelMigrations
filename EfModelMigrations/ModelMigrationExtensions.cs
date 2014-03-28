@@ -85,8 +85,8 @@ namespace EfModelMigrations
             var principalMultiplicity = bothRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToOnePrimaryKeyAssociationTransformation(
-                new AssociationMemberInfo(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
-                new AssociationMemberInfo(dependent, RelationshipMultiplicity.One, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
+                new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
+                new AssociationEnd(dependent, RelationshipMultiplicity.One, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
                 willCascadeOnDelete));
                 
         }
@@ -124,8 +124,8 @@ namespace EfModelMigrations
             var dependentMultiplicity = dependentRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToOneForeignKeyAssociationTransformation(
-                new AssociationMemberInfo(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
-                new AssociationMemberInfo(dependent, dependentMultiplicity, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
+                new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
+                new AssociationEnd(dependent, dependentMultiplicity, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
                 dependentFkNames,
                 willCascadeOnDelete));
         }
@@ -164,8 +164,8 @@ namespace EfModelMigrations
             var principalMultiplicity = principalRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToManyAssociationTransformation(
-                new AssociationMemberInfo(principal, principalMultiplicity, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
-                new AssociationMemberInfo(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
+                new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
+                new AssociationEnd(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
                 dependentFkNames,
                 willCascadeOnDelete));
         }
@@ -199,8 +199,8 @@ namespace EfModelMigrations
             ManyToManyJoinTable joinTable)
         {
             ((ModelMigration)migration).AddTransformation(new AddManyToManyAssociationTransformation(
-                new AssociationMemberInfo(principal, RelationshipMultiplicity.Many, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
-                new AssociationMemberInfo(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new ManyNavigationPropertyBuilder(principal))),
+                new AssociationEnd(principal, RelationshipMultiplicity.Many, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
+                new AssociationEnd(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new ManyNavigationPropertyBuilder(principal))),
                 joinTable));
         }
         public static void AddManyToManyAssociation(this IModelMigration migration,

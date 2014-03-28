@@ -16,7 +16,7 @@ namespace EfModelMigrations.Transformations
     {
         public ManyToManyJoinTable JoinTable { get; private set; }
 
-        public AddManyToManyAssociationTransformation(AssociationMemberInfo source, AssociationMemberInfo target, ManyToManyJoinTable joinTable)
+        public AddManyToManyAssociationTransformation(AssociationEnd source, AssociationEnd target, ManyToManyJoinTable joinTable)
             : base(source, target)
         {
             this.JoinTable = joinTable;

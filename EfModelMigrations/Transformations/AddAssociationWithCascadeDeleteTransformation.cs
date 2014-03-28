@@ -11,7 +11,7 @@ namespace EfModelMigrations.Transformations
     {
         public bool? WillCascadeOnDelete { get; private set; }
 
-        public AddAssociationWithCascadeDeleteTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, bool? willCascadeOnDelete = null)
+        public AddAssociationWithCascadeDeleteTransformation(AssociationEnd principal, AssociationEnd dependent, bool? willCascadeOnDelete = null)
             :base(principal, dependent)
         {
             this.WillCascadeOnDelete = willCascadeOnDelete;

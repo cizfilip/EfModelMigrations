@@ -13,10 +13,10 @@ namespace EfModelMigrations.Transformations
 {
     public abstract class AddAssociationTransformation : ModelTransformation
     {
-        public AssociationMemberInfo Principal { get; private set; }
-        public AssociationMemberInfo Dependent { get; private set; }
+        public AssociationEnd Principal { get; private set; }
+        public AssociationEnd Dependent { get; private set; }
 
-        public AddAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent)
+        public AddAssociationTransformation(AssociationEnd principal, AssociationEnd dependent)
         {
             this.Principal = principal;
             this.Dependent = dependent;
@@ -50,7 +50,10 @@ namespace EfModelMigrations.Transformations
 
         protected abstract AddAssociationMapping CreateMappingInformation();
        
-        public abstract override ModelTransformation Inverse();
+        public override ModelTransformation Inverse()
+        {
+            return new RemoveAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd());
+        }
 
         public override bool IsDestructiveChange
         {

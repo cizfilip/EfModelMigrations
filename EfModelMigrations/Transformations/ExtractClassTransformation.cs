@@ -66,8 +66,8 @@ namespace EfModelMigrations.Transformations
 
         private AddOneToOneForeignKeyAssociationTransformation GetAssociationTransformation()
         {
-            var principal = new AssociationMemberInfo(FromClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(NewClass));
-            var dependent = new AssociationMemberInfo(NewClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(FromClass));
+            var principal = new AssociationEnd(FromClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(NewClass));
+            var dependent = new AssociationEnd(NewClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(FromClass));
 
             return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, ForeignKeyColumns, true);
         }

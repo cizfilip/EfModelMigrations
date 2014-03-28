@@ -42,7 +42,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             this.codeGenerator = configuration.CodeGenerator;
             this.classFinder = new CodeClassFinder(modelProject);
 
-            //this.mappingRemover = new VsMappingInformationsRemover(new CSharpRegexMappingGenerator());
+            this.mappingRemover = new VsMappingInformationsRemover(new CSharpRegexMappingGenerator());
         }
 
 
@@ -254,25 +254,30 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             CodeFunction2 onModelCreatingMethod = FindOnModelCreatingMethod(contextClass);
 
-            string oldCode = GetMethodCode(onModelCreatingMethod);
+            string methodCode = GetMethodCode(onModelCreatingMethod);
 
             //TODO: dodelat remove mapovani i v jinych castech (EntityTypeConfiguration ... attributy u trid...)
-            //var generatedInfo = mappingRemover.GetRegex(operation.MappingInformation);
-            //var prefixForOnModelCreating = mappingRemover.GetRegexPrefix(generatedInfo.TargetType);
+            var generatedInfos = mappingRemover.GetRegExps(operation.MappingInformation);
 
-            //var matches = Regex.Matches(oldCode, string.Concat(prefixForOnModelCreating, generatedInfo.Content), RegexOptions.None);
+            foreach (var generatedInfo in generatedInfos)
+            {
+                var prefixForOnModelCreating = mappingRemover.GetRegexPrefix(generatedInfo.TargetType);
 
-            //if(matches.Count > 1)
-            //{
-            //    throw new ModelMigrationsException("More than one mapping information found in OnModelCreating"); //TODO: string do resourcu
-            //}
+                var matches = Regex.Matches(methodCode, string.Concat(prefixForOnModelCreating, generatedInfo.Content), RegexOptions.None);
 
-            //if (matches.Count == 1)
-            //{
-            //    var match = matches[0];
-            //    string newCode = oldCode.Remove(match.Index, match.Length);
-            //    SetMethodCode(onModelCreatingMethod, newCode);
-            //}
+                if (matches.Count > 1)
+                {
+                    throw new ModelMigrationsException("More than one mapping information for remove found in OnModelCreating"); //TODO: string do resourcu
+                }
+
+                if (matches.Count == 1)
+                {
+                    var match = matches[0];
+                    methodCode = methodCode.Remove(match.Index, match.Length);
+                }
+            }
+
+            SetMethodCode(onModelCreatingMethod, methodCode);
         }
 
         protected virtual void ExecuteOperation(AddDbSetPropertyOperation operation)

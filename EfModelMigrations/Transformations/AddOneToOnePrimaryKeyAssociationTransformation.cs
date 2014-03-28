@@ -12,7 +12,7 @@ namespace EfModelMigrations.Transformations
 {
     public class AddOneToOnePrimaryKeyAssociationTransformation : AddAssociationWithCascadeDeleteTransformation
     {
-        public AddOneToOnePrimaryKeyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, bool? willCascadeOnDelete = null)
+        public AddOneToOnePrimaryKeyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, bool? willCascadeOnDelete = null)
             :base(principal, 
                 dependent,  
                 willCascadeOnDelete)
