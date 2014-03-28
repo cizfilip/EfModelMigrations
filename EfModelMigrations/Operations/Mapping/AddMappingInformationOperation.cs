@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations.Mapping
 {
-    public class AddMappingInformationOperation : MappingInformationOperation
+    public class AddMappingInformationOperation : MappingInformationOperation<IAddMappingInformation>
     {
-        public AddMappingInformationOperation(IMappingInformation mappingInformation)
+        public AddMappingInformationOperation(IAddMappingInformation mappingInformation)
             : base(mappingInformation) { }
     }
 }

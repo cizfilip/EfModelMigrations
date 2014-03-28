@@ -9,9 +9,9 @@ namespace EfModelMigrations.Transformations
 {
     public abstract class AddAssociationWithCascadeDeleteTransformation : AddAssociationTransformation
     {
-        public bool WillCascadeOnDelete { get; private set; }
+        public bool? WillCascadeOnDelete { get; private set; }
 
-        public AddAssociationWithCascadeDeleteTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, bool willCascadeOnDelete)
+        public AddAssociationWithCascadeDeleteTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, bool? willCascadeOnDelete = null)
             :base(principal, dependent)
         {
             this.WillCascadeOnDelete = willCascadeOnDelete;

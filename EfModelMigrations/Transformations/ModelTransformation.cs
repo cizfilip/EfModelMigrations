@@ -9,7 +9,6 @@ namespace EfModelMigrations.Transformations
 {
     public abstract class ModelTransformation
     {
-        //TODO: mozna odstranit parametr modelProvider
         public virtual IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
             return Enumerable.Empty<IModelChangeOperation>();

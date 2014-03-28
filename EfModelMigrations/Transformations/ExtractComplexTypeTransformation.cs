@@ -17,9 +17,9 @@ namespace EfModelMigrations.Transformations
         public string ComplexTypeName { get; private set; }
         public IEnumerable<string> PropertiesToExtract { get; private set; }
 
-        public NavigationProperty NavigationProperty { get; set; }
+        public NavigationPropertyCodeModel NavigationProperty { get; set; }
 
-        public ExtractComplexTypeTransformation(string className, string complexTypeName, IEnumerable<string> propertiesToExtract, NavigationProperty navigationProperty)
+        public ExtractComplexTypeTransformation(string className, string complexTypeName, IEnumerable<string> propertiesToExtract, NavigationPropertyCodeModel navigationProperty)
         {
             this.ClassName = className;
             this.ComplexTypeName = complexTypeName;

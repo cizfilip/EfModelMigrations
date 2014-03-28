@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel
 {
-    public sealed class ScalarProperty : PropertyCodeModel
+    public sealed class ScalarPropertyCodeModel : PropertyCodeModel
     {
         private ColumnModel columnModel;
         public ColumnModel ColumnModel { 
@@ -26,32 +26,26 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             }
         }
 
-        public ScalarProperty(string name, PrimitiveTypeKind type)
+        public ScalarPropertyCodeModel(string name, PrimitiveTypeKind type)
             : base(name)
         {
             this.columnModel = new ColumnModel(type);
         }
 
-        internal ScalarProperty(PrimitiveTypeKind type)
+        internal ScalarPropertyCodeModel(PrimitiveTypeKind type)
             :this(null, type)
         {
         }
 
-
-        public ColumnModel GetColumnModel()
-        {
-            return columnModel;
-        }
-
-
-        public static bool TryParse(string type, out ScalarProperty parsedProperty)
+        
+        public static bool TryParse(string type, out ScalarPropertyCodeModel parsedProperty)
         {
             string lowerType = type.ToLowerInvariant();
             PrimitiveTypeKind primitiveType;
 
             if (primitiveTypes.TryGetValue(lowerType, out primitiveType))
             {
-                parsedProperty = new ScalarProperty(primitiveType);
+                parsedProperty = new ScalarPropertyCodeModel(primitiveType);
                 return true;
             }
 

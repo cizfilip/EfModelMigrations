@@ -5,18 +5,24 @@ using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Transformations.Model;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
 
 namespace EfModelMigrations.Transformations
 {
-    public class AddOneToOnePrimaryKeyAssociationTransformation : AddOneToOneAssociationTransformation
+    public class AddOneToOnePrimaryKeyAssociationTransformation : AddAssociationWithCascadeDeleteTransformation
     {
-        public AddOneToOnePrimaryKeyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, bool bothEndsRequired, bool willCascadeOnDelete)
+        public AddOneToOnePrimaryKeyAssociationTransformation(AssociationMemberInfo principal, AssociationMemberInfo dependent, bool? willCascadeOnDelete = null)
             :base(principal, 
-                dependent, 
-                bothEndsRequired ? OneToOneAssociationType.BothEndsRequired : OneToOneAssociationType.DependentRequired, 
+                dependent,  
                 willCascadeOnDelete)
         {
+            //TODO: stringy do resourců
+            if ((principal.Multipticity == RelationshipMultiplicity.Many && dependent.Multipticity == RelationshipMultiplicity.Many)
+                || (principal.Multipticity == RelationshipMultiplicity.ZeroOrOne && dependent.Multipticity == RelationshipMultiplicity.ZeroOrOne))
+            {
+                throw new ModelTransformationValidationException("Invalid association multiplicity for one to one primary key association.");
+            }
         }
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
@@ -24,9 +30,12 @@ namespace EfModelMigrations.Transformations
             return builder.OneToOnePrimaryKeyRelationOperations(Principal.ClassName, Dependent.ClassName, WillCascadeOnDelete);
         }
 
-        protected override AssociationInfo CreateMappingInformation()
+        protected override AddAssociationMapping CreateMappingInformation()
         {
-            return new OneToOneAssociationInfo(Principal, Dependent, Type, WillCascadeOnDelete);
+            return new AddAssociationMapping(Principal, Dependent)
+            {
+                WillCascadeOnDelete = WillCascadeOnDelete
+            };
         }
 
         public override ModelTransformation Inverse()

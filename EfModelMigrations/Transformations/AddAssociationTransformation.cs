@@ -48,7 +48,7 @@ namespace EfModelMigrations.Transformations
             }
         }
 
-        protected abstract AssociationInfo CreateMappingInformation();
+        protected abstract AddAssociationMapping CreateMappingInformation();
        
         public abstract override ModelTransformation Inverse();
 

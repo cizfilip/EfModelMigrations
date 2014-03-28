@@ -13,20 +13,20 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             this.targetClass = targetClass;
         }
 
-        protected NavigationProperty Build(bool isCollection,
+        protected NavigationPropertyCodeModel Build(bool isCollection,
             string name = null, 
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            NavigationProperty property;
+            NavigationPropertyCodeModel property;
             if (name == null)
             {
-                property = new NavigationProperty(targetClass, isCollection);
+                property = new NavigationPropertyCodeModel(targetClass, isCollection);
             }
             else
             {
-                property = new NavigationProperty(name, targetClass, isCollection);
+                property = new NavigationPropertyCodeModel(name, targetClass, isCollection);
             }
             property.IsVirtual = isVirtual;
             property.IsSetterPrivate = isSetterPrivate;
@@ -43,7 +43,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         {
         }
 
-        public NavigationProperty One(string name, 
+        public NavigationPropertyCodeModel One(string name, 
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
@@ -51,7 +51,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return Build(false, name, visibility, isVirtual, isSetterPrivate);
         }
 
-        public NavigationProperty One(CodeModelVisibility? visibility = null,
+        public NavigationPropertyCodeModel One(CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
@@ -66,7 +66,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         {
         }
 
-        public NavigationProperty Many(string name,
+        public NavigationPropertyCodeModel Many(string name,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
@@ -74,7 +74,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return Build(true, name, visibility, isVirtual, isSetterPrivate);
         }
 
-        public NavigationProperty Many(CodeModelVisibility? visibility = null,
+        public NavigationPropertyCodeModel Many(CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {

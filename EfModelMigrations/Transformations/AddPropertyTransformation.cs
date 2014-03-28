@@ -11,9 +11,9 @@ namespace EfModelMigrations.Transformations
     public class AddPropertyTransformation : ModelTransformation
     {
         public string ClassName { get; private set; }
-        public ScalarProperty Model { get; private set; }
+        public ScalarPropertyCodeModel Model { get; private set; }
 
-        public AddPropertyTransformation(string className, ScalarProperty model)
+        public AddPropertyTransformation(string className, ScalarPropertyCodeModel model)
         {
             this.ClassName = className;
             this.Model = model;

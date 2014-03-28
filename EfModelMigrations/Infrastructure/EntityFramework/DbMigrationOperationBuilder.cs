@@ -113,7 +113,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
         //1:1, 1:0, 0:1
         //TODO: stringy do resourcu
-        public IEnumerable<MigrationOperation> OneToOnePrimaryKeyRelationOperations(string principalClassName, string dependentClassName, bool willCascadeOnDelete)
+        public IEnumerable<MigrationOperation> OneToOnePrimaryKeyRelationOperations(string principalClassName, string dependentClassName, bool? willCascadeOnDelete)
         {
             string principalClassFullName = GetFullClassName(principalClassName);
             string dependentClassFullName = GetFullClassName(dependentClassName);
@@ -185,13 +185,13 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             yield return AddForeignKeyOperation(principalTableName, dependentTableName, principalPrimaryKeyColumnsNames, dependentPrimaryKeyColumnsNames, willCascadeOnDelete);
         }
 
-        public IEnumerable<MigrationOperation> OneToOneForeignKeyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete)
+        public IEnumerable<MigrationOperation> OneToOneForeignKeyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool? willCascadeOnDelete)
         {
             return RelationWithForeignKeysOperations(principalClassName, dependentClassName, isDependentRequired, foreignKeyColumnNames, willCascadeOnDelete, true);
         }
 
 
-        public IEnumerable<MigrationOperation> OneToManyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete)
+        public IEnumerable<MigrationOperation> OneToManyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool? willCascadeOnDelete)
         {
             return RelationWithForeignKeysOperations(principalClassName, dependentClassName, isDependentRequired, foreignKeyColumnNames, willCascadeOnDelete, false);
         }
@@ -291,7 +291,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return operation;
         }
 
-        private IEnumerable<MigrationOperation> RelationWithForeignKeysOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool willCascadeOnDelete, bool isIndexUnique, bool includeAddColumnsForForeignKey = true)
+        private IEnumerable<MigrationOperation> RelationWithForeignKeysOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool? willCascadeOnDelete, bool isIndexUnique, bool includeAddColumnsForForeignKey = true)
         {
             string principalClassFullName = GetFullClassName(principalClassName);
             string dependentClassFullName = GetFullClassName(dependentClassName);
@@ -374,11 +374,11 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return createIndexOperation;
         }
 
-        private AddForeignKeyOperation AddForeignKeyOperation(string principalTable, string dependentTable, string[] principalColumns, string[] dependentColumns, bool cascadeOnDelete)
+        private AddForeignKeyOperation AddForeignKeyOperation(string principalTable, string dependentTable, string[] principalColumns, string[] dependentColumns, bool? cascadeOnDelete)
         {
             var addForeignKeyOperation = new AddForeignKeyOperation()
             {
-                CascadeDelete = cascadeOnDelete,
+                CascadeDelete = cascadeOnDelete.HasValue ? cascadeOnDelete.Value : false,
                 Name = null,
                 PrincipalTable = principalTable,
                 DependentTable = dependentTable

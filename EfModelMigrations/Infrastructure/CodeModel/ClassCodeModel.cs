@@ -13,9 +13,9 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             CodeModelVisibility visibility,
             string baseType,
             IEnumerable<string> implementedInterfaces,
-            IEnumerable<ScalarProperty> properties,
-            IEnumerable<NavigationProperty> navigationProperties,
-            IEnumerable<ScalarProperty> primaryKeys)
+            IEnumerable<ScalarPropertyCodeModel> properties,
+            IEnumerable<NavigationPropertyCodeModel> navigationProperties,
+            IEnumerable<ScalarPropertyCodeModel> primaryKeys)
         {
             Check.NotEmpty(name, "name");
 
@@ -24,9 +24,9 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             Visibility = visibility;
             BaseType = baseType;
             ImplementedInterfaces = implementedInterfaces ?? Enumerable.Empty<string>();
-            Properties = properties ?? Enumerable.Empty<ScalarProperty>();
-            NavigationProperties = navigationProperties ?? Enumerable.Empty<NavigationProperty>();
-            PrimaryKeys = primaryKeys ?? Enumerable.Empty<ScalarProperty>();
+            Properties = properties ?? Enumerable.Empty<ScalarPropertyCodeModel>();
+            NavigationProperties = navigationProperties ?? Enumerable.Empty<NavigationPropertyCodeModel>();
+            PrimaryKeys = primaryKeys ?? Enumerable.Empty<ScalarPropertyCodeModel>();
         }
 
         public string Name { get; private set; }
@@ -34,11 +34,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         public string BaseType { get; private set; }
         public IEnumerable<string> ImplementedInterfaces { get; private set; }
 
-        public IEnumerable<ScalarProperty> Properties { get; private set; }
+        public IEnumerable<ScalarPropertyCodeModel> Properties { get; private set; }
 
-        public IEnumerable<NavigationProperty> NavigationProperties { get; private set; }
+        public IEnumerable<NavigationPropertyCodeModel> NavigationProperties { get; private set; }
 
-        public IEnumerable<ScalarProperty> PrimaryKeys { get; private set; }
+        public IEnumerable<ScalarPropertyCodeModel> PrimaryKeys { get; private set; }
 
         
     }

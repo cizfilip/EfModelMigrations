@@ -17,7 +17,7 @@ namespace EfModelMigrations.Commands
         private string className;
         private string complexTypeName;
         private IEnumerable<string> propertiesToExtract;
-        private NavigationProperty navigationProperty;
+        private NavigationPropertyCodeModel navigationProperty;
 
         //TODO: Dat stringy vyjimek do resourcu
         public ExtractComplexTypeCommand(string className, string complexTypeName, string[] properties)
@@ -39,7 +39,7 @@ namespace EfModelMigrations.Commands
             this.className = className;
             this.complexTypeName = complexTypeName;
             this.propertiesToExtract = properties;
-            this.navigationProperty = new NavigationProperty(complexTypeName);
+            this.navigationProperty = new NavigationPropertyCodeModel(complexTypeName);
         }
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)

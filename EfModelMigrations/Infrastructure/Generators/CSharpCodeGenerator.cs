@@ -114,7 +114,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
         }
 
-        protected virtual string GetPropertyTypeAsString(ScalarProperty property)
+        protected virtual string GetPropertyTypeAsString(ScalarPropertyCodeModel property)
         {
             switch (property.Type)
             {
@@ -171,7 +171,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
         }
 
-        protected virtual string GetPropertyTypeAsString(NavigationProperty property)
+        protected virtual string GetPropertyTypeAsString(NavigationPropertyCodeModel property)
         {
             if (property.IsCollection)
             {

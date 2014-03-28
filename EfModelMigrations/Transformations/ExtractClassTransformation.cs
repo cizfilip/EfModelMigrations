@@ -6,6 +6,7 @@ using EfModelMigrations.Operations;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
@@ -65,14 +66,13 @@ namespace EfModelMigrations.Transformations
 
         private AddOneToOneForeignKeyAssociationTransformation GetAssociationTransformation()
         {
-            var principal = new AssociationMemberInfo(FromClass, new NavigationProperty(NewClass));
-            var dependent = new AssociationMemberInfo(NewClass, new NavigationProperty(FromClass));
+            var principal = new AssociationMemberInfo(FromClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(NewClass));
+            var dependent = new AssociationMemberInfo(NewClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(FromClass));
 
-            return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent,
-                OneToOneAssociationType.BothEndsRequired, ForeignKeyColumns, true);
+            return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, ForeignKeyColumns, true);
         }
 
-        private ScalarProperty GetPrimaryKeyForNewClass()
+        private ScalarPropertyCodeModel GetPrimaryKeyForNewClass()
         {
             var prop = new ScalarPropertyBuilder().Int();
             prop.Name = "Id";

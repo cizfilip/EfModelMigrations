@@ -28,8 +28,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             this.modelProject = modelProject;
             this.configuration = configuration;
             this.classFinder = new CodeClassFinder(modelProject);
-            this.mapper = new VsCodeClassToClassCodeModelMapper(configuration.GeneratorDefaults);
             this.metadata = EfModelMetadata.Load(edmxModel);
+            this.mapper = new VsCodeClassToClassCodeModelMapper(configuration.GeneratorDefaults, metadata);
         }
 
         public ClassCodeModel GetClassCodeModel(string className)

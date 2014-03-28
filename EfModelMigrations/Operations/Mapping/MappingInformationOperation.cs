@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations.Mapping
 {
-    public abstract class MappingInformationOperation : IModelChangeOperation
+    public abstract class MappingInformationOperation<MapInfo> : IModelChangeOperation where MapInfo : IMappingInformation
     {
-        public IMappingInformation MappingInformation { get; protected set; }
+        public MapInfo MappingInformation { get; protected set; }
 
-        public MappingInformationOperation(IMappingInformation mappingInformation)
+        public MappingInformationOperation(MapInfo mappingInformation)
         {
             this.MappingInformation = mappingInformation;
         }

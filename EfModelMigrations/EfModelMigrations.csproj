@@ -78,7 +78,7 @@
     <Compile Include="Infrastructure\CodeModel\Builders\ScalarPropertyBuilder.cs" />
     <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\CodeModelVisibility.cs" />
-    <Compile Include="Infrastructure\CodeModel\NavigationProperty.cs" />
+    <Compile Include="Infrastructure\CodeModel\NavigationPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationExtensions\DbMigrationExtensions.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\EdmxNames.cs" />
@@ -130,26 +130,21 @@
     <Compile Include="Infrastructure\ModelMigrationIdGenerator.cs" />
     <Compile Include="Infrastructure\ModelMigrationsLocator.cs" />
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
-    <Compile Include="Infrastructure\CodeModel\ScalarProperty.cs" />
+    <Compile Include="Infrastructure\CodeModel\ScalarPropertyCodeModel.cs" />
     <Compile Include="ModelTransformationBuilders.cs" />
     <Compile Include="Operations\Mapping\AddDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\AddMappingInformationOperation.cs" />
-    <Compile Include="Operations\Mapping\Associations\AssociationInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\AssociationWithCascadeDeleteInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\ManyToManyAssociationInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\OneToManyAssociationInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\OneToManyWithForeignKeyColumnsAssociationInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\OneToManyWithForeignKeyPropertiesAssociationInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\OneToOneAssociationInfo.cs" />
-    <Compile Include="Operations\Mapping\Associations\OneToOneWithForeignKeysAssociationInfo.cs" />
+    <Compile Include="Operations\Mapping\AddAssociationMapping.cs" />
     <Compile Include="Operations\Mapping\DbSetPropertyOperation.cs" />
-    <Compile Include="Operations\Mapping\IMappingInformation.cs" />
+    <Compile Include="Operations\Mapping\IAddMappingInformation.cs" />
     <Compile Include="ModelMigration.cs" />
     <Compile Include="ModelMigrationExtensions.cs" />
     <Compile Include="ModelMigrationIdAttribute.cs" />
     <Compile Include="Operations\AddPropertyToClassOperation.cs" />
     <Compile Include="Operations\CreateEmptyClassOperation.cs" />
     <Compile Include="Operations\IModelChangeOperation.cs" />
+    <Compile Include="Operations\Mapping\IMappingInformation.cs" />
+    <Compile Include="Operations\Mapping\IRemoveMappingInformation.cs" />
     <Compile Include="Operations\Mapping\MappingInformationOperation.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluentApiCallChain.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluentApiMethods.cs" />
@@ -159,6 +154,7 @@
     <Compile Include="Operations\Mapping\Model\PropertySelectorParameter.cs" />
     <Compile Include="Operations\Mapping\Model\StringParameter.cs" />
     <Compile Include="Operations\Mapping\Model\ValueParameter.cs" />
+    <Compile Include="Operations\Mapping\RemoveAssociationMapping.cs" />
     <Compile Include="Operations\Mapping\RemoveDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\RemoveMappingInformationOperation.cs" />
     <Compile Include="Operations\MovePropertyOperation.cs" />
@@ -177,7 +173,6 @@
     <Compile Include="Transformations\AddManyToManyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddOneToManyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddAssociationTransformation.cs" />
-    <Compile Include="Transformations\AddOneToOneAssociationTransformation.cs" />
     <Compile Include="Transformations\AddOneToOneForeignKeyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddOneToOnePrimaryKeyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddPropertyTransformation.cs" />
@@ -188,7 +183,6 @@
     <Compile Include="Transformations\ModelTransformation.cs" />
     <Compile Include="Transformations\Model\AssociationMemberInfo.cs" />
     <Compile Include="Transformations\Model\ManyToManyJoinTable.cs" />
-    <Compile Include="Transformations\Model\OneToOneAssociationType.cs" />
     <Compile Include="Transformations\RemoveClassTransformation.cs" />
     <Compile Include="Transformations\RemovePropertyTransformation.cs" />
     <Compile Include="Transformations\RenameClassTransformation.cs" />
@@ -197,7 +191,6 @@
     <Compile Include="Utilities\TypeFinder.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="Infrastructure\Generators\Templates\ClassTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>ClassTemplate.cs</LastGenOutput>

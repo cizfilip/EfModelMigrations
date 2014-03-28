@@ -176,7 +176,7 @@ namespace EfModelMigrations.Infrastructure.Generators
         }
 
 
-        protected virtual void Generate(ScalarProperty property, StringBuilder builder)
+        protected virtual void Generate(ScalarPropertyCodeModel property, StringBuilder builder)
         {
             builder.Append(TranslatePrimitiveTypeToBuilderMethodName(property.Type))
                 .Append("(");

@@ -1,29 +1,26 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.Entity.Core.Metadata.Edm;
 
 namespace EfModelMigrations.Transformations.Model
 {
     public sealed class AssociationMemberInfo
     {
-        public AssociationMemberInfo(string className, NavigationProperty navigationProperty)
+        public AssociationMemberInfo(string className, RelationshipMultiplicity multipticity, NavigationPropertyCodeModel navigationProperty)
         {
             this.ClassName = className;
             this.NavigationProperty = navigationProperty;
+            this.Multipticity = multipticity;
+        }
+
+        public AssociationMemberInfo(string className, RelationshipMultiplicity multipticity)
+            :this(className, multipticity, null)
+        {
         }
 
         public string ClassName { get; private set; }
-        public NavigationProperty NavigationProperty { get; private set; }
+        public NavigationPropertyCodeModel NavigationProperty { get; private set; }
 
-        public string NavigationPropertyName
-        {
-            get
-            {
-                return NavigationProperty != null ? NavigationProperty.Name : null;
-            }
-        }
+        public RelationshipMultiplicity Multipticity { get; private set; }
+
     }
 }

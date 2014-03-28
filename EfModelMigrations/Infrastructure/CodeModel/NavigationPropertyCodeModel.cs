@@ -19,26 +19,26 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
     //    public virtual HashSet<Address> Addresses { get; set; }
     //}
-    public sealed class NavigationProperty : PropertyCodeModel
+    public sealed class NavigationPropertyCodeModel : PropertyCodeModel
     {
         public string TargetClass { get; set; }
 
         public bool IsCollection { get; set; }
 
 
-        public NavigationProperty(string name, string targetClass, bool isCollection)
+        public NavigationPropertyCodeModel(string name, string targetClass, bool isCollection)
             :base(name)
         {
             this.TargetClass = targetClass;
             this.IsCollection = isCollection;
         }
 
-        internal NavigationProperty(string targetClass, bool isCollection)
+        internal NavigationPropertyCodeModel(string targetClass, bool isCollection)
             : this(GetDefaultNameFromTarget(targetClass, isCollection), targetClass, isCollection)
         {
         }
 
-        internal NavigationProperty(string targetClass)
+        internal NavigationPropertyCodeModel(string targetClass)
             : this(GetDefaultNameFromTarget(targetClass, false), targetClass, false)
         {
         }

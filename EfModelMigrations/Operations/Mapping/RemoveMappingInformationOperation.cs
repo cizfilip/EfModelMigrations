@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations.Mapping
 {
-    public class RemoveMappingInformationOperation : MappingInformationOperation
+    public class RemoveMappingInformationOperation : MappingInformationOperation<IRemoveMappingInformation>
     {
-        public RemoveMappingInformationOperation(IMappingInformation mappingInformation)
+        public RemoveMappingInformationOperation(IRemoveMappingInformation mappingInformation)
             : base(mappingInformation) { }
     }
 }

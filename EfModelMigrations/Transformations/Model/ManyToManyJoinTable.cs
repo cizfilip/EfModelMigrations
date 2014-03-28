@@ -10,14 +10,14 @@ namespace EfModelMigrations.Transformations.Model
     {
         public string TableName { get; private set; }
 
-        public string[] PrincipalForeignKeyColumns { get; private set; }
+        public string[] SourceForeignKeyColumns { get; private set; }
 
-        public string[] DependentForeignKeyColumns { get; private set; }
+        public string[] TargetForeignKeyColumns { get; private set; }
 
-        public ManyToManyJoinTable(string tableName, string[] principalForeignKeyColumns, string[] dependentForeignKeyColumns)
+        public ManyToManyJoinTable(string tableName, string[] sourceForeignKeyColumns, string[] targetForeignKeyColumns)
         {
-            this.PrincipalForeignKeyColumns = principalForeignKeyColumns;
-            this.DependentForeignKeyColumns = dependentForeignKeyColumns;
+            this.SourceForeignKeyColumns = sourceForeignKeyColumns;
+            this.TargetForeignKeyColumns = targetForeignKeyColumns;
         }
     }
 }
