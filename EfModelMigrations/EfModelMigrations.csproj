@@ -63,6 +63,7 @@
     <Compile Include="IModelMigration.cs" />
     <Compile Include="Infrastructure\EntityFramework\EdmxModelExtractor.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\XDocumentExtensions.cs" />
+    <Compile Include="Infrastructure\EntityFramework\EfModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\EfModelMetadata.cs" />
     <Compile Include="Infrastructure\EntityFramework\MigrationOperations\PlaceholderOperation.cs" />
     <Compile Include="Infrastructure\Generators\CodeGeneratorDefaults.cs" />
