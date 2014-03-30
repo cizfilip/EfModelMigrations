@@ -21,12 +21,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
     internal class VsCodeClassToClassCodeModelMapper
     {
         private CodeGeneratorDefaults defaults;
-        private EfModelMetadata metadata;
+        private EfModel efModel;
 
-        public VsCodeClassToClassCodeModelMapper(CodeGeneratorDefaults defaults, EfModelMetadata metadata)
+        public VsCodeClassToClassCodeModelMapper(CodeGeneratorDefaults defaults, EfModel efModel)
         {
             this.defaults = defaults;
-            this.metadata = metadata;
+            this.efModel = efModel;
         }
 
         public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass, EntityType entityType)
@@ -61,23 +61,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
         {
             Check.NotNull(codeProperty, "codeProperty");
 
-            ScalarPropertyCodeModel scalarProperty = new ScalarPropertyCodeModel(edmProperty.Name, edmProperty.PrimitiveType.PrimitiveTypeKind);
+            var columnModel = efModel.GetColumnModelForProperty(edmProperty.DeclaringType.Name, edmProperty.Name);
+
+            ScalarPropertyCodeModel scalarProperty = new ScalarPropertyCodeModel(edmProperty.Name, columnModel);
 
             MapProperty(scalarProperty, codeProperty);
-
-            var storeProperty = metadata.EntityContainerMapping
-                .EntitySetMappings
-                .SelectMany(m => m.EntityTypeMappings)
-                .Single(t => t.EntityType.Name.EqualsOrdinal(edmProperty.DeclaringType.Name))
-                .Fragments
-                .SelectMany(f => f.PropertyMappings)
-                .OfType<ScalarPropertyMapping>()
-                .Single(p => p.Property.Name.EqualsOrdinal(edmProperty.Name))
-                .Column;
-
-            MapColumnModel(scalarProperty, storeProperty);
-
-
 
             return scalarProperty;
         }
@@ -104,47 +92,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             property.IsVirtual = isVirtual == defaults.Property.IsVirtual ? (bool?)null : isVirtual;
         }
 
-        private void MapColumnModel(ScalarPropertyCodeModel scalarProperty, EdmProperty storeProperty)
-        {
-            var columnModel = scalarProperty.ColumnModel;
-
-            columnModel.Name = storeProperty.Name;
-            columnModel.IsNullable = storeProperty.Nullable;
-            columnModel.StoreType = storeProperty.TypeName;
-            columnModel.IsIdentity = storeProperty.IsStoreGeneratedIdentity;
-            columnModel.IsTimestamp = storeProperty.PrimitiveType.PrimitiveTypeKind == PrimitiveTypeKind.Binary
-                      && storeProperty.MaxLength == 8
-                      && storeProperty.IsStoreGeneratedComputed;
-            columnModel.IsUnicode = storeProperty.IsUnicode;
-            columnModel.IsFixedLength = storeProperty.IsFixedLength;
-
-            Facet facet;
-
-            if (storeProperty.TypeUsage.Facets.TryGetValue(DbProviderManifest.MaxLengthFacetName, true, out facet)
-                && !facet.IsUnbounded
-                && !facet.Description.IsConstant)
-            {
-                columnModel.MaxLength = (int?)facet.Value;
-            }
-
-            if (storeProperty.TypeUsage.Facets.TryGetValue(DbProviderManifest.PrecisionFacetName, true, out facet)
-                && !facet.IsUnbounded
-                && !facet.Description.IsConstant)
-            {
-                columnModel.Precision = (byte?)facet.Value;
-            }
-
-            if (storeProperty.TypeUsage.Facets.TryGetValue(DbProviderManifest.ScaleFacetName, true, out facet)
-                && !facet.IsUnbounded
-                && !facet.Description.IsConstant)
-            {
-                columnModel.Scale = (byte?)facet.Value;
-            }
-            
-            //TODO: anotace?
-        }
-
-        
 
         private IEnumerable<string> MapImplementedInterfaces(CodeElements codeElements)
         {

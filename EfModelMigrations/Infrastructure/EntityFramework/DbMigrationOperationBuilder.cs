@@ -17,6 +17,7 @@ using EfModelMigrations.Exceptions;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
+    //TODO: az prestanu tuhle tridu pouzivat tak zaroven odstranit z projektu DbMigrationBuilderException
     //TODO: handlovat dobre vyjimky, poresit problem kdyz je migrace slozena s takovych transformaci ktere nam zabrani v mapovani (napr. CreateClass a RemoveClass te same tridy v jedne migraci)
     public class DbMigrationOperationBuilder : IDbMigrationOperationBuilder
     {

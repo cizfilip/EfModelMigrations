@@ -59,10 +59,10 @@
     <Compile Include="Commands\RemovePropertiesCommand.cs" />
     <Compile Include="Commands\RenameClassCommand.cs" />
     <Compile Include="Commands\RenamePropertyCommand.cs" />
+    <Compile Include="Exceptions\EfModelException.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IModelMigration.cs" />
     <Compile Include="Infrastructure\EntityFramework\EdmxModelExtractor.cs" />
-    <Compile Include="Infrastructure\EntityFramework\Edmx\XDocumentExtensions.cs" />
     <Compile Include="Infrastructure\EntityFramework\EfModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\EfModelMetadata.cs" />
     <Compile Include="Infrastructure\EntityFramework\MigrationOperations\PlaceholderOperation.cs" />
@@ -221,7 +221,9 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Infrastructure\EntityFramework\EdmExtensions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

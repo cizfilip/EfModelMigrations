@@ -27,14 +27,19 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         }
 
         public ScalarPropertyCodeModel(string name, PrimitiveTypeKind type)
-            : base(name)
+            : this(name, new ColumnModel(type))
         {
-            this.columnModel = new ColumnModel(type);
         }
 
         internal ScalarPropertyCodeModel(PrimitiveTypeKind type)
             :this(null, type)
         {
+        }
+
+        internal ScalarPropertyCodeModel(string name, ColumnModel columnModel)
+            :base(name)
+        {
+            this.columnModel = columnModel;
         }
 
         

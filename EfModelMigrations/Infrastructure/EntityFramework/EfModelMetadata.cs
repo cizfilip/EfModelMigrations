@@ -10,32 +10,98 @@ using System.Data.Entity;
 using System.Data.Common;
 using System.Data.Entity.Core.EntityClient;
 using System;
+using System.Collections.ObjectModel;
+using System.Collections.Generic;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
-    public class EfModelMetadata
+    public sealed class EfModelMetadata
     {
-        private EfModelMetadata () { }
+        public static readonly PrimitiveTypeKind[] ValidIdentityTypes =
+        {
+            PrimitiveTypeKind.Byte,
+            PrimitiveTypeKind.Decimal,
+            PrimitiveTypeKind.Guid,
+            PrimitiveTypeKind.Int16,
+            PrimitiveTypeKind.Int32,
+            PrimitiveTypeKind.Int64
+        };
 
-        public EdmItemCollection EdmItemCollection { get; set; }
-        public StoreItemCollection StoreItemCollection { get; set; }
-        public EntityContainerMapping EntityContainerMapping { get; set; }
-        public EntityContainer StoreEntityContainer { get; set; }
-        public DbProviderManifest ProviderManifest { get; set; }
-        public DbProviderInfo ProviderInfo { get; set; }
+        private EfModelMetadata() { }
 
+        public EdmItemCollection EdmItemCollection { get; private set; }
+        public StoreItemCollection StoreItemCollection { get; private set; }
+        public StorageMappingItemCollection StorageMappingItemCollection { get; private set; }
+        public DbProviderManifest ProviderManifest { get; private set; }
+        public DbProviderInfo ProviderInfo { get; private set; }
 
+        private EntityContainerMapping entityContainerMapping;
+        public EntityContainerMapping EntityContainerMapping
+        {
+            get
+            {
+                if (entityContainerMapping == null)
+                {
+                    entityContainerMapping = StorageMappingItemCollection.GetItems<EntityContainerMapping>().Single();
+                }
+
+                return entityContainerMapping;
+            }
+        }
+
+        private IEnumerable<EntityTypeMapping> entityTypeMappings;
+        public IEnumerable<EntityTypeMapping> EntityTypeMappings
+        {
+            get
+            {
+                if (entityTypeMappings == null)
+                {
+                    entityTypeMappings = EntityContainerMapping
+                        .EntitySetMappings
+                        .SelectMany(m => m.EntityTypeMappings);
+                }
+
+                return entityTypeMappings;
+            }
+        }
+
+        //TODO: upravit EdmxNames tak abych ho ideálně mohl z projektu úplně vypustit - jelikož z něho využívám jen to co je v této metodě
         public static EfModelMetadata Load(string edmx)
         {
-            var metadata = XDocument.Parse(edmx).LoadEfModelMetadata();
+            var model = XDocument.Parse(edmx);
+
+            var edmItemCollection
+                = new EdmItemCollection(
+                    new[]
+                        {
+                            model.Descendants(EdmXNames.Csdl.SchemaNames).Single().CreateReader()
+                        });
+
+            var ssdlSchemaElement = model.Descendants(EdmXNames.Ssdl.SchemaNames).Single();
+
+            var providerInfo = new DbProviderInfo(
+                ssdlSchemaElement.ProviderAttribute(),
+                ssdlSchemaElement.ProviderManifestTokenAttribute());
+
+            var storeItemCollection
+                = new StoreItemCollection(
+                    new[]
+                        {
+                            ssdlSchemaElement.CreateReader()
+                        });
+
+            var storageMappingItemCollection = new StorageMappingItemCollection(
+                edmItemCollection,
+                storeItemCollection,
+                new[] { new XElement(model.Descendants(EdmXNames.Msl.MappingNames).Single()).CreateReader() });
+
             return new EfModelMetadata()
             {
-                EdmItemCollection = metadata.Item1,
-                StoreItemCollection = metadata.Item2,
-                StoreEntityContainer = metadata.Item2.GetItems<EntityContainer>().Single(),
-                EntityContainerMapping = metadata.Item3.GetItems<EntityContainerMapping>().Single(),
-                ProviderManifest = GetProviderManifest(metadata.Item4),
-                ProviderInfo = metadata.Item4
+                EdmItemCollection = edmItemCollection,
+                StoreItemCollection = storeItemCollection,
+                StorageMappingItemCollection = storageMappingItemCollection,
+                ProviderManifest = GetProviderManifest(providerInfo),
+                ProviderInfo = providerInfo
             };
         }
 

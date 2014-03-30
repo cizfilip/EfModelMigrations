@@ -21,29 +21,32 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private ModelMigrationsConfigurationBase configuration;
         private CodeClassFinder classFinder;
         private VsCodeClassToClassCodeModelMapper mapper;
-        private EfModelMetadata metadata;
+        private EfModel efModel;
 
         public VsClassModelProvider(Project modelProject, ModelMigrationsConfigurationBase configuration, string edmxModel)
         {
             this.modelProject = modelProject;
             this.configuration = configuration;
             this.classFinder = new CodeClassFinder(modelProject);
-            this.metadata = EfModelMetadata.Load(edmxModel);
-            this.mapper = new VsCodeClassToClassCodeModelMapper(configuration.GeneratorDefaults, metadata);
+            this.efModel = new EfModel(edmxModel);
+            this.mapper = new VsCodeClassToClassCodeModelMapper(configuration.GeneratorDefaults, efModel);
         }
 
         public ClassCodeModel GetClassCodeModel(string className)
         {
+            Check.NotEmpty(className, "className");
+
             CodeClass2 codeClass = classFinder.FindCodeClass(configuration.ModelNamespace, className);
 
-            var entityType = metadata.EdmItemCollection.GetItems<EntityType>().SingleOrDefault(e => e.Name.EqualsOrdinal(className));
-            if(entityType == null)
+            try
             {
-                throw new ModelMigrationsException(string.Format("Cannot find class {0} in ef model.", className)); //TODO: string do resourcu
+                var entityType = efModel.GetEntityTypeForClass(className);
+                return mapper.MapToClassCodeModel(codeClass, entityType);
             }
-            
-
-            return mapper.MapToClassCodeModel(codeClass, entityType);
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(string.Format(Resources.CannotFindClassInModelProject, className), e);
+            }
         }
         
     }
