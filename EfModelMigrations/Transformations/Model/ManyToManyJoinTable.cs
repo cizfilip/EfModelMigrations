@@ -16,6 +16,11 @@ namespace EfModelMigrations.Transformations.Model
 
         public ManyToManyJoinTable(string tableName, string[] sourceForeignKeyColumns, string[] targetForeignKeyColumns)
         {
+            Check.NotEmpty(tableName, "tableName");
+            Check.NotNull(sourceForeignKeyColumns, "sourceForeignKeyColumns");
+            Check.NotNull(targetForeignKeyColumns, "targetForeignKeyColumns");
+
+            this.TableName = tableName;
             this.SourceForeignKeyColumns = sourceForeignKeyColumns;
             this.TargetForeignKeyColumns = targetForeignKeyColumns;
         }

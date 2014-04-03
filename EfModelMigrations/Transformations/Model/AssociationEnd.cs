@@ -9,8 +9,18 @@ namespace EfModelMigrations.Transformations.Model
         public NavigationPropertyCodeModel NavigationProperty { get; private set; }
         public RelationshipMultiplicity Multipticity { get; private set; }
 
+        public bool HasNavigationProperty
+        {
+            get
+            {
+                return NavigationProperty != null;
+            }
+        }
+
         public AssociationEnd(string className, RelationshipMultiplicity multipticity, NavigationPropertyCodeModel navigationProperty)
         {
+            Check.NotEmpty(className, "className");
+
             this.ClassName = className;
             this.NavigationProperty = navigationProperty;
             this.Multipticity = multipticity;
@@ -25,7 +35,7 @@ namespace EfModelMigrations.Transformations.Model
         {
             return new SimpleAssociationEnd(
                 ClassName,
-                NavigationProperty != null ? NavigationProperty.Name : null
+                HasNavigationProperty ? NavigationProperty.Name : null
                 );
         }
     }

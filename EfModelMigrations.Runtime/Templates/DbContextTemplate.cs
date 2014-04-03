@@ -26,30 +26,32 @@ namespace EfModelMigrations.Runtime.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("using System;\r\nusing System.Data.Entity;\r\nusing System.Linq;\r\n\r\nnamespace ");
+            this.Write("using System;\r\nusing System.Data.Entity;\r\nusing System.Linq;\r\nusing System.Data.E" +
+                    "ntity.Infrastructure.Annotations; //For indexes mapping\r\nusing System.ComponentM" +
+                    "odel.DataAnnotations.Schema; //For indexes mapping\r\n\r\nnamespace ");
             
-            #line 8 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
+            #line 10 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Namespace));
             
             #line default
             #line hidden
             this.Write("\r\n{\r\n    public class ");
             
-            #line 10 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
+            #line 12 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ContextName));
             
             #line default
             #line hidden
             this.Write(" : DbContext\r\n    {\r\n        static ");
             
-            #line 12 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
+            #line 14 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ContextName));
             
             #line default
             #line hidden
             this.Write("()\r\n        {\r\n            Database.SetInitializer<");
             
-            #line 14 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
+            #line 16 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ContextName));
             
             #line default

@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.Data.Entity.Migrations.Builders;
 using System.Data.Entity.Migrations.Infrastructure;
+using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,12 +17,12 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
         public static IdentityOperationWrapper AddIdentity(
                 this DbMigration migration,
                 string principalTable,
-                string principalColumn)
+                Func<ColumnBuilder, ColumnModel> principalColumnAction)
         {
             var operation = new AddIdentityOperation
             {
                 PrincipalTable = principalTable,
-                PrincipalColumn = principalColumn,
+                PrincipalColumn = principalColumnAction(new ColumnBuilder())
             };
 
             ((IDbMigration)migration).AddOperation(operation);
@@ -31,12 +33,12 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
         public static IdentityOperationWrapper DropIdentity(
                 this DbMigration migration,
                 string principalTable,
-                string principalColumn)
+                Func<ColumnBuilder, ColumnModel> principalColumnAction)
         {
             var operation = new DropIdentityOperation
             {
                 PrincipalTable = principalTable,
-                PrincipalColumn = principalColumn,
+                PrincipalColumn = principalColumnAction(new ColumnBuilder())
             };
 
             ((IDbMigration)migration).AddOperation(operation);

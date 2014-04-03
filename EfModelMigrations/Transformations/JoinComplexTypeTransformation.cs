@@ -19,6 +19,9 @@ namespace EfModelMigrations.Transformations
         public JoinComplexTypeTransformation(string complexTypeName, string className, ModelTransformation inverse)
             : base(inverse)
         {
+            Check.NotEmpty(complexTypeName, "complexTypeName");
+            Check.NotEmpty(className, "className");
+
             this.ClassName = className;
             this.ComplexTypeName = complexTypeName;
         }
@@ -51,7 +54,8 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.RenameColumnOperationsForJoinComplexType(ComplexTypeName, ClassName);
+            throw new NotImplementedException();
+            //return builder.RenameColumnOperationsForJoinComplexType(ComplexTypeName, ClassName);
         }
 
         public override bool IsDestructiveChange

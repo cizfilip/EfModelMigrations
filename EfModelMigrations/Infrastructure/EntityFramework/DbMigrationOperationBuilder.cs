@@ -1,411 +1,213 @@
-﻿using EfModelMigrations.Infrastructure.CodeModel;
-using EfModelMigrations.Extensions;
-using EfModelMigrations.Infrastructure.EntityFramework.Edmx;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Data.Entity.Core.Metadata.Edm;
-using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.Entity.Core.Common;
-using System.Xml.Linq;
+using EfModelMigrations.Extensions;
+using EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions;
+using System.ComponentModel.DataAnnotations.Schema;
 using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
-using EfModelMigrations.Exceptions;
+
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
-    //TODO: az prestanu tuhle tridu pouzivat tak zaroven odstranit z projektu DbMigrationBuilderException
-    //TODO: handlovat dobre vyjimky, poresit problem kdyz je migrace slozena s takovych transformaci ktere nam zabrani v mapovani (napr. CreateClass a RemoveClass te same tridy v jedne migraci)
     public class DbMigrationOperationBuilder : IDbMigrationOperationBuilder
     {
-        private string modelNamespace;
-        private XDocument oldModel;
-        private XDocument newModel;
+        public EfModel OldModel { get; private set; }
+        public EfModel NewModel { get; private set; }
 
-        public DbMigrationOperationBuilder(string modelNamespace, string oldModel, string newModel)
+        public DbMigrationOperationBuilder(EfModel oldModel, EfModel newModel)
         {
-            this.modelNamespace = modelNamespace;
-            this.oldModel = XDocument.Parse(oldModel);
-            this.newModel = XDocument.Parse(newModel);
+            this.OldModel = oldModel;
+            this.NewModel = newModel;
         }
 
-        #region IDbMigrationOperationBuilder implementation
-
-        //TODO: Co kdyz ma vytvarena trida nejake vazby?? - Momentalne neni podporovano - a ani nebude ale musi se validovat ze zadne vazby nevzniknou
-        public CreateTableOperation CreateTableOperation(string className)
+        public CreateTableOperation CreateTableOperation(EntitySet storageEntitySet)
         {
-            return CreateTableOperationInternal(newModel, GetFullClassName(className));
-        }
-
-        public DropTableOperation DropTableOperation(string className)
-        {
-            string classFullName = GetFullClassName(className);
-
-            string tableName = oldModel.GetTableName(classFullName);
-
-            var inverseOperation = CreateTableOperationInternal(oldModel, classFullName);
-            var dropTableOperation = new DropTableOperation(tableName, inverseOperation);
-
-            return dropTableOperation;
-        }
-
-        public AddColumnOperation AddColumnOperation(string className, string propertyName)
-        {
-            return AddColumnOperationInternal(newModel, GetFullClassName(className), propertyName);
-        }
-
-        public DropColumnOperation DropColumnOperation(string className, string propertyName)
-        {
-            string classFullName = GetFullClassName(className);
-
-            string tableName = oldModel.GetTableName(classFullName);
-
-            string columnName = oldModel.GetColumnName(classFullName, propertyName);
-
-            var inverseOperation = AddColumnOperationInternal(oldModel, classFullName, propertyName);
-            var dropColumnOperation = new DropColumnOperation(tableName, columnName, inverseOperation);
-
-            return dropColumnOperation;
-        }
-
-        public RenameTableOperation RenameTableOperation(string oldClassName, string newClassName)
-        {
-            string oldTableName = oldModel.GetTableName(GetFullClassName(oldClassName));
-
-            string newTableName = newModel.GetTableNameWithoutSchema(GetFullClassName(newClassName));
-
-            //oldTableName is with schema, newName is NOT
-            var renameTableOperation = new RenameTableOperation(oldTableName, newTableName);
-
-            return renameTableOperation;
-        }
-
-        public RenameColumnOperation RenameColumnOperation(string className, string oldPropertyName, string newPropertyName)
-        {
-            string classFullName = GetFullClassName(className);
-
-            string tableName = newModel.GetTableName(classFullName);
-
-            string oldColumnName = oldModel.GetColumnName(classFullName, oldPropertyName);
-
-            string newColumnName = newModel.GetColumnName(classFullName, newPropertyName);
-
-            var renameColumnOperation = new RenameColumnOperation(tableName, oldColumnName, newColumnName);
-
-            return renameColumnOperation;
-        }
-
-
-        //TODO: predelat tak aby se nemuselo vracet vic operaci
-        public IEnumerable<RenameColumnOperation> RenameColumnOperationsForJoinComplexType(string complexTypeName, string className)
-        {
-            string tableName = newModel.GetTableName(GetFullClassName(className));
-
-            foreach (var property in oldModel.GetComplexTypeProperties(complexTypeName))
-            {
-                yield return RenameColumnOperation(className, property, property);
-            }
-        }
-
-
-
-        //1:1, 1:0, 0:1
-        //TODO: stringy do resourcu
-        public IEnumerable<MigrationOperation> OneToOnePrimaryKeyRelationOperations(string principalClassName, string dependentClassName, bool? willCascadeOnDelete)
-        {
-            string principalClassFullName = GetFullClassName(principalClassName);
-            string dependentClassFullName = GetFullClassName(dependentClassName);
-
-            string principalTableName = newModel.GetTableName(principalClassFullName);
-            string dependentTableName = newModel.GetTableName(dependentClassFullName);
-
-
-            var principalPrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(principalClassFullName).ToArray();
-            var dependentPrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(dependentClassFullName).ToArray();
-
-            //Primary keys validation
-            if(principalPrimaryKeyColumnsNames.Length != dependentPrimaryKeyColumnsNames.Length) //Same count
-            {
-                throw new DbMigrationBuilderException(string.Format("Cannot create One to One relation between {0} and {1}, because they does not have same count of primary key columns", principalClassName, dependentClassName));
-            }
-
-            //same storage types
-            if(!principalPrimaryKeyColumnsNames.Select(k => newModel.GetColumnStorageType(principalTableName, k))
-                .SequenceEqual(dependentPrimaryKeyColumnsNames.Select(k => newModel.GetColumnStorageType(dependentTableName, k))))
-            {
-                throw new DbMigrationBuilderException(string.Format("Cannot create One to One relation between {0} and {1}, because their primary keys do not have same storage types", principalClassName, dependentClassName));
-            }
-
-            //Drop Identity operations
-            if (dependentPrimaryKeyColumnsNames.Where(c => oldModel.IsColumnIdentity(c, dependentTableName)).Any())
-            {
-                //Validace pokud je treba dropovat identitu:
-                //  1 - jen pokud jsou primarni klice jednoduche (nepodporuji zatim slozene klice ve vazbe)
-                //  2 - jen pokud jsou oba klice typu int
-                //  oboji plyne z toho ze neumim dropovat identitu pokud vyse uvedene neni splneno
-
-                if(dependentPrimaryKeyColumnsNames.Length != 1)
-                {
-                    throw new DbMigrationBuilderException(string.Format("Cannot create One to One relation between {0} and {1}, because composite key is used and that is not suported yet.", principalClassName, dependentClassName));
-                }
-
-                var dependentPrimaryKeyColumnName = newModel.GetTableKeyColumnNamesForClass(dependentClassFullName).Single();
-                if (newModel.GetColumnStorageType(dependentTableName, dependentPrimaryKeyColumnName) != "int")
-                {
-                    throw new DbMigrationBuilderException("Cannot create One to One relation between {0} and {1}, because primary keys are not int type. Only int primary keys are supported.");
-                }
-
-                var dropIdentityOperation = new DropIdentityOperation()
-                {
-                    PrincipalColumn = dependentPrimaryKeyColumnName,
-                    PrincipalTable = dependentTableName
-                };
-
-                //TODO: pomoci ef metadat se tohle da nejspise krasne delat pomoci ForeignKeyDependents property na EntitySet :)
-                foreach (var dependentColumn in newModel.GetDependentColumns(dependentTableName, dependentPrimaryKeyColumnName))
-                {
-                    dropIdentityOperation.DependentColumns.Add(new DependentColumn()
-                    {
-                        DependentTable = dependentColumn.Item1,
-                        ForeignKeyColumn = dependentColumn.Item2
-                    });
-
-                }
-
-                yield return dropIdentityOperation;
-
-            }
-
-            //CreateIndex operation
-            yield return CreateIndexOperation(dependentTableName, dependentPrimaryKeyColumnsNames);
-
-            //AddForeignKeyOperation
-            yield return AddForeignKeyOperation(principalTableName, dependentTableName, principalPrimaryKeyColumnsNames, dependentPrimaryKeyColumnsNames, willCascadeOnDelete);
-        }
-
-        public IEnumerable<MigrationOperation> OneToOneForeignKeyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool? willCascadeOnDelete)
-        {
-            return RelationWithForeignKeysOperations(principalClassName, dependentClassName, isDependentRequired, foreignKeyColumnNames, willCascadeOnDelete, true);
-        }
-
-
-        public IEnumerable<MigrationOperation> OneToManyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool? willCascadeOnDelete)
-        {
-            return RelationWithForeignKeysOperations(principalClassName, dependentClassName, isDependentRequired, foreignKeyColumnNames, willCascadeOnDelete, false);
-        }
-
-        public IEnumerable<MigrationOperation> ManyToManyRelationOperations(string principalClassName, string dependentClassName, string tableName, string[] leftKeyColumnNames, string[] rightKeyColumnNames)
-        {
-            string principalClassFullName = GetFullClassName(principalClassName);
-            string dependentClassFullName = GetFullClassName(dependentClassName);
-
-            string principalTableName = newModel.GetTableName(principalClassFullName);
-            string dependentTableName = newModel.GetTableName(dependentClassFullName);
-
-            var principalPrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(principalClassFullName).ToArray();
-            var dependentPrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(dependentClassFullName).ToArray();
-
-            //Validation of principal pk and supplied fk names
-            if (principalPrimaryKeyColumnsNames.Length != leftKeyColumnNames.Length)
-            {
-                throw new DbMigrationBuilderException(string.Format("Cannot create many to many relation between {0} and {1}, because count of supplied principal foreign keys is not same as principal primary keys count.", principalClassName, dependentClassName));
-            }
-            if (dependentPrimaryKeyColumnsNames.Length != rightKeyColumnNames.Length)
-            {
-                throw new DbMigrationBuilderException(string.Format("Cannot create many to many relation between {0} and {1}, because count of supplied dependent foreign keys is not same as dependent primary keys count.", principalClassName, dependentClassName));
-            }
-
-            string fullTableName = newModel.GetTableFullNameForTable(tableName);
-            var joinTableColumnNames = leftKeyColumnNames.Concat(rightKeyColumnNames).ToArray();
-
-            // create join table operation
-            var createTableOperation = new CreateTableOperation(fullTableName);
-            foreach (var column in joinTableColumnNames)
-            {
-                var columnModel = newModel.GetColumnModel(fullTableName, column);
-                createTableOperation.Columns.Add(columnModel);
-            }
-            var addPrimaryKeyOperation = new AddPrimaryKeyOperation();
-            joinTableColumnNames.Each(c => addPrimaryKeyOperation.Columns.Add(c));
-
-            createTableOperation.PrimaryKey = addPrimaryKeyOperation;
-            yield return createTableOperation;
-
-            //indexes
-            yield return CreateIndexOperation(fullTableName, leftKeyColumnNames);
-            yield return CreateIndexOperation(fullTableName, rightKeyColumnNames);
-
-            //foreign keys
-            yield return AddForeignKeyOperation(principalTableName, fullTableName, principalPrimaryKeyColumnsNames, leftKeyColumnNames, true);
-            yield return AddForeignKeyOperation(dependentTableName, fullTableName, dependentPrimaryKeyColumnsNames, rightKeyColumnNames, true);
-        }
-
-
-        public IEnumerable<MigrationOperation> ExtractTable(string fromClass, string newClass, string[] properties, string[] foreignKeyNames, bool willCascadeOnDelete)
-        {
-            yield return CreateTableOperationInternal(newModel, GetFullClassName(newClass));
-
-            var relationOperations = RelationWithForeignKeysOperations(fromClass, newClass, true, foreignKeyNames, willCascadeOnDelete, true, false);
-            foreach (var op in relationOperations)
-            {
-                yield return op;
-            }
-
-            yield return MoveDataOperation(fromClass, newClass, properties, foreignKeyNames);
-
-            foreach (var property in properties)
-            {
-                yield return DropColumnOperation(fromClass, property);
-            }
-        }
-
-        #endregion
-
-        #region Private methods
-
-        private MoveDataOperation MoveDataOperation(string fromClass, string toClass, string[] properties, string[] foreignKeyNames)
-        {
-            string fromClassFullName = GetFullClassName(fromClass);
-            string toClassFullName = GetFullClassName(toClass);
-
-            string fromTableName = newModel.GetTableName(fromClassFullName);
-            string toTableName = newModel.GetTableName(toClassFullName);
-
-            var fromTablePrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(fromClassFullName);
-            var fromColumnNames = properties.Select(p => oldModel.GetColumnName(fromClassFullName, p)); //from columns se musi brat ze stareho modelu - v novem uz nejsou
-            var fromColumns = fromTablePrimaryKeyColumnsNames.Concat(fromColumnNames).ToArray();
-
-            var fromModel = new MoveDataModel(fromTableName, fromColumns);
-
-            var toColumnNames = properties.Select(p => newModel.GetColumnName(toClassFullName, p));
-            var toColumns = foreignKeyNames.Concat(toColumnNames).ToArray();
-
-            var toModel = new MoveDataModel(toTableName, toColumns);
-
-            var operation = new MoveDataOperation();
-            operation.From = fromModel;
-            operation.To = toModel;
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+
+            var operation = new CreateTableOperation(storageEntitySet.FullTableName());
+
+            //add columns
+            var providerManifest = NewModel.Metadata.ProviderManifest;
+            operation.Columns.AddRange(
+                    storageEntitySet.ElementType.Properties.Select(p => p.ToColumnModel(providerManifest))
+                );
+
+            // add primary keys
+            var addPrimaryKeyOp = new AddPrimaryKeyOperation();
+            addPrimaryKeyOp.Columns.AddRange(
+                    storageEntitySet.ElementType.KeyProperties.Select(k => k.Name)
+                );
+
+            operation.PrimaryKey = addPrimaryKeyOp;
 
             return operation;
         }
 
-        private IEnumerable<MigrationOperation> RelationWithForeignKeysOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool? willCascadeOnDelete, bool isIndexUnique, bool includeAddColumnsForForeignKey = true)
+        public DropTableOperation DropTableOperation(EntitySet storageEntitySet)
         {
-            string principalClassFullName = GetFullClassName(principalClassName);
-            string dependentClassFullName = GetFullClassName(dependentClassName);
+            Check.NotNull(storageEntitySet, "storageEntitySet");
 
-            string principalTableName = newModel.GetTableName(principalClassFullName);
-            string dependentTableName = newModel.GetTableName(dependentClassFullName);
+            var inverse = CreateTableOperation(storageEntitySet);
 
-            var principalPrimaryKeyColumnsNames = newModel.GetTableKeyColumnNamesForClass(principalClassFullName).ToArray();
+            return new DropTableOperation(storageEntitySet.FullTableName(), inverse);
+        }
 
-            //Validation of principal pk and supplied fk names
-            if (principalPrimaryKeyColumnsNames.Length != foreignKeyColumnNames.Length)
+        public AddColumnOperation AddColumnOperation(EntitySet storageEntitySet, EdmProperty column)
+        {
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+            Check.NotNull(column, "column");
+
+            var columnModel = column.ToColumnModel(NewModel.Metadata.ProviderManifest);
+
+            return new AddColumnOperation(storageEntitySet.FullTableName(), columnModel);
+        }
+
+        public DropColumnOperation DropColumnOperation(EntitySet storageEntitySet, EdmProperty column)
+        {
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+            Check.NotNull(column, "columnName");
+
+            var inverse = AddColumnOperation(storageEntitySet, column);
+
+            return new DropColumnOperation(storageEntitySet.FullTableName(), column.Name, inverse);
+        }
+
+        public RenameTableOperation RenameTableOperation(EntitySet oldStorageEntitySet, EntitySet newStorageEntitySet)
+        {
+            Check.NotNull(oldStorageEntitySet, "oldStorageEntitySet");
+            Check.NotNull(newStorageEntitySet, "newStorageEntitySet");
+
+            //oldTableName is with schema, newName is NOT
+            return new RenameTableOperation(oldStorageEntitySet.FullTableName(), newStorageEntitySet.Table);
+        }
+
+        public RenameColumnOperation RenameColumnOperation(EntitySet storageEntitySet, EdmProperty oldColumn, EdmProperty newColumn)
+        {
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+            Check.NotNull(oldColumn, "oldColumn");
+            Check.NotNull(newColumn, "newColumn");
+
+            return new RenameColumnOperation(storageEntitySet.FullTableName(), oldColumn.Name, newColumn.Name);
+        }
+
+
+        public AddForeignKeyOperation AddForeignKeyOperation(ReferentialConstraint referentialConstraint)
+        {
+            Check.NotNull(referentialConstraint, "referentialConstraint");
+
+            var operation = new AddForeignKeyOperation();
+            BuildForeignKeyOperation(operation, referentialConstraint, NewModel);
+
+            operation.PrincipalColumns.AddRange(
+                    referentialConstraint.FromProperties.Select(p => p.Name)
+                );
+
+            operation.CascadeDelete = referentialConstraint.FromRole.DeleteBehavior == OperationAction.Cascade;
+
+            return operation;
+        }
+
+        public DropForeignKeyOperation DropForeignKeyOperation(ReferentialConstraint referentialConstraint)
+        {
+            Check.NotNull(referentialConstraint, "referentialConstraint");
+
+            var inverse = AddForeignKeyOperation(referentialConstraint);
+            var operation = new DropForeignKeyOperation(inverse);
+
+            BuildForeignKeyOperation(operation, referentialConstraint, OldModel);
+
+            return operation;
+        }
+
+        public CreateIndexOperation TryBuildCreateIndexOperation(EntitySet storageEntitySet, IEnumerable<EdmProperty> columns)
+        {
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+            Check.NotNullOrEmpty(columns, "columns");
+
+            ConsolidatedIndex index;
+            if (ForeignKeyIndexBuilder.TryBuild(storageEntitySet.FullTableName(), columns, out index))
             {
-                throw new DbMigrationBuilderException(string.Format("Cannot create relation between {0} and {1}, because count of supplied foreign keys is not same as principal primary keys count.", principalClassName, dependentClassName));
+                return index.CreateCreateIndexOperation();
+            }
+            return null;
+        }
+
+        public DropIndexOperation TryBuildDropIndexOperation(EntitySet storageEntitySet, IEnumerable<EdmProperty> columns)
+        {
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+            Check.NotNullOrEmpty(columns, "columns");
+
+            ConsolidatedIndex index;
+            if (ForeignKeyIndexBuilder.TryBuild(storageEntitySet.FullTableName(), columns, out index))
+            {
+                return index.CreateDropIndexOperation();
+            }
+            return null;
+        }
+
+
+        public AddIdentityOperation TryBuildAddIdentityOperation(EntitySet storageEntitySet)
+        {
+            return TryBuildIdentityOperation(storageEntitySet, NewModel, () => new AddIdentityOperation());
+        }
+
+        public DropIdentityOperation TryBuildDropIdentityOperation(EntitySet storageEntitySet)
+        {
+            return TryBuildIdentityOperation(storageEntitySet, OldModel, () => new DropIdentityOperation());
+        }
+
+        private T TryBuildIdentityOperation<T>(EntitySet storageEntitySet, EfModel model, Func<T> operationFactory) where T : IdentityOperation
+        {
+            var primaryKeys = storageEntitySet.ElementType.KeyProperties;
+            if (primaryKeys.Any(p => p.IsStoreGeneratedIdentity) && primaryKeys.Count <= 1)
+            {
+                var principalPk = primaryKeys.Single();
+
+                var dependentColumns = model.GetAssociationSetsForEntitySet(storageEntitySet)
+                    .Where(a => a.ElementType.Constraint.FromRole.GetEntityType() == storageEntitySet.ElementType)
+                    .Select(a => new DependentColumn()
+                    {
+                        DependentTable = a.AssociationSetEnds.ElementAt(1).EntitySet.FullTableName(),
+                        ForeignKeyColumn = a.ElementType.Constraint.ToProperties.Single().Name
+                    }
+                    );
+
+                var operation = operationFactory();
+                
+                operation.PrincipalTable = storageEntitySet.FullTableName();
+                operation.PrincipalColumn = principalPk.ToColumnModel(model.Metadata.ProviderManifest);
+                operation.DependentColumns.AddRange(dependentColumns);
+
+                return operation;
             }
 
-            //Add foreign key columns
-            if (includeAddColumnsForForeignKey)
-            {
-                for (int i = 0; i < foreignKeyColumnNames.Length; i++)
-                {
-                    var columnModel = newModel.GetColumnModel(principalTableName, principalPrimaryKeyColumnsNames[i]);
-                    columnModel.Name = foreignKeyColumnNames[i];
-                    columnModel.IsNullable = !isDependentRequired;
-
-                    yield return new AddColumnOperation(dependentTableName, columnModel);
-                }
-            }
-
-            //CreateIndex operation
-            yield return CreateIndexOperation(dependentTableName, foreignKeyColumnNames, isIndexUnique);
-
-            //AddForeignKeyOperation
-            yield return AddForeignKeyOperation(principalTableName, dependentTableName, principalPrimaryKeyColumnsNames, foreignKeyColumnNames, willCascadeOnDelete);
+            return null;
         }
 
-        private CreateTableOperation CreateTableOperationInternal(XDocument edmx, string classFullName)
+        private void BuildForeignKeyOperation(ForeignKeyOperation operation, ReferentialConstraint referentialConstraint, EfModel model)
         {
-            //get table name
-            string tableName = edmx.GetTableName(classFullName);
-            CreateTableOperation createTableOperation = new CreateTableOperation(tableName);
+            operation.PrincipalTable = model.Metadata.StoreEntityContainer.EntitySets
+                .Single(es => es.ElementType == referentialConstraint.FromRole.GetEntityType())
+                .FullTableName();
 
-            //map properties to colums 
-            edmx.GetColumnModelsForClass(classFullName)
-                .Each(c => createTableOperation.Columns.Add(c));
+            operation.DependentTable = model.Metadata.StoreEntityContainer.EntitySets
+                .Single(es => es.ElementType == referentialConstraint.ToRole.GetEntityType())
+                .FullTableName();
 
-            //add primary keys
-            var addPrimaryKeyOperation = new AddPrimaryKeyOperation();
-            edmx.GetTableKeyColumnNamesForClass(classFullName)
-                .Each(k => addPrimaryKeyOperation.Columns.Add(k));
-
-            createTableOperation.PrimaryKey = addPrimaryKeyOperation;
-
-            return createTableOperation;
-        }
-
-        private AddColumnOperation AddColumnOperationInternal(XDocument edmx, string classFullName, string propertyName)
-        {
-            string tableName = edmx.GetTableName(classFullName);
-
-            string columnName = edmx.GetColumnName(classFullName, propertyName);
-
-            var columnModel = edmx.GetColumnModelsForClass(classFullName)
-                .Single(c => c.Name.EqualsOrdinalIgnoreCase(columnName));
-
-            var addColumnOperation = new AddColumnOperation(tableName, columnModel);
-
-            return addColumnOperation;
-        }
-
-        private CreateIndexOperation CreateIndexOperation(string tableName, string[] columns, bool isUnique = false)
-        {
-            var createIndexOperation = new CreateIndexOperation()
-            {
-                Table = tableName,
-                IsUnique = isUnique,
-                IsClustered = false,
-                Name = null
-            };
-            columns.Each(c => createIndexOperation.Columns.Add(c));
-            return createIndexOperation;
-        }
-
-        private AddForeignKeyOperation AddForeignKeyOperation(string principalTable, string dependentTable, string[] principalColumns, string[] dependentColumns, bool? cascadeOnDelete)
-        {
-            var addForeignKeyOperation = new AddForeignKeyOperation()
-            {
-                CascadeDelete = cascadeOnDelete.HasValue ? cascadeOnDelete.Value : false,
-                Name = null,
-                PrincipalTable = principalTable,
-                DependentTable = dependentTable
-            };
-
-            principalColumns.Each(c => addForeignKeyOperation.PrincipalColumns.Add(c));
-
-            dependentColumns.Each(c => addForeignKeyOperation.DependentColumns.Add(c));
-
-            return addForeignKeyOperation;
+            operation.DependentColumns.AddRange(
+                    referentialConstraint.ToProperties.Select(p => p.Name)
+                );
         }
 
 
-        private string GetFullClassName(string className)
-        {
-            return modelNamespace + "." + className;
-        }
-
-        #endregion
 
 
 
 
 
-
-
-        
     }
 }

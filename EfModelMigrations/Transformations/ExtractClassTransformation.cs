@@ -27,6 +27,11 @@ namespace EfModelMigrations.Transformations
 
         public ExtractClassTransformation(string fromClass, string[] properties, string newClass, string[] foreignKeyColumns)
         {
+            Check.NotEmpty(fromClass, "fromClass");
+            Check.NotNullOrEmpty(properties, "properties");
+            Check.NotEmpty(newClass, "newClass");
+            Check.NotNullOrEmpty(foreignKeyColumns, "foreignKeyColumns");
+
             this.FromClass = fromClass;
             this.Properties = properties;
             this.NewClass = newClass;
@@ -54,7 +59,8 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.ExtractTable(FromClass, NewClass, Properties, ForeignKeyColumns, true);
+            throw new NotImplementedException();
+            //return builder.ExtractTable(FromClass, NewClass, Properties, ForeignKeyColumns, true);
         }
 
 

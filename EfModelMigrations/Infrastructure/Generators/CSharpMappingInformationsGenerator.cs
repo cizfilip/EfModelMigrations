@@ -6,6 +6,7 @@ using EfModelMigrations.Transformations;
 using Microsoft.CSharp.RuntimeBinder;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -173,6 +174,96 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
         }
 
+        protected virtual void GenerateParameter(IndexAnnotationParameter parameter, StringBuilder sb)
+        {
+            sb.Append("new")
+                .Append(GetWhiteSpace())
+                .Append("IndexAnnotation")
+                .Append(GetSyntaxToken(CSharpTokenType.ParameterListStart));
+
+            var indexAttributes = parameter.Indexes;
+
+            if(indexAttributes.Length == 1)
+            {
+                GenerateIndexAttribute(indexAttributes[0], sb);
+            }
+            else
+            {
+                sb.Append("new")
+                    .Append(GetSyntaxToken(CSharpTokenType.IndexerStart))
+                    .Append(GetSyntaxToken(CSharpTokenType.IndexerEnd));
+
+                AppendIndentedNewLine(sb, 2);
+                sb.Append(GetSyntaxToken(CSharpTokenType.BlockStart));
+                foreach (var indexAttribute in indexAttributes)
+                {
+                    AppendIndentedNewLine(sb, 3);
+                    GenerateIndexAttribute(indexAttribute, sb);
+                    sb.Append(GetSyntaxToken(CSharpTokenType.StatementSeparator));
+                }
+                AppendIndentedNewLine(sb);
+                sb.Append(GetSyntaxToken(CSharpTokenType.BlockEnd));
+            }
+
+            sb.Append(GetSyntaxToken(CSharpTokenType.ParameterListEnd));
+        }
+
+        protected virtual void GenerateIndexAttribute(IndexAttribute indexAttribute, StringBuilder sb)
+        {
+            sb.Append("new")
+                .Append(GetWhiteSpace())
+                .Append("IndexAttribute")
+                .Append(GetSyntaxToken(CSharpTokenType.ParameterListStart));
+
+            bool includeComma = false;
+            if(!string.IsNullOrEmpty(indexAttribute.Name))
+            {
+                sb.Append("\"")
+                    .Append(indexAttribute.Name)
+                    .Append("\"");
+                includeComma = true;
+            }
+            if(indexAttribute.Order >= 0)
+            {
+                if (includeComma)
+                    sb.Append(ParameterSeparatorWithWhitespace());
+
+                sb.Append(indexAttribute.Order);
+            }
+            sb.Append(GetSyntaxToken(CSharpTokenType.ParameterListEnd));
+
+            includeComma = false;
+            if(indexAttribute.IsUniqueConfigured || indexAttribute.IsClusteredConfigured)
+            {
+                sb.Append(GetWhiteSpace())
+                    .Append(GetSyntaxToken(CSharpTokenType.BlockStart))
+                    .Append(GetWhiteSpace());
+
+                if(indexAttribute.IsUniqueConfigured)
+                {
+                    sb.Append("IsUnique")
+                        .Append(GetWhiteSpace())
+                        .Append(GetSyntaxToken(CSharpTokenType.EqualSign))
+                        .Append(GetWhiteSpace())
+                        .Append(indexAttribute.IsUnique.ToString().ToLower());
+                }
+                if (indexAttribute.IsClusteredConfigured)
+                {
+                    if (includeComma)
+                        sb.Append(ParameterSeparatorWithWhitespace());
+
+                    sb.Append("IsClustered")
+                        .Append(GetWhiteSpace())
+                        .Append(GetSyntaxToken(CSharpTokenType.EqualSign))
+                        .Append(GetWhiteSpace())
+                        .Append(indexAttribute.IsClustered.ToString().ToLower());
+                }
+
+                sb.Append(GetWhiteSpace())
+                    .Append(GetSyntaxToken(CSharpTokenType.BlockEnd));
+            }
+        }
+
 
         protected virtual string GetLambdaParameterName(string className)
         {
@@ -213,6 +304,12 @@ namespace EfModelMigrations.Infrastructure.Generators
                     return ")";
                 case CSharpTokenType.ParameterSeparator:
                     return ",";
+                case CSharpTokenType.EqualSign:
+                    return "=";
+                case CSharpTokenType.IndexerStart:
+                    return "[";
+                case CSharpTokenType.IndexerEnd:
+                    return "]";
                 default:
                     throw new InvalidOperationException("Invalid CSharpTokenType."); //TODO: string do resourcu
             }
@@ -256,5 +353,8 @@ namespace EfModelMigrations.Infrastructure.Generators
         ParameterListStart,
         ParameterListEnd,
         ParameterSeparator,
+        EqualSign,
+        IndexerStart,
+        IndexerEnd
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations
 {
+    //TODO odstranit z projektu! az predelam extract 
     public class MovePropertyOperation : IModelChangeOperation
     {
         public string FromClassName { get; private set; }

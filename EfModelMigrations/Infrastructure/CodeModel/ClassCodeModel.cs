@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,7 +41,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
         public IEnumerable<ScalarPropertyCodeModel> PrimaryKeys { get; private set; }
 
-        
+        public EntityType StoreEntityType { get; internal set; }
     }
 
     

@@ -20,6 +20,8 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public EfFluetApiCall AddParameter(IEfFluentApiMethodParameter parameter)
         {
+            Check.NotNull(parameter, "parameter");
+
             Parameters.Add(parameter);
 
             return this;
@@ -27,6 +29,8 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public EfFluetApiCall AddParameters(IEnumerable<IEfFluentApiMethodParameter> parameters)
         {
+            Check.NotNull(parameters, "parameters");
+
             foreach (var param in parameters)
             {
                 Parameters.Add(param);

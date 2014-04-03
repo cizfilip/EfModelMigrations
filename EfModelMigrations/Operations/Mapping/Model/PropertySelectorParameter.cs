@@ -19,6 +19,9 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public PropertySelectorParameter(string className, string[] propertyNames)
         {
+            Check.NotEmpty(className, "className");
+            Check.NotNull(propertyNames, "propertyNames");
+
             this.ClassName = className;
             this.PropertyNames = propertyNames;
         }

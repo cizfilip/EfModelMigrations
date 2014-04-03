@@ -13,12 +13,16 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public EfFluentApiCallChain(string entityType)
         {
+            Check.NotEmpty(entityType, "entityType");
+
             this.EntityType = entityType;
             this.FluentApiCalls = new List<EfFluetApiCall>();
         }
 
         public EfFluentApiCallChain AddMethodCall(EfFluetApiCall methodCall)
         {
+            Check.NotNull(methodCall, "methodCall");
+
             FluentApiCalls.Add(methodCall);
 
             return this;

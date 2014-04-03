@@ -15,6 +15,9 @@ namespace EfModelMigrations.Operations
         
         public RemovePropertyFromClassOperation(string className, string name)
         {
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(name, "name");
+
             this.ClassName = className;
             this.Name = name;
         }

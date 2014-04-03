@@ -16,6 +16,9 @@ namespace EfModelMigrations.Transformations
         //TODO: Pridat ve vsech transformaci validace na parametry v konstruktoru - jako v commandech
         public CreateClassTransformation(string name, IEnumerable<ScalarPropertyCodeModel> properties)
         {
+            Check.NotEmpty(name, "name");
+            Check.NotNullOrEmpty(properties, "properties");
+
             this.Name = name;
             this.Properties = properties;
         }
@@ -34,7 +37,9 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            yield return builder.CreateTableOperation(Name);
+            yield return builder.CreateTableOperation(
+                    builder.NewModel.GetStoreEntitySetForClass(Name)
+                );
         }
         
         public override ModelTransformation Inverse()

@@ -12,6 +12,8 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public StringParameter(string value)
         {
+            Check.NotEmpty(value, "value");
+
             this.Value = value;
         }
     }

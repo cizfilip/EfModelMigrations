@@ -13,6 +13,8 @@ namespace EfModelMigrations.Transformations
             
         public RemoveClassTransformation(string name, ModelTransformation inverse) : base(inverse)
         {
+            Check.NotEmpty(name, "name");
+
             this.Name = name;
         }
 
@@ -32,7 +34,9 @@ namespace EfModelMigrations.Transformations
         //tak operaci provést jenom pokud byl predan parameter -Force
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            yield return builder.DropTableOperation(Name);
+            yield return builder.DropTableOperation(
+                    builder.OldModel.GetStoreEntitySetForClass(Name)
+                );
         }
 
         public override bool IsDestructiveChange

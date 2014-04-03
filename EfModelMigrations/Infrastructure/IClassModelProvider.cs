@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure
 {
+    //TODO: sem mozna pridat nejake metody ci objekt co usnadnuje validace tj. ClassExists PropertyExists apod... - pouziti hlavne v remove transformacich
     public interface IClassModelProvider
     {
         ClassCodeModel GetClassCodeModel(string className);

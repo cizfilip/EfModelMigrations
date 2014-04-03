@@ -29,7 +29,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             this.efModel = efModel;
         }
 
-        public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass, EntityType entityType)
+        public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass, EntityType entityType, EntityType storeEntityType)
         {
             var scalarProperties = MapScalarProperties(codeClass, entityType.Properties);
             var primaryKeys = entityType.KeyProperties.Select(k => k.Name);
@@ -42,7 +42,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 scalarProperties,
                 MapNavigationProperties(codeClass, entityType.NavigationProperties),
                 scalarProperties.Where(p => primaryKeys.Contains(p.Name)).ToList()
-                );
+                )
+                {
+                    StoreEntityType = storeEntityType
+                };
         }
 
         private IEnumerable<ScalarPropertyCodeModel> MapScalarProperties(CodeClass2 codeClass, IEnumerable<EdmProperty> properties)

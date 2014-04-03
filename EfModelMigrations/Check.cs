@@ -38,5 +38,17 @@ namespace EfModelMigrations
 
             return value;
         }
+
+        public static IEnumerable<T> NotNullOrEmpty<T>(IEnumerable<T> value, string parameterName)
+        {
+            NotNull(value, parameterName);
+
+            if (!value.Any())
+            {
+                throw new ArgumentException(string.Format("The argument '{0}' cannot be empty.", parameterName)); //TODO: string do resourcu
+            }
+
+            return value;
+        }
     }
 }

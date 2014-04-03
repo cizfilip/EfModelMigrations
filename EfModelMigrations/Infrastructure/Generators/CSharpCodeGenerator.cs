@@ -16,6 +16,7 @@ using EfModelMigrations.Configuration;
 
 namespace EfModelMigrations.Infrastructure.Generators
 {
+    //TODO: generovat spravne nullable typy
     public class CSharpCodeGenerator : CodeGenerator
     {
         protected IPluralizationService pluralizationService;

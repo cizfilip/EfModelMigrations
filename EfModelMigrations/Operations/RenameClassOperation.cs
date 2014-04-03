@@ -15,6 +15,9 @@ namespace EfModelMigrations.Operations
         
         public RenameClassOperation(string oldName, string newName)
         {
+            Check.NotEmpty(oldName, "oldName");
+            Check.NotEmpty(newName, "newName");
+
             this.OldName = oldName;
             this.NewName = newName;
         }

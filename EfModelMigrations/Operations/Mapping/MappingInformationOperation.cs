@@ -12,6 +12,8 @@ namespace EfModelMigrations.Operations.Mapping
 
         public MappingInformationOperation(MapInfo mappingInformation)
         {
+            Check.NotNull(mappingInformation as IMappingInformation, "mappingInformation");
+
             this.MappingInformation = mappingInformation;
         }
     }

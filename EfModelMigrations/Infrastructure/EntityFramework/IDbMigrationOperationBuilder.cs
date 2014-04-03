@@ -1,6 +1,8 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
@@ -8,31 +10,40 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
+    //TODO: asi dodelat support anotaci po vzoru efmodel differu
     public interface IDbMigrationOperationBuilder
     {
+        EfModel OldModel { get; }
+
+        EfModel NewModel { get; }
+
         //create/remove table
-        CreateTableOperation CreateTableOperation(string className);
-        DropTableOperation DropTableOperation(string className);
+        CreateTableOperation CreateTableOperation(EntitySet storageEntitySet);
+        DropTableOperation DropTableOperation(EntitySet storageEntitySet);
 
         //add/remove column
-        AddColumnOperation AddColumnOperation(string className, string propertyName);
-        DropColumnOperation DropColumnOperation(string className, string propertyName);
+        AddColumnOperation AddColumnOperation(EntitySet storageEntitySet, EdmProperty column);
+        DropColumnOperation DropColumnOperation(EntitySet storageEntitySet, EdmProperty column);
 
         //Rename operatoins
-        RenameTableOperation RenameTableOperation(string oldClassName, string newClassName);
-        RenameColumnOperation RenameColumnOperation(string className, string oldPropertyName, string newPropertyName);
+        RenameTableOperation RenameTableOperation(EntitySet oldStorageEntitySet, EntitySet newStorageEntitySet);
+        RenameColumnOperation RenameColumnOperation(EntitySet storageEntitySet, EdmProperty oldColumn, EdmProperty newColumn);
 
-        IEnumerable<RenameColumnOperation> RenameColumnOperationsForJoinComplexType(string complexTypeName, string className);
+        //Relations operations
+        CreateIndexOperation TryBuildCreateIndexOperation(EntitySet storageEntitySet, IEnumerable<EdmProperty> columns);
+        DropIndexOperation TryBuildDropIndexOperation(EntitySet storageEntitySet, IEnumerable<EdmProperty> columns);
+
+        AddForeignKeyOperation AddForeignKeyOperation(ReferentialConstraint referentialConstraint);
+        DropForeignKeyOperation DropForeignKeyOperation(ReferentialConstraint referentialConstraint);
+
+        //Identity operations
+        AddIdentityOperation TryBuildAddIdentityOperation(EntitySet storageEntitySet);
+        DropIdentityOperation TryBuildDropIdentityOperation(EntitySet storageEntitySet);
 
 
-        //Relations
-        IEnumerable<MigrationOperation> OneToOnePrimaryKeyRelationOperations(string principalClassName, string dependentClassName, bool? willCascadeOnDelete);
-        IEnumerable<MigrationOperation> OneToOneForeignKeyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool? willCascadeOnDelete);
-        IEnumerable<MigrationOperation> OneToManyRelationOperations(string principalClassName, string dependentClassName, bool isDependentRequired, string[] foreignKeyColumnNames, bool? willCascadeOnDelete);
-        IEnumerable<MigrationOperation> ManyToManyRelationOperations(string principalClassName, string dependentClassName, string tableName, string[] leftKeyColumnNames, string[] rightKeyColumnNames);
+        //Other
+        //MoveDataOperation MoveDataOperation(EntitySet storageEntitySet, string oldColumnName, string newColumnName);
 
-
-        //Extract
-        IEnumerable<MigrationOperation> ExtractTable(string fromClass, string newClass, string[] properties, string[] foreignKeyNames, bool willCascadeOnDelete);
+       
     }
 }

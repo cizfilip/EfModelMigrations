@@ -23,6 +23,8 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         WillCascadeOnDelete,
 
+        //Annotations
+        HasColumnAnnotation,
 
         //Map method
         Map,

@@ -12,6 +12,8 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public ValueParameter(object value)
         {
+            Check.NotNull(value, "value");
+
             this.Value = value;
         }
     }

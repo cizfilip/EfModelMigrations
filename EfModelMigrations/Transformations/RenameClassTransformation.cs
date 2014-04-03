@@ -17,6 +17,9 @@ namespace EfModelMigrations.Transformations
 
         public RenameClassTransformation(string oldName, string newName)
         {
+            Check.NotEmpty(oldName, "oldName");
+            Check.NotEmpty(newName, "newName");
+
             this.OldName = oldName;
             this.NewName = newName;
         }
@@ -29,7 +32,10 @@ namespace EfModelMigrations.Transformations
         //TODO: V DB by bylo treba prejmenovat i vsechny reference - napr. jmena cizich klicu atd... ??
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            yield return builder.RenameTableOperation(OldName, NewName);
+            yield return builder.RenameTableOperation(
+                builder.OldModel.GetStoreEntitySetForClass(NewName),
+                builder.NewModel.GetStoreEntitySetForClass(NewName)
+                );
         }
 
         public override ModelTransformation Inverse()

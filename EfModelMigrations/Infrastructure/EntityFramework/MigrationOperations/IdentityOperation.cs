@@ -10,7 +10,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
     public abstract class IdentityOperation : MigrationOperation
     {
         private string principalTable;
-        private string principalColumn;
+        private ColumnModel principalColumn;
 
         private readonly List<DependentColumn> dependentColumns = new List<DependentColumn>();
 
@@ -26,7 +26,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
                 principalTable = value;
             }
         }
-        public string PrincipalColumn
+        public ColumnModel PrincipalColumn
         {
             get { return principalColumn; }
             set

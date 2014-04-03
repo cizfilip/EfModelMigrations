@@ -21,6 +21,11 @@ namespace EfModelMigrations.Transformations
 
         public ExtractComplexTypeTransformation(string className, string complexTypeName, IEnumerable<string> propertiesToExtract, NavigationPropertyCodeModel navigationProperty)
         {
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(complexTypeName, "complexTypeName");
+            Check.NotNullOrEmpty(propertiesToExtract, "propertiesToExtract");
+            Check.NotNull(navigationProperty, "navigationProperty");
+            
             this.ClassName = className;
             this.ComplexTypeName = complexTypeName;
             this.PropertiesToExtract = propertiesToExtract;
@@ -46,7 +51,11 @@ namespace EfModelMigrations.Transformations
         {
             foreach (var property in PropertiesToExtract)
             {
-                yield return builder.RenameColumnOperation(ClassName, property, property);
+                yield return builder.RenameColumnOperation(
+                        builder.NewModel.GetStoreEntitySetForClass(ClassName),
+                        builder.OldModel.GetStoreColumnForProperty(ClassName, property),
+                        builder.NewModel.GetStoreColumnForProperty(ClassName, property)
+                    );
             }
         }
 

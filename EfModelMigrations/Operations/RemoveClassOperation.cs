@@ -14,6 +14,8 @@ namespace EfModelMigrations.Operations
 
         public RemoveClassOperation(string name)
         {
+            Check.NotEmpty(name, "name");
+
             this.Name = name;
         }
         

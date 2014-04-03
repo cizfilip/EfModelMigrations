@@ -31,6 +31,19 @@ namespace EfModelMigrations.Extensions
                 action(t);
             }
         }
+
+        public static string Uniquify(this IEnumerable<string> inputStrings, string targetString)
+        {
+            var uniqueString = targetString;
+            var i = 0;
+
+            while (inputStrings.Any(n => n.EqualsOrdinal(uniqueString)))
+            {
+                uniqueString = targetString + ++i;
+            }
+
+            return uniqueString;
+        }
     }
 
    

@@ -2,11 +2,13 @@
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.EntityFramework;
+using EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
@@ -15,27 +17,35 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
-    public class AddOneToManyAssociationTransformation : AddAssociationWithCascadeDeleteTransformation
+    //TODO: doresit indexy
+    public class AddOneToManyAssociationTransformation : AddAssociationWithForeignKeyTransformation
     {
         public string[] ForeignKeyColumnNames { get; private set; }
         public ScalarPropertyCodeModel[] ForeignKeyProperties { get; private set; }
+        public IndexAttribute ForeignKeyIndex { get; private set; }
 
 
-        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ScalarPropertyCodeModel[] foreignKeyProperties, bool? willCascadeOnDelete = null)
-            : this(principal, dependent, foreignKeyProperties, null, willCascadeOnDelete)
+        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ScalarPropertyCodeModel[] foreignKeyProperties, bool? willCascadeOnDelete = null, IndexAttribute foreignKeyIndex = null)
+            : this(principal, dependent, foreignKeyProperties, null, willCascadeOnDelete, foreignKeyIndex)
         {
         }
 
-        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, string[] foreignKeyColumnNames, bool? willCascadeOnDelete = null)
-            : this(principal, dependent, null, foreignKeyColumnNames, willCascadeOnDelete)
+        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, string[] foreignKeyColumnNames, bool? willCascadeOnDelete = null, IndexAttribute foreignKeyIndex = null)
+            : this(principal, dependent, null, foreignKeyColumnNames, willCascadeOnDelete, foreignKeyIndex)
         {
         }
 
-        private AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ScalarPropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool? willCascadeOnDelete)
+        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, bool? willCascadeOnDelete = null, IndexAttribute foreignKeyIndex = null)
+            : this(principal, dependent, null, null, willCascadeOnDelete, foreignKeyIndex)
+        {
+        }
+
+        private AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ScalarPropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool? willCascadeOnDelete, IndexAttribute foreignKeyIndex)
             :base(principal, dependent, willCascadeOnDelete)
         {
             this.ForeignKeyColumnNames = foreignKeyColumnNames;
             this.ForeignKeyProperties = foreignKeyProperties;
+            this.ForeignKeyIndex = foreignKeyIndex;
 
             //TODO: stringy do resourců
             if (!((principal.Multipticity == RelationshipMultiplicity.One || principal.Multipticity == RelationshipMultiplicity.ZeroOrOne ) 
@@ -44,14 +54,9 @@ namespace EfModelMigrations.Transformations
                 throw new ModelTransformationValidationException("Invalid association multiplicity for one to many association.");
             }
 
-            if (principal.NavigationProperty != null && !principal.NavigationProperty.IsCollection)
+            if (principal.HasNavigationProperty && !principal.NavigationProperty.IsCollection)
             {
                 throw new ModelTransformationValidationException("Principal navigation property in one to many association must have IsCollection set to true.");
-            }
-
-            if (ForeignKeyColumnNames == null && foreignKeyProperties == null)
-            {
-                throw new ModelTransformationValidationException("Foreign key properties/columns not specified. You must supply foreign key properties or foreign key column names.");
             }
 
             if (ForeignKeyColumnNames != null && foreignKeyProperties != null)
@@ -60,18 +65,29 @@ namespace EfModelMigrations.Transformations
             }
         }
 
-        protected override IEnumerable<IModelChangeOperation> CreateModelChangeOperations()
+        protected override IEnumerable<IModelChangeOperation> CreateModelChangeOperations(IClassModelProvider modelProvider)
         {
-            var baseOperations = base.CreateModelChangeOperations();
+            var baseOperations = base.CreateModelChangeOperations(modelProvider);
 
             var addForeignKeyPropertyOperations = new List<IModelChangeOperation>();
-
             if (ForeignKeyProperties != null)
             {
-                foreach (var foreignKeyProperty in ForeignKeyProperties)
+                for (int i = 0; i < ForeignKeyProperties.Length; i++)
                 {
+                    var foreignKeyProperty = ForeignKeyProperties[i];
+
                     addForeignKeyPropertyOperations.Add(
                             new AddPropertyToClassOperation(Dependent.ClassName, foreignKeyProperty)
+                        );
+
+                    var propertyMapping = new AddPropertyMapping(foreignKeyProperty);
+                    if(ForeignKeyIndex != null)
+                    {
+                        propertyMapping.Index = ForeignKeyIndex.CopyWithNameAndOrder(ForeignKeyIndex.Name, i);
+                    }
+
+                    addForeignKeyPropertyOperations.Add(
+                            new AddMappingInformationOperation(propertyMapping)
                         );
                 }
             }
@@ -79,44 +95,31 @@ namespace EfModelMigrations.Transformations
             return baseOperations.Concat(addForeignKeyPropertyOperations);
         }
 
-        protected override AddAssociationMapping CreateMappingInformation()
+        protected override AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider)
         {
-            if(ForeignKeyColumnNames != null)
+            if(ForeignKeyProperties != null)
             {
+                return new AddAssociationMapping(Principal, Dependent)
+                {
+                    ForeignKeyProperties = ForeignKeyProperties.Select(p => p.Name).ToArray(),
+                    WillCascadeOnDelete = WillCascadeOnDelete
+                };
+            }
+            else
+            {
+                if(ForeignKeyColumnNames == null)
+                {
+                    ForeignKeyColumnNames = GetDefaultForeignKeyColumnNames(
+                        modelProvider.GetClassCodeModel(Principal.ClassName),
+                        modelProvider.GetClassCodeModel(Dependent.ClassName));
+                }
+
                 return new AddAssociationMapping(Principal, Dependent)
                 {
                     ForeignKeyColumnNames = ForeignKeyColumnNames,
+                    ForeignKeyIndex = ForeignKeyIndex,
                     WillCascadeOnDelete = WillCascadeOnDelete
                 };
-            }
-            else
-            {
-                return new AddAssociationMapping(Principal, Dependent)
-                {
-                    ForeignKeyProperties = GetForeignKeyPropertyNames(),
-                    WillCascadeOnDelete = WillCascadeOnDelete
-                };
-            }
-        }
-
-        public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
-        {
-            //TODO: bacha pokud delam 1:n a pridavam do trid explicitni cizi klice zde predavam nazvy properties nikoliv nazvy sloupcu (dle defaultnich ef konvenci je to jedno ale pokud by to bylo jinak tak to nefunguje)
-            if (ForeignKeyColumnNames != null)
-            {
-                return builder.OneToManyRelationOperations(Principal.ClassName, 
-                    Dependent.ClassName, 
-                    IsDependentRequired(), 
-                    ForeignKeyColumnNames, 
-                    WillCascadeOnDelete);
-            }
-            else
-            {
-                return builder.OneToManyRelationOperations(Principal.ClassName, 
-                    Dependent.ClassName,
-                    IsDependentRequired(),
-                    GetForeignKeyPropertyNames(), 
-                    WillCascadeOnDelete);
             }
         }
         
@@ -125,15 +128,5 @@ namespace EfModelMigrations.Transformations
             return null;
         } 
        
-
-        private string[] GetForeignKeyPropertyNames()
-        {
-            return ForeignKeyProperties.Select(p => p.Name).ToArray();
-        }
-
-        private bool IsDependentRequired()
-        {
-            return Dependent.Multipticity == RelationshipMultiplicity.One ? true : false;
-        }
     }
 }

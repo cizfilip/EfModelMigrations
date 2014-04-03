@@ -146,7 +146,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
         internal virtual IEnumerable<MigrationOperation> GetDbMigrationOperations(ModelTransformation transformation, string oldEdmxModel, string newEdmxModel)
         {
-            var operationBuilder = new DbMigrationOperationBuilder(configuration.ModelNamespace, oldEdmxModel, newEdmxModel);
+            var operationBuilder = new DbMigrationOperationBuilder(new EfModel(oldEdmxModel), new EfModel(newEdmxModel));
 
             return transformation.GetDbMigrationOperations(operationBuilder).ToList();
         }

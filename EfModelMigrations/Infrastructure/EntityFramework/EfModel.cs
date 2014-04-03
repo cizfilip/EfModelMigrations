@@ -10,10 +10,10 @@ using System.Data.Entity.Core.Mapping;
 using System.Data.Entity.Core.Common;
 using System.Data.Entity.Infrastructure.Annotations;
 using EfModelMigrations.Exceptions;
+using EfModelMigrations.Transformations.Model;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
-    //TODO: vyhazovat zde vyjimky nebo vracet null?
     public sealed class EfModel
     {
         public EfModelMetadata Metadata { get; private set; }
@@ -28,46 +28,100 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             this.Metadata = metadata;
         }
 
-        //TODO: nejspis nebude fungovat pri dedicnosti - EntityType bude mit vice MappingFragmentu
-        public string GetTableNameForClass(string className, bool includeSchema = true)
+        public IEnumerable<AssociationSet> GetAssociationSetsForEntitySet(EntitySet entitySet)
         {
-            Check.NotEmpty(className, "className");
+            Check.NotNull(entitySet, "entitySet");
 
-            try
+            return entitySet.EntityContainer.AssociationSets.Where(a => a.AssociationSetEnds.Any(e => e.EntitySet.Equals(entitySet)));
+        }
+
+
+        public EntitySet GetStoreEntitySetJoinTableForManyToMany(AssociationEnd from, AssociationEnd to)
+        {
+            Check.NotNull(from, "from");
+            Check.NotNull(to, "to");
+
+            try 
             {
-                var storeEntitySet = Metadata.EntityTypeMappings
-                    .Single(t => t.EntityType.Name.EqualsOrdinal(className))
-                    .Fragments
-                    .Single()
-                    .StoreEntitySet;
-
-                if (includeSchema)
+                if (from.HasNavigationProperty)
                 {
-                    return string.Concat(storeEntitySet.Schema, ".", storeEntitySet.Table);
+                    return GetStoreEntitySetJoinTableForManyToManyFromAssociationEnd(from);
                 }
                 else
                 {
-                    return storeEntitySet.Table;
+                    return GetStoreEntitySetJoinTableForManyToManyFromAssociationEnd(to);
                 }
             }
             catch (Exception e)
             {
-                throw new EfModelException(string.Format("Cannot find table name for class {0}", className), e); //TODO: string do resourcu
-                throw;
+                throw new EfModelException(string.Format("Cannot find join table for association from {0} to {1} in entity framework metadata", from.ClassName, to.ClassName), e); //TODO: string do resourcu
             }
         }
 
-        public EntityType GetEntityTypeForClass(string className)
+
+        public AssociationType GetStorageAssociationTypeForAssociation(AssociationEnd from, AssociationEnd to)
         {
-            Check.NotEmpty(className, "className");
+            Check.NotNull(from, "from");
+            Check.NotNull(to, "to");
 
             try
             {
-                return Metadata.EdmItemCollection.GetItems<EntityType>().Single(e => e.Name.EqualsOrdinal(className));
+                if (from.HasNavigationProperty)
+                {
+                    return GetStoreAssociationTypeFromAssociationEnd(from);
+                }
+                else
+                {
+                    return GetStoreAssociationTypeFromAssociationEnd(to);
+                }
             }
             catch (Exception e)
             {
-                throw new EfModelException(string.Format("Cannot find entity type for class {0}", className), e); //TODO: string do resourcu
+                throw new EfModelException(string.Format("Cannot find association from {0} to {1} in entity framework metadata", from.ClassName, to.ClassName), e); //TODO: string do resourcu
+            }
+            
+        }
+
+        public EntitySet GetStoreEntitySetForClass(string className)
+        {
+            Check.NotEmpty(className, "className");
+            try
+            {
+                return Metadata.GetStoreEntitySetForClass(className);
+            }
+            catch (Exception e)
+            {
+                throw new EfModelException(string.Format("Cannot find class {0} in entity framework metadata", className), e); //TODO: string do resourcu
+            }
+        }
+
+        public EntityType GetStoreEntityTypeForClass(string className)
+        {
+            Check.NotEmpty(className, "className");
+            try
+            {
+                return Metadata.GetStoreEntitySetForClass(className).ElementType;
+            }
+            catch (Exception e)
+            {
+                throw new EfModelException(string.Format("Cannot find class {0} in entity framework metadata", className), e); //TODO: string do resourcu
+            }
+        }
+
+
+        public EdmProperty GetStoreColumnForProperty(string className, string propertyName)
+        {
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(propertyName, "propertyName");
+
+            try
+            {
+                return Metadata.GetScalarPropertyMappingForProperty(className, propertyName)
+                    .Column;
+            }
+            catch (Exception e)
+            {
+                throw new EfModelException(string.Format("Cannot find column for property {0} in class {1}", propertyName, className), e); //TODO: string do resourcu
             }
         }
 
@@ -78,15 +132,10 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
             try
             {
-                var storeProperty = Metadata.EntityTypeMappings
-                    .Single(t => t.EntityType.Name.EqualsOrdinal(className))
-                    .Fragments
-                    .SelectMany(f => f.PropertyMappings)
-                    .OfType<ScalarPropertyMapping>()
-                    .Single(p => p.Property.Name.EqualsOrdinal(propertyName))
+                var storeProperty = Metadata.GetScalarPropertyMappingForProperty(className, propertyName)
                     .Column;
 
-                return ConvertEdmPropertyToColumnModel(storeProperty);
+                return storeProperty.ToColumnModel(Metadata.ProviderManifest);
             }
             catch (Exception e)
             {
@@ -94,63 +143,38 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
         }
 
+        
 
-
-        public ColumnModel ConvertEdmPropertyToColumnModel(EdmProperty property, IDictionary<string, AnnotationValues> annotations = null)
+        //Private methods
+        private AssociationType GetStoreAssociationTypeFromAssociationEnd(AssociationEnd associationEnd)
         {
-            var conceptualTypeUsage = Metadata.ProviderManifest.GetEdmType(property.TypeUsage);
-            var defaultStoreTypeUsage = Metadata.ProviderManifest.GetStoreType(conceptualTypeUsage);
+            var associationName = GetAssociationNameFromAssociationEnd(associationEnd);
 
-            var column = new ColumnModel(property.PrimitiveType.PrimitiveTypeKind, conceptualTypeUsage)
-            {
-                Name
-                    = property.Name,
-                IsNullable
-                    = !property.Nullable ? false : (bool?)null,
-                StoreType
-                    = !property.TypeName.EqualsOrdinalIgnoreCase(defaultStoreTypeUsage.EdmType.Name)
-                        ? property.TypeName
-                        : null,
-                IsIdentity
-                    = property.IsStoreGeneratedIdentity
-                      && EfModelMetadata.ValidIdentityTypes.Contains(property.PrimitiveType.PrimitiveTypeKind),
-                IsTimestamp
-                    = property.PrimitiveType.PrimitiveTypeKind == PrimitiveTypeKind.Binary
-                      && property.MaxLength == 8
-                      && property.IsStoreGeneratedComputed,
-                IsUnicode
-                    = property.IsUnicode == false ? false : (bool?)null,
-                IsFixedLength
-                    = property.IsFixedLength == true ? true : (bool?)null,
-                Annotations
-                    = annotations
-            };
-
-            Facet facet;
-
-            if (property.TypeUsage.Facets.TryGetValue(DbProviderManifest.MaxLengthFacetName, true, out facet)
-                && !facet.IsUnbounded
-                && !facet.Description.IsConstant)
-            {
-                column.MaxLength = (int?)facet.Value;
-            }
-
-            if (property.TypeUsage.Facets.TryGetValue(DbProviderManifest.PrecisionFacetName, true, out facet)
-                && !facet.IsUnbounded
-                && !facet.Description.IsConstant)
-            {
-                column.Precision = (byte?)facet.Value;
-            }
-
-            if (property.TypeUsage.Facets.TryGetValue(DbProviderManifest.ScaleFacetName, true, out facet)
-                && !facet.IsUnbounded
-                && !facet.Description.IsConstant)
-            {
-                column.Scale = (byte?)facet.Value;
-            }
-
-            return column;
+            return Metadata.StoreAssociatonTypes.Single(at => at.Name.EqualsOrdinal(associationName));
         }
 
+        private EntitySet GetStoreEntitySetJoinTableForManyToManyFromAssociationEnd(AssociationEnd associationEnd)
+        {
+            var associationName = GetAssociationNameFromAssociationEnd(associationEnd);
+
+            return Metadata.EntityContainerMapping.AssociationSetMappings
+                .Where(asm => asm.AssociationTypeMapping.AssociationType.Name.EqualsOrdinal(associationName))
+                .Single()
+                .StoreEntitySet;
+        }
+
+        private string GetAssociationNameFromAssociationEnd(AssociationEnd associationEnd)
+        {
+            return GetNavigationPropertyFromAssociationEnd(associationEnd)
+                    .RelationshipType
+                    .Name;
+        }
+
+        private NavigationProperty GetNavigationPropertyFromAssociationEnd(AssociationEnd associationEnd)
+        {
+            return Metadata.GetEntityTypeForClass(associationEnd.ClassName)
+                    .NavigationProperties
+                    .Single(np => np.Name.EqualsOrdinal(associationEnd.NavigationProperty.Name));
+        }
     }
 }

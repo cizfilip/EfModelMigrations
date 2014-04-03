@@ -13,6 +13,8 @@ namespace EfModelMigrations.Transformations.Model
 
         public SimpleAssociationEnd(string className, string navigationPropertyName)
         {
+            Check.NotEmpty(className, "className");
+
             this.ClassName = className;
             this.NavigationPropertyName = navigationPropertyName;
         }

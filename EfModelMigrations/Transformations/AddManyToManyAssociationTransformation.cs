@@ -1,4 +1,5 @@
 ﻿using EfModelMigrations.Exceptions;
+using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Transformations.Model;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
+    //TODO: pro many to many zda se neni zpusob jak explicitne namapovat ze fk v join table budou mit indexy - tudiz spoleham na konvence....
     public class AddManyToManyAssociationTransformation : AddAssociationTransformation
     {
         public ManyToManyJoinTable JoinTable { get; private set; }
@@ -29,7 +31,7 @@ namespace EfModelMigrations.Transformations
         }
 
 
-        protected override AddAssociationMapping CreateMappingInformation()
+        protected override AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider)
         {
             return new AddAssociationMapping(Principal, Dependent)
                 {
@@ -39,7 +41,25 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            return builder.ManyToManyRelationOperations(Principal.ClassName, Dependent.ClassName, JoinTable.TableName, JoinTable.SourceForeignKeyColumns, JoinTable.TargetForeignKeyColumns);
+            //add join table
+            var joinTableEntitySet = builder.NewModel.GetStoreEntitySetJoinTableForManyToMany(Principal, Dependent);
+            yield return builder.CreateTableOperation(joinTableEntitySet);
+
+            //add foreign keys and indexes
+            var joinTableRelations = joinTableEntitySet.EntityContainer.AssociationSets
+                .Where(a => a.AssociationSetEnds.ElementAt(1).EntitySet == joinTableEntitySet);
+
+            foreach (var relation in joinTableRelations)
+            {
+                var referentialConstraint = relation.ElementType.Constraint;
+
+                var indexOperation = builder.TryBuildCreateIndexOperation(joinTableEntitySet, referentialConstraint.ToProperties);
+                if (indexOperation != null)
+                {
+                    yield return indexOperation;
+                }
+                yield return builder.AddForeignKeyOperation(referentialConstraint);
+            }
         }
 
         public override ModelTransformation Inverse()

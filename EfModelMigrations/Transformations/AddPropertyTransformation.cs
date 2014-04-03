@@ -15,6 +15,9 @@ namespace EfModelMigrations.Transformations
 
         public AddPropertyTransformation(string className, ScalarPropertyCodeModel model)
         {
+            Check.NotEmpty(className, "className");
+            Check.NotNull(model, "model");
+
             this.ClassName = className;
             this.Model = model;
         }
@@ -26,7 +29,10 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            yield return builder.AddColumnOperation(ClassName, Model.Name);
+            yield return builder.AddColumnOperation(
+                builder.NewModel.GetStoreEntitySetForClass(ClassName),
+                builder.NewModel.GetStoreColumnForProperty(ClassName, Model.Name)
+                );
         }
 
         public override ModelTransformation Inverse()

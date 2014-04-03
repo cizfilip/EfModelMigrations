@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
+    //TODO: Je rozdil kdyz prejmenovavam scalarPropert, navigation property nebo primary key!!!
+    //TODO: a co mapovací informace pro přejmenovávanou property ???
     public class RenamePropertyTransformation : ModelTransformation
     {
         public string ClassName { get; private set; }
@@ -19,6 +21,10 @@ namespace EfModelMigrations.Transformations
 
         public RenamePropertyTransformation(string className, string oldName, string newName)
         {
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(oldName, "oldName");
+            Check.NotEmpty(newName, "newName");
+
             this.ClassName = className;
             this.OldName = oldName;
             this.NewName = newName;
@@ -31,7 +37,11 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            yield return builder.RenameColumnOperation(ClassName, OldName, NewName);
+            yield return builder.RenameColumnOperation(
+                builder.NewModel.GetStoreEntitySetForClass(ClassName),                
+                builder.OldModel.GetStoreColumnForProperty(ClassName, OldName),
+                builder.NewModel.GetStoreColumnForProperty(ClassName, NewName)
+                );
         }
 
         public override ModelTransformation Inverse()

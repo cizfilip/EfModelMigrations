@@ -60,11 +60,19 @@
     <Compile Include="Commands\RenameClassCommand.cs" />
     <Compile Include="Commands\RenamePropertyCommand.cs" />
     <Compile Include="Exceptions\EfModelException.cs" />
+    <Compile Include="Extensions\IListExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IModelMigration.cs" />
+    <Compile Include="Infrastructure\EntityFramework\ConsolidatedIndex.cs" />
+    <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
+    <Compile Include="Infrastructure\EntityFramework\EdmExtensions\EdmPropertyExtensions.cs" />
+    <Compile Include="Infrastructure\EntityFramework\EdmExtensions\EntitySetExtensions.cs" />
+    <Compile Include="Infrastructure\EntityFramework\EdmExtensions\IndexAttributeExtensions.cs" />
+    <Compile Include="Infrastructure\EntityFramework\EdmExtensions\MetadataItemExtensions.cs" />
     <Compile Include="Infrastructure\EntityFramework\EdmxModelExtractor.cs" />
     <Compile Include="Infrastructure\EntityFramework\EfModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\EfModelMetadata.cs" />
+    <Compile Include="Infrastructure\EntityFramework\ForeignKeyIndexBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\MigrationOperations\PlaceholderOperation.cs" />
     <Compile Include="Infrastructure\Generators\CodeGeneratorDefaults.cs" />
     <Compile Include="Configuration\ModelMigrationsConfiguration.cs" />
@@ -81,7 +89,6 @@
     <Compile Include="Infrastructure\CodeModel\CodeModelVisibility.cs" />
     <Compile Include="Infrastructure\CodeModel\NavigationPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationExtensions\DbMigrationExtensions.cs" />
-    <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\EdmxNames.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\EdmxXmlExtensions.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\XContainerExtension.cs" />
@@ -136,6 +143,7 @@
     <Compile Include="Operations\Mapping\AddDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\AddMappingInformationOperation.cs" />
     <Compile Include="Operations\Mapping\AddAssociationMapping.cs" />
+    <Compile Include="Operations\Mapping\AddPropertyMapping.cs" />
     <Compile Include="Operations\Mapping\DbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\IAddMappingInformation.cs" />
     <Compile Include="ModelMigration.cs" />
@@ -151,6 +159,7 @@
     <Compile Include="Operations\Mapping\Model\EfFluentApiMethods.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluetApiCall.cs" />
     <Compile Include="Operations\Mapping\Model\IEfFluentApiMethodParameter.cs" />
+    <Compile Include="Operations\Mapping\Model\IndexAnnotationParameter.cs" />
     <Compile Include="Operations\Mapping\Model\MapMethodParameter.cs" />
     <Compile Include="Operations\Mapping\Model\PropertySelectorParameter.cs" />
     <Compile Include="Operations\Mapping\Model\StringParameter.cs" />
@@ -158,6 +167,7 @@
     <Compile Include="Operations\Mapping\RemoveAssociationMapping.cs" />
     <Compile Include="Operations\Mapping\RemoveDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\RemoveMappingInformationOperation.cs" />
+    <Compile Include="Operations\Mapping\RemovePropertyMapping.cs" />
     <Compile Include="Operations\MovePropertyOperation.cs" />
     <Compile Include="Operations\RemoveClassOperation.cs" />
     <Compile Include="Operations\RemovePropertyFromClassOperation.cs" />
@@ -171,6 +181,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Transformations\AddAssociationWithCascadeDeleteTransformation.cs" />
+    <Compile Include="Transformations\AddAssociationWithForeignKeyTransformation.cs" />
     <Compile Include="Transformations\AddManyToManyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddOneToManyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddAssociationTransformation.cs" />
@@ -221,9 +232,7 @@
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Infrastructure\EntityFramework\EdmExtensions\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

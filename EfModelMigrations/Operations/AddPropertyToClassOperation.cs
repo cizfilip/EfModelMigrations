@@ -15,6 +15,9 @@ namespace EfModelMigrations.Operations
 
         public AddPropertyToClassOperation(string className, PropertyCodeModel model)
         {
+            Check.NotEmpty(className, "className");
+            Check.NotNull(model, "model");
+
             this.ClassName = className;
             this.Model = model;
         }

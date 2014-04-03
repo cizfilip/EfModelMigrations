@@ -103,8 +103,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             writer.Write(extensionMethodName);
             writer.Write("(");
             writer.Write(Quote(operation.PrincipalTable));
-            writer.Write(", ");
-            writer.Write(Quote(operation.PrincipalColumn));
+            writer.Write(", c =>");
+            Generate(operation.PrincipalColumn, writer);
             writer.Write(")");
 
             if (operation.DependentColumns.Count > 0)

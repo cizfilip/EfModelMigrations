@@ -3,6 +3,7 @@ using System.Data.Entity.Core.Mapping;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework.Edmx;
+using EfModelMigrations.Extensions;
 using System.Data.Entity.Infrastructure.DependencyResolution;
 using System.Xml.Linq;
 using System.Linq;
@@ -12,9 +13,11 @@ using System.Data.Entity.Core.EntityClient;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using EfModelMigrations.Exceptions;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
+    //TODO: idealne dopsat dokumentaci ze muze vyhazovat exceptiony...
     public sealed class EfModelMetadata
     {
         public static readonly PrimitiveTypeKind[] ValidIdentityTypes =
@@ -34,6 +37,34 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         public StorageMappingItemCollection StorageMappingItemCollection { get; private set; }
         public DbProviderManifest ProviderManifest { get; private set; }
         public DbProviderInfo ProviderInfo { get; private set; }
+
+        private EntityContainer entityContainer;
+        public EntityContainer EntityContainer
+        {
+            get
+            {
+                if (entityContainer == null)
+                {
+                    entityContainer = EdmItemCollection.GetItems<EntityContainer>().Single();
+                }
+
+                return entityContainer;
+            }
+        }
+
+        private EntityContainer storeEntityContainer;
+        public EntityContainer StoreEntityContainer
+        {
+            get
+            {
+                if (storeEntityContainer == null)
+                {
+                    storeEntityContainer = StoreItemCollection.GetItems<EntityContainer>().Single();
+                }
+
+                return storeEntityContainer;
+            }
+        }
 
         private EntityContainerMapping entityContainerMapping;
         public EntityContainerMapping EntityContainerMapping
@@ -64,6 +95,61 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 return entityTypeMappings;
             }
         }
+
+        private IEnumerable<AssociationType> storeAssociatonTypes;
+        public IEnumerable<AssociationType> StoreAssociatonTypes
+        {
+            get
+            {
+                if (storeAssociatonTypes == null)
+                {
+                    storeAssociatonTypes = StoreItemCollection.GetItems<AssociationType>();
+                }
+
+                return storeAssociatonTypes;
+            }
+        }
+
+        public EntityType GetEntityTypeForClass(string className)
+        {
+            Check.NotEmpty(className, "className");
+            
+            return EdmItemCollection.GetItems<EntityType>().Single(e => e.Name.EqualsOrdinal(className));
+        }
+
+
+        public EntityTypeMapping GetEntityTypeMappingForClass(string className)
+        {
+            Check.NotEmpty(className, "className");
+
+            return EntityTypeMappings
+                .Single(t => t.EntityType.Name.EqualsOrdinal(className));
+        }
+
+        //TODO: hint jak handlovat mapping fragmenty je v efmodeldifferu metoda FindRenamedMappedColumns
+        //TODO: nejspis nebude fungovat pri dedicnosti - EntityType bude mit vice MappingFragmentu
+        public EntitySet GetStoreEntitySetForClass(string className)
+        {
+            Check.NotEmpty(className, "className");
+
+            return GetEntityTypeMappingForClass(className)
+                .Fragments
+                .Single()
+                .StoreEntitySet;
+        }
+
+        public ScalarPropertyMapping GetScalarPropertyMappingForProperty(string className, string propertyName)
+        {
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(propertyName, "propertyName");
+
+            return GetEntityTypeMappingForClass(className)
+                .Fragments
+                .SelectMany(f => f.PropertyMappings)
+                .OfType<ScalarPropertyMapping>()
+                .Single(p => p.Property.Name.EqualsOrdinal(propertyName));
+        }
+
 
         //TODO: upravit EdmxNames tak abych ho ideálně mohl z projektu úplně vypustit - jelikož z něho využívám jen to co je v této metodě
         public static EfModelMetadata Load(string edmx)

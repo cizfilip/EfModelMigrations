@@ -9,6 +9,7 @@ using System.Data.Entity.Migrations.Model;
 
 namespace EfModelMigrations.Transformations
 {
+    //TODO: validovat ze property je skalarni nebo enum - navigacni property maze remove association
     public class RemovePropertyTransformation : TransformationWithInverse
     {
         public string ClassName { get; private set; }
@@ -17,6 +18,9 @@ namespace EfModelMigrations.Transformations
         public RemovePropertyTransformation(string className, string name, ModelTransformation inverse)
             : base(inverse)
         {
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(name, "name");
+
             this.ClassName = className;
             this.Name = name;
         }
@@ -37,7 +41,10 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            yield return builder.DropColumnOperation(ClassName, Name);
+            yield return builder.DropColumnOperation(
+                builder.OldModel.GetStoreEntitySetForClass(ClassName),
+                builder.OldModel.GetStoreColumnForProperty(ClassName, Name)
+                );
         }
 
         public override bool IsDestructiveChange

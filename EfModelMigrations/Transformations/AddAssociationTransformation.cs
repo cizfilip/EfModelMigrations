@@ -18,11 +18,14 @@ namespace EfModelMigrations.Transformations
 
         public AddAssociationTransformation(AssociationEnd principal, AssociationEnd dependent)
         {
+            Check.NotNull(principal, "principal");
+            Check.NotNull(dependent, "dependent");
+
             this.Principal = principal;
             this.Dependent = dependent;
 
             //TODO: stringy do resourců
-            if (principal.NavigationProperty == null && dependent.NavigationProperty == null)
+            if (!principal.HasNavigationProperty && !dependent.HasNavigationProperty)
             {
                 throw new ModelTransformationValidationException("You must specify at least one navigation property in association.");
             }
@@ -30,25 +33,25 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            var modelChangeOperations = CreateModelChangeOperations();
+            var modelChangeOperations = CreateModelChangeOperations(modelProvider);
 
-            return modelChangeOperations.Concat(new[] { new AddMappingInformationOperation(CreateMappingInformation()) });
+            return modelChangeOperations.Concat(new[] { new AddMappingInformationOperation(CreateAssociationMappingInformation(modelProvider)) });
         }
 
-        protected virtual IEnumerable<IModelChangeOperation> CreateModelChangeOperations()
+        protected virtual IEnumerable<IModelChangeOperation> CreateModelChangeOperations(IClassModelProvider modelProvider)
         {
-            if (Principal.NavigationProperty != null)
+            if (Principal.HasNavigationProperty)
             {
                 yield return new AddPropertyToClassOperation(Principal.ClassName, Principal.NavigationProperty);
             }
 
-            if (Dependent.NavigationProperty != null)
+            if (Dependent.HasNavigationProperty)
             {
                 yield return new AddPropertyToClassOperation(Dependent.ClassName, Dependent.NavigationProperty);
             }
         }
 
-        protected abstract AddAssociationMapping CreateMappingInformation();
+        protected abstract AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider);
        
         public override ModelTransformation Inverse()
         {

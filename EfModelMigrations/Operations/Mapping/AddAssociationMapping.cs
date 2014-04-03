@@ -1,9 +1,13 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Operations.Mapping.Model;
 using EfModelMigrations.Transformations.Model;
+using EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.Entity.Infrastructure.Annotations;
+using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,8 +29,13 @@ namespace EfModelMigrations.Operations.Mapping
 
         public string[] ForeignKeyProperties { get; set; }
 
+        public IndexAttribute ForeignKeyIndex { get; set; }
+
         public AddAssociationMapping(AssociationEnd source, AssociationEnd target)
         {
+            Check.NotNull(source, "source");
+            Check.NotNull(target, "target");
+
             this.Source = source;
             this.Target = target;
         }
@@ -36,7 +45,7 @@ namespace EfModelMigrations.Operations.Mapping
         {
             EfFluentApiCallChain callChain;
 
-            if (Source.NavigationProperty != null) //Navigation property on Source
+            if (Source.HasNavigationProperty) //Navigation property on Source
             {
                 var methods = GetFluentApiMethodsStartingFromSource();
                 callChain = new EfFluentApiCallChain(Source.ClassName)
@@ -104,7 +113,22 @@ namespace EfModelMigrations.Operations.Mapping
 
         private void AddMapForeignKeysMethodCall(EfFluentApiCallChain callChain)
         {
-            callChain.AddMethodCall(EfFluentApiMethods.Map, new MapMethodParameter().MapKey(ForeignKeyColumnNames));
+            var mapMethodParameter = new MapMethodParameter().MapKey(ForeignKeyColumnNames);
+
+            if(ForeignKeyIndex != null)
+            {
+                var indexName = ForeignKeyIndex.GetDefaultNameIfRequired(ForeignKeyColumnNames);
+                var indexAnnotationName = IndexAnnotation.AnnotationName;
+
+                for (int i = 0; i < ForeignKeyColumnNames.Length; i++)
+                {
+                    mapMethodParameter.HasIndexColumnAnnotation(ForeignKeyColumnNames[i], indexAnnotationName, 
+                            ForeignKeyIndex.CopyWithNameAndOrder(indexName, i)
+                        );
+                }
+            }
+
+            callChain.AddMethodCall(EfFluentApiMethods.Map, mapMethodParameter);
         }
 
         private void AddCascadeOnDeleteMethodCall(EfFluentApiCallChain callChain)
@@ -117,7 +141,7 @@ namespace EfModelMigrations.Operations.Mapping
             string[] leftKeys;
             string[] rightKeys;
 
-            if (Source.NavigationProperty != null)
+            if (Source.HasNavigationProperty)
             {
                 leftKeys = JoinTable.SourceForeignKeyColumns;
                 rightKeys = JoinTable.TargetForeignKeyColumns;

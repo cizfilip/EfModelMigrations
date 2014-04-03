@@ -14,6 +14,9 @@ namespace EfModelMigrations.Operations.Mapping
 
         public RemoveAssociationMapping(SimpleAssociationEnd source, SimpleAssociationEnd target)
         {
+            Check.NotNull(source, "source");
+            Check.NotNull(target, "target");
+
             this.Source = source;
             this.Target = target;
         }

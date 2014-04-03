@@ -19,6 +19,8 @@ namespace EfModelMigrations.Operations
 
         public CreateEmptyClassOperation(string name)
         {
+            Check.NotEmpty(name, "name");
+
             this.Name = name;
         }
 
