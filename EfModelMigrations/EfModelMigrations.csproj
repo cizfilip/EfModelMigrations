@@ -63,6 +63,8 @@
     <Compile Include="Extensions\IListExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IModelMigration.cs" />
+    <Compile Include="Infrastructure\CodeModel\Builders\ForeignKeyPropertyBuilder.cs" />
+    <Compile Include="Infrastructure\CodeModel\ForeignKeyPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\ConsolidatedIndex.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\EdmExtensions\EdmPropertyExtensions.cs" />

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 {
     //TODO: neni metoda pro Sbyte - je to s nim nejake podivne ani ColumnBuilder v EF ji nema - jeste kouknout o co jde
-    public class ScalarPropertyBuilder : IFluentInterface
+    public sealed class ScalarPropertyBuilder : IFluentInterface
     {
         public ScalarPropertyCodeModel Binary(
             CodeModelVisibility? visibility = null,

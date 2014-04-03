@@ -36,7 +36,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public class OneNavigationPropertyBuilder : NavigationPropertyBuilder
+    public sealed class OneNavigationPropertyBuilder : NavigationPropertyBuilder
     {
         public OneNavigationPropertyBuilder(string targetClass)
             :base(targetClass)
@@ -59,7 +59,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public class ManyNavigationPropertyBuilder : NavigationPropertyBuilder
+    public sealed class ManyNavigationPropertyBuilder : NavigationPropertyBuilder
     {
         public ManyNavigationPropertyBuilder(string targetClass)
             :base(targetClass)

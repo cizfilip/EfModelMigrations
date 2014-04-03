@@ -17,15 +17,14 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
-    //TODO: doresit indexy
     public class AddOneToManyAssociationTransformation : AddAssociationWithForeignKeyTransformation
     {
         public string[] ForeignKeyColumnNames { get; private set; }
-        public ScalarPropertyCodeModel[] ForeignKeyProperties { get; private set; }
+        public ForeignKeyPropertyCodeModel[] ForeignKeyProperties { get; private set; }
         public IndexAttribute ForeignKeyIndex { get; private set; }
 
 
-        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ScalarPropertyCodeModel[] foreignKeyProperties, bool? willCascadeOnDelete = null, IndexAttribute foreignKeyIndex = null)
+        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ForeignKeyPropertyCodeModel[] foreignKeyProperties, bool? willCascadeOnDelete = null, IndexAttribute foreignKeyIndex = null)
             : this(principal, dependent, foreignKeyProperties, null, willCascadeOnDelete, foreignKeyIndex)
         {
         }
@@ -40,7 +39,7 @@ namespace EfModelMigrations.Transformations
         {
         }
 
-        private AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ScalarPropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool? willCascadeOnDelete, IndexAttribute foreignKeyIndex)
+        private AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ForeignKeyPropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool? willCascadeOnDelete, IndexAttribute foreignKeyIndex)
             :base(principal, dependent, willCascadeOnDelete)
         {
             this.ForeignKeyColumnNames = foreignKeyColumnNames;
@@ -72,9 +71,18 @@ namespace EfModelMigrations.Transformations
             var addForeignKeyPropertyOperations = new List<IModelChangeOperation>();
             if (ForeignKeyProperties != null)
             {
+                var principalPks = modelProvider.GetClassCodeModel(Principal.ClassName).PrimaryKeys.ToArray();
+
+                string indexName = null;
+                if (ForeignKeyIndex != null)
+                {
+                    indexName = ForeignKeyIndex.GetDefaultNameIfRequired(ForeignKeyProperties.Select(p => p.Name));
+                }
+
                 for (int i = 0; i < ForeignKeyProperties.Length; i++)
                 {
-                    var foreignKeyProperty = ForeignKeyProperties[i];
+                    var foreignKeyProperty = ForeignKeyProperties[i].MergeWithScalarProperty(principalPks[i]);
+
 
                     addForeignKeyPropertyOperations.Add(
                             new AddPropertyToClassOperation(Dependent.ClassName, foreignKeyProperty)
@@ -83,7 +91,7 @@ namespace EfModelMigrations.Transformations
                     var propertyMapping = new AddPropertyMapping(foreignKeyProperty);
                     if(ForeignKeyIndex != null)
                     {
-                        propertyMapping.Index = ForeignKeyIndex.CopyWithNameAndOrder(ForeignKeyIndex.Name, i);
+                        propertyMapping.Index = ForeignKeyIndex.CopyWithNameAndOrder(indexName, i);
                     }
 
                     addForeignKeyPropertyOperations.Add(
