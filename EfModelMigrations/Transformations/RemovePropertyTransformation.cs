@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations.Model;
+using EfModelMigrations.Operations.Mapping;
 
 namespace EfModelMigrations.Transformations
 {
@@ -35,6 +36,8 @@ namespace EfModelMigrations.Transformations
         {
             //TODO: Validovat zda property vůbec existuje
             //TODO: stejnej kod je i v RemovePropertiesCommand
+
+            yield return new RemoveMappingInformationOperation(new RemovePropertyMapping(ClassName, Name));
 
             yield return new RemovePropertyFromClassOperation(ClassName, Name);
         }

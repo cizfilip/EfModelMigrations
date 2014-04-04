@@ -64,7 +64,7 @@ namespace EfModelMigrations.Transformations
 
         public override ModelTransformation Inverse()
         {
-            return null;
+            return new RemoveManyToManyAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd());
         }
     }
 }

@@ -27,7 +27,7 @@ namespace EfModelMigrations.Transformations
             //TODO: stringy do resourců
             if (!principal.HasNavigationProperty && !dependent.HasNavigationProperty)
             {
-                throw new ModelTransformationValidationException("You must specify at least one navigation property in association.");
+                throw new ModelTransformationValidationException("You must specify at least one navigation property for association.");
             }
         }
 
@@ -52,11 +52,6 @@ namespace EfModelMigrations.Transformations
         }
 
         protected abstract AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider);
-       
-        public override ModelTransformation Inverse()
-        {
-            return new RemoveAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd());
-        }
 
         public override bool IsDestructiveChange
         {

@@ -11,6 +11,14 @@ namespace EfModelMigrations.Transformations.Model
         public string ClassName { get; private set; }
         public string NavigationPropertyName { get; private set; }
 
+        public bool HasNavigationPropertyName
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(NavigationPropertyName);
+            }
+        }
+
         public SimpleAssociationEnd(string className, string navigationPropertyName)
         {
             Check.NotEmpty(className, "className");

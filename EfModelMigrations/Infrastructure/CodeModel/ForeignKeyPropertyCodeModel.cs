@@ -13,6 +13,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         {
         }
 
+        internal ForeignKeyPropertyCodeModel()
+            :this(null)
+        {
+        }
+
         public ScalarPropertyCodeModel MergeWithScalarProperty(ScalarPropertyCodeModel property)
         {
             var merged = new ScalarPropertyCodeModel(Name, property.ColumnModel);

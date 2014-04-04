@@ -88,7 +88,7 @@ namespace EfModelMigrations.Transformations
                             new AddPropertyToClassOperation(Dependent.ClassName, foreignKeyProperty)
                         );
 
-                    var propertyMapping = new AddPropertyMapping(foreignKeyProperty);
+                    var propertyMapping = new AddPropertyMapping(Dependent.ClassName, foreignKeyProperty);
                     if(ForeignKeyIndex != null)
                     {
                         propertyMapping.Index = ForeignKeyIndex.CopyWithNameAndOrder(indexName, i);
@@ -133,7 +133,13 @@ namespace EfModelMigrations.Transformations
         
         public override ModelTransformation Inverse()
         {
-            return null;
+            string[] foreignKeyPropertiesNames = null;
+            if(ForeignKeyProperties != null)
+            {
+                foreignKeyPropertiesNames = ForeignKeyProperties.Select(p => p.Name).ToArray();
+            }
+
+            return new RemoveOneToManyAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd(), foreignKeyPropertiesNames);
         } 
        
     }

@@ -44,7 +44,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 scalarProperties.Where(p => primaryKeys.Contains(p.Name)).ToList()
                 )
                 {
-                    StoreEntityType = storeEntityType
+                    StoreEntityType = storeEntityType,
+                    ConceptualEntityType = entityType
                 };
         }
 

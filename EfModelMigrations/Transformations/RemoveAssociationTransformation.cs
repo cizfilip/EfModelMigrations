@@ -1,4 +1,5 @@
-﻿using EfModelMigrations.Infrastructure;
+﻿using EfModelMigrations.Exceptions;
+using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
@@ -12,40 +13,44 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
-    public class RemoveAssociationTransformation : TransformationWithInverse
+    public abstract class RemoveAssociationTransformation : TransformationWithInverse
     {
-        public SimpleAssociationEnd Source { get; private set; }
-        public SimpleAssociationEnd Target { get; private set; }
+        public SimpleAssociationEnd Principal { get; private set; }
+        public SimpleAssociationEnd Dependent { get; private set; }
 
-        public RemoveAssociationTransformation(SimpleAssociationEnd source, SimpleAssociationEnd target, ModelTransformation inverse) : base(inverse)
+        public RemoveAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, ModelTransformation inverse) : base(inverse)
         {
-            this.Source = source;
-            this.Target = target;
+            Check.NotNull(principal, "source");
+            Check.NotNull(dependent, "target");
+
+            this.Principal = principal;
+            this.Dependent = dependent;
+
+            //TODO: stringy do resourců
+            if (!principal.HasNavigationPropertyName && !dependent.HasNavigationPropertyName)
+            {
+                throw new ModelTransformationValidationException("You must specify at least one navigation property for association.");
+            }
         }
 
-        public RemoveAssociationTransformation(SimpleAssociationEnd source, SimpleAssociationEnd target)
-            : this(source, target, null)
+        public RemoveAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent)
+            : this(principal, dependent, null)
         {
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            if (!string.IsNullOrEmpty(Source.NavigationPropertyName))
+            if (!string.IsNullOrEmpty(Principal.NavigationPropertyName))
             {
-                yield return new RemovePropertyFromClassOperation(Source.ClassName, Source.NavigationPropertyName);
+                yield return new RemovePropertyFromClassOperation(Principal.ClassName, Principal.NavigationPropertyName);
             }
 
-            if (!string.IsNullOrEmpty(Target.NavigationPropertyName))
+            if (!string.IsNullOrEmpty(Dependent.NavigationPropertyName))
             {
-                yield return new RemovePropertyFromClassOperation(Target.ClassName, Target.NavigationPropertyName);
+                yield return new RemovePropertyFromClassOperation(Dependent.ClassName, Dependent.NavigationPropertyName);
             }
 
-            yield return new RemoveMappingInformationOperation(new RemoveAssociationMapping(Source, Target));
-        }
-
-        public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
-        {
-            throw new NotImplementedException();
+            yield return new RemoveMappingInformationOperation(new RemoveAssociationMapping(Principal, Dependent));
         }
 
         public override bool IsDestructiveChange

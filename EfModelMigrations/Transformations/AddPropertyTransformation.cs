@@ -2,12 +2,14 @@
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
+using EfModelMigrations.Operations.Mapping;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
 
 namespace EfModelMigrations.Transformations
 {
+    //TODO: pridat moznost specifikovat index
     public class AddPropertyTransformation : ModelTransformation
     {
         public string ClassName { get; private set; }
@@ -25,6 +27,8 @@ namespace EfModelMigrations.Transformations
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
             yield return new AddPropertyToClassOperation(ClassName, Model);
+
+            yield return new AddMappingInformationOperation(new AddPropertyMapping(ClassName, Model));
         }
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)

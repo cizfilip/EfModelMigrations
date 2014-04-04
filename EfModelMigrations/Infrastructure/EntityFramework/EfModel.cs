@@ -35,15 +35,22 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return entitySet.EntityContainer.AssociationSets.Where(a => a.AssociationSetEnds.Any(e => e.EntitySet.Equals(entitySet)));
         }
 
-
         public EntitySet GetStoreEntitySetJoinTableForManyToMany(AssociationEnd from, AssociationEnd to)
+        {
+            Check.NotNull(from, "from");
+            Check.NotNull(to, "to");
+
+            return GetStoreEntitySetJoinTableForManyToMany(from.ToSimpleAssociationEnd(), to.ToSimpleAssociationEnd());
+        }
+
+        public EntitySet GetStoreEntitySetJoinTableForManyToMany(SimpleAssociationEnd from, SimpleAssociationEnd to)
         {
             Check.NotNull(from, "from");
             Check.NotNull(to, "to");
 
             try 
             {
-                if (from.HasNavigationProperty)
+                if (from.HasNavigationPropertyName)
                 {
                     return GetStoreEntitySetJoinTableForManyToManyFromAssociationEnd(from);
                 }
@@ -58,15 +65,22 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
         }
 
-
         public AssociationType GetStorageAssociationTypeForAssociation(AssociationEnd from, AssociationEnd to)
+        {
+            Check.NotNull(from, "from");
+            Check.NotNull(to, "to");
+
+            return GetStorageAssociationTypeForAssociation(from.ToSimpleAssociationEnd(), to.ToSimpleAssociationEnd());
+        }
+
+        public AssociationType GetStorageAssociationTypeForAssociation(SimpleAssociationEnd from, SimpleAssociationEnd to)
         {
             Check.NotNull(from, "from");
             Check.NotNull(to, "to");
 
             try
             {
-                if (from.HasNavigationProperty)
+                if (from.HasNavigationPropertyName)
                 {
                     return GetStoreAssociationTypeFromAssociationEnd(from);
                 }
@@ -146,14 +160,14 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         
 
         //Private methods
-        private AssociationType GetStoreAssociationTypeFromAssociationEnd(AssociationEnd associationEnd)
+        private AssociationType GetStoreAssociationTypeFromAssociationEnd(SimpleAssociationEnd associationEnd)
         {
             var associationName = GetAssociationNameFromAssociationEnd(associationEnd);
 
             return Metadata.StoreAssociatonTypes.Single(at => at.Name.EqualsOrdinal(associationName));
         }
 
-        private EntitySet GetStoreEntitySetJoinTableForManyToManyFromAssociationEnd(AssociationEnd associationEnd)
+        private EntitySet GetStoreEntitySetJoinTableForManyToManyFromAssociationEnd(SimpleAssociationEnd associationEnd)
         {
             var associationName = GetAssociationNameFromAssociationEnd(associationEnd);
 
@@ -163,18 +177,18 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 .StoreEntitySet;
         }
 
-        private string GetAssociationNameFromAssociationEnd(AssociationEnd associationEnd)
+        private string GetAssociationNameFromAssociationEnd(SimpleAssociationEnd associationEnd)
         {
             return GetNavigationPropertyFromAssociationEnd(associationEnd)
                     .RelationshipType
                     .Name;
         }
 
-        private NavigationProperty GetNavigationPropertyFromAssociationEnd(AssociationEnd associationEnd)
+        private NavigationProperty GetNavigationPropertyFromAssociationEnd(SimpleAssociationEnd associationEnd)
         {
             return Metadata.GetEntityTypeForClass(associationEnd.ClassName)
                     .NavigationProperties
-                    .Single(np => np.Name.EqualsOrdinal(associationEnd.NavigationProperty.Name));
+                    .Single(np => np.Name.EqualsOrdinal(associationEnd.NavigationPropertyName));
         }
     }
 }

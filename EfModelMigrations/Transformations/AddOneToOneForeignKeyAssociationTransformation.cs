@@ -54,7 +54,7 @@ namespace EfModelMigrations.Transformations
 
         public override ModelTransformation Inverse()
         {
-            return null;
+            return new RemoveOneToOneForeignKeyAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd());
         }
         
         

@@ -42,6 +42,8 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         public IEnumerable<ScalarPropertyCodeModel> PrimaryKeys { get; private set; }
 
         public EntityType StoreEntityType { get; internal set; }
+
+        public EntityType ConceptualEntityType { get; internal set; }
     }
 
     

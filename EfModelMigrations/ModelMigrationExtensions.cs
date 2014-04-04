@@ -76,12 +76,12 @@ namespace EfModelMigrations
         //}
 
         //1:1 PK
-        public static void AddOneToOnePrimaryKeyAssociation(this IModelMigration migration, 
-            string principal, 
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty, 
-            string dependent, 
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty, 
-            bool bothRequired = false, 
+        public static void AddOneToOnePrimaryKeyAssociation(this IModelMigration migration,
+            string principal,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
+            string dependent,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            bool bothRequired = false,
             bool? willCascadeOnDelete = null)
         {
             var principalMultiplicity = bothRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
@@ -90,21 +90,21 @@ namespace EfModelMigrations
                 new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
                 new AssociationEnd(dependent, RelationshipMultiplicity.One, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
                 willCascadeOnDelete));
-                
+
         }
         public static void AddOneToOnePrimaryKeyAssociation(this IModelMigration migration,
             string principal,
             string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
             bool bothRequired = false,
             bool? willCascadeOnDelete = null)
         {
             AddOneToOnePrimaryKeyAssociation(migration, principal, _ => null, dependent, dependentNavigationProperty, bothRequired, willCascadeOnDelete);
         }
-        public static void AddOneToOnePrimaryKeyAssociation(this IModelMigration migration, 
+        public static void AddOneToOnePrimaryKeyAssociation(this IModelMigration migration,
             string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty, 
-            string dependent, 
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
+            string dependent,
             bool bothRequired = false,
             bool? willCascadeOnDelete = null)
         {
@@ -114,9 +114,9 @@ namespace EfModelMigrations
         //1:1 FK
         public static void AddOneToOneForeignKeyAssociation(this IModelMigration migration,
             string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
             string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
             string[] dependentFkNames = null,
             bool principalRequired = false,
             bool dependentRequired = true,
@@ -133,7 +133,7 @@ namespace EfModelMigrations
         }
         public static void AddOneToOneForeignKeyAssociation(this IModelMigration migration,
             string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
             string dependent,
             string[] dependentFkNames = null,
             bool principalRequired = false,
@@ -145,7 +145,7 @@ namespace EfModelMigrations
         public static void AddOneToOneForeignKeyAssociation(this IModelMigration migration,
             string principal,
             string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
             string[] dependentFkNames = null,
             bool principalRequired = false,
             bool dependentRequired = true,
@@ -155,11 +155,11 @@ namespace EfModelMigrations
         }
 
         //1:N - ForeignKeyNames
-        public static void AddManyToOneAssociation(this IModelMigration migration,
+        public static void AddOneToManyAssociation(this IModelMigration migration,
             string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
+            Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
             string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
             string[] dependentFkNames = null,
             bool principalRequired = true,
             bool? willCascadeOnDelete = null,
@@ -174,35 +174,35 @@ namespace EfModelMigrations
                 willCascadeOnDelete,
                 foreignKeyIndex));
         }
-        public static void AddManyToOneAssociation(this IModelMigration migration,
+        public static void AddOneToManyAssociation(this IModelMigration migration,
             string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
+            Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
             string dependent,
             string[] dependentFkNames = null,
             bool principalRequired = true,
             bool? willCascadeOnDelete = null,
             IndexAttribute foreignKeyIndex = null)
         {
-            AddManyToOneAssociation(migration, principal, principalNavigationProperty, dependent, _ => null, dependentFkNames, principalRequired, willCascadeOnDelete, foreignKeyIndex);
+            AddOneToManyAssociation(migration, principal, principalNavigationProperty, dependent, _ => null, dependentFkNames, principalRequired, willCascadeOnDelete, foreignKeyIndex);
         }
-        public static void AddManyToOneAssociation(this IModelMigration migration,
+        public static void AddOneToManyAssociation(this IModelMigration migration,
             string principal,
             string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
             string[] dependentFkNames = null,
             bool principalRequired = true,
             bool? willCascadeOnDelete = null,
             IndexAttribute foreignKeyIndex = null)
         {
-            AddManyToOneAssociation(migration, principal, _ => null, dependent, dependentNavigationProperty, dependentFkNames, principalRequired, willCascadeOnDelete, foreignKeyIndex);
+            AddOneToManyAssociation(migration, principal, _ => null, dependent, dependentNavigationProperty, dependentFkNames, principalRequired, willCascadeOnDelete, foreignKeyIndex);
         }
 
         //1:N - ForeignKeyProperties
-        public static void AddManyToOneAssociation<TProps>(this IModelMigration migration,
+        public static void AddOneToManyAssociation<TProps>(this IModelMigration migration,
             string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
+            Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
             string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
             Func<ForeignKeyPropertyBuilder, TProps> dependentFkPropertiesAction,
             bool principalRequired = true,
             bool? willCascadeOnDelete = null,
@@ -217,60 +217,108 @@ namespace EfModelMigrations
                 willCascadeOnDelete,
                 foreignKeyIndex));
         }
-        public static void AddManyToOneAssociation<TProps>(this IModelMigration migration,
+        public static void AddOneToManyAssociation<TProps>(this IModelMigration migration,
             string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
+            Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
             string dependent,
             Func<ForeignKeyPropertyBuilder, TProps> dependentFkPropertiesAction,
             bool principalRequired = true,
             bool? willCascadeOnDelete = null,
             IndexAttribute foreignKeyIndex = null)
         {
-            AddManyToOneAssociation(migration, principal, principalNavigationProperty, dependent, _ => null, dependentFkPropertiesAction, principalRequired, willCascadeOnDelete, foreignKeyIndex);
+            AddOneToManyAssociation(migration, principal, principalNavigationProperty, dependent, _ => null, dependentFkPropertiesAction, principalRequired, willCascadeOnDelete, foreignKeyIndex);
         }
-        public static void AddManyToOneAssociation<TProps>(this IModelMigration migration,
+        public static void AddOneToManyAssociation<TProps>(this IModelMigration migration,
             string principal,
             string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
             Func<ForeignKeyPropertyBuilder, TProps> dependentFkPropertiesAction,
             bool principalRequired = true,
             bool? willCascadeOnDelete = null,
             IndexAttribute foreignKeyIndex = null)
         {
-            AddManyToOneAssociation(migration, principal, _ => null, dependent, dependentNavigationProperty, dependentFkPropertiesAction, principalRequired, willCascadeOnDelete, foreignKeyIndex);
+            AddOneToManyAssociation(migration, principal, _ => null, dependent, dependentNavigationProperty, dependentFkPropertiesAction, principalRequired, willCascadeOnDelete, foreignKeyIndex);
         }
 
         //M:N
         public static void AddManyToManyAssociation(this IModelMigration migration,
-            string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
-            string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            string source,
+            Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> sourceNavigationProperty,
+            string target,
+            Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> targetNavigationProperty,
             ManyToManyJoinTable joinTable = null)
         {
             ((ModelMigration)migration).AddTransformation(new AddManyToManyAssociationTransformation(
-                new AssociationEnd(principal, RelationshipMultiplicity.Many, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
-                new AssociationEnd(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new ManyNavigationPropertyBuilder(principal))),
+                new AssociationEnd(source, RelationshipMultiplicity.Many, sourceNavigationProperty(new ManyNavigationPropertyBuilder(target))),
+                new AssociationEnd(target, RelationshipMultiplicity.Many, targetNavigationProperty(new ManyNavigationPropertyBuilder(source))),
                 joinTable));
         }
         public static void AddManyToManyAssociation(this IModelMigration migration,
-            string principal,
-            string dependent,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> dependentNavigationProperty,
+            string source,
+            string target,
+            Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> targetNavigationProperty,
             ManyToManyJoinTable joinTable = null)
         {
-            AddManyToManyAssociation(migration, principal, _ => null, dependent, dependentNavigationProperty, joinTable);
+            AddManyToManyAssociation(migration, source, _ => null, target, targetNavigationProperty, joinTable);
         }
         public static void AddManyToManyAssociation(this IModelMigration migration,
-            string principal,
-            Func<NavigationPropertyBuilder, NavigationPropertyCodeModel> principalNavigationProperty,
-            string dependent,
+            string source,
+            Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> sourceNavigationProperty,
+            string target,
             ManyToManyJoinTable joinTable = null)
         {
-            AddManyToManyAssociation(migration, principal, principalNavigationProperty, dependent, _ => null, joinTable);
+            AddManyToManyAssociation(migration, source, sourceNavigationProperty, target, _ => null, joinTable);
         }
 
-        
+
+        //Remove association
+        public static void RemoveOneToOnePrimaryKeyAssociation(this IModelMigration migration,
+            string source,
+            string sourceNavigationPropertyName,
+            string target,
+            string targetNavigationPropertyName)
+        {
+            ((ModelMigration)migration).AddTransformation(new RemoveOneToOneForeignKeyAssociationTransformation(
+                new SimpleAssociationEnd(source, sourceNavigationPropertyName),
+                new SimpleAssociationEnd(target, targetNavigationPropertyName)));
+        }
+
+        public static void RemoveOneToOneForeignKeyAssociation(this IModelMigration migration,
+            string source,
+            string sourceNavigationPropertyName,
+            string target,
+            string targetNavigationPropertyName)
+        {
+            ((ModelMigration)migration).AddTransformation(new RemoveOneToOneForeignKeyAssociationTransformation(
+                new SimpleAssociationEnd(source, sourceNavigationPropertyName),
+                new SimpleAssociationEnd(target, targetNavigationPropertyName)));
+        }
+
+        public static void RemoveOneToManyAssociation(this IModelMigration migration,
+            string source,
+            string sourceNavigationPropertyName,
+            string target,
+            string targetNavigationPropertyName,
+            string[] foreignKeyPropertyNames = null)
+        {
+            ((ModelMigration)migration).AddTransformation(new RemoveOneToManyAssociationTransformation(
+                new SimpleAssociationEnd(source, sourceNavigationPropertyName),
+                new SimpleAssociationEnd(target, targetNavigationPropertyName),
+                foreignKeyPropertyNames));
+        }
+
+        public static void RemoveManyToManyAssociation(this IModelMigration migration,
+            string source,
+            string sourceNavigationPropertyName,
+            string target,
+            string targetNavigationPropertyName)
+        {
+            ((ModelMigration)migration).AddTransformation(new RemoveManyToManyAssociationTransformation(
+                new SimpleAssociationEnd(source, sourceNavigationPropertyName),
+                new SimpleAssociationEnd(target, targetNavigationPropertyName)));
+        }
+
+
         private static IEnumerable<ScalarPropertyCodeModel> ConvertObjectToScalarPropertyModel<TProps>(TProps properties)
         {
             var propertiesOnObject = properties.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(
@@ -315,5 +363,5 @@ namespace EfModelMigrations
     }
 
 
-   
+
 }

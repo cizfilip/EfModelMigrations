@@ -9,12 +9,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
     public sealed class ForeignKeyPropertyBuilder : IFluentInterface
     {
         public ForeignKeyPropertyCodeModel Build(
-            string name,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return new ForeignKeyPropertyCodeModel(name)
+            return new ForeignKeyPropertyCodeModel()
                 {
                     Visibility = visibility,
                     IsVirtual = isVirtual,

@@ -1,4 +1,5 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Infrastructure.EntityFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,6 @@ namespace EfModelMigrations.Infrastructure
     {
         ClassCodeModel GetClassCodeModel(string className);
 
-        
+        EfModel EfModel { get; }
     }
 }

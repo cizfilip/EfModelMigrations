@@ -49,6 +49,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 throw new ModelMigrationsException(string.Format(Resources.CannotFindClassInModelProject, className), e);
             }
         }
-        
+
+
+
+        public EfModel EfModel
+        {
+            get { return efModel; }
+        }
     }
 }

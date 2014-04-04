@@ -199,7 +199,12 @@
     <Compile Include="Transformations\Model\ManyToManyJoinTable.cs" />
     <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />
     <Compile Include="Transformations\RemoveAssociationTransformation.cs" />
+    <Compile Include="Transformations\RemoveAssociationWithForeignKeyTransformation.cs" />
     <Compile Include="Transformations\RemoveClassTransformation.cs" />
+    <Compile Include="Transformations\RemoveManyToManyAssociationTransformation.cs" />
+    <Compile Include="Transformations\RemoveOneToManyAssociationTransformation.cs" />
+    <Compile Include="Transformations\RemoveOneToOneForeignKeyAssociationTransformation.cs" />
+    <Compile Include="Transformations\RemoveOneToOnePrimaryKeyAssociationTransformation.cs" />
     <Compile Include="Transformations\RemovePropertyTransformation.cs" />
     <Compile Include="Transformations\RenameClassTransformation.cs" />
     <Compile Include="Transformations\RenamePropertyTransformation.cs" />
