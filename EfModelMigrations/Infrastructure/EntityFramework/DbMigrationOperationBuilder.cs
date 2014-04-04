@@ -28,10 +28,15 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         {
             Check.NotNull(storageEntitySet, "storageEntitySet");
 
+            return CreateTableOperationInternal(storageEntitySet, NewModel);
+        }
+
+        private CreateTableOperation CreateTableOperationInternal(EntitySet storageEntitySet, EfModel model)
+        {
             var operation = new CreateTableOperation(storageEntitySet.FullTableName());
 
             //add columns
-            var providerManifest = NewModel.Metadata.ProviderManifest;
+            var providerManifest = model.Metadata.ProviderManifest;
             operation.Columns.AddRange(
                     storageEntitySet.ElementType.Properties.Select(p => p.ToColumnModel(providerManifest))
                 );
@@ -51,7 +56,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         {
             Check.NotNull(storageEntitySet, "storageEntitySet");
 
-            var inverse = CreateTableOperation(storageEntitySet);
+            var inverse = CreateTableOperationInternal(storageEntitySet, OldModel);
 
             return new DropTableOperation(storageEntitySet.FullTableName(), inverse);
         }
@@ -61,7 +66,12 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             Check.NotNull(storageEntitySet, "storageEntitySet");
             Check.NotNull(column, "column");
 
-            var columnModel = column.ToColumnModel(NewModel.Metadata.ProviderManifest);
+            return AddColumnOperationInternal(storageEntitySet, column, NewModel);
+        }
+
+        private AddColumnOperation AddColumnOperationInternal(EntitySet storageEntitySet, EdmProperty column, EfModel model)
+        {
+            var columnModel = column.ToColumnModel(model.Metadata.ProviderManifest);
 
             return new AddColumnOperation(storageEntitySet.FullTableName(), columnModel);
         }
@@ -71,7 +81,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             Check.NotNull(storageEntitySet, "storageEntitySet");
             Check.NotNull(column, "columnName");
 
-            var inverse = AddColumnOperation(storageEntitySet, column);
+            var inverse = AddColumnOperationInternal(storageEntitySet, column, OldModel);
 
             return new DropColumnOperation(storageEntitySet.FullTableName(), column.Name, inverse);
         }
@@ -99,8 +109,13 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         {
             Check.NotNull(referentialConstraint, "referentialConstraint");
 
+            return AddForeignKeyOperationInternal(referentialConstraint, NewModel);
+        }
+
+        private AddForeignKeyOperation AddForeignKeyOperationInternal(ReferentialConstraint referentialConstraint, EfModel model)
+        {
             var operation = new AddForeignKeyOperation();
-            BuildForeignKeyOperation(operation, referentialConstraint, NewModel);
+            BuildForeignKeyOperation(operation, referentialConstraint, model);
 
             operation.PrincipalColumns.AddRange(
                     referentialConstraint.FromProperties.Select(p => p.Name)
@@ -115,7 +130,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         {
             Check.NotNull(referentialConstraint, "referentialConstraint");
 
-            var inverse = AddForeignKeyOperation(referentialConstraint);
+            var inverse = AddForeignKeyOperationInternal(referentialConstraint, OldModel);
             var operation = new DropForeignKeyOperation(inverse);
 
             BuildForeignKeyOperation(operation, referentialConstraint, OldModel);

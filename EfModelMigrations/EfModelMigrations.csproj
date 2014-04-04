@@ -64,7 +64,9 @@
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IModelMigration.cs" />
     <Compile Include="Infrastructure\CodeModel\Builders\ForeignKeyPropertyBuilder.cs" />
+    <Compile Include="Infrastructure\CodeModel\EnumPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\ForeignKeyPropertyCodeModel.cs" />
+    <Compile Include="Infrastructure\CodeModel\PrimitivePropertyCodeModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\ConsolidatedIndex.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\EdmExtensions\EdmPropertyExtensions.cs" />
@@ -86,7 +88,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="IFluentInterface.cs" />
     <Compile Include="Infrastructure\CodeModel\Builders\NavigationPropertyBuilder.cs" />
-    <Compile Include="Infrastructure\CodeModel\Builders\ScalarPropertyBuilder.cs" />
+    <Compile Include="Infrastructure\CodeModel\Builders\PrimitivePropertyBuilder.cs" />
     <Compile Include="Infrastructure\CodeModel\PropertyCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\CodeModelVisibility.cs" />
     <Compile Include="Infrastructure\CodeModel\NavigationPropertyCodeModel.cs" />

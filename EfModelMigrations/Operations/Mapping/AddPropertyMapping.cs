@@ -14,11 +14,11 @@ namespace EfModelMigrations.Operations.Mapping
     public class AddPropertyMapping : IAddMappingInformation
     {
         public string ClassName { get; private set; }
-        public ScalarPropertyCodeModel Property { get; private set; }
+        public PrimitivePropertyCodeModel Property { get; private set; }
 
         public IndexAttribute Index { get; set; }
 
-        public AddPropertyMapping(string className, ScalarPropertyCodeModel property)
+        public AddPropertyMapping(string className, PrimitivePropertyCodeModel property)
         {
             Check.NotEmpty(className, "className");
             Check.NotNull(property, "property");
@@ -29,7 +29,30 @@ namespace EfModelMigrations.Operations.Mapping
 
         public EfFluentApiCallChain BuildEfFluentApiCallChain()
         {
-            throw new NotImplementedException();
+            //TODO: dodelat !!!!
+
+            var propertyCalls = new List<EfFluetApiCall>();
+
+            //if (Property.IsNullable.HasValue)
+            //{
+            //    if (Property.IsNullable.Value)
+            //    {
+            //        propertyCalls.Add(new EfFluetApiCall(EfFluentApiMethods.IsOptional));
+            //    }
+            //    else
+            //    {
+            //        propertyCalls.Add(new EfFluetApiCall(EfFluentApiMethods.IsRequired));
+            //    }
+            //}
+            
+
+
+            if (propertyCalls.Count > 0)
+            {
+
+            }
+
+            return null;
         }
     }
 }

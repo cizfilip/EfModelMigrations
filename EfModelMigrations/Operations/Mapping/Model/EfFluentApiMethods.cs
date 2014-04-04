@@ -35,5 +35,10 @@ namespace EfModelMigrations.Operations.Mapping.Model
         ToTable,
 
         HasForeignKey,
+
+        //Properties
+        Property,
+        IsRequired,
+        IsOptional
     }
 }

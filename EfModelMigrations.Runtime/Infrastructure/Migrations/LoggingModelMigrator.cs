@@ -68,7 +68,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             Logger.Info(string.Format("Migration {0} was succesfully {1}.", migrationId, direction2));
         }
 
-        internal virtual ScaffoldedMigration GenerateDbMigration(IEnumerable<MigrationOperation> operations, string dbMigrationName)
+        internal override ScaffoldedMigration GenerateDbMigration(IEnumerable<MigrationOperation> operations, string dbMigrationName)
         {
             Logger.Info("Generating Db migration...");
             return base.GenerateDbMigration(operations, dbMigrationName);
@@ -79,6 +79,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             Logger.Info("Updating database...");
             base.UpdateDatabase(dbMigrationId);
         }
+
 
     }
 }

@@ -31,7 +31,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 
         public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass, EntityType entityType, EntityType storeEntityType)
         {
-            var scalarProperties = MapScalarProperties(codeClass, entityType.Properties);
+            var scalarProperties = MapProperties(codeClass, entityType.Properties);
             var primaryKeys = entityType.KeyProperties.Select(k => k.Name);
 
             return new ClassCodeModel(
@@ -49,10 +49,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 };
         }
 
-        private IEnumerable<ScalarPropertyCodeModel> MapScalarProperties(CodeClass2 codeClass, IEnumerable<EdmProperty> properties)
+        private IEnumerable<PrimitivePropertyCodeModel> MapProperties(CodeClass2 codeClass, IEnumerable<EdmProperty> properties)
         {
             //map only properies of primitive type -> no enum is mapped
-            return properties.Where(p => p.IsPrimitiveType).Select(p => MapScalarProperty(codeClass.FindProperty(p.Name), p)).ToList();
+            return properties.Select(p => MapProperty(codeClass.FindProperty(p.Name), p)).ToList();
         }
 
         private IEnumerable<NavigationPropertyCodeModel> MapNavigationProperties(CodeClass2 codeClass, IEnumerable<NavigationProperty> properties)
@@ -61,17 +61,34 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
         }
 
 
-        private ScalarPropertyCodeModel MapScalarProperty(CodeProperty2 codeProperty, EdmProperty edmProperty)
+        private PrimitivePropertyCodeModel MapProperty(CodeProperty2 codeProperty, EdmProperty edmProperty)
         {
             Check.NotNull(codeProperty, "codeProperty");
 
+            PrimitivePropertyCodeModel property = null;
+
             var columnModel = efModel.GetColumnModelForProperty(edmProperty.DeclaringType.Name, edmProperty.Name);
 
-            ScalarPropertyCodeModel scalarProperty = new ScalarPropertyCodeModel(edmProperty.Name, columnModel);
+            //TODO: DodelatMapovani
+            if(edmProperty.IsPrimitiveType)
+            {
+                property = new ScalarPropertyCodeModel(edmProperty.Name, columnModel.Type);
+            }
+            else if(edmProperty.IsEnumType)
+            {
+                property = new EnumPropertyCodeModel(edmProperty.Name, edmProperty.EnumType.Name);
+            }
+            else
+            {
+                throw new InvalidOperationException("Unknown type for edmProperty"); //TODO: string do resourcu
+            }
 
-            MapProperty(scalarProperty, codeProperty);
 
-            return scalarProperty;
+            
+
+            MapPropertyCodeModel(property, codeProperty);
+
+            return property;
         }
 
         private NavigationPropertyCodeModel MapNavigationProperty(CodeProperty2 codeProperty, NavigationProperty edmProperty)
@@ -80,14 +97,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 
             NavigationPropertyCodeModel navigationProperty = new NavigationPropertyCodeModel(edmProperty.Name,
                 edmProperty.ToEndMember.GetEntityType().Name,
-                edmProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many);           
+                edmProperty.ToEndMember.RelationshipMultiplicity == RelationshipMultiplicity.Many);
 
-            MapProperty(navigationProperty, codeProperty);
+            MapPropertyCodeModel(navigationProperty, codeProperty);
 
             return navigationProperty;
         }
 
-        private void MapProperty(PropertyCodeModel property, CodeProperty2 codeProperty)
+        private void MapPropertyCodeModel(PropertyCodeModel property, CodeProperty2 codeProperty)
         {
             property.Visibility = MapVisibilityWitDefaults(codeProperty.Access, defaults.Property.Visibility);
             var setterPrivate = codeProperty.Setter.Access == vsCMAccess.vsCMAccessPrivate;

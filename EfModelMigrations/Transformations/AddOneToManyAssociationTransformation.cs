@@ -81,7 +81,7 @@ namespace EfModelMigrations.Transformations
 
                 for (int i = 0; i < ForeignKeyProperties.Length; i++)
                 {
-                    var foreignKeyProperty = ForeignKeyProperties[i].MergeWithScalarProperty(principalPks[i]);
+                    var foreignKeyProperty = ForeignKeyProperties[i].MergeWithProperty(principalPks[i]);
 
 
                     addForeignKeyPropertyOperations.Add(

@@ -80,7 +80,7 @@ namespace EfModelMigrations.Transformations
 
         private ScalarPropertyCodeModel GetPrimaryKeyForNewClass()
         {
-            var prop = new ScalarPropertyBuilder().Int();
+            var prop = new PrimitivePropertyBuilder().Int();
             prop.Name = "Id";
             return prop;
         }

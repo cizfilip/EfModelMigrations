@@ -14,9 +14,9 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             CodeModelVisibility visibility,
             string baseType,
             IEnumerable<string> implementedInterfaces,
-            IEnumerable<ScalarPropertyCodeModel> properties,
+            IEnumerable<PrimitivePropertyCodeModel> properties,
             IEnumerable<NavigationPropertyCodeModel> navigationProperties,
-            IEnumerable<ScalarPropertyCodeModel> primaryKeys)
+            IEnumerable<PrimitivePropertyCodeModel> primaryKeys)
         {
             Check.NotEmpty(name, "name");
 
@@ -25,9 +25,9 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             Visibility = visibility;
             BaseType = baseType;
             ImplementedInterfaces = implementedInterfaces ?? Enumerable.Empty<string>();
-            Properties = properties ?? Enumerable.Empty<ScalarPropertyCodeModel>();
+            Properties = properties ?? Enumerable.Empty<PrimitivePropertyCodeModel>();
             NavigationProperties = navigationProperties ?? Enumerable.Empty<NavigationPropertyCodeModel>();
-            PrimaryKeys = primaryKeys ?? Enumerable.Empty<ScalarPropertyCodeModel>();
+            PrimaryKeys = primaryKeys ?? Enumerable.Empty<PrimitivePropertyCodeModel>();
         }
 
         public string Name { get; private set; }
@@ -35,11 +35,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         public string BaseType { get; private set; }
         public IEnumerable<string> ImplementedInterfaces { get; private set; }
 
-        public IEnumerable<ScalarPropertyCodeModel> Properties { get; private set; }
+        public IEnumerable<PrimitivePropertyCodeModel> Properties { get; private set; }
 
         public IEnumerable<NavigationPropertyCodeModel> NavigationProperties { get; private set; }
 
-        public IEnumerable<ScalarPropertyCodeModel> PrimaryKeys { get; private set; }
+        public IEnumerable<PrimitivePropertyCodeModel> PrimaryKeys { get; private set; }
 
         public EntityType StoreEntityType { get; internal set; }
 

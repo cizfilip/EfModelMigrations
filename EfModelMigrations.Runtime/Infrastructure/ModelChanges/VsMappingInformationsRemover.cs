@@ -41,23 +41,31 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         protected virtual IEnumerable<GeneratedFluetApiCall> RemoveRegExps(RemoveAssociationMapping mappingInfo)
         {
-            if(!string.IsNullOrEmpty(mappingInfo.Source.NavigationPropertyName))
+            if(mappingInfo.Source.HasNavigationPropertyName)
             {
                 var methodChain = new EfFluentApiCallChain(mappingInfo.Source.ClassName)
                     .AddMethodCall(EfFluentApiMethods.HasMany, CreatePropertySelectorParameter(mappingInfo.Source.ClassName, mappingInfo.Source.NavigationPropertyName))
-                    .AddMethodCall(EfFluentApiMethods.HasMany, CreatePropertySelectorParameter(mappingInfo.Target.ClassName, mappingInfo.Target.NavigationPropertyName));
+                    .AddMethodCall(EfFluentApiMethods.WithMany, CreatePropertySelectorParameter(mappingInfo.Target.ClassName, mappingInfo.Target.NavigationPropertyName));
 
                 yield return regexGenerator.GenerateFluentApiCall(methodChain);
             }
 
-            if (!string.IsNullOrEmpty(mappingInfo.Target.NavigationPropertyName))
+            if (mappingInfo.Target.HasNavigationPropertyName)
             {
                 var methodChain = new EfFluentApiCallChain(mappingInfo.Target.ClassName)
                     .AddMethodCall(EfFluentApiMethods.HasMany, CreatePropertySelectorParameter(mappingInfo.Target.ClassName, mappingInfo.Target.NavigationPropertyName))
-                    .AddMethodCall(EfFluentApiMethods.HasMany, CreatePropertySelectorParameter(mappingInfo.Source.ClassName, mappingInfo.Source.NavigationPropertyName));
+                    .AddMethodCall(EfFluentApiMethods.WithMany, CreatePropertySelectorParameter(mappingInfo.Source.ClassName, mappingInfo.Source.NavigationPropertyName));
 
                 yield return regexGenerator.GenerateFluentApiCall(methodChain);
             }
+        }
+
+        protected virtual IEnumerable<GeneratedFluetApiCall> RemoveRegExps(RemovePropertyMapping mappingInfo)
+        {
+            var methodChain = new EfFluentApiCallChain(mappingInfo.ClassName)
+                .AddMethodCall(EfFluentApiMethods.Property, CreatePropertySelectorParameter(mappingInfo.ClassName, mappingInfo.PropertyName));
+
+            yield return regexGenerator.GenerateFluentApiCall(methodChain);
         }
 
 

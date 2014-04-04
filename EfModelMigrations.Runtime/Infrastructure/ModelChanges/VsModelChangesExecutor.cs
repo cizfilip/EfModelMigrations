@@ -217,34 +217,33 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         protected virtual void ExecuteOperation(AddMappingInformationOperation operation)
         {
-                        
             var mappingGenerator = codeGenerator.MappingGenerator;
-
             var generatedInfo = mappingGenerator.GenerateFluentApiCall(operation.MappingInformation.BuildEfFluentApiCallChain());
-            var prefixForOnModelCreating = mappingGenerator.GetPrefixForOnModelCreatingUse(generatedInfo.TargetType);
-            
 
-            CodeClass2 contextClass = GetDbContextCodeClass();
-            historyTracker.MarkItemModified(contextClass.ProjectItem);
-
-            CodeFunction2 onModelCreatingMethod = FindOnModelCreatingMethod(contextClass);
-
-
-            try
+            if (generatedInfo != null)
             {
-                var editPoint = onModelCreatingMethod.GetEndPoint(vsCMPart.vsCMPartBody).CreateEditPoint();
+                var prefixForOnModelCreating = mappingGenerator.GetPrefixForOnModelCreatingUse(generatedInfo.TargetType);
 
-                editPoint.Insert(string.Concat(prefixForOnModelCreating, generatedInfo.Content));
-                editPoint.Insert(Environment.NewLine);
+                CodeClass2 contextClass = GetDbContextCodeClass();
+                historyTracker.MarkItemModified(contextClass.ProjectItem);
 
-                //Format inserted mapping
-                onModelCreatingMethod.StartPoint.CreateEditPoint().SmartFormat(onModelCreatingMethod.EndPoint);
+                CodeFunction2 onModelCreatingMethod = FindOnModelCreatingMethod(contextClass);
+
+                try
+                {
+                    var editPoint = onModelCreatingMethod.GetEndPoint(vsCMPart.vsCMPartBody).CreateEditPoint();
+
+                    editPoint.Insert(string.Concat(prefixForOnModelCreating, generatedInfo.Content));
+                    editPoint.Insert(Environment.NewLine);
+
+                    //Format inserted mapping
+                    onModelCreatingMethod.StartPoint.CreateEditPoint().SmartFormat(onModelCreatingMethod.EndPoint);
+                }
+                catch (Exception e)
+                {
+                    throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddMappingInformation, operation.GetType().Name), e);
+                }
             }
-            catch (Exception e)
-            {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddMappingInformation, operation.GetType().Name), e);
-            }
-            
         }
 
         protected virtual void ExecuteOperation(RemoveMappingInformationOperation operation)
@@ -259,22 +258,30 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             //TODO: dodelat remove mapovani i v jinych castech (EntityTypeConfiguration ... attributy u trid...)
             var generatedInfos = mappingRemover.GetRegExps(operation.MappingInformation);
 
+            
+
             foreach (var generatedInfo in generatedInfos)
             {
                 var prefixForOnModelCreating = mappingRemover.GetRegexPrefix(generatedInfo.TargetType);
 
                 var matches = Regex.Matches(methodCode, string.Concat(prefixForOnModelCreating, generatedInfo.Content), RegexOptions.None);
 
-                if (matches.Count > 1)
-                {
-                    throw new ModelMigrationsException("More than one mapping information for remove found in OnModelCreating"); //TODO: string do resourcu
-                }
+                //TODO: associace by meli matchnout jen jednou ale property mapping by mohl i vicekrat....
+                //if (matches.Count > 1)
+                //{
+                //    throw new ModelMigrationsException("More than one mapping information for remove found in OnModelCreating"); //TODO: string do resourcu
+                //}
 
-                if (matches.Count == 1)
+                //if (matches.Count == 1)
+                //{
+                //    var match = matches[0];
+                //    methodCode = methodCode.Remove(match.Index, match.Length);
+                //}
+                foreach (Match match in matches)
                 {
-                    var match = matches[0];
                     methodCode = methodCode.Remove(match.Index, match.Length);
                 }
+
             }
 
             SetMethodCode(onModelCreatingMethod, methodCode);

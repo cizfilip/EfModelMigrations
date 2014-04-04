@@ -87,7 +87,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                     .Append(" = ")
                     .Append("p.");
 
-                Generate(property, builder);
+                GenerateProperty(property, builder);
 
                 builder.AppendLine(",");
             }
@@ -112,7 +112,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 .Append(", ")
                 .Append("p => p.");
 
-            Generate(transformation.Model, builder);
+            GenerateProperty(transformation.Model, builder);
             
             builder.Append(");");
         }
@@ -175,8 +175,21 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(");");
         }
 
+        protected virtual void GenerateProperty(PrimitivePropertyCodeModel property, StringBuilder builder)
+        {
+            try
+            {
+                dynamic prop = property;
+                GenerateProperty(prop, builder);
+            }
+            catch (RuntimeBinderException e)
+            {
+                //TODO: string do resourcu
+                throw new ModelMigrationsException(string.Format("Cannot generate property {0}. Generator implementation is missing.", property.Name), e);
+            }
+        }
 
-        protected virtual void Generate(ScalarPropertyCodeModel property, StringBuilder builder)
+        protected virtual void GenerateProperty(ScalarPropertyCodeModel property, StringBuilder builder)
         {
             builder.Append(TranslatePrimitiveTypeToBuilderMethodName(property.Type))
                 .Append("(");
@@ -201,6 +214,10 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
 
             builder.Append(")");
+        }
+        protected virtual void GenerateProperty(EnumPropertyCodeModel property, StringBuilder builder)
+        {
+            //TODO: dodelat generator pro enum type
         }
 
         private string TranslateCodeModelVisbility(CodeModelVisibility codeModelVisibility)

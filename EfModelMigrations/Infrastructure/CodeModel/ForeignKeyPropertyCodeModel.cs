@@ -18,10 +18,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         {
         }
 
-        public ScalarPropertyCodeModel MergeWithScalarProperty(ScalarPropertyCodeModel property)
+        public PrimitivePropertyCodeModel MergeWithProperty(PrimitivePropertyCodeModel property)
         {
-            var merged = new ScalarPropertyCodeModel(Name, property.ColumnModel);
+            var merged = property.Copy();
 
+            merged.Name = Name;
             merged.IsSetterPrivate = IsSetterPrivate;
             merged.IsVirtual = IsVirtual;
             merged.Visibility = Visibility;

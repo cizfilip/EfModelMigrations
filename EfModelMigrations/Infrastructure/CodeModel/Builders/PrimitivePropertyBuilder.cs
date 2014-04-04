@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 {
     //TODO: neni metoda pro Sbyte - je to s nim nejake podivne ani ColumnBuilder v EF ji nema - jeste kouknout o co jde
-    public sealed class ScalarPropertyBuilder : IFluentInterface
+    public sealed class PrimitivePropertyBuilder : IFluentInterface
     {
         public ScalarPropertyCodeModel Binary(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Binary, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Binary, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Boolean(
@@ -23,7 +23,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Boolean, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Boolean, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Byte(
@@ -31,7 +31,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Byte, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Byte, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel DateTime(
@@ -39,7 +39,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.DateTime, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.DateTime, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel DateTimeOffset(
@@ -47,7 +47,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.DateTimeOffset, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.DateTimeOffset, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Decimal(
@@ -55,7 +55,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Decimal, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Decimal, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Double(
@@ -63,7 +63,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Double, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Double, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Geography(
@@ -71,7 +71,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Geography, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Geography, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Geometry(
@@ -79,7 +79,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Geometry, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Geometry, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Guid(
@@ -87,7 +87,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Guid, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Guid, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Short(
@@ -95,7 +95,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Int16, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Int16, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Int(
@@ -103,7 +103,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Int32, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Int32, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Long(
@@ -111,7 +111,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Int64, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Int64, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel Single(
@@ -119,7 +119,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Single, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Single, visibility, isVirtual, isSetterPrivate);
         }
 
         public ScalarPropertyCodeModel String(
@@ -127,19 +127,33 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.String, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.String, visibility, isVirtual, isSetterPrivate);
         }
         public ScalarPropertyCodeModel Time(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildProperty(PrimitiveTypeKind.Time, visibility, isVirtual, isSetterPrivate);
+            return BuildScalarProperty(PrimitiveTypeKind.Time, visibility, isVirtual, isSetterPrivate);
+        }
+
+        public EnumPropertyCodeModel Enum(
+            string enumType,
+            CodeModelVisibility? visibility = null,
+            bool? isVirtual = null,
+            bool? isSetterPrivate = null
+            )
+        {
+            return new EnumPropertyCodeModel(enumType)
+            {
+                Visibility = visibility,
+                IsVirtual = isVirtual,
+                IsSetterPrivate = isSetterPrivate
+            };
         }
 
 
-
-        private ScalarPropertyCodeModel BuildProperty(PrimitiveTypeKind type,
+        private ScalarPropertyCodeModel BuildScalarProperty(PrimitiveTypeKind type,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
@@ -152,5 +166,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 
             return scalarProperty;
         }
+
+        
     }
 }

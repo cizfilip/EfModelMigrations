@@ -19,6 +19,8 @@ namespace EfModelMigrations.UnitTests
             string address = "Address";
 
             var gen = new CSharpRegexMappingGenerator();
+
+
             var fluentCall = new EfFluentApiCallChain(person);
             fluentCall.AddMethodCall(EfFluentApiMethods.HasMany, new PropertySelectorParameter(address, person))
                 .AddMethodCall(EfFluentApiMethods.WithMany);

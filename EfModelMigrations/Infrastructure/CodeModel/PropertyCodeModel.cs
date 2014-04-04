@@ -27,7 +27,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         
         public PropertyCodeModel(string name)
         {
-            this.Name = name;
+            this.name = name;
         }
     }
 }

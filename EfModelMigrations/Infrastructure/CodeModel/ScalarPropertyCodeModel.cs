@@ -8,40 +8,20 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel
 {
-    public sealed class ScalarPropertyCodeModel : PropertyCodeModel
+    public sealed class ScalarPropertyCodeModel : PrimitivePropertyCodeModel
     {
-        private ColumnModel columnModel;
-        public ColumnModel ColumnModel { 
-            get
-            {
-                return columnModel;
-            }
-         }
-
-        public PrimitiveTypeKind Type
-        {
-            get
-            {
-                return columnModel.Type;
-            }
-        }
+        public PrimitiveTypeKind Type { get; private set; }
 
         public ScalarPropertyCodeModel(string name, PrimitiveTypeKind type)
-            : this(name, new ColumnModel(type))
+            : base(name)
         {
+            this.Type = type;
         }
 
         internal ScalarPropertyCodeModel(PrimitiveTypeKind type)
             :this(null, type)
         {
         }
-
-        internal ScalarPropertyCodeModel(string name, ColumnModel columnModel)
-            :base(name)
-        {
-            this.columnModel = columnModel;
-        }
-
         
         public static bool TryParse(string type, out ScalarPropertyCodeModel parsedProperty)
         {
@@ -116,5 +96,19 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             {"timespan", PrimitiveTypeKind.Time},
             {"system.timespan", PrimitiveTypeKind.Time},
         };
+
+        public override PrimitivePropertyCodeModel Copy()
+        {
+            return new ScalarPropertyCodeModel(Name, Type)
+            {
+                ColumnName = ColumnName,
+                ColumnType = ColumnType,
+                HasDatabaseGeneratedOption = HasDatabaseGeneratedOption,
+                IsRequired = IsRequired,
+                IsSetterPrivate = IsSetterPrivate,
+                IsVirtual = IsVirtual,
+                Visibility = Visibility
+            };
+        }
     }
 }

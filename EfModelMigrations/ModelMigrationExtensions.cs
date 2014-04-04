@@ -16,11 +16,11 @@ namespace EfModelMigrations
 {
     public static class ModelMigrationExtensions
     {
-        public static void CreateClass<TProps>(this IModelMigration migration, string className, Func<ScalarPropertyBuilder, TProps> propertiesAction)
+        public static void CreateClass<TProps>(this IModelMigration migration, string className, Func<PrimitivePropertyBuilder, TProps> propertiesAction)
         {
             //TODO: Dat do classcodemodelu namespace atd....
             ((ModelMigration)migration).AddTransformation(
-                new CreateClassTransformation(className, ConvertObjectToScalarPropertyModel(propertiesAction(new ScalarPropertyBuilder())))
+                new CreateClassTransformation(className, ConvertObjectToPrimitivePropertyModel(propertiesAction(new PrimitivePropertyBuilder())))
                 );
         }
 
@@ -30,12 +30,12 @@ namespace EfModelMigrations
         }
 
 
-        public static void AddProperty(this IModelMigration migration, string className, string propertyName, Func<ScalarPropertyBuilder, ScalarPropertyCodeModel> propertyAction)
+        public static void AddProperty(this IModelMigration migration, string className, string propertyName, Func<PrimitivePropertyBuilder, PrimitivePropertyCodeModel> propertyAction)
         {
-            var scalarProperty = propertyAction(new ScalarPropertyBuilder());
+            var property = propertyAction(new PrimitivePropertyBuilder());
 
-            scalarProperty.Name = propertyName;
-            ((ModelMigration)migration).AddTransformation(new AddPropertyTransformation(className, scalarProperty));
+            property.Name = propertyName;
+            ((ModelMigration)migration).AddTransformation(new AddPropertyTransformation(className, property));
         }
 
         public static void RemoveProperty(this IModelMigration migration, string className, string propertyName)
@@ -319,24 +319,24 @@ namespace EfModelMigrations
         }
 
 
-        private static IEnumerable<ScalarPropertyCodeModel> ConvertObjectToScalarPropertyModel<TProps>(TProps properties)
+        private static IEnumerable<PrimitivePropertyCodeModel> ConvertObjectToPrimitivePropertyModel<TProps>(TProps properties)
         {
             var propertiesOnObject = properties.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(
                 p => !p.GetIndexParameters().Any());
 
             foreach (var property in propertiesOnObject)
             {
-                var scalarProperty = property.GetValue(properties) as ScalarPropertyCodeModel;
+                var primitiveProperty = property.GetValue(properties) as PrimitivePropertyCodeModel;
 
-                if (scalarProperty == null)
+                if (primitiveProperty == null)
                     throw new ModelMigrationsException("Cannot retrieve property definition from migration!"); // TODO: string do resourcu
 
-                if (string.IsNullOrWhiteSpace(scalarProperty.Name))
+                if (string.IsNullOrWhiteSpace(primitiveProperty.Name))
                 {
-                    scalarProperty.Name = property.Name;
+                    primitiveProperty.Name = property.Name;
                 }
 
-                yield return scalarProperty;
+                yield return primitiveProperty;
             }
         }
 

@@ -13,9 +13,9 @@ namespace EfModelMigrations.Transformations
     public class AddPropertyTransformation : ModelTransformation
     {
         public string ClassName { get; private set; }
-        public ScalarPropertyCodeModel Model { get; private set; }
+        public PrimitivePropertyCodeModel Model { get; private set; }
 
-        public AddPropertyTransformation(string className, ScalarPropertyCodeModel model)
+        public AddPropertyTransformation(string className, PrimitivePropertyCodeModel model)
         {
             Check.NotEmpty(className, "className");
             Check.NotNull(model, "model");
