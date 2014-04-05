@@ -12,31 +12,83 @@ namespace EfModelMigrations.Infrastructure.CodeModel
     {
         public PrimitiveTypeKind Type { get; private set; }
 
-        public ScalarPropertyCodeModel(string name, PrimitiveTypeKind type)
+        public ScalarPropertyCodeModel(string name, PrimitiveTypeKind type, bool isTypeNullable)
             : base(name)
         {
             this.Type = type;
+            this.IsTypeNullable = EnsureCorrectNullability(isTypeNullable);
         }
 
-        internal ScalarPropertyCodeModel(PrimitiveTypeKind type)
-            :this(null, type)
+        internal ScalarPropertyCodeModel(PrimitiveTypeKind type, bool isTypeNullable)
+            :this(null, type, isTypeNullable)
         {
         }
-        
-        public static bool TryParse(string type, out ScalarPropertyCodeModel parsedProperty)
-        {
-            string lowerType = type.ToLowerInvariant();
-            PrimitiveTypeKind primitiveType;
 
-            if (primitiveTypes.TryGetValue(lowerType, out primitiveType))
+        public override PrimitivePropertyCodeModel MergeWith(PropertyCodeModel property, bool? newNullability = null)
+        {
+            bool nullability = newNullability.HasValue ? EnsureCorrectNullability(newNullability.Value) : this.IsTypeNullable;
+
+            return new ScalarPropertyCodeModel(property.Name, Type, nullability)
             {
-                parsedProperty = new ScalarPropertyCodeModel(primitiveType);
+                IsVirtual = property.IsVirtual,
+                IsSetterPrivate = property.IsSetterPrivate,
+                Visibility = property.Visibility,
+
+                ColumnName = this.ColumnName,
+                ColumnType = this.ColumnType,
+                DatabaseGeneratedOption = this.DatabaseGeneratedOption,
+                IsRequired = this.IsRequired,
+            };
+        }
+
+        private bool EnsureCorrectNullability(bool proposed)
+        {
+            if (!proposed && nullablePrimitiveTypes.Contains(Type))
+                return true;
+
+            return proposed;
+        }
+
+        public static bool TryParse(string name, string type, out ScalarPropertyCodeModel parsedProperty)
+        {
+            Check.NotEmpty(name, "name");
+            Check.NotEmpty(type, "type");
+
+            string unwrappedType;
+            bool isNullable = PrimitivePropertyCodeModel.TryUnwrapNullability(type, out unwrappedType);
+
+            PrimitiveTypeKind primitiveType;
+            if (primitiveTypes.TryGetValue(unwrappedType, out primitiveType))
+            {
+                parsedProperty = new ScalarPropertyCodeModel(name, primitiveType, isNullable);
                 return true;
             }
 
             parsedProperty = null;
             return false;
         }
+
+        private static readonly HashSet<PrimitiveTypeKind> nullablePrimitiveTypes = new HashSet<PrimitiveTypeKind>()
+        {
+            PrimitiveTypeKind.String,
+            PrimitiveTypeKind.Binary,
+            PrimitiveTypeKind.Geography,
+            PrimitiveTypeKind.GeographyCollection,
+            PrimitiveTypeKind.GeographyLineString,
+            PrimitiveTypeKind.GeographyMultiLineString,
+            PrimitiveTypeKind.GeographyMultiPoint,
+            PrimitiveTypeKind.GeographyMultiPolygon,
+            PrimitiveTypeKind.GeographyPoint,
+            PrimitiveTypeKind.GeographyPolygon,
+            PrimitiveTypeKind.Geometry,
+            PrimitiveTypeKind.GeometryCollection,
+            PrimitiveTypeKind.GeometryLineString,
+            PrimitiveTypeKind.GeometryMultiLineString,
+            PrimitiveTypeKind.GeometryMultiPoint,
+            PrimitiveTypeKind.GeometryMultiPolygon,
+            PrimitiveTypeKind.GeometryPoint,
+            PrimitiveTypeKind.GeometryPolygon
+        };
 
         private static readonly Dictionary<string, PrimitiveTypeKind> primitiveTypes = new Dictionary<string, PrimitiveTypeKind>()
         {
@@ -96,19 +148,5 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             {"timespan", PrimitiveTypeKind.Time},
             {"system.timespan", PrimitiveTypeKind.Time},
         };
-
-        public override PrimitivePropertyCodeModel Copy()
-        {
-            return new ScalarPropertyCodeModel(Name, Type)
-            {
-                ColumnName = ColumnName,
-                ColumnType = ColumnType,
-                HasDatabaseGeneratedOption = HasDatabaseGeneratedOption,
-                IsRequired = IsRequired,
-                IsSetterPrivate = IsSetterPrivate,
-                IsVirtual = IsVirtual,
-                Visibility = Visibility
-            };
-        }
     }
 }

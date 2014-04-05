@@ -40,14 +40,14 @@ namespace EfModelMigrations.Transformations
         }
 
         private AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ForeignKeyPropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool? willCascadeOnDelete, IndexAttribute foreignKeyIndex)
-            :base(principal, dependent, willCascadeOnDelete)
+            : base(principal, dependent, willCascadeOnDelete)
         {
             this.ForeignKeyColumnNames = foreignKeyColumnNames;
             this.ForeignKeyProperties = foreignKeyProperties;
             this.ForeignKeyIndex = foreignKeyIndex;
 
             //TODO: stringy do resourců
-            if (!((principal.Multipticity == RelationshipMultiplicity.One || principal.Multipticity == RelationshipMultiplicity.ZeroOrOne ) 
+            if (!((principal.Multipticity == RelationshipMultiplicity.One || principal.Multipticity == RelationshipMultiplicity.ZeroOrOne)
                 && dependent.Multipticity == RelationshipMultiplicity.Many))
             {
                 throw new ModelTransformationValidationException("Invalid association multiplicity for one to many association.");
@@ -81,15 +81,15 @@ namespace EfModelMigrations.Transformations
 
                 for (int i = 0; i < ForeignKeyProperties.Length; i++)
                 {
-                    var foreignKeyProperty = ForeignKeyProperties[i].MergeWithProperty(principalPks[i]);
-
-
+                    bool isForeignKeyNullable = Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne ? true : false;
+                    var foreignKeyProperty = principalPks[i].MergeWith(ForeignKeyProperties[i], isForeignKeyNullable);
+                    
                     addForeignKeyPropertyOperations.Add(
                             new AddPropertyToClassOperation(Dependent.ClassName, foreignKeyProperty)
                         );
 
                     var propertyMapping = new AddPropertyMapping(Dependent.ClassName, foreignKeyProperty);
-                    if(ForeignKeyIndex != null)
+                    if (ForeignKeyIndex != null)
                     {
                         propertyMapping.Index = ForeignKeyIndex.CopyWithNameAndOrder(indexName, i);
                     }
@@ -105,7 +105,7 @@ namespace EfModelMigrations.Transformations
 
         protected override AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider)
         {
-            if(ForeignKeyProperties != null)
+            if (ForeignKeyProperties != null)
             {
                 return new AddAssociationMapping(Principal, Dependent)
                 {
@@ -115,7 +115,7 @@ namespace EfModelMigrations.Transformations
             }
             else
             {
-                if(ForeignKeyColumnNames == null)
+                if (ForeignKeyColumnNames == null)
                 {
                     ForeignKeyColumnNames = GetDefaultForeignKeyColumnNames(
                         modelProvider.GetClassCodeModel(Principal.ClassName),
@@ -130,17 +130,16 @@ namespace EfModelMigrations.Transformations
                 };
             }
         }
-        
+
         public override ModelTransformation Inverse()
         {
             string[] foreignKeyPropertiesNames = null;
-            if(ForeignKeyProperties != null)
+            if (ForeignKeyProperties != null)
             {
                 foreignKeyPropertiesNames = ForeignKeyProperties.Select(p => p.Name).ToArray();
             }
 
             return new RemoveOneToManyAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd(), foreignKeyPropertiesNames);
-        } 
-       
+        }
     }
 }

@@ -18,16 +18,5 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         {
         }
 
-        public PrimitivePropertyCodeModel MergeWithProperty(PrimitivePropertyCodeModel property)
-        {
-            var merged = property.Copy();
-
-            merged.Name = Name;
-            merged.IsSetterPrivate = IsSetterPrivate;
-            merged.IsVirtual = IsVirtual;
-            merged.Visibility = Visibility;
-
-            return merged;
-        }
     }
 }

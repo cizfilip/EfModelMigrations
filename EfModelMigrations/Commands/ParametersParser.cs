@@ -1,4 +1,5 @@
 ﻿using EfModelMigrations.Exceptions;
+using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using System;
 using System.Collections.Generic;
@@ -8,36 +9,56 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Commands
 {
-    internal class ParametersParser
+    public class ParametersParser
     {
-        //TODO: Dat stringy vyjimek do resourcu
-        public static IEnumerable<ScalarPropertyCodeModel> ParseProperties(IEnumerable<string> parameters)
+        private IClassModelProvider modelProvider;
+
+        public ParametersParser(IClassModelProvider modelProvider)
         {
+            this.modelProvider = modelProvider;
+        }
+
+        //TODO: Dat stringy vyjimek do resourcu
+        public IEnumerable<PrimitivePropertyCodeModel> ParseProperties(IEnumerable<string> parameters)
+        {
+            Check.NotNullOrEmpty(parameters, "parameters");
+
             foreach (var param in parameters)
             {
-                yield return ParsePropertyModel(param);
+                yield return ParseProperty(param);
             }
         }
 
         //TODO: Dat stringy vyjimek do resourcu
-        private static ScalarPropertyCodeModel ParsePropertyModel(string param)
+        public PrimitivePropertyCodeModel ParseProperty(string parameter)
         {
-            var splitted = param.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+            Check.NotEmpty(parameter, "parameter");
 
-            if (splitted.Length != 2)
+            var splitted = parameter.Split(new[] { ":" }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (splitted.Length != 2 || string.IsNullOrEmpty(splitted[0]) || string.IsNullOrEmpty(splitted[1]))
             {
                 throw new ModelMigrationsException("Wrong property format, use [PropertyName]:[PropertyType], example: Name:string ");
             }
 
+            string name = splitted[0];
+            string type = splitted[1];
             ScalarPropertyCodeModel property;
-            if (!ScalarPropertyCodeModel.TryParse(splitted[1], out property))
+            if (ScalarPropertyCodeModel.TryParse(name, type, out property))
             {
-                throw new ModelMigrationsException(string.Format("Unknown scalar property type {0}", splitted[1]));
+                return property;
             }
 
-            property.Name = splitted[0];
+            string enumType;
+            var isNullable = PrimitivePropertyCodeModel.TryUnwrapNullability(type, out enumType);
+            //Try find if its enum
+            if (modelProvider.IsEnumInModel(enumType))
+            {
+                return new EnumPropertyCodeModel(enumType, isNullable);
+            }
 
-            return property;
+            //TODO: udelat lepsi hlasku
+            throw new ModelMigrationsException(string.Format("Unknown property type {0}. Type is not primitive or enum.", splitted[1])); 
         }
 
 

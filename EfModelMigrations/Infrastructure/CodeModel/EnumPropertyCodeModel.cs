@@ -10,31 +10,31 @@ namespace EfModelMigrations.Infrastructure.CodeModel
     {
         public string EnumType { get; private set; }
 
-        public EnumPropertyCodeModel(string name, string enumTypeName)
+        public EnumPropertyCodeModel(string name, string enumTypeName, bool isTypeNullable)
             :base(name)
         {
             this.EnumType = enumTypeName;
+            this.IsTypeNullable = isTypeNullable;
         }
 
-        internal EnumPropertyCodeModel(string enumTypeName)
-            :this(null, enumTypeName)
+        internal EnumPropertyCodeModel(string enumTypeName, bool isTypeNullable)
+            :this(null, enumTypeName, isTypeNullable)
         {
-
         }
-        
 
-        //TODO: dodelat copy vsech vlastnosti
-        public override PrimitivePropertyCodeModel Copy()
+        public override PrimitivePropertyCodeModel MergeWith(PropertyCodeModel property, bool? newNullability = null)
         {
-            return new EnumPropertyCodeModel(Name, EnumType)
+            return new EnumPropertyCodeModel(property.Name, EnumType, 
+                newNullability.HasValue ? newNullability.Value : this.IsTypeNullable)
             {
-                ColumnName = ColumnName,
-                ColumnType = ColumnType,
-                HasDatabaseGeneratedOption = HasDatabaseGeneratedOption,
-                IsRequired = IsRequired,
-                IsSetterPrivate = IsSetterPrivate,
-                IsVirtual = IsVirtual,
-                Visibility = Visibility
+                IsVirtual = property.IsVirtual,
+                IsSetterPrivate = property.IsSetterPrivate,
+                Visibility = property.Visibility,
+
+                ColumnName = this.ColumnName,
+                ColumnType = this.ColumnType,
+                DatabaseGeneratedOption = this.DatabaseGeneratedOption,
+                IsRequired = this.IsRequired,
             };
         }
     }

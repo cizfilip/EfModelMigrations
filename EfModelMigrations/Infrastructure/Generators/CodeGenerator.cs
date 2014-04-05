@@ -1,4 +1,5 @@
 ﻿using EfModelMigrations.Configuration;
+using EfModelMigrations.Infrastructure.CodeModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +19,9 @@ namespace EfModelMigrations.Infrastructure.Generators
             this.mappingGenerator = mappingGenerator;
         }
 
-        public abstract string GenerateEmptyClass(string name, string @namespace, CodeModel.CodeModelVisibility? visibility, string baseType, IEnumerable<string> implementedInterfaces);
+        public abstract string GenerateEmptyClass(string name, string @namespace, CodeModelVisibility? visibility, string baseType, IEnumerable<string> implementedInterfaces);
 
-        public abstract string GenerateProperty(CodeModel.PropertyCodeModel propertyModel, out string propertyName);
+        public abstract string GenerateProperty(PropertyCodeModel propertyModel, out string propertyName);
 
         public abstract string GenerateDbSetProperty(string className, out string dbSetPropertyName);
 

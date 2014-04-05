@@ -10,10 +10,11 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Commands
 {
+    //TODO: vyhodit a podporovat jen command pro pridani jedne property !!!
     public class AddPropertiesCommand : ModelMigrationsCommand
     {
         private string className;
-        private IEnumerable<ScalarPropertyCodeModel> propertiesToAdd;
+        private string[] propertiesToAdd;
 
         //TODO: Dat stringy vyjimek do resourcu
         public AddPropertiesCommand(string className, string[] propertiesToAdd)
@@ -28,21 +29,23 @@ namespace EfModelMigrations.Commands
             }
 
             this.className = className;
-            this.propertiesToAdd = ParametersParser.ParseProperties(propertiesToAdd);
+            this.propertiesToAdd = propertiesToAdd;
         }
         
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
+            var parameterParser = new ParametersParser(modelProvider);
+
             foreach (var property in propertiesToAdd)
             {
-                //TODO: predat parametry
-                yield return new AddPropertyTransformation(className, property);
+                yield return new AddPropertyTransformation(className, parameterParser.ParseProperty(property));
             }
         }
 
+        //TODO: predelat jmeno
         public override string GetMigrationName()
         {
-            return "AddProperties" + string.Join("", propertiesToAdd.Select(p => p.Name));
+            return "AddPropertiesToClass" + className; // string.Join("", propertiesToAdd.Select(p => p.Name));
         }
     }
 }

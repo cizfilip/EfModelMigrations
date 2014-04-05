@@ -117,24 +117,42 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual string GetPropertyTypeAsString(ScalarPropertyCodeModel property)
         {
+            bool mayBeNullable = false;
+            string returnType;
+
             switch (property.Type)
             {
                 case PrimitiveTypeKind.Binary:
-                    return "byte[]";
+                    returnType = "byte[]";
+                    break;
                 case PrimitiveTypeKind.Boolean:
-                    return "bool";
+                    returnType = "bool";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Byte:
-                    return "byte";
+                    returnType = "byte";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.DateTime:
-                    return "DateTime";
+                    returnType = "DateTime";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Time:
-                    return "TimeSpan";
+                    returnType = "TimeSpan";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.DateTimeOffset:
-                    return "DateTimeOffset";
+                    returnType = "DateTimeOffset";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Decimal:
-                    return "decimal";
+                    returnType = "decimal";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Double:
-                    return "double";
+                    returnType = "double";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Geography:
                 case PrimitiveTypeKind.GeographyPoint:
                 case PrimitiveTypeKind.GeographyLineString:
@@ -143,7 +161,8 @@ namespace EfModelMigrations.Infrastructure.Generators
                 case PrimitiveTypeKind.GeographyMultiLineString:
                 case PrimitiveTypeKind.GeographyMultiPolygon:
                 case PrimitiveTypeKind.GeographyCollection:
-                    return "System.Data.Entity.Spatial.DbGeography"; //TODO: mozna ne fullname ale pak musi byt using ve tride....
+                    returnType = "System.Data.Entity.Spatial.DbGeography"; //TODO: mozna ne fullname ale pak musi byt using ve tride....
+                    break;
                 case PrimitiveTypeKind.Geometry:
                 case PrimitiveTypeKind.GeometryPoint:
                 case PrimitiveTypeKind.GeometryLineString:
@@ -152,24 +171,45 @@ namespace EfModelMigrations.Infrastructure.Generators
                 case PrimitiveTypeKind.GeometryMultiLineString:
                 case PrimitiveTypeKind.GeometryMultiPolygon:
                 case PrimitiveTypeKind.GeometryCollection:
-                    return "System.Data.Entity.Spatial.DbGeometry";
+                    returnType = "System.Data.Entity.Spatial.DbGeometry"; //TODO: mozna ne fullname ale pak musi byt using ve tride....
+                    break;
                 case PrimitiveTypeKind.Guid:
-                    return "Guid";
+                    returnType = "Guid";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Single:
-                    return "float";
+                    returnType = "float";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.SByte:
-                    return "sbyte";
+                    returnType = "sbyte";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Int16:
-                    return "short";
+                    returnType = "short";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Int32:
-                    return "int";
+                    returnType = "int";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.Int64:
-                    return "long";
+                    returnType = "long";
+                    mayBeNullable = true;
+                    break;
                 case PrimitiveTypeKind.String:
-                    return "string";
+                    returnType = "string";
+                    break;
                 default:
                     throw new InvalidOperationException("Invalid PrimitiveTypeKind."); //TODO: string do resourcu
             }
+
+            if (mayBeNullable && property.IsTypeNullable)
+            {
+                returnType = returnType + "?";
+            }
+
+            return returnType;
         }
 
         protected virtual string GetPropertyTypeAsString(NavigationPropertyCodeModel property)
@@ -186,7 +226,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual string GetPropertyTypeAsString(EnumPropertyCodeModel property)
         {
-            return property.EnumType;
+            return property.IsTypeNullable ? property.EnumType + "?" : property.EnumType;
         }
 
         

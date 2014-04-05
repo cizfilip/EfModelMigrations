@@ -12,7 +12,7 @@ namespace EfModelMigrations.Commands
     public class CreateClassCommand : ModelMigrationsCommand
     {
         private string className;
-        private IEnumerable<ScalarPropertyCodeModel> properties;
+        private string[] properties;
 
         //TODO: Dat stringy vyjimek do resourcu
         public CreateClassCommand(string className, string[] properties)
@@ -21,15 +21,21 @@ namespace EfModelMigrations.Commands
             {
                 throw new ModelMigrationsException("Name od the new class is missing.");
             }
+            if (properties == null || properties.Length == 0)
+            {
+                throw new ModelMigrationsException("Properties for the new class is missing.");
+            }
 
             //TODO: parsovat i dalsi veci az budou hotovz lepsi parametry z powershellu
             this.className = className;
-            this.properties = ParametersParser.ParseProperties(properties);
+            this.properties = properties;
         }
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
-            yield return new CreateClassTransformation(className, properties);
+            var parameterParser = new ParametersParser(modelProvider);
+
+            yield return new CreateClassTransformation(className, parameterParser.ParseProperties(properties));
         }
 
         public override string GetMigrationName()

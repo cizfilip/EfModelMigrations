@@ -69,21 +69,23 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 
             var columnModel = efModel.GetColumnModelForProperty(edmProperty.DeclaringType.Name, edmProperty.Name);
 
+            bool isPropertyNullable = GetNullability(codeProperty);
+
             //TODO: DodelatMapovani
             if(edmProperty.IsPrimitiveType)
             {
-                property = new ScalarPropertyCodeModel(edmProperty.Name, columnModel.Type);
+                property = new ScalarPropertyCodeModel(edmProperty.Name, columnModel.Type, isPropertyNullable);
             }
             else if(edmProperty.IsEnumType)
             {
-                property = new EnumPropertyCodeModel(edmProperty.Name, edmProperty.EnumType.Name);
+                property = new EnumPropertyCodeModel(edmProperty.Name, edmProperty.EnumType.Name, isPropertyNullable);
             }
             else
             {
                 throw new InvalidOperationException("Unknown type for edmProperty"); //TODO: string do resourcu
             }
 
-
+            //TODO: map primitive property - IsRequired, ColumnName atd...
             
 
             MapPropertyCodeModel(property, codeProperty);
@@ -172,6 +174,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 default:
                     return CodeModelVisibility.Public;
             }
+        }
+
+        private bool GetNullability(CodeProperty2 codeProperty)
+        {
+            string type = codeProperty.Type.AsString;
+            string _;
+            return PrimitivePropertyCodeModel.TryUnwrapNullability(type, out _);
         }
     }
 }

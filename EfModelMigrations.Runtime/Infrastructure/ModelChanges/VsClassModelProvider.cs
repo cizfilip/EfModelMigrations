@@ -23,6 +23,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private VsCodeClassToClassCodeModelMapper mapper;
         private EfModel efModel;
 
+        public EfModel EfModel
+        {
+            get { return efModel; }
+        }
+
         public VsClassModelProvider(Project modelProject, ModelMigrationsConfigurationBase configuration, string edmxModel)
         {
             this.modelProject = modelProject;
@@ -50,11 +55,16 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
-
-
-        public EfModel EfModel
+        public bool IsEnumInModel(string enumName)
         {
-            get { return efModel; }
+            try
+            {
+                return efModel.Metadata.EdmItemCollection.GetItems<EnumType>().Any(e => e.Name.EqualsOrdinal(enumName));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
