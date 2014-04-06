@@ -13,10 +13,16 @@ namespace EfModelMigrations.Infrastructure.CodeModel
     {
         public bool IsTypeNullable { get; protected set; }
 
-        public string ColumnName { get; set; }
         public bool? IsRequired { get; set; }
-        public DatabaseGeneratedOption? DatabaseGeneratedOption { get; set; }
+        public string ColumnName { get; set; }
         public string ColumnType { get; set; }
+        public int? ColumnOrder { get; set; }
+        public IList<Tuple<string, object>> ColumnAnnotations { get; set; }
+        public DatabaseGeneratedOption? DatabaseGeneratedOption { get; set; }
+        public bool? IsConcurrencyToken { get; set; }
+        public string ParameterName { get; set; }
+        public int? MaxLength { get; set; }
+        
 
 
         //TODO: ParameterName, ColumnOrder, ConcurrencyToken, ColumnAnnotation a dalsi - vse co lze mapovat pomoci fluent api

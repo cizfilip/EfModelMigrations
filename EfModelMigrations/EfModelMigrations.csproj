@@ -67,6 +67,7 @@
     <Compile Include="Infrastructure\CodeModel\EnumPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\ForeignKeyPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\PrimitivePropertyCodeModel.cs" />
+    <Compile Include="Infrastructure\CodeModel\MappingItem.cs" />
     <Compile Include="Infrastructure\EntityFramework\ConsolidatedIndex.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\EdmExtensions\EdmPropertyExtensions.cs" />
@@ -162,6 +163,7 @@
     <Compile Include="Operations\Mapping\Model\EfFluentApiCallChain.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluentApiMethods.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluetApiCall.cs" />
+    <Compile Include="Operations\Mapping\Model\IEfFluentApiMethod.cs" />
     <Compile Include="Operations\Mapping\Model\IEfFluentApiMethodParameter.cs" />
     <Compile Include="Operations\Mapping\Model\IndexAnnotationParameter.cs" />
     <Compile Include="Operations\Mapping\Model\MapMethodParameter.cs" />

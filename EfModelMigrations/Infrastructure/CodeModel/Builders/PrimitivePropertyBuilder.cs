@@ -182,6 +182,37 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return scalarProperty;
         }
 
-        
+
+    }
+
+    public abstract class PrimitiveMappingBuilder
+    {
+        protected PrimitivePropertyCodeModel property;
+        internal PrimitivePropertyCodeModel Property
+        {
+            get
+            {
+                return property;
+            }
+        }
+
+        public PrimitiveMappingBuilder(PrimitivePropertyCodeModel property)
+        {
+            this.property = property;
+        }
+    }
+
+    public class EnumMappingBuilder : PrimitiveMappingBuilder
+    {
+        public EnumMappingBuilder(PrimitivePropertyCodeModel property)
+            :base(property)
+        {
+        }
+
+        public PrimitiveMappingBuilder WithColumnMapping()
+        {
+
+            return this;
+        }
     }
 }
