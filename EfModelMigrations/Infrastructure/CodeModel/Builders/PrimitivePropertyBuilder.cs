@@ -10,147 +10,179 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
     //TODO: neni metoda pro Sbyte - je to s nim nejake podivne ani ColumnBuilder v EF ji nema - jeste kouknout o co jde
     public sealed class PrimitivePropertyBuilder : IFluentInterface
     {
-        public ScalarPropertyCodeModel Binary(
+        public BinaryMappingBuilder Binary(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Binary, true, visibility, isVirtual, isSetterPrivate);
+            return new BinaryMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Binary, true, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Boolean(
+        public PrimitiveMappingBuilder Boolean(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Boolean, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Boolean, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Byte(
+        public PrimitiveMappingBuilder Byte(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Byte, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Byte, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel DateTime(
+        public DateTimeMappingBuilder DateTime(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.DateTime, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new DateTimeMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.DateTime, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel DateTimeOffset(
+        public DateTimeMappingBuilder DateTimeOffset(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.DateTimeOffset, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new DateTimeMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.DateTimeOffset, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Decimal(
+        public DecimalMappingBuilder Decimal(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Decimal, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new DecimalMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Decimal, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Double(
+        public PrimitiveMappingBuilder Double(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Double, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Double, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Geography(
+        public PrimitiveMappingBuilder Geography(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Geography, true, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Geography, true, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Geometry(
+        public PrimitiveMappingBuilder Geometry(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Geometry, true, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Geometry, true, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Guid(
+        public PrimitiveMappingBuilder Guid(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Guid, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Guid, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Short(
+        public PrimitiveMappingBuilder Short(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Int16, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Int16, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Int(
+        public PrimitiveMappingBuilder Int(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Int32, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Int32, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Long(
+        public PrimitiveMappingBuilder Long(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Int64, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Int64, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Single(
+        public PrimitiveMappingBuilder Single(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Single, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new PrimitiveMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Single, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel String(
+        public StringMappingBuilder String(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.String, true, visibility, isVirtual, isSetterPrivate);
+            return new StringMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.String, true, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public ScalarPropertyCodeModel Time(
+        public DateTimeMappingBuilder Time(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
         {
-            return BuildScalarProperty(PrimitiveTypeKind.Time, isNullable, visibility, isVirtual, isSetterPrivate);
+            return new DateTimeMappingBuilder(
+                BuildScalarProperty(PrimitiveTypeKind.Time, isNullable, visibility, isVirtual, isSetterPrivate)
+            );
         }
 
-        public EnumPropertyCodeModel Enum(
+        public PrimitiveMappingBuilder Enum(
             string enumType,
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
@@ -158,12 +190,14 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             bool? isSetterPrivate = null
             )
         {
-            return new EnumPropertyCodeModel(enumType, isNullable)
-            {
-                Visibility = visibility,
-                IsVirtual = isVirtual,
-                IsSetterPrivate = isSetterPrivate
-            };
+            return new PrimitiveMappingBuilder(
+                new EnumPropertyCodeModel(enumType, isNullable)
+                {
+                    Visibility = visibility,
+                    IsVirtual = isVirtual,
+                    IsSetterPrivate = isSetterPrivate
+                }
+            );
         }
 
 
@@ -185,9 +219,9 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 
     }
 
-    public abstract class PrimitiveMappingBuilder
+    public class PrimitiveMappingBuilder
     {
-        protected PrimitivePropertyCodeModel property;
+        private PrimitivePropertyCodeModel property;
         internal PrimitivePropertyCodeModel Property
         {
             get
@@ -196,22 +230,122 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             }
         }
 
-        public PrimitiveMappingBuilder(PrimitivePropertyCodeModel property)
+        internal PrimitiveMappingBuilder(PrimitivePropertyCodeModel property)
         {
             this.property = property;
         }
+
+        public PrimitiveMappingBuilder WithColumnMapping(string columnName = null,
+            bool? isNullable = null,
+            string databaseType = null,
+            int? order = null,
+            string parameterName = null,
+            bool? isConcurrencyToken = null)
+        {
+            MapPrimitive(columnName, isNullable, databaseType, order, parameterName, isConcurrencyToken);
+
+            return this;
+        }
+
+
+        protected void MapPrimitive(string columnName = null, 
+            bool? isNullable = null,
+            string databaseType = null, 
+            int? order = null,
+            string parameterName = null,
+            bool? isConcurrencyToken = null)
+        {
+            property.Column.ColumnName = columnName;
+            property.Column.IsNullable = isNullable;
+            property.Column.ColumnType = databaseType;
+            property.Column.ColumnOrder = order;
+            property.Column.ParameterName = parameterName;
+            property.Column.IsConcurrencyToken = isConcurrencyToken;
+        }
     }
 
-    public class EnumMappingBuilder : PrimitiveMappingBuilder
+    public abstract class LengthMappingBuilder : PrimitiveMappingBuilder
     {
-        public EnumMappingBuilder(PrimitivePropertyCodeModel property)
-            :base(property)
+        public LengthMappingBuilder(PrimitivePropertyCodeModel property)
+            : base(property)
         {
         }
 
-        public PrimitiveMappingBuilder WithColumnMapping()
+        public LengthMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
         {
+            Property.Column.MaxLength = maxLength;
+            Property.Column.IsMaxLength = isMaxLength;
+            Property.Column.IsFixedLength = isFixedLegth;
 
+            return this;
+        }
+    }
+
+    public class StringMappingBuilder : LengthMappingBuilder
+    {
+        public StringMappingBuilder(PrimitivePropertyCodeModel property)
+            : base(property)
+        {
+        }
+
+        public new StringMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
+        {
+            base.WithLengthOptions(maxLength, isMaxLength, isFixedLegth);
+            return this;
+        }
+
+        public StringMappingBuilder IsUnicode(bool value)
+        {
+            Property.Column.IsUnicode = value;
+            return this;
+        }
+    }
+
+    public class BinaryMappingBuilder : LengthMappingBuilder
+    {
+        public BinaryMappingBuilder(PrimitivePropertyCodeModel property)
+            : base(property)
+        {
+        }
+
+        public new BinaryMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
+        {
+            base.WithLengthOptions(maxLength, isMaxLength, isFixedLegth);
+            return this;
+        }
+
+        public BinaryMappingBuilder IsTimespan()
+        {
+            Property.Column.IsRowVersion = true;
+            return this;
+        }
+    }
+
+    public class DateTimeMappingBuilder : PrimitiveMappingBuilder
+    {
+        public DateTimeMappingBuilder(PrimitivePropertyCodeModel property)
+            : base(property)
+        {
+        }
+
+        public DateTimeMappingBuilder WithPrecision(byte precision)
+        {
+            Property.Column.Precision = precision;
+            return this;
+        }
+    }
+
+    public class DecimalMappingBuilder : PrimitiveMappingBuilder
+    {
+        public DecimalMappingBuilder(PrimitivePropertyCodeModel property)
+            : base(property)
+        {
+        }
+
+        public DecimalMappingBuilder WithPrecision(byte precision, byte scale)
+        {
+            Property.Column.Precision = precision;
+            Property.Column.Scale = scale;
             return this;
         }
     }

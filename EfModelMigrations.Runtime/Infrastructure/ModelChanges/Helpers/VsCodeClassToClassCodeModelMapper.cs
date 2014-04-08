@@ -2,6 +2,7 @@
 using EfModelMigrations.Extensions;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.Generators;
+using EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions;
 using System.Data.Entity.Core.Mapping;
 using EfModelMigrations.Runtime.Extensions;
 using EnvDTE;
@@ -14,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using System.Data.Entity.Core.Common;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 {
@@ -51,8 +53,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 
         private IEnumerable<PrimitivePropertyCodeModel> MapProperties(CodeClass2 codeClass, IEnumerable<EdmProperty> properties)
         {
-            //map only properies of primitive type -> no enum is mapped
-            return properties.Select(p => MapProperty(codeClass.FindProperty(p.Name), p)).ToList();
+            return properties.Select(p => MapProperty(
+                                                codeClass.FindProperty(p.Name), 
+                                                p,
+                                                efModel.GetStoreColumnForProperty(codeClass.Name, p.Name)
+                                            )).ToList();
         }
 
         private IEnumerable<NavigationPropertyCodeModel> MapNavigationProperties(CodeClass2 codeClass, IEnumerable<NavigationProperty> properties)
@@ -61,20 +66,17 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
         }
 
 
-        private PrimitivePropertyCodeModel MapProperty(CodeProperty2 codeProperty, EdmProperty edmProperty)
+        private PrimitivePropertyCodeModel MapProperty(CodeProperty2 codeProperty, EdmProperty edmProperty, EdmProperty column)
         {
             Check.NotNull(codeProperty, "codeProperty");
 
             PrimitivePropertyCodeModel property = null;
 
-            var columnModel = efModel.GetColumnModelForProperty(edmProperty.DeclaringType.Name, edmProperty.Name);
-
             bool isPropertyNullable = GetNullability(codeProperty);
 
-            //TODO: DodelatMapovani
             if(edmProperty.IsPrimitiveType)
             {
-                property = new ScalarPropertyCodeModel(edmProperty.Name, columnModel.Type, isPropertyNullable);
+                property = new ScalarPropertyCodeModel(edmProperty.Name, edmProperty.PrimitiveType.PrimitiveTypeKind, isPropertyNullable);
             }
             else if(edmProperty.IsEnumType)
             {
@@ -84,14 +86,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             {
                 throw new InvalidOperationException("Unknown type for edmProperty"); //TODO: string do resourcu
             }
-
-            //TODO: map primitive property - IsRequired, ColumnName atd...
             
+            MapPrimitiveProperty(property, edmProperty, column);
 
             MapPropertyCodeModel(property, codeProperty);
 
             return property;
         }
+
+        
 
         private NavigationPropertyCodeModel MapNavigationProperty(CodeProperty2 codeProperty, NavigationProperty edmProperty)
         {
@@ -113,6 +116,30 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             property.IsSetterPrivate = setterPrivate == defaults.Property.IsSetterPrivate ? (bool?)null : setterPrivate;
             var isVirtual = codeProperty.OverrideKind == vsCMOverrideKind.vsCMOverrideKindVirtual ? true : false;
             property.IsVirtual = isVirtual == defaults.Property.IsVirtual ? (bool?)null : isVirtual;
+        }
+
+        private void MapPrimitiveProperty(PrimitivePropertyCodeModel property, EdmProperty edmProperty, EdmProperty column)
+        {
+            var storeEntity = column.DeclaringType as EntityType;
+
+            property.Column.ColumnOrder = storeEntity != null ? storeEntity.Properties.Select((p, i) => Tuple.Create((int?)i, p)).Where(p => p.Item2.Name.EqualsOrdinal(column.Name)).Select(i => i.Item1).SingleOrDefault() : null;
+            property.Column.ColumnAnnotations.AddRange(column.CustomAnnotationsAsDictionary());
+            property.Column.ColumnName = column.Name;
+            property.Column.ColumnType = column.TypeName;
+            property.Column.DatabaseGeneratedOption = (DatabaseGeneratedOption)column.StoreGeneratedPattern;
+            property.Column.IsConcurrencyToken = edmProperty.ConcurrencyMode == ConcurrencyMode.Fixed ? true : false;
+            property.Column.IsFixedLength = edmProperty.IsFixedLength;
+            property.Column.IsMaxLength = edmProperty.IsMaxLength;
+            property.Column.MaxLength = edmProperty.MaxLength;
+            property.Column.IsNullable = column.Nullable;
+            property.Column.IsRowVersion = column.PrimitiveType.PrimitiveTypeKind == PrimitiveTypeKind.Binary && column.MaxLength == 8 && column.IsStoreGeneratedComputed;
+            property.Column.IsUnicode = edmProperty.IsUnicode;
+            property.Column.Precision = edmProperty.Precision;
+            property.Column.Scale = edmProperty.Scale;
+
+            //TODO: momentalne nemapuji PropertyName...
+            //efModel.Metadata.EntityContainerMapping.EntitySetMappings.SelectMany(es => es.ModificationFunctionMappings).Where(mf => mf.EntityType == edmProperty.DeclaringType).SelectMany(ef => ef.DeleteFunctionMapping.ParameterBindings.)
+            //property.Column.ParameterName = edm
         }
 
 

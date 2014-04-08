@@ -23,8 +23,7 @@ namespace EfModelMigrations
             }
         }
 
-        //TODO: udelat internal az bude kod z runneru ve vlastnich tridach v hlavnich projektu
-        public IEnumerable<ModelTransformation> Transformations
+        internal IEnumerable<ModelTransformation> Transformations
         {
             get { return transformations; }
         }

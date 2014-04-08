@@ -60,14 +60,14 @@
     <Compile Include="Commands\RenameClassCommand.cs" />
     <Compile Include="Commands\RenamePropertyCommand.cs" />
     <Compile Include="Exceptions\EfModelException.cs" />
-    <Compile Include="Extensions\IListExtensions.cs" />
+    <Compile Include="Extensions\ICollectionExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="IModelMigration.cs" />
     <Compile Include="Infrastructure\CodeModel\Builders\ForeignKeyPropertyBuilder.cs" />
     <Compile Include="Infrastructure\CodeModel\EnumPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\ForeignKeyPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\PrimitivePropertyCodeModel.cs" />
-    <Compile Include="Infrastructure\CodeModel\MappingItem.cs" />
+    <Compile Include="Infrastructure\CodeModel\ColumnInfo.cs" />
     <Compile Include="Infrastructure\EntityFramework\ConsolidatedIndex.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationOperationBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\EdmExtensions\EdmPropertyExtensions.cs" />
@@ -163,6 +163,7 @@
     <Compile Include="Operations\Mapping\Model\EfFluentApiCallChain.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluentApiMethods.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluetApiCall.cs" />
+    <Compile Include="Operations\Mapping\Model\EnumParameter.cs" />
     <Compile Include="Operations\Mapping\Model\IEfFluentApiMethod.cs" />
     <Compile Include="Operations\Mapping\Model\IEfFluentApiMethodParameter.cs" />
     <Compile Include="Operations\Mapping\Model\IndexAnnotationParameter.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Transformations\ModelTransformation.cs" />
     <Compile Include="Transformations\Model\AssociationEnd.cs" />
     <Compile Include="Transformations\Model\ManyToManyJoinTable.cs" />
+    <Compile Include="Transformations\Model\MultiplicityHelper.cs" />
     <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />
     <Compile Include="Transformations\RemoveAssociationTransformation.cs" />
     <Compile Include="Transformations\RemoveAssociationWithForeignKeyTransformation.cs" />

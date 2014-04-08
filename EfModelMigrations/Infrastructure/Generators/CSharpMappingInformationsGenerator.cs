@@ -124,6 +124,13 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
         }
 
+        protected virtual void GenerateParameter(EnumParameter parameter, StringBuilder sb)
+        {
+            sb.Append(parameter.EnumType.Name)
+                .Append(GetSyntaxToken(CSharpTokenType.DotOperator))
+                .Append(Enum.GetName(parameter.EnumType, parameter.Value));
+        }
+
         protected virtual void GenerateParameter(ValueParameter parameter, StringBuilder sb)
         {
             sb.Append(parameter.Value.ToString().ToLower());

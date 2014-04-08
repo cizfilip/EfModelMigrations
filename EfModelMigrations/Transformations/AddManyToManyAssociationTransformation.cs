@@ -24,7 +24,7 @@ namespace EfModelMigrations.Transformations
             this.JoinTable = joinTable;
 
             //TODO: stringy do resourců
-            if (!(source.Multipticity == RelationshipMultiplicity.Many && target.Multipticity == RelationshipMultiplicity.Many))
+            if (!MultiplicityHelper.IsOneToMany(source, target))
             {
                 throw new ModelTransformationValidationException("Invalid association multiplicity for many to many association.");
             }

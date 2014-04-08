@@ -24,7 +24,7 @@ namespace EfModelMigrations.Transformations
             this.ForeignKeyColumnNames = foreignKeyColumnNames;
 
             //TODO: stringy do resourců
-            if (principal.Multipticity == RelationshipMultiplicity.Many && dependent.Multipticity == RelationshipMultiplicity.Many)
+            if (!MultiplicityHelper.IsOneToOne(principal, dependent))
             {
                 throw new ModelTransformationValidationException("Invalid association multiplicity for one to one foreign key association.");
             }

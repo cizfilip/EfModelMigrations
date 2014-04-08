@@ -18,13 +18,8 @@ namespace EfModelMigrations.Operations.Mapping.Model
         WithOptionalDependent,
         HasMany,
         WithMany,
-
-
-
+        
         WillCascadeOnDelete,
-
-        //Annotations
-        HasColumnAnnotation,
 
         //Map method
         Map,
@@ -39,6 +34,22 @@ namespace EfModelMigrations.Operations.Mapping.Model
         //Properties
         Property,
         IsRequired,
-        IsOptional
+        IsOptional,
+        HasColumnName,
+        HasColumnType,
+        HasColumnOrder,
+        HasDatabaseGeneratedOption,
+        HasParameterName,
+        IsConcurrencyToken,
+        IsMaxLength,
+        HasMaxLength,
+        IsFixedLength,
+        IsVariableLength,
+        IsUnicode,
+        IsRowVersion,
+        HasPrecision,
+
+        //Annotations
+        HasColumnAnnotation,
     }
 }

@@ -22,20 +22,10 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         {
         }
 
-        public override PrimitivePropertyCodeModel MergeWith(PropertyCodeModel property, bool? newNullability = null)
+        protected override PrimitivePropertyCodeModel CreateForMerge(PropertyCodeModel property, bool? newNullability = null)
         {
-            return new EnumPropertyCodeModel(property.Name, EnumType, 
-                newNullability.HasValue ? newNullability.Value : this.IsTypeNullable)
-            {
-                IsVirtual = property.IsVirtual,
-                IsSetterPrivate = property.IsSetterPrivate,
-                Visibility = property.Visibility,
-
-                ColumnName = this.ColumnName,
-                ColumnType = this.ColumnType,
-                DatabaseGeneratedOption = this.DatabaseGeneratedOption,
-                IsRequired = this.IsRequired,
-            };
+            return new EnumPropertyCodeModel(property.Name, EnumType,
+                newNullability.HasValue ? newNullability.Value : this.IsTypeNullable);
         }
     }
 }

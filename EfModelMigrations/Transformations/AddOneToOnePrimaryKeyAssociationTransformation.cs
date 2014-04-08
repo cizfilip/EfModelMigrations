@@ -18,8 +18,7 @@ namespace EfModelMigrations.Transformations
             :base(principal, dependent, willCascadeOnDelete)
         {
             //TODO: stringy do resourců
-            if ((principal.Multipticity == RelationshipMultiplicity.Many && dependent.Multipticity == RelationshipMultiplicity.Many)
-                || (principal.Multipticity == RelationshipMultiplicity.ZeroOrOne && dependent.Multipticity == RelationshipMultiplicity.ZeroOrOne))
+            if (MultiplicityHelper.IsOneToOne(principal, dependent) && !(principal.Multipticity == RelationshipMultiplicity.ZeroOrOne && dependent.Multipticity == RelationshipMultiplicity.ZeroOrOne))
             {
                 throw new ModelTransformationValidationException("Invalid association multiplicity for one to one primary key association.");
             }

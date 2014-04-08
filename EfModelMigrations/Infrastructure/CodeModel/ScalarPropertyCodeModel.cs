@@ -24,23 +24,13 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         {
         }
 
-        public override PrimitivePropertyCodeModel MergeWith(PropertyCodeModel property, bool? newNullability = null)
+        protected override PrimitivePropertyCodeModel CreateForMerge(PropertyCodeModel property, bool? newNullability = null)
         {
             bool nullability = newNullability.HasValue ? EnsureCorrectNullability(newNullability.Value) : this.IsTypeNullable;
 
-            return new ScalarPropertyCodeModel(property.Name, Type, nullability)
-            {
-                IsVirtual = property.IsVirtual,
-                IsSetterPrivate = property.IsSetterPrivate,
-                Visibility = property.Visibility,
-
-                ColumnName = this.ColumnName,
-                ColumnType = this.ColumnType,
-                DatabaseGeneratedOption = this.DatabaseGeneratedOption,
-                IsRequired = this.IsRequired,
-            };
+            return new ScalarPropertyCodeModel(property.Name, Type, nullability);
         }
-
+        
         private bool EnsureCorrectNullability(bool proposed)
         {
             if (!proposed && nullablePrimitiveTypes.Contains(Type))
@@ -148,5 +138,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             {"timespan", PrimitiveTypeKind.Time},
             {"system.timespan", PrimitiveTypeKind.Time},
         };
+
+        
     }
 }

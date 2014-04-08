@@ -12,29 +12,29 @@ namespace EfModelMigrations.Infrastructure.CodeModel
     public abstract class PrimitivePropertyCodeModel : PropertyCodeModel
     {
         public bool IsTypeNullable { get; protected set; }
+        public ColumnInfo Column { get; protected set; }
 
-        public bool? IsRequired { get; set; }
-        public string ColumnName { get; set; }
-        public string ColumnType { get; set; }
-        public int? ColumnOrder { get; set; }
-        public IList<Tuple<string, object>> ColumnAnnotations { get; set; }
-        public DatabaseGeneratedOption? DatabaseGeneratedOption { get; set; }
-        public bool? IsConcurrencyToken { get; set; }
-        public string ParameterName { get; set; }
-        public int? MaxLength { get; set; }
         
-
-
-        //TODO: ParameterName, ColumnOrder, ConcurrencyToken, ColumnAnnotation a dalsi - vse co lze mapovat pomoci fluent api
-        // Pokud pridam nove property musim dodelat implementace MergeWithNullability v podtypech
-
         public PrimitivePropertyCodeModel(string name)
             : base(name)
         {
             this.IsTypeNullable = false;
+            this.Column = new ColumnInfo();
         }
 
-        public abstract PrimitivePropertyCodeModel MergeWith(PropertyCodeModel property, bool? newNullability = null);
+        protected abstract PrimitivePropertyCodeModel CreateForMerge(PropertyCodeModel property, bool? newNullability = null);
+        
+        public PrimitivePropertyCodeModel MergeWith(PropertyCodeModel property, bool? newNullability = null)
+        {
+            var merged = CreateForMerge(property, newNullability);
+            
+            merged.IsVirtual = property.IsVirtual;
+            merged.IsSetterPrivate = property.IsSetterPrivate;
+            merged.Visibility = property.Visibility;
+            merged.Column = this.Column.Copy();
+
+            return merged;
+        }
         
 
         public static bool TryUnwrapNullability(string type, out string underlayingType)

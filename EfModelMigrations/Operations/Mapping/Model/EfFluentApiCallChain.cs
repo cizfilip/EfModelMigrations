@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EfModelMigrations.Extensions;
 
 namespace EfModelMigrations.Operations.Mapping.Model
 {
     public class EfFluentApiCallChain : IFluentInterface
     {
         public string EntityType { get; private set; }
-        public IList<EfFluetApiCall> FluentApiCalls { get; set; }
+        public IList<EfFluetApiCall> FluentApiCalls { get; private set; }
 
         public EfFluentApiCallChain(string entityType)
         {
@@ -42,5 +43,13 @@ namespace EfModelMigrations.Operations.Mapping.Model
             return this;
         }
 
+        public EfFluentApiCallChain AddCalls(IEnumerable<EfFluetApiCall> calls)
+        {
+            Check.NotNullOrEmpty(calls, "calls");
+
+            FluentApiCalls.AddRange(calls);
+
+            return this;
+        }
     }
 }

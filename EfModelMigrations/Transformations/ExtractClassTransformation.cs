@@ -78,9 +78,9 @@ namespace EfModelMigrations.Transformations
             return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, ForeignKeyColumns, true);
         }
 
-        private ScalarPropertyCodeModel GetPrimaryKeyForNewClass()
+        private PrimitivePropertyCodeModel GetPrimaryKeyForNewClass()
         {
-            var prop = new PrimitivePropertyBuilder().Int();
+            var prop = new PrimitivePropertyBuilder().Int().Property;
             prop.Name = "Id";
             return prop;
         }

@@ -138,26 +138,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 throw new EfModelException(string.Format("Cannot find column for property {0} in class {1}", propertyName, className), e); //TODO: string do resourcu
             }
         }
-
-        public ColumnModel GetColumnModelForProperty(string className, string propertyName)
-        {
-            Check.NotEmpty(className, "className");
-            Check.NotEmpty(propertyName, "propertyName");
-
-            try
-            {
-                var storeProperty = Metadata.GetScalarPropertyMappingForProperty(className, propertyName)
-                    .Column;
-
-                return storeProperty.ToColumnModel(Metadata.ProviderManifest);
-            }
-            catch (Exception e)
-            {
-                throw new EfModelException(string.Format("Cannot get ColumnModel for property {0} in class {1}", propertyName, className), e); //TODO: string do resourcu
-            }
-        }
-
-        
+       
 
         //Private methods
         private AssociationType GetStoreAssociationTypeFromAssociationEnd(SimpleAssociationEnd associationEnd)

@@ -5,7 +5,7 @@ using System;
 using System.Data.Entity;
 using System.Linq;
 using System.Data.Entity.Infrastructure.Annotations; //For indexes mapping
-using System.ComponentModel.DataAnnotations.Schema; //For indexes mapping
+using System.ComponentModel.DataAnnotations.Schema; //For indexes mapping and DatabaseGeneratedOption
 
 namespace <#= Namespace #>
 {

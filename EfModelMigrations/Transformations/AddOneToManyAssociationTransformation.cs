@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.Entity.Infrastructure.Annotations;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
@@ -47,8 +48,7 @@ namespace EfModelMigrations.Transformations
             this.ForeignKeyIndex = foreignKeyIndex;
 
             //TODO: stringy do resourců
-            if (!((principal.Multipticity == RelationshipMultiplicity.One || principal.Multipticity == RelationshipMultiplicity.ZeroOrOne)
-                && dependent.Multipticity == RelationshipMultiplicity.Many))
+            if (!MultiplicityHelper.IsOneToMany(principal, dependent))
             {
                 throw new ModelTransformationValidationException("Invalid association multiplicity for one to many association.");
             }
@@ -81,26 +81,42 @@ namespace EfModelMigrations.Transformations
 
                 for (int i = 0; i < ForeignKeyProperties.Length; i++)
                 {
-                    bool isForeignKeyNullable = Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne ? true : false;
-                    var foreignKeyProperty = principalPks[i].MergeWith(ForeignKeyProperties[i], isForeignKeyNullable);
+                    IndexAttribute index = null;
+                    if (ForeignKeyIndex != null)
+                    {
+                        index = ForeignKeyIndex.CopyWithNameAndOrder(indexName, i);
+                    }
+                    var foreignKeyProperty = CreateForeignKey(ForeignKeyProperties[i], principalPks[i], index);
                     
                     addForeignKeyPropertyOperations.Add(
                             new AddPropertyToClassOperation(Dependent.ClassName, foreignKeyProperty)
                         );
 
-                    var propertyMapping = new AddPropertyMapping(Dependent.ClassName, foreignKeyProperty);
-                    if (ForeignKeyIndex != null)
-                    {
-                        propertyMapping.Index = ForeignKeyIndex.CopyWithNameAndOrder(indexName, i);
-                    }
-
                     addForeignKeyPropertyOperations.Add(
-                            new AddMappingInformationOperation(propertyMapping)
+                            new AddMappingInformationOperation(new AddPropertyMapping(Dependent.ClassName, foreignKeyProperty))
                         );
                 }
             }
 
             return baseOperations.Concat(addForeignKeyPropertyOperations);
+        }
+
+        private PrimitivePropertyCodeModel CreateForeignKey(ForeignKeyPropertyCodeModel foreignKey, PrimitivePropertyCodeModel primaryKey, IndexAttribute index = null)
+        {
+            bool isForeignKeyNullable = Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne ? true : false;
+            var foreignKeyProperty = primaryKey.MergeWith(foreignKey, isForeignKeyNullable);
+
+            foreignKeyProperty.Column.ColumnName = foreignKey.ColumnName;
+            foreignKeyProperty.Column.ParameterName = null;
+            foreignKeyProperty.Column.ColumnOrder = null;
+
+            foreignKeyProperty.Column.ColumnAnnotations.Clear();
+            if (index != null)
+            {
+                foreignKeyProperty.Column.ColumnAnnotations.Add(IndexAnnotation.AnnotationName, index);
+            }
+            
+            return foreignKeyProperty;
         }
 
         protected override AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider)

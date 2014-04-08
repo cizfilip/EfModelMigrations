@@ -28,7 +28,8 @@ namespace EfModelMigrations.Runtime.Templates
         {
             this.Write("using System;\r\nusing System.Data.Entity;\r\nusing System.Linq;\r\nusing System.Data.E" +
                     "ntity.Infrastructure.Annotations; //For indexes mapping\r\nusing System.ComponentM" +
-                    "odel.DataAnnotations.Schema; //For indexes mapping\r\n\r\nnamespace ");
+                    "odel.DataAnnotations.Schema; //For indexes mapping and DatabaseGeneratedOption\r\n" +
+                    "\r\nnamespace ");
             
             #line 10 "D:\SkyDrive\CVUT\DP-Projekt\EfModelMigrations\EfModelMigrations.Runtime\Templates\DbContextTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(Namespace));

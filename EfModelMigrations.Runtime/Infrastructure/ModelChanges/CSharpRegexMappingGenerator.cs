@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
+
+    //TODO: kromě povolování whitespace okolo CSharpTokenType bych taky mel povolovat komentáře typu... /**/
+    //@"[\s/*]*";
     internal class CSharpRegexMappingGenerator : CSharpMappingInformationsGenerator
     {
         private static readonly string AllowWhiteSpaceToken = @"\s*";

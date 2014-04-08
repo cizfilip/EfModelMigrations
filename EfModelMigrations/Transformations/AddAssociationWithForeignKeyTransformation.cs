@@ -47,7 +47,7 @@ namespace EfModelMigrations.Transformations
             var dependentColumnNames = dependentCodeModel.StoreEntityType.Properties.Select(p => p.Name);
 
             return principalCodeModel.PrimaryKeys.Select(
-                    p => string.Concat(prefix, "_", dependentColumnNames.Uniquify(p.ColumnName))
+                    p => string.Concat(prefix, "_", dependentColumnNames.Uniquify(p.Column.ColumnName))
                 ).ToArray();
         }
     }

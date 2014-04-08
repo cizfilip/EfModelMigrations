@@ -84,22 +84,22 @@ namespace EfModelMigrations.Operations.Mapping
         
         protected virtual void AddAdditionalMethodCalls(EfFluentApiCallChain callChain)
         {
-            if (ForeignKeyProperties != null)
+            if (ForeignKeyProperties != null && MultiplicityHelper.IsOneToMany(Source, Target))
             {
                 AddHasForeignKeyMethodCall(callChain);
             }
-
-            if(ForeignKeyColumnNames != null)
+            else if (ForeignKeyColumnNames != null &&
+                (MultiplicityHelper.IsOneToMany(Source, Target) || (MultiplicityHelper.IsOneToOne(Source, Target))))
             {
                 AddMapForeignKeysMethodCall(callChain);
             }
 
-            if(JoinTable != null)
+            if (JoinTable != null && MultiplicityHelper.IsManyToMany(Source, Target))
             {
                 AddMapJoinTableMethodCall(callChain);
             }
 
-            if(WillCascadeOnDelete.HasValue)
+            if (WillCascadeOnDelete.HasValue && !MultiplicityHelper.IsManyToMany(Source, Target))
             {
                 AddCascadeOnDeleteMethodCall(callChain);
             }

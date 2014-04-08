@@ -326,7 +326,9 @@ namespace EfModelMigrations
 
             foreach (var property in propertiesOnObject)
             {
-                var primitiveProperty = property.GetValue(properties) as PrimitivePropertyCodeModel;
+                var mappingBuilder = property.GetValue(properties) as PrimitiveMappingBuilder;
+
+                var primitiveProperty = mappingBuilder != null ? mappingBuilder.Property : null;
 
                 if (primitiveProperty == null)
                     throw new ModelMigrationsException("Cannot retrieve property definition from migration!"); // TODO: string do resourcu
