@@ -35,7 +35,7 @@ namespace EfModelMigrations.Transformations
                 yield return dropIdentityOperation;
             }
 
-            var referentialConstraint = builder.NewModel.GetStorageAssociationTypeForAssociation(Principal, Dependent)
+            var referentialConstraint = builder.NewModel.GetStoreAssociationTypeForAssociation(Principal, Dependent)
                 .Constraint;
             var foreignKeyColumns = referentialConstraint.ToProperties;
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity.Core.Metadata.Edm;
+using System.Data.Entity.Infrastructure.Annotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -247,6 +249,12 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
+        public PrimitiveMappingBuilder WithIndex(IndexAttribute index)
+        {
+            property.Column.ColumnAnnotations.Add(IndexAnnotation.AnnotationName, new IndexAnnotation(index));
+            return this;
+        }
+
 
         protected void MapPrimitive(string columnName = null, 
             bool? isNullable = null,
@@ -287,6 +295,22 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             : base(property)
         {
         }
+        public new StringMappingBuilder WithColumnMapping(string columnName = null,
+            bool? isNullable = null,
+            string databaseType = null,
+            int? order = null,
+            string parameterName = null,
+            bool? isConcurrencyToken = null)
+        {
+            base.WithColumnMapping(columnName, isNullable, databaseType, order, parameterName, isConcurrencyToken);
+            return this;
+        }
+
+        public StringMappingBuilder WithIndex(IndexAttribute index)
+        {
+            base.WithIndex(index);
+            return this;
+        }
 
         public new StringMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
         {
@@ -306,6 +330,22 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         public BinaryMappingBuilder(PrimitivePropertyCodeModel property)
             : base(property)
         {
+        }
+        public new BinaryMappingBuilder WithColumnMapping(string columnName = null,
+            bool? isNullable = null,
+            string databaseType = null,
+            int? order = null,
+            string parameterName = null,
+            bool? isConcurrencyToken = null)
+        {
+            base.WithColumnMapping(columnName, isNullable, databaseType, order, parameterName, isConcurrencyToken);
+            return this;
+        }
+
+        public BinaryMappingBuilder WithIndex(IndexAttribute index)
+        {
+            base.WithIndex(index);
+            return this;
         }
 
         public new BinaryMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
@@ -328,6 +368,23 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         {
         }
 
+        public new DateTimeMappingBuilder WithColumnMapping(string columnName = null,
+            bool? isNullable = null,
+            string databaseType = null,
+            int? order = null,
+            string parameterName = null,
+            bool? isConcurrencyToken = null)
+        {
+            base.WithColumnMapping(columnName, isNullable, databaseType, order, parameterName, isConcurrencyToken);
+            return this;
+        }
+
+        public DateTimeMappingBuilder WithIndex(IndexAttribute index)
+        {
+            base.WithIndex(index);
+            return this;
+        }
+
         public DateTimeMappingBuilder WithPrecision(byte precision)
         {
             Property.Column.Precision = precision;
@@ -340,6 +397,22 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         public DecimalMappingBuilder(PrimitivePropertyCodeModel property)
             : base(property)
         {
+        }
+        public new DecimalMappingBuilder WithColumnMapping(string columnName = null,
+            bool? isNullable = null,
+            string databaseType = null,
+            int? order = null,
+            string parameterName = null,
+            bool? isConcurrencyToken = null)
+        {
+            base.WithColumnMapping(columnName, isNullable, databaseType, order, parameterName, isConcurrencyToken);
+            return this;
+        }
+
+        public DecimalMappingBuilder WithIndex(IndexAttribute index)
+        {
+            base.WithIndex(index);
+            return this;
         }
 
         public DecimalMappingBuilder WithPrecision(byte precision, byte scale)

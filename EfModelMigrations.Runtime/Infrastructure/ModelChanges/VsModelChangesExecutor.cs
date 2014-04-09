@@ -67,7 +67,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         protected virtual void ExecuteOperation(CreateEmptyClassOperation operation)
         {
             //TODO: ujistit se za pouzivam validni C# identifikatory - pomoci metody CodeModel.IsValidID
-            //TODO: zde propagovat defaultni nastaveni pro tridy z configurace...
             string fileFullPath = Path.Combine(modelProject.GetProjectDir(), GetConventionPathFromNamespace(modelNamespace), operation.Name + codeGenerator.GetFileExtensions());
             historyTracker.MarkItemAdded(fileFullPath);
 

@@ -68,6 +68,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             yield return regexGenerator.GenerateFluentApiCall(methodChain);
         }
 
+        protected virtual IEnumerable<GeneratedFluetApiCall> RemoveRegExps(RemoveClassMapping mappingInfo)
+        {
+            var methodChain = new EfFluentApiCallChain(mappingInfo.Name);
+
+            yield return regexGenerator.GenerateFluentApiCall(methodChain);
+        }
+
 
         private PropertySelectorParameter CreatePropertySelectorParameter(string className, string navigationProperty)
         {

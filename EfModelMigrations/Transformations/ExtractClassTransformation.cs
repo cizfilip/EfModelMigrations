@@ -16,44 +16,49 @@ namespace EfModelMigrations.Transformations
 {
     public class ExtractClassTransformation : ModelTransformation
     {
+        private AddOneToOneForeignKeyAssociationTransformation association;
+
         public string FromClass { get; private set; }
 
         public string[] Properties { get; private set; }
 
-        public string NewClass { get; private set; }
+        public ClassModel NewClass { get; private set; }
 
-        public string[] ForeignKeyColumns { get; private set; }
+        //public string[] ForeignKeyColumns { get; private set; }
 
 
-        public ExtractClassTransformation(string fromClass, string[] properties, string newClass, string[] foreignKeyColumns)
+        public ExtractClassTransformation(string fromClass, string[] properties, ClassModel newClass)
         {
             Check.NotEmpty(fromClass, "fromClass");
             Check.NotNullOrEmpty(properties, "properties");
-            Check.NotEmpty(newClass, "newClass");
-            Check.NotNullOrEmpty(foreignKeyColumns, "foreignKeyColumns");
+            Check.NotNull(newClass, "newClass");
+            
 
             this.FromClass = fromClass;
             this.Properties = properties;
             this.NewClass = newClass;
-            this.ForeignKeyColumns = foreignKeyColumns;
+            this.association = GetAssociationTransformation();
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            yield return new CreateEmptyClassOperation(NewClass);
+            //TODO: pouzivat rovnou i create class transformaci ne??
+            throw new NotImplementedException();
 
-            yield return new AddPropertyToClassOperation(NewClass, GetPrimaryKeyForNewClass());
+            //yield return new CreateEmptyClassOperation(NewClass);
+
+            //yield return new AddPropertyToClassOperation(NewClass, GetPrimaryKeyForNewClass());
             
-            foreach (var prop in Properties)
-            {
-                yield return new MovePropertyOperation(FromClass, NewClass, prop);
-            }
+            //foreach (var prop in Properties)
+            //{
+            //    yield return new MovePropertyOperation(FromClass, NewClass, prop);
+            //}
 
-            var associationOperations = GetAssociationTransformation().GetModelChangeOperations(modelProvider);
-            foreach (var assocOp in associationOperations)
-            {
-                yield return assocOp;
-            }
+            //var associationOperations = GetAssociationTransformation().GetModelChangeOperations(modelProvider);
+            //foreach (var assocOp in associationOperations)
+            //{
+            //    yield return assocOp;
+            //}
         }
 
 
@@ -72,10 +77,11 @@ namespace EfModelMigrations.Transformations
 
         private AddOneToOneForeignKeyAssociationTransformation GetAssociationTransformation()
         {
-            var principal = new AssociationEnd(FromClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(NewClass));
-            var dependent = new AssociationEnd(NewClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(FromClass));
+            var principal = new AssociationEnd(FromClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(NewClass.Name));
+            var dependent = new AssociationEnd(NewClass.Name, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(FromClass));
 
-            return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, ForeignKeyColumns, true);
+            //return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, ForeignKeyColumns, true);
+            return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, null, true);
         }
 
         private PrimitivePropertyCodeModel GetPrimaryKeyForNewClass()

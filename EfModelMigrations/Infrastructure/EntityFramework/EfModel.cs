@@ -65,15 +65,15 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
         }
 
-        public AssociationType GetStorageAssociationTypeForAssociation(AssociationEnd from, AssociationEnd to)
+        public AssociationType GetStoreAssociationTypeForAssociation(AssociationEnd from, AssociationEnd to)
         {
             Check.NotNull(from, "from");
             Check.NotNull(to, "to");
 
-            return GetStorageAssociationTypeForAssociation(from.ToSimpleAssociationEnd(), to.ToSimpleAssociationEnd());
+            return GetStoreAssociationTypeForAssociation(from.ToSimpleAssociationEnd(), to.ToSimpleAssociationEnd());
         }
 
-        public AssociationType GetStorageAssociationTypeForAssociation(SimpleAssociationEnd from, SimpleAssociationEnd to)
+        public AssociationType GetStoreAssociationTypeForAssociation(SimpleAssociationEnd from, SimpleAssociationEnd to)
         {
             Check.NotNull(from, "from");
             Check.NotNull(to, "to");

@@ -71,14 +71,40 @@ namespace EfModelMigrations.Infrastructure.Generators
         {
             builder.AppendLine("Model.CreateClass(");
             AppendIndent(builder);
-            builder.Append(QuoteString(transformation.Name))
-                .AppendLine(",");
+            builder.Append("c => c.Class(");
+            builder.Append(QuoteString(transformation.Model.Name));
+
+            
+            if(transformation.Model.Visibility.HasValue || transformation.Model.TableName != null)
+            {
+                if(transformation.Model.Visibility.HasValue)
+                {
+                    builder.Append(", ")
+                        .Append(transformation.Model.Visibility.Value.ToString().ToLowerInvariant());
+                }
+                else
+                {
+                    builder.Append(", null");
+                }
+                if (transformation.Model.TableName != null)
+                {
+                    builder.Append(", ")
+                        .Append(transformation.Model.TableName.Table);
+
+                    if(!string.IsNullOrWhiteSpace(transformation.Model.TableName.Schema))
+                    {
+                        builder.Append(", ")
+                        .Append(transformation.Model.TableName.Schema);
+                    }
+                }
+            }
+
+            builder.Append("), ");
+            builder.AppendLine();
             AppendIndent(builder);
             builder.AppendLine("p => new");
             AppendIndent(builder, 2);
             builder.AppendLine("{");
-                        
-
             
             foreach (var property in transformation.Properties)
             {

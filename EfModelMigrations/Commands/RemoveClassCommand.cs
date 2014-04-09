@@ -26,8 +26,10 @@ namespace EfModelMigrations.Commands
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
+            var classModel = modelProvider.GetClassCodeModel(className);
+
             yield return new RemoveClassTransformation(className,
-                new CreateClassTransformation(className, modelProvider.GetClassCodeModel(className).Properties)
+                new CreateClassTransformation(classModel.ToClassModel(), classModel.Properties)
                 );
         }
 

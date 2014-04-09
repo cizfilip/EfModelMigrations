@@ -18,7 +18,7 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            var referentialConstraint = builder.NewModel.GetStorageAssociationTypeForAssociation(Principal, Dependent)
+            var referentialConstraint = builder.NewModel.GetStoreAssociationTypeForAssociation(Principal, Dependent)
                 .Constraint;
             var dependentStoreEntitySet = builder.NewModel.GetStoreEntitySetForClass(Dependent.ClassName);
             var foreignKeyColumns = referentialConstraint.ToProperties;

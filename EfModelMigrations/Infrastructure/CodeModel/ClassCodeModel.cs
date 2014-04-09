@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EfModelMigrations.Transformations.Model;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
     {
         internal ClassCodeModel(
             string name,
+            TableName tableName,
             CodeModelVisibility visibility,
             string baseType,
             IEnumerable<string> implementedInterfaces,
@@ -19,18 +21,20 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             IEnumerable<PrimitivePropertyCodeModel> primaryKeys)
         {
             Check.NotEmpty(name, "name");
+            Check.NotNull(tableName, "tableName");
 
-            //TODO: defaults must be supplied from configuration
-            Name = name;
-            Visibility = visibility;
-            BaseType = baseType;
-            ImplementedInterfaces = implementedInterfaces ?? Enumerable.Empty<string>();
-            Properties = properties ?? Enumerable.Empty<PrimitivePropertyCodeModel>();
-            NavigationProperties = navigationProperties ?? Enumerable.Empty<NavigationPropertyCodeModel>();
-            PrimaryKeys = primaryKeys ?? Enumerable.Empty<PrimitivePropertyCodeModel>();
+            this.Name = name;
+            this.TableName = tableName;
+            this.Visibility = visibility;
+            this.BaseType = baseType;
+            this.ImplementedInterfaces = implementedInterfaces ?? Enumerable.Empty<string>();
+            this.Properties = properties ?? Enumerable.Empty<PrimitivePropertyCodeModel>();
+            this.NavigationProperties = navigationProperties ?? Enumerable.Empty<NavigationPropertyCodeModel>();
+            this.PrimaryKeys = primaryKeys ?? Enumerable.Empty<PrimitivePropertyCodeModel>();
         }
 
         public string Name { get; private set; }
+        public TableName TableName { get; private set; }
         public CodeModelVisibility Visibility { get; private set; }
         public string BaseType { get; private set; }
         public IEnumerable<string> ImplementedInterfaces { get; private set; }
@@ -44,7 +48,25 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         public EntityType StoreEntityType { get; internal set; }
 
         public EntityType ConceptualEntityType { get; internal set; }
+
+        public ClassModel ToClassModel()
+        {
+            return new ClassModel(Name, TableName, Visibility);
+        }
     }
 
-    
+    public sealed class TableName
+    {
+        public string Table { get; private set; }
+        public string Schema { get; private set; }
+
+        public TableName(string table, string schema)
+        {
+            Check.NotEmpty(table, "table");
+
+            this.Table = table;
+            this.Schema = schema;
+        }
+    }
+
 }

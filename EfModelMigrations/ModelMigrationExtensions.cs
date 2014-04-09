@@ -16,11 +16,11 @@ namespace EfModelMigrations
 {
     public static class ModelMigrationExtensions
     {
-        public static void CreateClass<TProps>(this IModelMigration migration, string className, Func<PrimitivePropertyBuilder, TProps> propertiesAction)
+        public static void CreateClass<TProps>(this IModelMigration migration, Func<ClassModelBuilder, ClassModel> classAction, Func<PrimitivePropertyBuilder, TProps> propertiesAction, string[] primaryKeys = null)
         {
             //TODO: Dat do classcodemodelu namespace atd....
             ((ModelMigration)migration).AddTransformation(
-                new CreateClassTransformation(className, ConvertObjectToPrimitivePropertyModel(propertiesAction(new PrimitivePropertyBuilder())))
+                new CreateClassTransformation(classAction(new ClassModelBuilder()), ConvertObjectToPrimitivePropertyModel(propertiesAction(new PrimitivePropertyBuilder())), primaryKeys)
                 );
         }
 
@@ -28,7 +28,6 @@ namespace EfModelMigrations
         {
             ((ModelMigration)migration).AddTransformation(new RemoveClassTransformation(className));
         }
-
 
         public static void AddProperty(this IModelMigration migration, string className, string propertyName, Func<PrimitivePropertyBuilder, PrimitivePropertyCodeModel> propertyAction)
         {
@@ -63,9 +62,9 @@ namespace EfModelMigrations
             ((ModelMigration)migration).AddTransformation(new JoinComplexTypeTransformation(complexTypeName, className));
         }
 
-        public static void ExtractClass(this IModelMigration migration, string newClassName, string fromClassName, string[] propertiesToExtract, string[] foreignKeyColumns)
+        public static void ExtractClass(this IModelMigration migration, Func<ClassModelBuilder, ClassModel> newClassAction, string fromClassName, string[] propertiesToExtract)
         {
-            ((ModelMigration)migration).AddTransformation(new ExtractClassTransformation(fromClassName, propertiesToExtract, newClassName, foreignKeyColumns));
+            ((ModelMigration)migration).AddTransformation(new ExtractClassTransformation(fromClassName, propertiesToExtract, newClassAction(new ClassModelBuilder())));
         }
 
 

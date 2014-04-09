@@ -28,7 +28,7 @@ namespace EfModelMigrations.Transformations
         {
             var dependentStoreEntitySet = builder.OldModel.GetStoreEntitySetForClass(Dependent.ClassName);
 
-            var referentialConstraint = builder.OldModel.GetStorageAssociationTypeForAssociation(Principal, Dependent)
+            var referentialConstraint = builder.OldModel.GetStoreAssociationTypeForAssociation(Principal, Dependent)
                 .Constraint;
             var foreignKeyColumns = referentialConstraint.ToProperties;
 

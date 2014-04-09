@@ -19,7 +19,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 {
-    //TODO: resit enumy!!!
     internal class VsCodeClassToClassCodeModelMapper
     {
         private CodeGeneratorDefaults defaults;
@@ -31,13 +30,20 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             this.efModel = efModel;
         }
 
-        public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass, EntityType entityType, EntityType storeEntityType)
+        public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass, EntityType entityType, EntitySet storeEntitySet)
         {
             var scalarProperties = MapProperties(codeClass, entityType.Properties);
             var primaryKeys = entityType.KeyProperties.Select(k => k.Name);
 
+            //TODO: associace obecne - metoda InitializeForeignKeyLists na EntitySet - hiearchie komplikuje nejspis i asociace!!!! - viz extnsiony v ef IsAssignableFrom a IsSubtypeOf
+            //TODO: foreign keys
+            //var fks = efModel.Metadata.EntityContainer.AssociationSets.Select(a => a.ElementType)
+            //    .Where(at => at.IsForeignKey && at.Constraint != null && at.Constraint.ToRole.GetEntityType().Equals(entityType))
+            //    .SelectMany(a => a.Constraint.ToProperties);
+
             return new ClassCodeModel(
                 codeClass.Name,
+                new TableName(storeEntitySet.Table, storeEntitySet.Schema),
                 MapVisibility(codeClass.Access),
                 MapBaseType(codeClass.Bases),
                 MapImplementedInterfaces(codeClass.ImplementedInterfaces),
@@ -46,7 +52,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 scalarProperties.Where(p => primaryKeys.Contains(p.Name)).ToList()
                 )
                 {
-                    StoreEntityType = storeEntityType,
+                    StoreEntityType = storeEntitySet.ElementType,
                     ConceptualEntityType = entityType
                 };
         }

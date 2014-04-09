@@ -25,6 +25,8 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
+            //TODO: a co mapovaci informace jednak o tride a jednak o jejich property??
+            yield return new RemoveMappingInformationOperation(new RemoveClassMapping(Name));
             yield return new RemoveClassOperation(Name);
 
             yield return new RemoveDbSetPropertyOperation(Name);

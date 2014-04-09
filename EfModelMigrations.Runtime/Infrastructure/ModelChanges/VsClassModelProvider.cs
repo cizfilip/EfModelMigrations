@@ -46,8 +46,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             try
             {
                 var entityType = efModel.Metadata.GetEntityTypeForClass(className);
-                var storeEntityType = efModel.GetStoreEntityTypeForClass(className);
-                return mapper.MapToClassCodeModel(codeClass, entityType, storeEntityType);
+                var storeEntitySet = efModel.GetStoreEntitySetForClass(className);
+                return mapper.MapToClassCodeModel(codeClass, entityType, storeEntitySet);
             }
             catch (Exception e)
             {

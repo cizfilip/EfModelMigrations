@@ -51,5 +51,9 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         //Annotations
         HasColumnAnnotation,
+
+        //Entity
+        HasKey,
+
     }
 }

@@ -2,6 +2,7 @@
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Transformations;
+using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace EfModelMigrations.Commands
         {
             var parameterParser = new ParametersParser(modelProvider);
 
-            yield return new CreateClassTransformation(className, parameterParser.ParseProperties(properties));
+            yield return new CreateClassTransformation(new ClassModel(className), parameterParser.ParseProperties(properties));
         }
 
         public override string GetMigrationName()

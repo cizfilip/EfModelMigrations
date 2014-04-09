@@ -145,6 +145,7 @@
     <Compile Include="Infrastructure\CodeModel\ClassCodeModel.cs" />
     <Compile Include="Infrastructure\CodeModel\ScalarPropertyCodeModel.cs" />
     <Compile Include="ModelTransformationBuilders.cs" />
+    <Compile Include="Operations\Mapping\AddClassMapping.cs" />
     <Compile Include="Operations\Mapping\AddDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\AddMappingInformationOperation.cs" />
     <Compile Include="Operations\Mapping\AddAssociationMapping.cs" />
@@ -172,6 +173,7 @@
     <Compile Include="Operations\Mapping\Model\StringParameter.cs" />
     <Compile Include="Operations\Mapping\Model\ValueParameter.cs" />
     <Compile Include="Operations\Mapping\RemoveAssociationMapping.cs" />
+    <Compile Include="Operations\Mapping\RemoveClassMapping.cs" />
     <Compile Include="Operations\Mapping\RemoveDbSetPropertyOperation.cs" />
     <Compile Include="Operations\Mapping\RemoveMappingInformationOperation.cs" />
     <Compile Include="Operations\Mapping\RemovePropertyMapping.cs" />
@@ -201,6 +203,7 @@
     <Compile Include="Transformations\JoinComplexTypeTransformation.cs" />
     <Compile Include="Transformations\ModelTransformation.cs" />
     <Compile Include="Transformations\Model\AssociationEnd.cs" />
+    <Compile Include="Transformations\Model\ClassModel.cs" />
     <Compile Include="Transformations\Model\ManyToManyJoinTable.cs" />
     <Compile Include="Transformations\Model\MultiplicityHelper.cs" />
     <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />

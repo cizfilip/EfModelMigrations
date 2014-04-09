@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
+    //TODO: dodelat ci odstranit
     public class ExtractComplexTypeTransformation : ModelTransformation
     {
         public string ClassName { get; set; }

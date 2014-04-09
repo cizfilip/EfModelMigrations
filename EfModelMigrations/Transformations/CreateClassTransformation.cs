@@ -5,46 +5,51 @@ using EfModelMigrations.Operations;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Transformations.Model;
 
 namespace EfModelMigrations.Transformations
 {
     public class CreateClassTransformation : ModelTransformation
     {
-        public string Name { get; private set; }
+        public ClassModel Model { get; private set; }
         public IEnumerable<PrimitivePropertyCodeModel> Properties { get; private set; }
+        public string[] PrimaryKeys { get; private set; }
 
-        //TODO: Pridat ve vsech transformaci validace na parametry v konstruktoru - jako v commandech
-        public CreateClassTransformation(string name, IEnumerable<PrimitivePropertyCodeModel> properties)
+        public CreateClassTransformation(ClassModel model, IEnumerable<PrimitivePropertyCodeModel> properties, string[] primaryKeys = null)
         {
-            Check.NotEmpty(name, "name");
+            Check.NotNull(model, "model");
             Check.NotNullOrEmpty(properties, "properties");
 
-            this.Name = name;
+            this.Model = model;
             this.Properties = properties;
+            this.PrimaryKeys = primaryKeys;
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
             //TODO: vyhazovat vyjimky pokud trida jiz existuje... i jinde treba v addproperty pokud property jiz existuje atd..
-            yield return new CreateEmptyClassOperation(Name);
+            yield return new CreateEmptyClassOperation(Model.Name, Model.Visibility);
+            yield return new AddMappingInformationOperation(new AddClassMapping(Model, PrimaryKeys));
+
             foreach (var property in Properties)
             {
-                yield return new AddPropertyToClassOperation(Name, property);
+                yield return new AddPropertyToClassOperation(Model.Name, property);
+                yield return new AddMappingInformationOperation(new AddPropertyMapping(Model.Name, property));
             }
 
-            yield return new AddDbSetPropertyOperation(Name);
+            yield return new AddDbSetPropertyOperation(Model.Name);
         }
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
             yield return builder.CreateTableOperation(
-                    builder.NewModel.GetStoreEntitySetForClass(Name)
+                    builder.NewModel.GetStoreEntitySetForClass(Model.Name)
                 );
         }
         
         public override ModelTransformation Inverse()
         {
-            return new RemoveClassTransformation(Name, this);
+            return new RemoveClassTransformation(Model.Name, this);
         }
 
         public override bool IsDestructiveChange

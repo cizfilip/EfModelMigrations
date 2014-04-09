@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations
 {
-
+    //TODO: dodelat ci odstranit
     public class JoinComplexTypeTransformation : TransformationWithInverse
     {
         public string ClassName { get; set; }
