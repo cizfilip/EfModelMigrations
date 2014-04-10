@@ -19,6 +19,21 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             this.project = project;
         }
 
+        public CodeEnum FindCodeEnum(string @namespace, string name)
+        {
+            return FindCodeEnumFromFullName(GetFullNameOfClass(@namespace, name));
+        }
+
+        public CodeEnum FindCodeEnumFromFullName(string enumFullName)
+        {
+            CodeEnum codeEnum = FindCodeTypeFromFullNameInternal(enumFullName) as CodeEnum;
+
+            if (codeEnum == null)
+                throw new ModelMigrationsException(string.Format(Resources.CannotFindEnumInModelProject, enumFullName));
+
+            return codeEnum;
+        }
+
 
         public CodeClass2 FindCodeClass(string @namespace, string className)
         {
@@ -27,7 +42,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 
         public CodeClass2 FindCodeClassFromFullName(string classFullName)
         {
-            CodeClass2 codeClass = FindClassFromFullNameInternal(classFullName);
+            CodeClass2 codeClass = FindCodeTypeFromFullNameInternal(classFullName) as CodeClass2;
 
             if (codeClass == null)
                 throw new ModelMigrationsException(string.Format(Resources.CannotFindClassInModelProject, classFullName));
@@ -44,13 +59,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
         /// <summary>
         /// Gets the type only if typeName is its fully-qualified name and it's local to the specified project
         /// </summary>
-        private CodeClass2 FindClassFromFullNameInternal(string className)
+        private CodeType FindCodeTypeFromFullNameInternal(string fullName)
         {
             try
             {
-                var fullNameResult = project.CodeModel.CodeTypeFromFullName(className);
+                var fullNameResult = project.CodeModel.CodeTypeFromFullName(fullName);
                 if ((fullNameResult != null) && (fullNameResult.InfoLocation == vsCMInfoLocation.vsCMInfoLocationProject))
-                    return fullNameResult as CodeClass2;
+                    return fullNameResult;
             }
             catch (ArgumentException)
             {

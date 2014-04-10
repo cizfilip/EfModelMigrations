@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
 {
-    public class MoveDataOperation : MigrationOperation
+    //TODO: a co inverse???
+    public class InsertFromOperation : MigrationOperation
     {
-        public MoveDataModel From { get; set; }
-        public MoveDataModel To { get; set; }
+        public InsertDataModel From { get; set; }
+        public InsertDataModel To { get; set; }
 
-        public MoveDataOperation(object anonymousArguments = null)
+        public InsertFromOperation(object anonymousArguments = null)
             :base(anonymousArguments)
         {
         }
@@ -23,13 +24,13 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
         }
     }
 
-    public class MoveDataModel
+    public sealed class InsertDataModel
     {
         public string TableName { get; set; }
 
         public string[] ColumnNames { get; set; }
 
-        public MoveDataModel(string tableName, string[] columns)
+        public InsertDataModel(string tableName, string[] columns)
         {
             this.TableName = tableName;
             this.ColumnNames = columns;

@@ -42,7 +42,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
 
         //Other
-        //MoveDataOperation MoveDataOperation(EntitySet storageEntitySet, string oldColumnName, string newColumnName);
+        //InsertFromOperation InsertFromOperation(EntitySet fromEntitySet, IEnumerable<EdmProperty> fromColumns, EntitySet toEntitySet, IEnumerable<EdmProperty> toColumns);
 
        
     }

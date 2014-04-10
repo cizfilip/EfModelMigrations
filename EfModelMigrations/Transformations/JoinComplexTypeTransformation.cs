@@ -33,14 +33,16 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            var complexModel = modelProvider.GetClassCodeModel(ComplexTypeName);
+            throw new NotImplementedException();
 
-            foreach (var property in complexModel.Properties)
-            {
-                yield return new MovePropertyOperation(ComplexTypeName, ClassName, property.Name);
-            }
+            //var complexModel = modelProvider.GetClassCodeModel(ComplexTypeName);
 
-            yield return new RemoveClassOperation(ComplexTypeName);
+            //foreach (var property in complexModel.Properties)
+            //{
+            //    yield return new MovePropertyOperation(ComplexTypeName, ClassName, property.Name);
+            //}
+
+            //yield return new RemoveClassOperation(ComplexTypeName);
 
 
             //TODO: dodelat mazani navigacni property!

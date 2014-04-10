@@ -175,43 +175,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         }
 
 
-        protected virtual void ExecuteOperation(MovePropertyOperation operation)
-        {
-            CodeClass2 fromCodeClass = classFinder.FindCodeClass(modelNamespace, operation.FromClassName);
-            CodeClass2 toCodeClass = classFinder.FindCodeClass(modelNamespace, operation.ToClassName);
-
-            historyTracker.MarkItemModified(fromCodeClass.ProjectItem);
-            historyTracker.MarkItemModified(toCodeClass.ProjectItem);
-
-            try
-            {
-                CodeProperty2 property = FindProperty(fromCodeClass, operation.Name);
-                var endPoint = property.GetEndPoint();
-                var startEditPoint = property.GetStartPoint(vsCMPart.vsCMPartWholeWithAttributes).CreateEditPoint();
-                string propertyString = startEditPoint.GetText(endPoint);
-                startEditPoint.Delete(endPoint);
-
-                AddPropertyToClassInternal(toCodeClass,
-                    operation.Name,
-                    propertyString,
-                    e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddProperty,
-                        operation.Name,
-                        operation.ToClassName), e)
-                    );
-                
-            }
-            catch (ModelMigrationsException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                throw new ModelMigrationsException("Failed to move property.", e); //TODO: string do resourcu
-            }
-
-            
-        }
-
         #region Mapping Informations
 
         protected virtual void ExecuteOperation(AddMappingInformationOperation operation)

@@ -167,13 +167,31 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
         public AddIdentityOperation TryBuildAddIdentityOperation(EntitySet storageEntitySet)
         {
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+
             return TryBuildIdentityOperation(storageEntitySet, NewModel, () => new AddIdentityOperation());
         }
 
         public DropIdentityOperation TryBuildDropIdentityOperation(EntitySet storageEntitySet)
         {
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+
             return TryBuildIdentityOperation(storageEntitySet, OldModel, () => new DropIdentityOperation());
         }
+
+        //public InsertFromOperation InsertFromOperation(EntitySet fromEntitySet, IEnumerable<EdmProperty> fromColumns, EntitySet toEntitySet, IEnumerable<EdmProperty> toColumns)
+        //{
+        //    Check.NotNull(fromEntitySet, "fromEntitySet");
+        //    Check.NotNullOrEmpty(fromColumns, "fromColumns");
+        //    Check.NotNull(toEntitySet, "toEntitySet");
+        //    Check.NotNullOrEmpty(toColumns, "toColumns");
+
+        //    return new InsertFromOperation()
+        //    {
+        //        From = new InsertDataModel(fromEntitySet.FullTableName(), fromColumns.Select(c => c.Name).ToArray()),
+        //        To = new InsertDataModel(toEntitySet.FullTableName(), toColumns.Select(c => c.Name).ToArray())
+        //    };
+        //}
 
         private T TryBuildIdentityOperation<T>(EntitySet storageEntitySet, EfModel model, Func<T> operationFactory) where T : IdentityOperation
         {
@@ -217,12 +235,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                     referentialConstraint.ToProperties.Select(p => p.Name)
                 );
         }
-
-
-
-
-
-
 
     }
 }

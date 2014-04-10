@@ -115,6 +115,15 @@ namespace EfModelMigrations.Runtime.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find enum with name {0} in model project..
+        /// </summary>
+        internal static string CannotFindEnumInModelProject {
+            get {
+                return ResourceManager.GetString("CannotFindEnumInModelProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Command name not specified..
         /// </summary>
         internal static string CommandNameNotSpecified {

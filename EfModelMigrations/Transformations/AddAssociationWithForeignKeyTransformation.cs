@@ -40,14 +40,22 @@ namespace EfModelMigrations.Transformations
             yield return builder.AddForeignKeyOperation(referentialConstraint);
         }
 
-        protected string[] GetDefaultForeignKeyColumnNames(ClassCodeModel principalCodeModel, ClassCodeModel dependentCodeModel)
+        public static string[] GetUniquifiedDefaultForeignKeyColumnNames(AssociationEnd principal, AssociationEnd dependent, ClassCodeModel principalCodeModel, ClassCodeModel dependentCodeModel)
         {
-            string prefix = Dependent.HasNavigationProperty ? Dependent.NavigationProperty.Name : Principal.ClassName;
+            string prefix = dependent.HasNavigationProperty ? dependent.NavigationProperty.Name : principal.ClassName;
 
             var dependentColumnNames = dependentCodeModel.StoreEntityType.Properties.Select(p => p.Name);
 
             return principalCodeModel.PrimaryKeys.Select(
                     p => string.Concat(prefix, "_", dependentColumnNames.Uniquify(p.Column.ColumnName))
+                ).ToArray();
+        }
+        public static string[] GetDefaultForeignKeyColumnNames(AssociationEnd principal, AssociationEnd dependent, ClassCodeModel principalCodeModel)
+        {
+            string prefix = dependent.HasNavigationProperty ? dependent.NavigationProperty.Name : principal.ClassName;
+
+            return principalCodeModel.PrimaryKeys.Select(
+                    p => string.Concat(prefix, "_", p.Column.ColumnName)
                 ).ToArray();
         }
     }

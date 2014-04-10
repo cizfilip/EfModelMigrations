@@ -59,7 +59,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         {
             try
             {
-                return efModel.Metadata.EdmItemCollection.GetItems<EnumType>().Any(e => e.Name.EqualsOrdinal(enumName));
+                var enumCode = classFinder.FindCodeEnum(configuration.ModelNamespace, enumName);
+                if(enumCode != null)
+                {
+                    return true;
+                }
+                return false;
             }
             catch (Exception)
             {

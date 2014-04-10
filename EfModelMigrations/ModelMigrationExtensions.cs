@@ -62,9 +62,24 @@ namespace EfModelMigrations
             ((ModelMigration)migration).AddTransformation(new JoinComplexTypeTransformation(complexTypeName, className));
         }
 
-        public static void ExtractClass(this IModelMigration migration, Func<ClassModelBuilder, ClassModel> newClassAction, string fromClassName, string[] propertiesToExtract)
+        public static void ExtractClass<TPks>(this IModelMigration migration, 
+            string fromClassName, 
+            string[] propertiesToExtract, 
+            Func<ClassModelBuilder, ClassModel> newClassAction, 
+            Func<PrimitivePropertyBuilder, TPks> primaryKeysAction = null, 
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> fromClassNavigationPropAction = null,
+            Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> newClassNavigationPropAction = null,
+            string[] foreignKeyColumns = null)
         {
-            ((ModelMigration)migration).AddTransformation(new ExtractClassTransformation(fromClassName, propertiesToExtract, newClassAction(new ClassModelBuilder())));
+            var newClassModel = newClassAction(new ClassModelBuilder());
+            NavigationPropertyCodeModel fromNavigationProp = fromClassNavigationPropAction != null ? fromClassNavigationPropAction(new OneNavigationPropertyBuilder(newClassModel.Name)) : null;
+            NavigationPropertyCodeModel newNavigationProp = newClassNavigationPropAction != null ? newClassNavigationPropAction(new OneNavigationPropertyBuilder(fromClassName)) : null;
+
+            IEnumerable<PrimitivePropertyCodeModel> primaryKeys = primaryKeysAction != null ? ConvertObjectToPrimitivePropertyModel(primaryKeysAction(new PrimitivePropertyBuilder())) : null;
+
+            ((ModelMigration)migration).AddTransformation(
+                new ExtractClassTransformation(fromClassName, propertiesToExtract, newClassModel, primaryKeys, fromNavigationProp, newNavigationProp, foreignKeyColumns)
+            );
         }
 
 

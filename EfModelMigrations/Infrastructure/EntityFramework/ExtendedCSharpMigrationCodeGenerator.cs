@@ -20,7 +20,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 var operation = newOperations[i];
                 if(operation is AddIdentityOperation ||
                     operation is DropIdentityOperation ||
-                    operation is MoveDataOperation)
+                    operation is InsertFromOperation)
                 {
                     newOperations[i] = new PlaceholderOperation(operation);
                 }
@@ -52,7 +52,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         }
 
 
-        protected virtual void Generate(MoveDataOperation moveDataOperation, IndentedTextWriter writer)
+        protected virtual void Generate(InsertFromOperation moveDataOperation, IndentedTextWriter writer)
         {
             writer.Write("this.");
             writer.Write("MoveData");
@@ -60,9 +60,9 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
             writer.Indent++;
 
-            GenerateMoveDataFluentCall("FromTable", moveDataOperation.From, writer);
+            GenerateInsertFromFluentCall("FromTable", moveDataOperation.From, writer);
             writer.WriteLine();
-            GenerateMoveDataFluentCall("ToTable", moveDataOperation.To, writer);
+            GenerateInsertFromFluentCall("ToTable", moveDataOperation.To, writer);
             writer.WriteLine(";");
 
             writer.Indent--;
@@ -70,7 +70,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             writer.WriteLine();
         }
 
-        private void GenerateMoveDataFluentCall(string methodName, MoveDataModel model, IndentedTextWriter writer)
+        private void GenerateInsertFromFluentCall(string methodName, InsertDataModel model, IndentedTextWriter writer)
         {
             writer.Write(".");
             writer.Write(methodName);

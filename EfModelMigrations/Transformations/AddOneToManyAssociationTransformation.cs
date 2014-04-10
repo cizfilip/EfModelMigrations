@@ -133,7 +133,9 @@ namespace EfModelMigrations.Transformations
             {
                 if (ForeignKeyColumnNames == null)
                 {
-                    ForeignKeyColumnNames = GetDefaultForeignKeyColumnNames(
+                    ForeignKeyColumnNames = AddAssociationWithForeignKeyTransformation.GetUniquifiedDefaultForeignKeyColumnNames(
+                        Principal,
+                        Dependent,
                         modelProvider.GetClassCodeModel(Principal.ClassName),
                         modelProvider.GetClassCodeModel(Dependent.ClassName));
                 }

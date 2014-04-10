@@ -2,6 +2,7 @@
 using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.CodeModel.Builders;
 using EfModelMigrations.Infrastructure.EntityFramework;
+using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Transformations.Model;
 using System;
@@ -16,18 +17,33 @@ namespace EfModelMigrations.Transformations
 {
     public class ExtractClassTransformation : ModelTransformation
     {
-        private AddOneToOneForeignKeyAssociationTransformation association;
+        private CreateClassTransformation createClass;
+        private IEnumerable<AddPropertyTransformation> addProperties;
+        private IEnumerable<RemovePropertyTransformation> removeProperties;
+        private AddOneToOneForeignKeyAssociationTransformation addAssociation;
 
         public string FromClass { get; private set; }
+
+        public NavigationPropertyCodeModel FromClassNavigationProperty { get; set; }
 
         public string[] Properties { get; private set; }
 
         public ClassModel NewClass { get; private set; }
 
-        //public string[] ForeignKeyColumns { get; private set; }
+        public NavigationPropertyCodeModel NewClassNavigationProperty { get; set; }
+
+        public IEnumerable<PrimitivePropertyCodeModel> PrimaryKeys { get; set; }
+
+        public string[] ForeignKeyColumns { get; private set; }
 
 
-        public ExtractClassTransformation(string fromClass, string[] properties, ClassModel newClass)
+        public ExtractClassTransformation(string fromClass, 
+            string[] properties, 
+            ClassModel newClass, 
+            IEnumerable<PrimitivePropertyCodeModel> primaryKeys = null, 
+            NavigationPropertyCodeModel fromNavigationProp = null, 
+            NavigationPropertyCodeModel newNavigationProp = null, 
+            string[] foreignKeyColumns = null)
         {
             Check.NotEmpty(fromClass, "fromClass");
             Check.NotNullOrEmpty(properties, "properties");
@@ -37,54 +53,129 @@ namespace EfModelMigrations.Transformations
             this.FromClass = fromClass;
             this.Properties = properties;
             this.NewClass = newClass;
-            this.association = GetAssociationTransformation();
+            this.PrimaryKeys = primaryKeys;
+            this.ForeignKeyColumns = foreignKeyColumns;
+            this.FromClassNavigationProperty = fromNavigationProp;
+            this.NewClassNavigationProperty = newNavigationProp;
         }
+
+       
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            //TODO: pouzivat rovnou i create class transformaci ne??
-            throw new NotImplementedException();
-
-            //yield return new CreateEmptyClassOperation(NewClass);
-
-            //yield return new AddPropertyToClassOperation(NewClass, GetPrimaryKeyForNewClass());
             
-            //foreach (var prop in Properties)
-            //{
-            //    yield return new MovePropertyOperation(FromClass, NewClass, prop);
-            //}
+            this.createClass = GetCreateClassTransformation(modelProvider);
+            this.addProperties = modelProvider.GetClassCodeModel(FromClass).Properties.Where(p => Properties.Contains(p.Name))
+                .Select(p => new AddPropertyTransformation(NewClass.Name, p));
+            this.removeProperties = Properties.Select(p => new RemovePropertyTransformation(FromClass, p));
+            this.addAssociation = GetAssociationTransformation(modelProvider);
 
-            //var associationOperations = GetAssociationTransformation().GetModelChangeOperations(modelProvider);
-            //foreach (var assocOp in associationOperations)
-            //{
-            //    yield return assocOp;
-            //}
+            //create new class (only primary keys)
+            var operations = createClass.GetModelChangeOperations(modelProvider).ToList();
+            
+            //add properties
+            operations.AddRange(addProperties.SelectMany(pt => pt.GetModelChangeOperations(modelProvider)));
+            
+            //create one to one fk association
+            operations.AddRange(addAssociation.GetModelChangeOperations(modelProvider));
+
+            //remove extracted properties from class
+            operations.AddRange(removeProperties.SelectMany(pt => pt.GetModelChangeOperations(modelProvider)));
+
+            return operations;
         }
-
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            throw new NotImplementedException();
-            //return builder.ExtractTable(FromClass, NewClass, Properties, ForeignKeyColumns, true);
-        }
+            var operations = new List<MigrationOperation>();
+            //create table
+            operations.AddRange(createClass.GetDbMigrationOperations(builder));
 
+            //add columns
+            var addColumnOperations = addProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder));
+            operations.AddRange(addColumnOperations);
+
+            //add association
+            var associationOperations = addAssociation.GetDbMigrationOperations(builder);
+            operations.AddRange(associationOperations);
+
+            var dropColumnOperations = removeProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder));
+
+            //move data
+            var foreigKeyConstaintOp = associationOperations.OfType<AddForeignKeyOperation>().Single();
+            var from = new InsertDataModel(foreigKeyConstaintOp.PrincipalTable, dropColumnOperations
+                .OfType<DropColumnOperation>()
+                .Select(c => c.Name)
+                .Concat(foreigKeyConstaintOp.PrincipalColumns)
+                .ToArray());
+            var to = new InsertDataModel(foreigKeyConstaintOp.DependentTable, addColumnOperations
+                .OfType<AddColumnOperation>()
+                .Select(c => c.Column.Name)
+                .Concat(foreigKeyConstaintOp.DependentColumns)
+                .ToArray());
+            operations.Add(
+                    new InsertFromOperation()
+                    {
+                        From = from,
+                        To = to
+                    }
+                );
+
+            //drop columns
+            operations.AddRange(dropColumnOperations);
+            
+
+            return operations;
+        }
 
         public override ModelTransformation Inverse()
         {
-            return null;
+            var associationEnds = GetAssociationEnds();
+            return new MergeClassesTransformation(associationEnds.Item1.ToSimpleAssociationEnd(), associationEnds.Item2.ToSimpleAssociationEnd(), Properties);
         }
 
 
-        private AddOneToOneForeignKeyAssociationTransformation GetAssociationTransformation()
+        private AddOneToOneForeignKeyAssociationTransformation GetAssociationTransformation(IClassModelProvider modelProvider)
         {
-            var principal = new AssociationEnd(FromClass, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(NewClass.Name));
-            var dependent = new AssociationEnd(NewClass.Name, RelationshipMultiplicity.One, new NavigationPropertyCodeModel(FromClass));
+            var associationEnds = GetAssociationEnds();
+            var principal = associationEnds.Item1;
+            var dependent = associationEnds.Item2;
 
-            //return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, ForeignKeyColumns, true);
-            return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, null, true);
+            if(ForeignKeyColumns == null)
+            {
+                ForeignKeyColumns = AddAssociationWithForeignKeyTransformation
+                    .GetDefaultForeignKeyColumnNames(principal, dependent, modelProvider.GetClassCodeModel(FromClass));
+            }
+            return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, ForeignKeyColumns, true);
         }
 
-        private PrimitivePropertyCodeModel GetPrimaryKeyForNewClass()
+        private Tuple<AssociationEnd, AssociationEnd> GetAssociationEnds()
+        {
+            if(FromClassNavigationProperty == null && NewClassNavigationProperty == null)
+            {
+                FromClassNavigationProperty = new NavigationPropertyCodeModel(NewClass.Name);
+                NewClassNavigationProperty = new NavigationPropertyCodeModel(FromClass);
+            }
+
+            var principal = new AssociationEnd(FromClass, RelationshipMultiplicity.One, FromClassNavigationProperty);
+            var dependent = new AssociationEnd(NewClass.Name, RelationshipMultiplicity.One, NewClassNavigationProperty);
+
+            return Tuple.Create(principal, dependent);
+        }
+
+        private CreateClassTransformation GetCreateClassTransformation(IClassModelProvider modelProvider)
+        {
+            List<PrimitivePropertyCodeModel> properties = new List<PrimitivePropertyCodeModel>();
+            if(PrimaryKeys == null || PrimaryKeys.Count() > 1)
+            {
+                PrimaryKeys = new[] { GetDefaultPrimaryKeyForNewClass() };
+            }
+            properties.AddRange(PrimaryKeys);
+            
+            return new CreateClassTransformation(NewClass, properties, PrimaryKeys.Select(p => p.Name).ToArray());
+        }
+
+        private PrimitivePropertyCodeModel GetDefaultPrimaryKeyForNewClass()
         {
             var prop = new PrimitivePropertyBuilder().Int().Property;
             prop.Name = "Id";

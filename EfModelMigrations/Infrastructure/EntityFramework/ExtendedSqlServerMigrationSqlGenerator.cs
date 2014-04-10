@@ -18,14 +18,14 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             {
                 Generate((IdentityOperation)migrationOperation);
             }
-            if (migrationOperation is MoveDataOperation)
+            if (migrationOperation is InsertFromOperation)
             {
-                Generate((MoveDataOperation)migrationOperation);
+                Generate((InsertFromOperation)migrationOperation);
             }
         }
 
 
-        protected virtual void Generate(MoveDataOperation migrationOperation)
+        protected virtual void Generate(InsertFromOperation migrationOperation)
         {
             var from = migrationOperation.From;
             var to = migrationOperation.To;

@@ -135,6 +135,9 @@
   <data name="CannotFindConfiguration" xml:space="preserve">
     <value>Cannot find configuration class in project.</value>
   </data>
+  <data name="CannotFindEnumInModelProject" xml:space="preserve">
+    <value>Cannot find enum with name {0} in model project.</value>
+  </data>
   <data name="CommandNameNotSpecified" xml:space="preserve">
     <value>Command name not specified.</value>
   </data>

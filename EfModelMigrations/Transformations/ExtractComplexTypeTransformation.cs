@@ -35,17 +35,19 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            yield return new CreateEmptyClassOperation(ComplexTypeName);
+            throw new NotImplementedException();
+
+            //yield return new CreateEmptyClassOperation(ComplexTypeName);
 
 
-            //var classModel = modelProvider.GetClassCodeModel(ClassName);
+            ////var classModel = modelProvider.GetClassCodeModel(ClassName);
             
-            foreach (var property in PropertiesToExtract)
-            {
-                yield return new MovePropertyOperation(ClassName, ComplexTypeName, property);
-            }            
+            //foreach (var property in PropertiesToExtract)
+            //{
+            //    yield return new MovePropertyOperation(ClassName, ComplexTypeName, property);
+            //}            
 
-            yield return new AddPropertyToClassOperation(ClassName, NavigationProperty);
+            //yield return new AddPropertyToClassOperation(ClassName, NavigationProperty);
         }
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
