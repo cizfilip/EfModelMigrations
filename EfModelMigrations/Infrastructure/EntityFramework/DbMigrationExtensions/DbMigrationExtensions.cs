@@ -70,23 +70,23 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
         }
 
 
-        public static MoveDataOperationWrapper MoveData(this DbMigration migration)
+        public static InsertFromOperationWrapper InsertFrom(this DbMigration migration)
         {
             var operation = new InsertFromOperation();
             ((IDbMigration)migration).AddOperation(operation);
-            return new MoveDataOperationWrapper(operation);
+            return new InsertFromOperationWrapper(operation);
         }
 
-        public class MoveDataOperationWrapper : IFluentInterface
+        public class InsertFromOperationWrapper : IFluentInterface
         {
             private InsertFromOperation operation;
 
-            public MoveDataOperationWrapper(InsertFromOperation operation)
+            public InsertFromOperationWrapper(InsertFromOperation operation)
             {
                 this.operation = operation;
             }
 
-            public MoveDataOperationWrapper FromTable(
+            public InsertFromOperationWrapper FromTable(
                 string table,
                 string[] columns)
             {
@@ -94,7 +94,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
                 return this;
             }
 
-            public MoveDataOperationWrapper ToTable(
+            public InsertFromOperationWrapper ToTable(
                 string table,
                 string[] columns)
             {

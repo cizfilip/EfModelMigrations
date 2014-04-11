@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
 {
+    //TODO: az bude implementace tak upravit generatory - ExtendedCSharpMigrationCodeGenerator, Sqlgenerator atd...
     public class UpdateFromOperation : MigrationOperation
     {
         

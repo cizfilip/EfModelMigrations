@@ -106,9 +106,14 @@ namespace EfModelMigrations.Transformations
             bool isForeignKeyNullable = Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne ? true : false;
             var foreignKeyProperty = primaryKey.MergeWith(foreignKey, isForeignKeyNullable);
 
+            foreignKeyProperty.Column.DatabaseGeneratedOption = DatabaseGeneratedOption.None;
             foreignKeyProperty.Column.ColumnName = foreignKey.ColumnName;
             foreignKeyProperty.Column.ParameterName = null;
             foreignKeyProperty.Column.ColumnOrder = null;
+
+            //TODO: opravdu je ok tyhle veci dat null - jeste zrevidovat
+            foreignKeyProperty.Column.IsConcurrencyToken = null;
+            foreignKeyProperty.Column.ColumnType = null;
 
             foreignKeyProperty.Column.ColumnAnnotations.Clear();
             if (index != null)

@@ -81,6 +81,18 @@ namespace EfModelMigrations
             );
         }
 
+        public static void MergeClasses(this IModelMigration migration, 
+            string principal,
+            string principalNavigationProperty,
+            string dependent,
+            string dependentNavigationProperty,
+            string[] propertiesToMerge)
+        {
+            ((ModelMigration)migration).AddTransformation(
+                new MergeClassesTransformation(new SimpleAssociationEnd(principal, principalNavigationProperty), new SimpleAssociationEnd(dependent, dependentNavigationProperty), propertiesToMerge)
+            );
+        }
+
 
         //Associations
         //public static AssociationBuilder Association(this IModelMigration migration)
