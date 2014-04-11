@@ -18,7 +18,6 @@ namespace EfModelMigrations
     {
         public static void CreateClass<TProps>(this IModelMigration migration, Func<ClassModelBuilder, ClassModel> classAction, Func<PrimitivePropertyBuilder, TProps> propertiesAction, string[] primaryKeys = null)
         {
-            //TODO: Dat do classcodemodelu namespace atd....
             ((ModelMigration)migration).AddTransformation(
                 new CreateClassTransformation(classAction(new ClassModelBuilder()), ConvertObjectToPrimitivePropertyModel(propertiesAction(new PrimitivePropertyBuilder())), primaryKeys)
                 );

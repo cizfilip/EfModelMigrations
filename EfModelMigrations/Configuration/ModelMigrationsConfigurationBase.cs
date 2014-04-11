@@ -14,11 +14,13 @@ namespace EfModelMigrations.Configuration
     {
         public static readonly string DefaultModelMigrationsDirectory = "ModelMigrations";
 
+        private ICodeGenerator codeGenerator;
+
+
         public ModelMigrationsConfigurationBase()
         {
             ModelMigrationGenerator = new CSharpModelMigrationGenerator();
             GeneratorDefaults = CodeGeneratorDefaults.Create();
-            CodeGenerator = new CSharpCodeGenerator(GeneratorDefaults, new CSharpMappingInformationsGenerator());
             ModelMigrationsNamespace = GetType().Namespace;
             ModelMigrationsAssembly = GetType().Assembly;
             ModelMigrationsDirectory = ModelMigrationsConfigurationBase.DefaultModelMigrationsDirectory;
@@ -26,7 +28,23 @@ namespace EfModelMigrations.Configuration
 
         //Generators
         public IModelMigrationGenerator ModelMigrationGenerator { get; set; }
-        public ICodeGenerator CodeGenerator { get; set; }
+
+        public ICodeGenerator CodeGenerator
+        {
+            get
+            {
+                if (codeGenerator == null)
+                {
+                    codeGenerator = new CSharpCodeGenerator(GeneratorDefaults, new CSharpMappingInformationsGenerator());
+                }
+                return codeGenerator;
+            }
+            set
+            {
+                Check.NotNull(value, "CodeGenerator");
+                codeGenerator = value;
+            }
+        }
 
         public CodeGeneratorDefaults GeneratorDefaults { get; set; }
 
