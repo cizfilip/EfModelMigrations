@@ -62,11 +62,11 @@ namespace EfModelMigrations
             ((ModelMigration)migration).AddTransformation(new JoinComplexTypeTransformation(complexTypeName, className));
         }
 
-        public static void ExtractClass<TPks>(this IModelMigration migration, 
+        public static void ExtractClass(this IModelMigration migration, 
             string fromClassName, 
             string[] propertiesToExtract, 
             Func<ClassModelBuilder, ClassModel> newClassAction, 
-            Func<PrimitivePropertyBuilder, TPks> primaryKeysAction = null, 
+            Func<PrimitivePropertyBuilder, object> primaryKeysAction = null, 
             Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> fromClassNavigationPropAction = null,
             Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> newClassNavigationPropAction = null,
             string[] foreignKeyColumns = null)
