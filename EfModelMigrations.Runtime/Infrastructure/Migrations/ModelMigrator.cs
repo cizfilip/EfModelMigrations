@@ -106,10 +106,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 }
                 
                 //generate db migration    
-                //TODO: !!! generovani db migrace musi probehnout v nove appdomene!!! jinak tam ef neprilozi spravny (novy) edmx model ale ten stary!!!
                 scaffoldedMigration = GenerateDbMigration(dbMigrationOperations, GetDbMigrationName(migration, isRevert));
-                //write migration
-                dbMigrationWriter.Write(scaffoldedMigration);
+                //write migration - edmxModel is supplied because ef MigrationScaffolder see only old model before migrating
+                dbMigrationWriter.Write(scaffoldedMigration, oldEdmxModel);
 
                 //build project before updating DB
                 projectBuilder.BuildModelProject();

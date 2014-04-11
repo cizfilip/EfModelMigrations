@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Resources;
+using System.IO.Compression;
+using System.Xml.Linq;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 {
@@ -44,8 +46,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             }
         }
 
-        public void Write(ScaffoldedMigration scaffoldedMigration)
+        public void Write(ScaffoldedMigration scaffoldedMigration, string edmxModel)
         {
+            Check.NotNull(scaffoldedMigration, "scaffoldedMigration");
+            Check.NotEmpty(edmxModel, "edmxModel");
+
             string userCodePath;
             string resourcesPath;
             string designerCodePath;
@@ -53,6 +58,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
             project.AddContentToProject(userCodePath, scaffoldedMigration.UserCode);
             
+            //use provided model as target
+            scaffoldedMigration.Resources["Target"] = CompressAndEncodeEdmxModel(edmxModel);
 
             WriteResources(Path.Combine(project.GetProjectDir(), resourcesPath), scaffoldedMigration.Resources);
             project.AddContentToProject(designerCodePath, scaffoldedMigration.DesignerCode);
@@ -79,9 +86,29 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                     writer.AddResource(res.Key, res.Value);
                 }
             }
-
-
             project.AddFileToProject(resourcesPath);
+        }
+
+
+        private string CompressAndEncodeEdmxModel(string model)
+        {
+            var compressed = CompressEdmxModel(model);
+            return Convert.ToBase64String(compressed);
+        }
+
+        private byte[] CompressEdmxModel(string model)
+        {
+            var xModel = XDocument.Parse(model);
+
+            using (var outStream = new MemoryStream())
+            {
+                using (var gzipStream = new GZipStream(outStream, CompressionMode.Compress))
+                {
+                    xModel.Save(gzipStream);
+                }
+
+                return outStream.ToArray();
+            }
         }
     }
 }

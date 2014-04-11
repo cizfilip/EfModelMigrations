@@ -10,9 +10,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
     public class ExtendedCSharpMigrationCodeGenerator : CSharpMigrationCodeGenerator
     {
         public IEnumerable<MigrationOperation> NewOperations { get; set; }
-
-        //TODO: predat new target model ale bacha musim si ho sam base64 encodovat a compresovat - mozna by to proslo i bez komprese???!!!
-        public string NewTargetModel { get; set; }
         
         public override ScaffoldedMigration Generate(string migrationId, IEnumerable<MigrationOperation> operations, string sourceModel, string targetModel, string @namespace, string className)
         {
@@ -28,7 +25,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                     newOperations[i] = new PlaceholderOperation(operation);
                 }
             }
-            return base.Generate(migrationId, newOperations, sourceModel, NewTargetModel, @namespace, className);
+            return base.Generate(migrationId, newOperations, sourceModel, targetModel, @namespace, className);
         }
 
         protected override void Generate(SqlOperation sqlOperation, IndentedTextWriter writer)
