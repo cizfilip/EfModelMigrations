@@ -29,9 +29,9 @@ namespace EfModelMigrations
             ((ModelMigration)migration).AddTransformation(new RemoveClassTransformation(className));
         }
 
-        public static void AddProperty(this IModelMigration migration, string className, string propertyName, Func<PrimitivePropertyBuilder, PrimitivePropertyCodeModel> propertyAction)
+        public static void AddProperty(this IModelMigration migration, string className, string propertyName, Func<PrimitivePropertyBuilder, PrimitiveMappingBuilder> propertyAction)
         {
-            var property = propertyAction(new PrimitivePropertyBuilder());
+            var property = propertyAction(new PrimitivePropertyBuilder()).Property;
 
             property.Name = propertyName;
             ((ModelMigration)migration).AddTransformation(new AddPropertyTransformation(className, property));

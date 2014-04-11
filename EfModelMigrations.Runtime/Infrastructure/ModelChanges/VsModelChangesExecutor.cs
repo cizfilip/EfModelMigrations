@@ -180,10 +180,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         protected virtual void ExecuteOperation(AddMappingInformationOperation operation)
         {
             var mappingGenerator = codeGenerator.MappingGenerator;
-            var generatedInfo = mappingGenerator.GenerateFluentApiCall(operation.MappingInformation.BuildEfFluentApiCallChain());
 
-            if (generatedInfo != null)
+            var fluentApiCallChain = operation.MappingInformation.BuildEfFluentApiCallChain();
+
+            if (fluentApiCallChain != null)
             {
+                var generatedInfo = mappingGenerator.GenerateFluentApiCall(fluentApiCallChain);
+
                 var prefixForOnModelCreating = mappingGenerator.GetPrefixForOnModelCreatingUse(generatedInfo.TargetType);
 
                 CodeClass2 contextClass = GetDbContextCodeClass();

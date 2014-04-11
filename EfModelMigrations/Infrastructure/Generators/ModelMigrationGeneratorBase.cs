@@ -23,6 +23,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             namespaces.Add("System");
             namespaces.Add("EfModelMigrations");
             namespaces.Add("EfModelMigrations.Infrastructure.CodeModel");
+            namespaces.Add("System.ComponentModel.DataAnnotations.Schema");
 
             return namespaces;
         }

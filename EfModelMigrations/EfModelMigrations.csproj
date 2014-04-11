@@ -79,6 +79,7 @@
     <Compile Include="Infrastructure\EntityFramework\EfModelMetadata.cs" />
     <Compile Include="Infrastructure\EntityFramework\ForeignKeyIndexBuilder.cs" />
     <Compile Include="Infrastructure\EntityFramework\MigrationOperations\PlaceholderOperation.cs" />
+    <Compile Include="Infrastructure\EntityFramework\MigrationOperations\UpdateFromOperation.cs" />
     <Compile Include="Infrastructure\Generators\CodeGeneratorDefaults.cs" />
     <Compile Include="Configuration\ModelMigrationsConfiguration.cs" />
     <Compile Include="Configuration\ModelMigrationsConfigurationBase.cs" />

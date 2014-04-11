@@ -221,7 +221,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 
     }
 
-    public class PrimitiveMappingBuilder
+    public class PrimitiveMappingBuilder : IFluentInterface
     {
         private PrimitivePropertyCodeModel property;
         internal PrimitivePropertyCodeModel Property
@@ -252,6 +252,12 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         public PrimitiveMappingBuilder WithIndex(IndexAttribute index)
         {
             property.Column.ColumnAnnotations.Add(IndexAnnotation.AnnotationName, new IndexAnnotation(index));
+            return this;
+        }
+
+        public PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        {
+            property.Column.DatabaseGeneratedOption = option;
             return this;
         }
 
@@ -306,9 +312,15 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public StringMappingBuilder WithIndex(IndexAttribute index)
+        public new StringMappingBuilder WithIndex(IndexAttribute index)
         {
             base.WithIndex(index);
+            return this;
+        }
+
+        public new PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        {
+            base.HasDatabaseGeneratedOption(option);
             return this;
         }
 
@@ -342,9 +354,15 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public BinaryMappingBuilder WithIndex(IndexAttribute index)
+        public new BinaryMappingBuilder WithIndex(IndexAttribute index)
         {
             base.WithIndex(index);
+            return this;
+        }
+
+        public new PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        {
+            base.HasDatabaseGeneratedOption(option);
             return this;
         }
 
@@ -379,9 +397,15 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public DateTimeMappingBuilder WithIndex(IndexAttribute index)
+        public new DateTimeMappingBuilder WithIndex(IndexAttribute index)
         {
             base.WithIndex(index);
+            return this;
+        }
+
+        public new PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        {
+            base.HasDatabaseGeneratedOption(option);
             return this;
         }
 
@@ -409,9 +433,15 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public DecimalMappingBuilder WithIndex(IndexAttribute index)
+        public new DecimalMappingBuilder WithIndex(IndexAttribute index)
         {
             base.WithIndex(index);
+            return this;
+        }
+
+        public new PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        {
+            base.HasDatabaseGeneratedOption(option);
             return this;
         }
 

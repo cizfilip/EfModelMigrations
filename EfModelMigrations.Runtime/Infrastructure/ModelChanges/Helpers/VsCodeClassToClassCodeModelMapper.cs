@@ -128,7 +128,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
         {
             var storeEntity = column.DeclaringType as EntityType;
 
-            property.Column.ColumnOrder = storeEntity != null ? storeEntity.Properties.Select((p, i) => Tuple.Create((int?)i, p)).Where(p => p.Item2.Name.EqualsOrdinal(column.Name)).Select(i => i.Item1).SingleOrDefault() : null;
+            //property.Column.ColumnOrder = storeEntity != null ? storeEntity.Properties.Select((p, i) => Tuple.Create((int?)i, p)).Where(p => p.Item2.Name.EqualsOrdinal(column.Name)).Select(i => i.Item1).SingleOrDefault() : null;
             property.Column.ColumnAnnotations.AddRange(column.CustomAnnotationsAsDictionary());
             property.Column.ColumnName = column.Name;
             property.Column.ColumnType = column.TypeName;
@@ -143,7 +143,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             property.Column.Precision = edmProperty.Precision;
             property.Column.Scale = edmProperty.Scale;
 
-            //TODO: momentalne nemapuji PropertyName...
+            //TODO: momentalne nemapuji PropertyName... a column order
             //efModel.Metadata.EntityContainerMapping.EntitySetMappings.SelectMany(es => es.ModificationFunctionMappings).Where(mf => mf.EntityType == edmProperty.DeclaringType).SelectMany(ef => ef.DeleteFunctionMapping.ParameterBindings.)
             //property.Column.ParameterName = edm
         }

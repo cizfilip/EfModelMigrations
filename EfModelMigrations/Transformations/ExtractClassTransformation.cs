@@ -91,12 +91,11 @@ namespace EfModelMigrations.Transformations
             //create table
             operations.AddRange(createClass.GetDbMigrationOperations(builder));
 
-            //add columns
-            var addColumnOperations = addProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder));
-            operations.AddRange(addColumnOperations);
+            //add columns - create table added all columns - this is only helper for move data operation
+            var addedColumnOperations = addProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder));
 
-            //add association
-            var associationOperations = addAssociation.GetDbMigrationOperations(builder);
+            //add association - without adding fk columns - these were added in create table
+            var associationOperations = addAssociation.GetDbMigrationOperations(builder).Where(op => !(op is AddColumnOperation));
             operations.AddRange(associationOperations);
 
             var dropColumnOperations = removeProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder));
@@ -108,7 +107,7 @@ namespace EfModelMigrations.Transformations
                 .Select(c => c.Name)
                 .Concat(foreigKeyConstaintOp.PrincipalColumns)
                 .ToArray());
-            var to = new InsertDataModel(foreigKeyConstaintOp.DependentTable, addColumnOperations
+            var to = new InsertDataModel(foreigKeyConstaintOp.DependentTable, addedColumnOperations
                 .OfType<AddColumnOperation>()
                 .Select(c => c.Column.Name)
                 .Concat(foreigKeyConstaintOp.DependentColumns)

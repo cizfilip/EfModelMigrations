@@ -31,7 +31,8 @@ namespace EfModelMigrations.Transformations.Model
     {
         public ClassModel Class(string name, CodeModelVisibility? visibility = null, string tableName = null, string schema = null)
         {
-            return new ClassModel(name, new TableName(tableName, schema), visibility);
+            var table = tableName != null ? new TableName(tableName, schema) : null;
+            return new ClassModel(name, table, visibility);
         }
     }
 }
