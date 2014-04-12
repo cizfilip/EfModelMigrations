@@ -18,6 +18,10 @@ namespace EfModelMigrations
     {
         public static void CreateClass<TProps>(this IModelMigration migration, Func<ClassModelBuilder, ClassModel> classAction, Func<PrimitivePropertyBuilder, TProps> propertiesAction, string[] primaryKeys = null)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotNull(classAction, "classAction");
+            Check.NotNull(propertiesAction, "propertiesAction");
+            
             ((ModelMigration)migration).AddTransformation(
                 new CreateClassTransformation(classAction(new ClassModelBuilder()), ConvertObjectToPrimitivePropertyModel(propertiesAction(new PrimitivePropertyBuilder())), primaryKeys)
                 );
@@ -25,11 +29,19 @@ namespace EfModelMigrations
 
         public static void RemoveClass(this IModelMigration migration, string className)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(className, "className");
+
             ((ModelMigration)migration).AddTransformation(new RemoveClassTransformation(className));
         }
 
         public static void AddProperty(this IModelMigration migration, string className, string propertyName, Func<PrimitivePropertyBuilder, PrimitiveMappingBuilder> propertyAction)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(propertyName, "propertyName");
+            Check.NotNull(propertyAction, "propertyAction");
+
             var property = propertyAction(new PrimitivePropertyBuilder()).Property;
 
             property.Name = propertyName;
@@ -38,26 +50,48 @@ namespace EfModelMigrations
 
         public static void RemoveProperty(this IModelMigration migration, string className, string propertyName)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(propertyName, "propertyName");
+
             ((ModelMigration)migration).AddTransformation(new RemovePropertyTransformation(className, propertyName));
         }
 
         public static void RenameClass(this IModelMigration migration, string oldClassName, string newClassName)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(oldClassName, "oldClassName");
+            Check.NotEmpty(newClassName, "newClassName");
+
             ((ModelMigration)migration).AddTransformation(new RenameClassTransformation(oldClassName, newClassName));
         }
 
         public static void RenameProperty(this IModelMigration migration, string className, string oldPropertyName, string newPropertyName)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(oldPropertyName, "oldPropertyName");
+            Check.NotEmpty(newPropertyName, "newPropertyName");
+
             ((ModelMigration)migration).AddTransformation(new RenamePropertyTransformation(className, oldPropertyName, newPropertyName));
         }
 
         public static void ExtractComplexType(this IModelMigration migration, string className, string complexTypeName, string[] propertiesToExtract)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(className, "className");
+            Check.NotEmpty(complexTypeName, "complexTypeName");
+            Check.NotNullOrEmpty(propertiesToExtract, "propertiesToExtract");
+
             ((ModelMigration)migration).AddTransformation(new ExtractComplexTypeTransformation(className, complexTypeName, propertiesToExtract, new NavigationPropertyCodeModel(complexTypeName)));
         }
 
         public static void JoinComplexType(this IModelMigration migration, string complexTypeName, string className)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(complexTypeName, "complexTypeName");
+            Check.NotEmpty(className, "className");
+
             ((ModelMigration)migration).AddTransformation(new JoinComplexTypeTransformation(complexTypeName, className));
         }
 
@@ -70,6 +104,11 @@ namespace EfModelMigrations
             Func<OneNavigationPropertyBuilder, NavigationPropertyCodeModel> newClassNavigationPropAction = null,
             string[] foreignKeyColumns = null)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(fromClassName, "fromClassName");
+            Check.NotNullOrEmpty(propertiesToExtract, "propertiesToExtract");
+            Check.NotNull(newClassAction, "newClassAction");
+
             var newClassModel = newClassAction(new ClassModelBuilder());
             NavigationPropertyCodeModel fromNavigationProp = fromClassNavigationPropAction != null ? fromClassNavigationPropAction(new OneNavigationPropertyBuilder(newClassModel.Name)) : null;
             NavigationPropertyCodeModel newNavigationProp = newClassNavigationPropAction != null ? newClassNavigationPropAction(new OneNavigationPropertyBuilder(fromClassName)) : null;
@@ -88,12 +127,17 @@ namespace EfModelMigrations
             string dependentNavigationProperty,
             string[] propertiesToMerge)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(principal, "principal");
+            Check.NotEmpty(dependent, "dependent");
+            Check.NotNullOrEmpty(propertiesToMerge, "propertiesToMerge");
+
             ((ModelMigration)migration).AddTransformation(
                 new MergeClassesTransformation(new SimpleAssociationEnd(principal, principalNavigationProperty), new SimpleAssociationEnd(dependent, dependentNavigationProperty), propertiesToMerge)
             );
         }
 
-
+        //TODO: odstranit pokud se nerozhodnu pouzit - kdyby ne tak odstranit i ModelTransformationBuilders.cs
         //Associations
         //public static AssociationBuilder Association(this IModelMigration migration)
         //{
@@ -109,6 +153,12 @@ namespace EfModelMigrations
             bool bothRequired = false,
             bool? willCascadeOnDelete = null)
         {
+            Check.NotNull(migration, "migration");           
+            Check.NotEmpty(principal, "principal");
+            Check.NotNull(principalNavigationProperty, "principalNavigationProperty");
+            Check.NotEmpty(dependent, "dependent");
+            Check.NotNull(dependentNavigationProperty, "dependentNavigationProperty");
+
             var principalMultiplicity = bothRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToOnePrimaryKeyAssociationTransformation(
@@ -147,6 +197,12 @@ namespace EfModelMigrations
             bool dependentRequired = true,
             bool? willCascadeOnDelete = null)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(principal, "principal");
+            Check.NotNull(principalNavigationProperty, "principalNavigationProperty");
+            Check.NotEmpty(dependent, "dependent");
+            Check.NotNull(dependentNavigationProperty, "dependentNavigationProperty");
+
             var principalMultiplicity = principalRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
             var dependentMultiplicity = dependentRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
@@ -190,6 +246,12 @@ namespace EfModelMigrations
             bool? willCascadeOnDelete = null,
             IndexAttribute foreignKeyIndex = null)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(principal, "principal");
+            Check.NotNull(principalNavigationProperty, "principalNavigationProperty");
+            Check.NotEmpty(dependent, "dependent");
+            Check.NotNull(dependentNavigationProperty, "dependentNavigationProperty");
+
             var principalMultiplicity = principalRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToManyAssociationTransformation(
@@ -233,6 +295,13 @@ namespace EfModelMigrations
             bool? willCascadeOnDelete = null,
             IndexAttribute foreignKeyIndex = null)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(principal, "principal");
+            Check.NotNull(principalNavigationProperty, "principalNavigationProperty");
+            Check.NotEmpty(dependent, "dependent");
+            Check.NotNull(dependentNavigationProperty, "dependentNavigationProperty");
+            Check.NotNull(dependentFkPropertiesAction, "dependentFkPropertiesAction");
+
             var principalMultiplicity = principalRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToManyAssociationTransformation(
@@ -273,6 +342,12 @@ namespace EfModelMigrations
             Func<ManyNavigationPropertyBuilder, NavigationPropertyCodeModel> targetNavigationProperty,
             ManyToManyJoinTable joinTable = null)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(source, "source");
+            Check.NotNull(sourceNavigationProperty, "sourceNavigationProperty");
+            Check.NotEmpty(target, "target");
+            Check.NotNull(targetNavigationProperty, "targetNavigationProperty");
+
             ((ModelMigration)migration).AddTransformation(new AddManyToManyAssociationTransformation(
                 new AssociationEnd(source, RelationshipMultiplicity.Many, sourceNavigationProperty(new ManyNavigationPropertyBuilder(target))),
                 new AssociationEnd(target, RelationshipMultiplicity.Many, targetNavigationProperty(new ManyNavigationPropertyBuilder(source))),
@@ -303,6 +378,10 @@ namespace EfModelMigrations
             string target,
             string targetNavigationPropertyName)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(source, "source");
+            Check.NotEmpty(target, "target");
+
             ((ModelMigration)migration).AddTransformation(new RemoveOneToOneForeignKeyAssociationTransformation(
                 new SimpleAssociationEnd(source, sourceNavigationPropertyName),
                 new SimpleAssociationEnd(target, targetNavigationPropertyName)));
@@ -314,6 +393,10 @@ namespace EfModelMigrations
             string target,
             string targetNavigationPropertyName)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(source, "source");
+            Check.NotEmpty(target, "target");
+
             ((ModelMigration)migration).AddTransformation(new RemoveOneToOneForeignKeyAssociationTransformation(
                 new SimpleAssociationEnd(source, sourceNavigationPropertyName),
                 new SimpleAssociationEnd(target, targetNavigationPropertyName)));
@@ -326,6 +409,10 @@ namespace EfModelMigrations
             string targetNavigationPropertyName,
             string[] foreignKeyPropertyNames = null)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(source, "source");
+            Check.NotEmpty(target, "target");
+
             ((ModelMigration)migration).AddTransformation(new RemoveOneToManyAssociationTransformation(
                 new SimpleAssociationEnd(source, sourceNavigationPropertyName),
                 new SimpleAssociationEnd(target, targetNavigationPropertyName),
@@ -338,6 +425,10 @@ namespace EfModelMigrations
             string target,
             string targetNavigationPropertyName)
         {
+            Check.NotNull(migration, "migration");
+            Check.NotEmpty(source, "source");
+            Check.NotEmpty(target, "target");
+
             ((ModelMigration)migration).AddTransformation(new RemoveManyToManyAssociationTransformation(
                 new SimpleAssociationEnd(source, sourceNavigationPropertyName),
                 new SimpleAssociationEnd(target, targetNavigationPropertyName)));

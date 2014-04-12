@@ -13,7 +13,7 @@ namespace EfModelMigrations.Transformations
     {
         public bool AddIdentityOnDependentPk { get; private set; }
 
-        public RemoveOneToOnePrimaryKeyAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, bool addIdentityOnDependentPk, ModelTransformation inverse)
+        public RemoveOneToOnePrimaryKeyAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, bool addIdentityOnDependentPk, AddOneToOnePrimaryKeyAssociationTransformation inverse)
             : base(principal, dependent, inverse)
         {
             this.AddIdentityOnDependentPk = addIdentityOnDependentPk;

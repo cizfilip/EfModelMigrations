@@ -11,7 +11,7 @@ namespace EfModelMigrations.Transformations
     {
         public string Name { get; private set; }
             
-        public RemoveClassTransformation(string name, ModelTransformation inverse) : base(inverse)
+        public RemoveClassTransformation(string name, CreateClassTransformation inverse) : base(inverse)
         {
             Check.NotEmpty(name, "name");
 

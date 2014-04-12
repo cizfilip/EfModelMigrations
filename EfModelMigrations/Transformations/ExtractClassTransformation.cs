@@ -100,20 +100,25 @@ namespace EfModelMigrations.Transformations
 
             var dropColumnOperations = removeProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder));
 
-            //move data
+            //move data -> InsertFrom
             var foreigKeyConstaintOp = associationOperations.OfType<AddForeignKeyOperation>().Single();
-            var from = new InsertDataModel(foreigKeyConstaintOp.PrincipalTable, dropColumnOperations
+            var from = new InserFromDataModel(foreigKeyConstaintOp.PrincipalTable, dropColumnOperations
                 .OfType<DropColumnOperation>()
                 .Select(c => c.Name)
                 .Concat(foreigKeyConstaintOp.PrincipalColumns)
                 .ToArray());
-            var to = new InsertDataModel(foreigKeyConstaintOp.DependentTable, addedColumnOperations
+            var to = new InserFromDataModel(foreigKeyConstaintOp.DependentTable, addedColumnOperations
                 .OfType<AddColumnOperation>()
                 .Select(c => c.Column.Name)
                 .Concat(foreigKeyConstaintOp.DependentColumns)
                 .ToArray());
+            var inverse = new UpdateFromOperation()
+                {
+                    From = new UpdateFromDataModel(from.TableName, from.ColumnNames, foreigKeyConstaintOp.PrincipalColumns.ToArray()),
+                    To = new UpdateFromDataModel(to.TableName, to.ColumnNames, foreigKeyConstaintOp.DependentColumns.ToArray()),
+                };
             operations.Add(
-                    new InsertFromOperation()
+                    new InsertFromOperation(inverse)
                     {
                         From = from,
                         To = to

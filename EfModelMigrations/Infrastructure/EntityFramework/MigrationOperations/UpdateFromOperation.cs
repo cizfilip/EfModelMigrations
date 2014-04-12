@@ -7,19 +7,32 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
 {
-    //TODO: az bude implementace tak upravit generatory - ExtendedCSharpMigrationCodeGenerator, Sqlgenerator atd...
-    public class UpdateFromOperation : MigrationOperation
+    public class UpdateFromOperation : MoveDataOperation<UpdateFromDataModel>
     {
-        
-
-        public UpdateFromOperation(object anonymousArguments = null)
-            : base(anonymousArguments)
+        public UpdateFromOperation(MigrationOperation inverse, object anonymousArguments = null)
+            : base(inverse, anonymousArguments)
         {
         }
 
-        public override bool IsDestructiveChange
+        public UpdateFromOperation(object anonymousArguments = null)
+            : base(null, anonymousArguments)
         {
-            get { return false; }
+        }
+    }
+
+    public sealed class UpdateFromDataModel
+    {
+        public string TableName { get; set; }
+
+        public string[] JoinColumns { get; set; }
+
+        public string[] ColumnNames { get; set; }
+
+        public UpdateFromDataModel(string tableName, string[] columns, string[] joinColumns)
+        {
+            this.TableName = tableName;
+            this.ColumnNames = columns;
+            this.JoinColumns = joinColumns;
         }
     }
 }

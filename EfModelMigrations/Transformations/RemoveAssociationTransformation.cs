@@ -18,7 +18,7 @@ namespace EfModelMigrations.Transformations
         public SimpleAssociationEnd Principal { get; private set; }
         public SimpleAssociationEnd Dependent { get; private set; }
 
-        public RemoveAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, ModelTransformation inverse) : base(inverse)
+        public RemoveAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, AddAssociationTransformation inverse) : base(inverse)
         {
             Check.NotNull(principal, "source");
             Check.NotNull(dependent, "target");

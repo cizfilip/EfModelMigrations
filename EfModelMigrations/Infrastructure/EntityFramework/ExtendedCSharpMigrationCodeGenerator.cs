@@ -4,6 +4,7 @@ using System.Data.Entity.Migrations.Design;
 using System.Data.Entity.Migrations.Model;
 using System.Data.Entity.Migrations.Utilities;
 using System.Linq;
+using System;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
@@ -20,7 +21,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 var operation = newOperations[i];
                 if(operation is AddIdentityOperation ||
                     operation is DropIdentityOperation ||
-                    operation is InsertFromOperation)
+                    operation is InsertFromOperation || 
+                    operation is UpdateFromOperation)
                 {
                     newOperations[i] = new PlaceholderOperation(operation);
                 }
@@ -52,39 +54,71 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         }
 
 
-        protected virtual void Generate(InsertFromOperation moveDataOperation, IndentedTextWriter writer)
+        protected virtual void Generate(InsertFromOperation insertFromOperation, IndentedTextWriter writer)
         {
-            writer.Write("this.");
-            writer.Write("InsertFrom");
-            writer.WriteLine("()");
-
-            writer.Indent++;
-
-            GenerateInsertFromFluentCall("FromTable", moveDataOperation.From, writer);
-            writer.WriteLine();
-            GenerateInsertFromFluentCall("ToTable", moveDataOperation.To, writer);
-            writer.WriteLine(";");
-
-            writer.Indent--;
-
-            writer.WriteLine();
+            GenerateInsertOrUpdateFrom<InsertFromOperation, InserFromDataModel>("InsertFrom", insertFromOperation, GenerateInsertFromFluentCall, writer);
         }
 
-        private void GenerateInsertFromFluentCall(string methodName, InsertDataModel model, IndentedTextWriter writer)
+        private void GenerateInsertFromFluentCall(string methodName, InserFromDataModel model, IndentedTextWriter writer)
         {
-            writer.Write(".");
-            writer.Write(methodName);
-            writer.Write("(");
-            writer.Write(Quote(model.TableName));
-            writer.Write(", new[] { ");
+            GenerateInsertOrUpdateFromFluentCall(methodName, model.TableName, model.ColumnNames, writer);
+            writer.Write(")");
+        }        
 
-            foreach (var column in model.ColumnNames)
+        protected virtual void Generate(UpdateFromOperation updateFromOperation, IndentedTextWriter writer)
+        {
+            GenerateInsertOrUpdateFrom<UpdateFromOperation, UpdateFromDataModel>("UpdateFrom", updateFromOperation, GenerateUpdateFromFluentCall, writer);
+        }
+
+        private void GenerateUpdateFromFluentCall(string methodName, UpdateFromDataModel model, IndentedTextWriter writer)
+        {
+            GenerateInsertOrUpdateFromFluentCall(methodName, model.TableName, model.ColumnNames, writer);
+
+            writer.Write(", new[] { ");
+            foreach (var column in model.JoinColumns)
             {
                 writer.Write(Quote(column));
                 writer.Write(", ");
             }
 
             writer.Write("})");
+        }
+
+        private void GenerateInsertOrUpdateFromFluentCall(string methodName, string tableName, string[] columnNames, IndentedTextWriter writer) 
+        {
+            writer.Write(".");
+            writer.Write(methodName);
+            writer.Write("(");
+            writer.Write(Quote(tableName));
+            writer.Write(", new[] { ");
+
+            foreach (var column in columnNames)
+            {
+                writer.Write(Quote(column));
+                writer.Write(", ");
+            }
+
+            writer.Write("}");
+        }
+
+        protected virtual void GenerateInsertOrUpdateFrom<T, TData>(string methodName, T operation, Action<string, TData, IndentedTextWriter> generateFluentCallAction, IndentedTextWriter writer)
+            where TData : class
+            where T : MoveDataOperation<TData>
+        {
+            writer.Write("this.");
+            writer.Write(methodName);
+            writer.WriteLine("()");
+
+            writer.Indent++;
+
+            generateFluentCallAction("FromTable", operation.From, writer);
+            writer.WriteLine();
+            generateFluentCallAction("ToTable", operation.To, writer);
+            writer.WriteLine(";");
+
+            writer.Indent--;
+
+            writer.WriteLine();
         }
 
         protected virtual void Generate(AddIdentityOperation addIdentityOperation, IndentedTextWriter writer)
@@ -97,7 +131,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             GenerateIdentityOperation("DropIdentity", dropIdentityOperation, writer);
         }
 
-        private void GenerateIdentityOperation(string extensionMethodName, IdentityOperation operation, IndentedTextWriter writer)
+        protected virtual void GenerateIdentityOperation(string extensionMethodName, IdentityOperation operation, IndentedTextWriter writer)
         {
             writer.Write("this.");
             writer.Write(extensionMethodName);

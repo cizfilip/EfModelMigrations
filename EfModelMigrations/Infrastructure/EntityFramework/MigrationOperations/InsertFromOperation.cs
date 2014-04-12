@@ -7,30 +7,26 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
 {
-    //TODO: a co inverse???
-    public class InsertFromOperation : MigrationOperation
+    public class InsertFromOperation : MoveDataOperation<InserFromDataModel>
     {
-        public InsertDataModel From { get; set; }
-        public InsertDataModel To { get; set; }
-
-        public InsertFromOperation(object anonymousArguments = null)
-            :base(anonymousArguments)
+        public InsertFromOperation(MigrationOperation inverse, object anonymousArguments = null)
+            : base(inverse, anonymousArguments)
         {
         }
 
-        public override bool IsDestructiveChange
+        public InsertFromOperation(object anonymousArguments = null)
+            : base(null, anonymousArguments)
         {
-            get { return false; }
         }
     }
 
-    public sealed class InsertDataModel
+    public sealed class InserFromDataModel
     {
         public string TableName { get; set; }
 
         public string[] ColumnNames { get; set; }
 
-        public InsertDataModel(string tableName, string[] columns)
+        public InserFromDataModel(string tableName, string[] columns)
         {
             this.TableName = tableName;
             this.ColumnNames = columns;

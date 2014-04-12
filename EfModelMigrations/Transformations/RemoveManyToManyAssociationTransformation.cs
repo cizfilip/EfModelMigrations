@@ -11,7 +11,7 @@ namespace EfModelMigrations.Transformations
 {
     public class RemoveManyToManyAssociationTransformation : RemoveAssociationTransformation
     {
-        public RemoveManyToManyAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, ModelTransformation inverse)
+        public RemoveManyToManyAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, AddManyToManyAssociationTransformation inverse)
             : base(principal, dependent, inverse)
         {
         }

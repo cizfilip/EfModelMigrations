@@ -39,6 +39,43 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 ));
         }
 
+        protected virtual void Generate(UpdateFromOperation migrationOperation)
+        {
+            string fromTableAlias = "fromTable";
+            string toTableAlias = "toTable";
+
+            var from = migrationOperation.From;
+            var to = migrationOperation.To;
+
+            var setColumns = string.Join(", ",
+                    to.ColumnNames.Zip(
+                        from.ColumnNames, 
+                        (t, f) => string.Format("{0}.{1} = {2}.{3}", toTableAlias, t, fromTableAlias, f)
+                    )
+                );
+
+            var joinColumns = string.Join(", ",
+                    to.JoinColumns.Zip(
+                        from.JoinColumns,
+                        (t, f) => string.Format("{0}.{1} = {2}.{3}", toTableAlias, t, fromTableAlias, f)
+                    )
+                );
+
+            Generate(new SqlOperation(
+                "UPDATE " + toTableAlias + " SET " + setColumns + 
+                    " FROM " + to.TableName + " AS " + toTableAlias + 
+                    " INNER JOIN " + from.TableName + " AS " + fromTableAlias +
+                    " ON " + joinColumns
+            ));
+
+            //UPDATE t
+            //   SET t.col1 = o.col1
+            //  FROM table1 AS t
+            //         INNER JOIN 
+            //       table2 AS o 
+            //         ON t.id = o.id            
+        }
+
         protected virtual void Generate(IdentityOperation migrationOperation)
         {
             var operation = migrationOperation as IdentityOperation;

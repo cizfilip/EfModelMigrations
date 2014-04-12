@@ -16,7 +16,7 @@ namespace EfModelMigrations.Transformations
         public string ClassName { get; set; }
         public string ComplexTypeName { get; private set; }
 
-        public JoinComplexTypeTransformation(string complexTypeName, string className, ModelTransformation inverse)
+        public JoinComplexTypeTransformation(string complexTypeName, string className, ExtractComplexTypeTransformation inverse)
             : base(inverse)
         {
             Check.NotEmpty(complexTypeName, "complexTypeName");

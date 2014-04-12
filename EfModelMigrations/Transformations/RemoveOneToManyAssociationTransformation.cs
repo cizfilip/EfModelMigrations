@@ -20,13 +20,13 @@ namespace EfModelMigrations.Transformations
     {
         public string[] ForeignKeyPropertyNames { get; private set; }
 
-        public RemoveOneToManyAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, string[] foreignKeyPropertyNames, ModelTransformation inverse)
+        public RemoveOneToManyAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, string[] foreignKeyPropertyNames, AddOneToManyAssociationTransformation inverse)
             : base(principal, dependent, inverse)
         {
             this.ForeignKeyPropertyNames = foreignKeyPropertyNames;
         }
 
-        public RemoveOneToManyAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, ModelTransformation inverse)
+        public RemoveOneToManyAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, AddOneToManyAssociationTransformation inverse)
             : this(principal, dependent, null, inverse)
         {
         }

@@ -11,7 +11,7 @@ namespace EfModelMigrations.Transformations
 {
     public class RemoveAssociationWithForeignKeyTransformation : RemoveAssociationTransformation
     {
-        public RemoveAssociationWithForeignKeyTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, ModelTransformation inverse)
+        public RemoveAssociationWithForeignKeyTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, AddAssociationWithForeignKeyTransformation inverse)
             : base(principal, dependent, inverse)
         {
         }

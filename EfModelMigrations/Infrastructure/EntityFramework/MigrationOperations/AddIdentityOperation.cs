@@ -25,11 +25,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
                         PrincipalTable = PrincipalTable,
                     };
 
-                foreach (var dependentColumn in DependentColumns)
-                {
-                    dropIdentityOperation.DependentColumns.Add(dependentColumn);
-                }
-                
+                dropIdentityOperation.DependentColumns.AddRange(this.DependentColumns);
+                                
                 return dropIdentityOperation;
             }
         }

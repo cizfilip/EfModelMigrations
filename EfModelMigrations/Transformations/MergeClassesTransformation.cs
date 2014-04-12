@@ -1,5 +1,7 @@
-﻿using EfModelMigrations.Infrastructure;
+﻿using EfModelMigrations.Exceptions;
+using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
+using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Transformations.Model;
 using System;
@@ -17,12 +19,13 @@ namespace EfModelMigrations.Transformations
         private RemoveClassTransformation removeClass;
         private RemoveOneToOneForeignKeyAssociationTransformation removeAssociation;
         private IEnumerable<AddPropertyTransformation> addProperties;
+        private IEnumerable<RemovePropertyTransformation> removeProperties; //Only for Db migration operations
 
         public SimpleAssociationEnd Principal { get; private set; }
         public SimpleAssociationEnd Dependent { get; private set; }
         public string[] PropertiesToMerge { get; private set; }
 
-        public MergeClassesTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, string[] propertiesToMerge, ModelTransformation inverse)
+        public MergeClassesTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, string[] propertiesToMerge, ExtractClassTransformation inverse)
             : base(inverse)
         {
             Check.NotNull(principal, "principal");
@@ -32,6 +35,12 @@ namespace EfModelMigrations.Transformations
             this.Principal = principal;
             this.Dependent = dependent;
             this.PropertiesToMerge = propertiesToMerge;
+
+            //TODO: stringy do resourců
+            if (!principal.HasNavigationPropertyName && !dependent.HasNavigationPropertyName)
+            {
+                throw new ModelTransformationValidationException("You must specify at least one navigation property for merge classes.");
+            }
         }
 
         public MergeClassesTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, string[] propertiesToMerge)
@@ -45,6 +54,7 @@ namespace EfModelMigrations.Transformations
             this.removeAssociation = new RemoveOneToOneForeignKeyAssociationTransformation(Principal, Dependent);
             this.addProperties = modelProvider.GetClassCodeModel(Dependent.ClassName).Properties.Where(p => PropertiesToMerge.Contains(p.Name))
                 .Select(p => new AddPropertyTransformation(Principal.ClassName, p));
+            this.removeProperties = PropertiesToMerge.Select(p => new RemovePropertyTransformation(Dependent.ClassName, p));
 
             var operations = new List<IModelChangeOperation>();
 
@@ -62,30 +72,39 @@ namespace EfModelMigrations.Transformations
             //add columns
             var addColumnOperations = addProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder));
             operations.AddRange(addColumnOperations);
-
-            //TODO: move data
-            //var foreigKeyConstaintOp = associationOperations.OfType<AddForeignKeyOperation>().Single();
-            //var from = new InsertDataModel(foreigKeyConstaintOp.PrincipalTable, dropColumnOperations
-            //    .OfType<DropColumnOperation>()
-            //    .Select(c => c.Name)
-            //    .Concat(foreigKeyConstaintOp.PrincipalColumns)
-            //    .ToArray());
-            //var to = new InsertDataModel(foreigKeyConstaintOp.DependentTable, addColumnOperations
-            //    .OfType<AddColumnOperation>()
-            //    .Select(c => c.Column.Name)
-            //    .Concat(foreigKeyConstaintOp.DependentColumns)
-            //    .ToArray());
-            //operations.Add(
-            //        new InsertFromOperation()
-            //        {
-            //            From = from,
-            //            To = to
-            //        }
-            //    );
+            
+            var dropAssociationOperations = removeAssociation.GetDbMigrationOperations(builder);
+            //move data -> UpdateFrom
+            var foreigKeyConstaintOp = dropAssociationOperations.OfType<DropForeignKeyOperation>().Single().Inverse as AddForeignKeyOperation;
+            var from = new UpdateFromDataModel(foreigKeyConstaintOp.DependentTable, 
+                removeProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder))
+                    .OfType<DropColumnOperation>()
+                    .Select(c => c.Name)
+                    .Concat(foreigKeyConstaintOp.DependentColumns)
+                    .ToArray(),
+                foreigKeyConstaintOp.DependentColumns.ToArray());
+            var to = new UpdateFromDataModel(foreigKeyConstaintOp.PrincipalTable,
+                addColumnOperations
+                    .OfType<AddColumnOperation>()
+                    .Select(c => c.Column.Name)
+                    .Concat(foreigKeyConstaintOp.PrincipalColumns)
+                    .ToArray(),
+                foreigKeyConstaintOp.PrincipalColumns.ToArray());
+            var inverse = new InsertFromOperation()
+            {
+                From = new InserFromDataModel(from.TableName, from.ColumnNames),
+                To = new InserFromDataModel(to.TableName, to.ColumnNames),
+            };
+            operations.Add(
+                    new UpdateFromOperation(inverse)
+                    {
+                        From = from,
+                        To = to
+                    }
+                );
 
             //remove association
-            var associationOperations = removeAssociation.GetDbMigrationOperations(builder);
-            operations.AddRange(associationOperations);
+            operations.AddRange(dropAssociationOperations);
 
             //drop table
             operations.AddRange(removeClass.GetDbMigrationOperations(builder));
