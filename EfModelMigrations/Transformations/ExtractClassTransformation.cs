@@ -114,8 +114,12 @@ namespace EfModelMigrations.Transformations
                 .ToArray());
             var inverse = new UpdateFromOperation()
                 {
-                    From = new UpdateFromDataModel(from.TableName, from.ColumnNames, foreigKeyConstaintOp.PrincipalColumns.ToArray()),
-                    To = new UpdateFromDataModel(to.TableName, to.ColumnNames, foreigKeyConstaintOp.DependentColumns.ToArray()),
+                    From = new UpdateFromDataModel(to.TableName, 
+                        to.ColumnNames.Except(foreigKeyConstaintOp.DependentColumns).ToArray(), 
+                        foreigKeyConstaintOp.DependentColumns.ToArray()),
+                    To = new UpdateFromDataModel(from.TableName, 
+                        from.ColumnNames.Except(foreigKeyConstaintOp.PrincipalColumns).ToArray(), 
+                        foreigKeyConstaintOp.PrincipalColumns.ToArray())
                 };
             operations.Add(
                     new InsertFromOperation(inverse)

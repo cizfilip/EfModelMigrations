@@ -22,6 +22,10 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             {
                 Generate((InsertFromOperation)migrationOperation);
             }
+            if (migrationOperation is UpdateFromOperation)
+            {
+                Generate((UpdateFromOperation)migrationOperation);
+            }
         }
 
 

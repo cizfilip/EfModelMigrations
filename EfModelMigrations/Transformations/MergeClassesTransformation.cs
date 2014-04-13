@@ -80,14 +80,12 @@ namespace EfModelMigrations.Transformations
                 removeProperties.SelectMany(pt => pt.GetDbMigrationOperations(builder))
                     .OfType<DropColumnOperation>()
                     .Select(c => c.Name)
-                    .Concat(foreigKeyConstaintOp.DependentColumns)
                     .ToArray(),
                 foreigKeyConstaintOp.DependentColumns.ToArray());
             var to = new UpdateFromDataModel(foreigKeyConstaintOp.PrincipalTable,
                 addColumnOperations
                     .OfType<AddColumnOperation>()
                     .Select(c => c.Column.Name)
-                    .Concat(foreigKeyConstaintOp.PrincipalColumns)
                     .ToArray(),
                 foreigKeyConstaintOp.PrincipalColumns.ToArray());
             var inverse = new InsertFromOperation()

@@ -229,7 +229,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             {
                 var prefixForOnModelCreating = mappingRemover.GetRegexPrefix(generatedInfo.TargetType);
 
-                var matches = Regex.Matches(methodCode, string.Concat(prefixForOnModelCreating, generatedInfo.Content), RegexOptions.None);
+                var matches = Regex.Matches(methodCode, string.Concat(prefixForOnModelCreating, generatedInfo.Content), RegexOptions.Singleline);
 
                 //TODO: associace by meli matchnout jen jednou ale property mapping by mohl i vicekrat....
                 //if (matches.Count > 1)
