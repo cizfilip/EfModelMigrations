@@ -13,10 +13,8 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Utilities
 {
-    //TODO: Rewrite this class too ugly...
     public class TypeFinder
     {
-        //well known types
         public bool TryFindModelMigrationsConfigurationType(Assembly assembly, out Type foundType)
         {
             return TryFindType(assembly, typeof(ModelMigrationsConfigurationBase), out foundType);
@@ -39,11 +37,16 @@ namespace EfModelMigrations.Utilities
             return TryMatchType(types, baseType, out foundType, derivedTypeName);
         }
 
-        public bool TryFindType(Type baseType, out Type foundType, string derivedTypeName = null)
+        public IEnumerable<Type> FindTypes(Type baseType)
         {
-            var types = FindTypes(baseType);
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => FindTypes(a, baseType));
+        }
 
-            return TryMatchType(types, baseType, out foundType, derivedTypeName);
+        public IEnumerable<Type> FindTypes(Assembly assembly, Type baseType)
+        {
+            var types = assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t) && baseType != t);
+
+            return types.ToList();
         }
 
         private bool TryMatchType(IEnumerable<Type> types, Type baseType, out Type foundType, string derivedTypeName = null)
@@ -68,43 +71,6 @@ namespace EfModelMigrations.Utilities
             foundType = types.Single();
 
             return true;
-        }
-
-        public Type FindType(Assembly assembly, Type baseType, string derivedTypeName = null)
-        {
-            Type foundType;
-
-            if (!TryFindType(assembly, baseType, out foundType, derivedTypeName))
-            {
-                throw new ModelMigrationsException(string.Format(Resources.TypeFinder_NoTypesFound));
-            }
-
-            return foundType;
-        }
-
-        public Type FindType(Type baseType, string derivedTypeName = null)
-        {
-            Type foundType;
-
-            if (!TryFindType(baseType, out foundType, derivedTypeName))
-            {
-                throw new ModelMigrationsException(string.Format(Resources.TypeFinder_NoTypesFound, baseType.FullName));
-            }
-
-            return foundType;
-        }
-
-
-        public IEnumerable<Type> FindTypes(Type baseType)
-        {
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => FindTypes(a, baseType));
-        }
-
-        public IEnumerable<Type> FindTypes(Assembly assembly, Type baseType)
-        {
-            var types = assembly.GetTypes().Where(t => baseType.IsAssignableFrom(t) && baseType != t);
-
-            return types.ToList();
         }
     }
 }

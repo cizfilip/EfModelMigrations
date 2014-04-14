@@ -65,10 +65,13 @@ function Model-CreateClass
     [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+        [Parameter(Mandatory = $false)][string] $Visibility,
+        [Parameter(Mandatory = $false)][string] $TableName,
+        [Parameter(Mandatory = $false)][string] $Schema,
         [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand @( $ClassName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand @( $ClassName, $Visibility, $TableName, $Schema, $Properties )
 }
 
 <#

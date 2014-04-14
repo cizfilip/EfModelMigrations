@@ -14,9 +14,12 @@ namespace EfModelMigrations.Commands
     {
         private string className;
         private string[] properties;
+        private string visibility;
+        private string tableName;
+        private string schema;
 
         //TODO: Dat stringy vyjimek do resourcu
-        public CreateClassCommand(string className, string[] properties)
+        public CreateClassCommand(string className, string visibility, string tableName, string schema, string[] properties)
         {
             if (string.IsNullOrWhiteSpace(className))
             {
@@ -27,16 +30,30 @@ namespace EfModelMigrations.Commands
                 throw new ModelMigrationsException("Properties for the new class is missing.");
             }
 
-            //TODO: parsovat i dalsi veci az budou hotovz lepsi parametry z powershellu
             this.className = className;
             this.properties = properties;
+            this.visibility = visibility;
+            this.tableName = tableName;
+            this.schema = schema;
         }
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
             var parameterParser = new ParametersParser(modelProvider);
 
-            yield return new CreateClassTransformation(new ClassModel(className), parameterParser.ParseProperties(properties));
+            CodeModelVisibility? classVisibility = null;
+            if(!string.IsNullOrWhiteSpace(this.visibility))
+            {
+                classVisibility = parameterParser.ParseVisibility(this.visibility);
+            }
+
+            TableName table = null;
+            if(!string.IsNullOrWhiteSpace(tableName))
+            {
+                table = new TableName(tableName, schema);
+            }
+
+            yield return new CreateClassTransformation(new ClassModel(className, table, classVisibility), parameterParser.ParseProperties(properties));
         }
 
         public override string GetMigrationName()

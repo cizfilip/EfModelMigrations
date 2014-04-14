@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 {
-    //TODO: neni metoda pro Sbyte - je to s nim nejake podivne ani ColumnBuilder v EF ji nema - jeste kouknout o co jde
     public sealed class PrimitivePropertyBuilder : IFluentInterface
     {
         public BinaryMappingBuilder Binary(
@@ -318,7 +317,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public new PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public new StringMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             base.HasDatabaseGeneratedOption(option);
             return this;
@@ -360,7 +359,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public new PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public new BinaryMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             base.HasDatabaseGeneratedOption(option);
             return this;
@@ -403,7 +402,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public new PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public new DateTimeMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             base.HasDatabaseGeneratedOption(option);
             return this;
@@ -439,7 +438,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public new PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public new DecimalMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             base.HasDatabaseGeneratedOption(option);
             return this;

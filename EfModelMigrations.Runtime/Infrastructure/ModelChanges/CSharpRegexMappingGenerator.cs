@@ -41,7 +41,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         {
             if(type == CSharpTokenType.StatementSeparator)
             {
-                //return AllowWhiteSpaceToken + Regex.Escape(base.GetSyntaxToken(type));
                 return ".*" + Regex.Escape(base.GetSyntaxToken(type));
             }
             else

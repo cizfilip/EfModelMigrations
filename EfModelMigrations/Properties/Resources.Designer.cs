@@ -104,14 +104,5 @@ namespace EfModelMigrations.Properties {
                 return ResourceManager.GetString("TypeFinder_MultipleTypesFound", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No type with base type {0} was found..
-        /// </summary>
-        internal static string TypeFinder_NoTypesFound {
-            get {
-                return ResourceManager.GetString("TypeFinder_NoTypesFound", resourceCulture);
-            }
-        }
     }
 }

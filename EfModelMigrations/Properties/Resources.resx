@@ -132,7 +132,4 @@
   <data name="TypeFinder_MultipleTypesFound" xml:space="preserve">
     <value>More than one type with base type {0} was found.</value>
   </data>
-  <data name="TypeFinder_NoTypesFound" xml:space="preserve">
-    <value>No type with base type {0} was found.</value>
-  </data>
 </root>

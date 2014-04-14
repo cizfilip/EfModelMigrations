@@ -16,7 +16,6 @@ namespace EfModelMigrations.Infrastructure.Generators
     public class CSharpModelMigrationGenerator : ModelMigrationGeneratorBase
     {
         protected static readonly string Indent = "    ";
-
         public override GeneratedModelMigration GenerateMigration(string migrationId, IEnumerable<ModelTransformation> transformations, string @namespace, string className)
         {
             string upMethodBody = GenerateMethodBody(transformations);
@@ -80,21 +79,21 @@ namespace EfModelMigrations.Infrastructure.Generators
                 if(transformation.Model.Visibility.HasValue)
                 {
                     builder.Append(", ")
-                        .Append(transformation.Model.Visibility.Value.ToString().ToLowerInvariant());
+                        .Append("visibility: ")
+                        .Append(TranslateCodeModelVisbility(transformation.Model.Visibility.Value));
                 }
-                else
-                {
-                    builder.Append(", null");
-                }
+                
                 if (transformation.Model.TableName != null)
                 {
                     builder.Append(", ")
-                        .Append(transformation.Model.TableName.Table);
+                        .Append("tableName: ")
+                        .Append(QuoteString(transformation.Model.TableName.Table));
 
                     if(!string.IsNullOrWhiteSpace(transformation.Model.TableName.Schema))
                     {
                         builder.Append(", ")
-                        .Append(transformation.Model.TableName.Schema);
+                            .Append("schema: ")
+                            .Append(QuoteString(transformation.Model.TableName.Schema));
                     }
                 }
             }
@@ -219,34 +218,72 @@ namespace EfModelMigrations.Infrastructure.Generators
         {
             builder.Append(TranslatePrimitiveTypeToBuilderMethodName(property.Type))
                 .Append("(");
+            bool generateTypeNullability = property.IsTypeNullable && !ScalarPropertyCodeModel.NullablePrimitiveTypes.Contains(property.Type);
+            GeneratePrimitivePropertyProperties(property, generateTypeNullability, builder);
+            builder.Append(")");
+                        
+            GenerateColumnInfo(property.Column, builder);
+        }
+        protected virtual void GenerateProperty(EnumPropertyCodeModel property, StringBuilder builder)
+        {
+            builder.Append(QuoteString(property.EnumType))
+                .Append("(");
+            GeneratePrimitivePropertyProperties(property, property.IsTypeNullable, builder);
+            builder.Append(")");
+            GenerateColumnInfo(property.Column, builder);
+        }
 
+        protected virtual void GenerateColumnInfo(ColumnInfo column, StringBuilder builder)
+        {
+            if(column.IsSomethingSpecified())
+            {
+                throw new NotImplementedException(); // Commands can not provide any column info...
+            }
+        }
+
+        protected virtual void GeneratePrimitivePropertyProperties(PrimitivePropertyCodeModel property, bool isTypeNullable, StringBuilder builder)
+        {
             bool includeComma = false;
-            if(property.Visibility.HasValue)
+            if (isTypeNullable)
+            {
+                builder.Append("isNullable: ")
+                    .Append("true");
+                includeComma = true;
+            }
+
+            if (property.Visibility.HasValue)
             {
                 builder.Append("visibility: ")
                     .Append(TranslateCodeModelVisbility(property.Visibility.Value));
                 includeComma = true;
             }
 
-            if(property.IsVirtual.HasValue)
+            if (property.IsVirtual.HasValue)
             {
-                if(includeComma)
+                if (includeComma)
                 {
                     builder.Append(", ");
                 }
-                
+
                 builder.Append("isVirtual: ")
-                    .Append(property.IsVirtual.Value.ToString());
+                    .Append(property.IsVirtual.Value.ToString().ToLowerInvariant());
+                includeComma = true;
             }
 
-            builder.Append(")");
-        }
-        protected virtual void GenerateProperty(EnumPropertyCodeModel property, StringBuilder builder)
-        {
-            //TODO: dodelat generator pro enum type
+            if (property.IsSetterPrivate.HasValue)
+            {
+                if (includeComma)
+                {
+                    builder.Append(", ");
+                }
+
+                builder.Append("isSetterPrivate: ")
+                    .Append(property.IsSetterPrivate.Value.ToString().ToLowerInvariant());
+                includeComma = true;
+            }
         }
 
-        private string TranslateCodeModelVisbility(CodeModelVisibility codeModelVisibility)
+        protected virtual string TranslateCodeModelVisbility(CodeModelVisibility codeModelVisibility)
         {
             switch (codeModelVisibility)
             {
@@ -308,7 +345,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 case PrimitiveTypeKind.Single:
                     return "Single";
                 case PrimitiveTypeKind.SByte:
-                    throw new InvalidOperationException("PrimitiveTypeKind.SByte not supported yet."); //TODO: string do resourcu
+                    throw new InvalidOperationException("PrimitiveTypeKind.SByte not supported as property type."); //TODO: string do resourcu
                 case PrimitiveTypeKind.Int16:
                     return "Short";
                 case PrimitiveTypeKind.Int32:
@@ -327,7 +364,6 @@ namespace EfModelMigrations.Infrastructure.Generators
             return "\"" + str + "\"";
         }
 
-        //TODO: refaktorovat a udelat si tridu IndentedWriter po vzore EF a tu pak pouzivat ve vsech generatorech (anebo pouzivat primo tu z EF...)
         protected virtual void AppendIndent(StringBuilder builder, int count = 1)
         {
             for (int i = 0; i < count; i++)

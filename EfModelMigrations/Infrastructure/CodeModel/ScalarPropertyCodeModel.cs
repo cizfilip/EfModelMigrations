@@ -33,7 +33,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         
         private bool EnsureCorrectNullability(bool proposed)
         {
-            if (!proposed && nullablePrimitiveTypes.Contains(Type))
+            if (!proposed && NullablePrimitiveTypes.Contains(Type))
                 return true;
 
             return proposed;
@@ -58,7 +58,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
             return false;
         }
 
-        private static readonly HashSet<PrimitiveTypeKind> nullablePrimitiveTypes = new HashSet<PrimitiveTypeKind>()
+        public static readonly HashSet<PrimitiveTypeKind> NullablePrimitiveTypes = new HashSet<PrimitiveTypeKind>()
         {
             PrimitiveTypeKind.String,
             PrimitiveTypeKind.Binary,

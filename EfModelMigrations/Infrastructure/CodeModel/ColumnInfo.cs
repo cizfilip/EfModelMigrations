@@ -23,7 +23,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         public IDictionary<string, object> ColumnAnnotations { get; private set; }
         public DatabaseGeneratedOption? DatabaseGeneratedOption { get; set; }
         public bool? IsConcurrencyToken { get; set; }
-        public string ParameterName { get; set; } 
+        public string ParameterName { get; set; }
         public int? MaxLength { get; set; }
         public bool? IsMaxLength { get; set; }
         public bool? IsFixedLength { get; set; }
@@ -55,41 +55,24 @@ namespace EfModelMigrations.Infrastructure.CodeModel
 
             return copy;
         }
+
+        public bool IsSomethingSpecified()
+        {
+            return IsNullable.HasValue &&
+                !string.IsNullOrWhiteSpace(ColumnName) &&
+                !string.IsNullOrWhiteSpace(ColumnType) &&
+                ColumnOrder.HasValue &&
+                ColumnAnnotations.Any() &&
+                DatabaseGeneratedOption.HasValue &&
+                IsConcurrencyToken.HasValue &&
+                !string.IsNullOrWhiteSpace(ParameterName) &&
+                MaxLength.HasValue &&
+                IsMaxLength.HasValue &&
+                IsFixedLength.HasValue &&
+                IsUnicode.HasValue &&
+                Precision.HasValue &&
+                Scale.HasValue &&
+                IsRowVersion.HasValue;
+        }
     }
-
-    //public sealed class ValueContainer<T>
-    //{
-    //    private T value;
-    //    private bool isSet;
-    //    public bool IsSet
-    //    {
-    //        get
-    //        {
-    //            return isSet;
-    //        }
-    //    }
-
-    //    public T Value
-    //    {
-    //        set
-    //        {
-    //            this.isSet = true;
-    //            this.value = value;
-    //        }
-    //    }
-
-    //    public object GetValueAsObject()
-    //    {
-    //        if (value == null)
-    //            throw new InvalidOperationException("Value is null.");
-    //        return value;
-    //    }
-
-    //    public static implicit operator ValueContainer<T>(T value)
-    //    {
-    //        var container = new ValueContainer<T>();
-    //        container.Value = value;
-    //        return container;
-    //    }
-    //}
 }
