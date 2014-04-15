@@ -1,5 +1,4 @@
-﻿using EfModelMigrations.Runtime.Properties;
-using EnvDTE;
+﻿using EnvDTE;
 using Microsoft.VisualStudio.Shell.Interop;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using EfModelMigrations.Extensions;
+using EfModelMigrations.Runtime.Resources;
 
 namespace EfModelMigrations.Runtime.Extensions
 {
@@ -70,7 +70,7 @@ namespace EfModelMigrations.Runtime.Extensions
         public static ProjectItem AddContentToProject(this Project project, string relativePath, string content)
         {
             if (Path.IsPathRooted(relativePath))
-                throw new ArgumentException(Resources.ProjectExtensions_PathMustBeRelative, "relativePath");
+                throw new ArgumentException(Strings.ProjectExtensions_PathMustBeRelative, "relativePath");
 
             string absolutePath = Path.Combine(project.GetProjectDir(), relativePath);
 
@@ -82,7 +82,7 @@ namespace EfModelMigrations.Runtime.Extensions
         public static ProjectItem AddContentToProjectFromAbsolutePath(this Project project, string absolutePath, string content)
         {
             if (!Path.IsPathRooted(absolutePath))
-                throw new ArgumentException(Resources.ProjectExtensions_PathMustBeAbsolute, "absolutePath");
+                throw new ArgumentException(Strings.ProjectExtensions_PathMustBeAbsolute, "absolutePath");
 
             Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
             File.WriteAllText(absolutePath, content);

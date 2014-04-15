@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Exceptions;
-using EfModelMigrations.Runtime.Properties;
+using EfModelMigrations.Runtime.Resources;
 
 namespace EfModelMigrations.Runtime.Infrastructure
 {
@@ -21,7 +21,7 @@ namespace EfModelMigrations.Runtime.Infrastructure
 
         public void BuildModelProject()
         {
-            modelProject.Build(() => new ModelMigrationsException(Resources.CannotBuildProject));
+            modelProject.Build(() => new ModelMigrationsException(Strings.CannotBuildProject));
         }
     }
 }

@@ -5,7 +5,7 @@ using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
-using EfModelMigrations.Runtime.Properties;
+using EfModelMigrations.Runtime.Resources;
 using EfModelMigrations.Transformations;
 using EnvDTE;
 using System;
@@ -131,7 +131,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             catch (Exception e)
             {
                 RollbackModelState(historyTracker, scaffoldedMigration);
-                throw new ModelMigrationsException(Resources.ApplyMigrationError, e);
+                throw new ModelMigrationsException(Strings.ApplyMigrationError, e);
             }
         }
 

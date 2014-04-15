@@ -2,7 +2,6 @@
 using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure.Generators;
 using EfModelMigrations.Runtime.Infrastructure.Runners;
-using EfModelMigrations.Runtime.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +10,7 @@ using System.Threading.Tasks;
 using EfModelMigrations.Runtime.Extensions;
 using System.IO;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
+using EfModelMigrations.Runtime.Resources;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
@@ -34,7 +34,7 @@ namespace EfModelMigrations.Runtime.PowerShell
 
             if (string.IsNullOrEmpty(commandFullName))
             {
-                throw new ModelMigrationsException(Resources.CommandNameNotSpecified);
+                throw new ModelMigrationsException(Strings.CommandNameNotSpecified);
             }
 
             WriteLine(string.Format("Scaffolding migration from command {0} ...", commandFullName));

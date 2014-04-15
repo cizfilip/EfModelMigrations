@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Exceptions;
-using EfModelMigrations.Runtime.Properties;
 using EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders;
 using EfModelMigrations.Runtime.Templates;
 using System.IO;
 using EfModelMigrations.Configuration;
 using System.Resources;
+using EfModelMigrations.Runtime.Resources;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
@@ -33,7 +33,7 @@ namespace EfModelMigrations.Runtime.PowerShell
                 string configurationType = facade.FindModelMigrationsConfiguration();
                 if (!string.IsNullOrEmpty(configurationType))
                 {
-                    WriteLine(Resources.ModelMigrationsAlreadyEnabled);
+                    WriteLine(Strings.ModelMigrationsAlreadyEnabled);
                     return;
                 }
             }
@@ -143,7 +143,7 @@ namespace EfModelMigrations.Runtime.PowerShell
 
             OpenFile(Path.Combine(Project.GetProjectDir(), configurationFilePath));
 
-            WriteLine(Resources.ModelEnableSuccessfull);
+            WriteLine(Strings.ModelEnableSuccessfull);
         }
 
         private void WriteResourceFile(string relativePath)

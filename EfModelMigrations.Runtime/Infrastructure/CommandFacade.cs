@@ -10,7 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders;
 using EfModelMigrations.Runtime.Infrastructure.Migrations;
-using EfModelMigrations.Runtime.Properties;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 
 namespace EfModelMigrations.Runtime.Infrastructure

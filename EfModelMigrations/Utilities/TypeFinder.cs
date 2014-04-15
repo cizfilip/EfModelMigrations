@@ -1,7 +1,7 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Exceptions;
 using EfModelMigrations.Extensions;
-using EfModelMigrations.Properties;
+using EfModelMigrations.Resources;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -59,7 +59,7 @@ namespace EfModelMigrations.Utilities
             var typesCount = types.Count();
             if (typesCount > 1)
             {
-                throw new ModelMigrationsException(string.Format(Resources.TypeFinder_MultipleTypesFound, baseType.FullName));
+                throw new ModelMigrationsException(Strings.TypeFinder_MultipleTypesFound(baseType.FullName));
             }
 
             if (typesCount == 0)

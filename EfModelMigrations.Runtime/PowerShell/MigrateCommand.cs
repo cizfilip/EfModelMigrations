@@ -1,6 +1,5 @@
 ﻿using EfModelMigrations.Runtime.Infrastructure.Migrations;
 using EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders;
-using EfModelMigrations.Runtime.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;

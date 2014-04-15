@@ -8,7 +8,7 @@ using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers;
-using EfModelMigrations.Runtime.Properties;
+using EfModelMigrations.Runtime.Resources;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.CSharp.RuntimeBinder;
@@ -77,7 +77,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToCreateClass, operation.Name), e);
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToCreateClass(operation.Name), e);
             }
         }
 
@@ -96,7 +96,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveClass, operation.Name), e);
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRemoveClass(operation.Name), e);
             }
         }
 
@@ -112,7 +112,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             AddPropertyToClassInternal(codeClass,
                 propertyName,
                 propertyString,
-                e => new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddProperty,
+                e => new ModelMigrationsException(Strings.VsCodeModel_FailedToAddProperty(
                     operation.Model.Name,
                     operation.ClassName), e)
                 );
@@ -132,7 +132,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveProperty, operation.Name, operation.ClassName), e);
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRemoveProperty(operation.Name, operation.ClassName), e);
             }
         }
 
@@ -153,7 +153,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameClass, operation.OldName), e);
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRenameClass(operation.OldName), e);
             }
         }
 
@@ -170,7 +170,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRenameProperty, operation.OldName, operation.ClassName), e);
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRenameProperty(operation.OldName, operation.ClassName), e);
             }
         }
 
@@ -206,7 +206,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 }
                 catch (Exception e)
                 {
-                    throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToAddMappingInformation, operation.GetType().Name), e);
+                    throw new ModelMigrationsException(Strings.VsCodeModel_FailedToAddMappingInformation(operation.GetType().Name), e);
                 }
             }
         }
@@ -263,8 +263,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             AddPropertyToClassInternal(contextClass, dbSetPropertyName, propertyString,
                 e => new ModelMigrationsException(
-                    string.Format(Resources.VsCodeModel_FailedToAddDbSetProperty,
-                    operation.ClassName)
+                    Strings.VsCodeModel_FailedToAddDbSetProperty(operation.ClassName)
                     , e)
                 );
         }
@@ -284,7 +283,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             catch (Exception e)
             {
                 //TODO: přeorganizovat resource stringy pro add/remove db set property
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToRemoveDbSetProperty, operation.ClassName), e);
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRemoveDbSetProperty(operation.ClassName), e);
             }
         }
 
@@ -316,7 +315,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             var property = codeClass.FindProperty(propertyName);
             if(property == null)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindProperty, propertyName, codeClass.Name));
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToFindProperty(propertyName, codeClass.Name));
             }
             return property;
         }
@@ -326,7 +325,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             var method = codeClass.FindMethod(methodName);
             if (method == null)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindMethod, methodName, codeClass.Name));
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToFindMethod(methodName, codeClass.Name));
             }
             return method;
         }
@@ -402,7 +401,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.VsCodeModel_FailedToFindDbSetProperty, classNameForRemoveProperty), e);
+                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToFindDbSetProperty(classNameForRemoveProperty), e);
             }
         }
 

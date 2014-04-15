@@ -1,5 +1,5 @@
 ﻿using EfModelMigrations.Exceptions;
-using EfModelMigrations.Runtime.Properties;
+using EfModelMigrations.Runtime.Resources;
 using EnvDTE;
 using EnvDTE80;
 using System;
@@ -29,7 +29,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             CodeEnum codeEnum = FindCodeTypeFromFullNameInternal(enumFullName) as CodeEnum;
 
             if (codeEnum == null)
-                throw new ModelMigrationsException(string.Format(Resources.CannotFindEnumInModelProject, enumFullName));
+                throw new ModelMigrationsException(Strings.CannotFindEnumInModelProject(enumFullName));
 
             return codeEnum;
         }
@@ -45,7 +45,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             CodeClass2 codeClass = FindCodeTypeFromFullNameInternal(classFullName) as CodeClass2;
 
             if (codeClass == null)
-                throw new ModelMigrationsException(string.Format(Resources.CannotFindClassInModelProject, classFullName));
+                throw new ModelMigrationsException(Strings.CannotFindClassInModelProject(classFullName));
 
             return codeClass;
         }

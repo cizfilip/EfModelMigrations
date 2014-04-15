@@ -9,7 +9,7 @@ using System.Reflection;
 using EfModelMigrations.Runtime.Infrastructure;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Exceptions;
-using EfModelMigrations.Runtime.Properties;
+using EfModelMigrations.Runtime.Resources;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
@@ -149,7 +149,7 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         private void BuildProject()
         {
-            Project.Build(() => new ModelMigrationsException(Resources.CannotBuildProject));
+            Project.Build(() => new ModelMigrationsException(Strings.CannotBuildProject));
         }
         
     }

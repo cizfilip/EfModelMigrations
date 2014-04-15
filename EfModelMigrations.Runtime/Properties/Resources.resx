@@ -126,9 +126,6 @@
   <data name="CannotBuildProject" xml:space="preserve">
     <value>Project failed to build.</value>
   </data>
-  <data name="CannotCreateInstance" xml:space="preserve">
-    <value>Cannot create instance of type {0}.</value>
-  </data>
   <data name="CannotFindClassInModelProject" xml:space="preserve">
     <value>Cannot find class with name {0} in model project.</value>
   </data>

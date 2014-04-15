@@ -1,11 +1,11 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Exceptions;
-using EfModelMigrations.Properties;
 using EfModelMigrations.Utilities;
 using EfModelMigrations.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Infrastructure
 {
@@ -48,7 +48,7 @@ namespace EfModelMigrations.Infrastructure
             }
             else
             {
-                throw new ModelMigrationsException(string.Format(Resources.CannotFindMigration, modelMigrationId));
+                throw new ModelMigrationsException(Strings.CannotFindMigration(modelMigrationId));
             }
         }
 
@@ -115,7 +115,7 @@ namespace EfModelMigrations.Infrastructure
 
             if(possibleMigrationIds.Length != 1)
             {
-                throw new ModelMigrationsException(string.Format(Resources.CannotFindMigration, migrationName));
+                throw new ModelMigrationsException(Strings.CannotFindMigration(migrationName));
             }
             if (possibleMigrationIds.Length > 1)
             {
@@ -153,12 +153,12 @@ namespace EfModelMigrations.Infrastructure
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(Resources.CannotFindMigrationId, e);
+                throw new ModelMigrationsException(Strings.CannotFindMigrationId, e);
             }
 
             if (string.IsNullOrEmpty(id) || !ModelMigrationIdGenerator.IsValidId(id))
             {
-                throw new ModelMigrationsException(Resources.InvalidModelMigrationId);
+                throw new ModelMigrationsException(Strings.InvalidModelMigrationId);
             }
             return id;
         }

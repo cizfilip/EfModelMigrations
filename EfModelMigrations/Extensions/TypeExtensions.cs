@@ -1,5 +1,5 @@
 ﻿using EfModelMigrations.Exceptions;
-using EfModelMigrations.Properties;
+using EfModelMigrations.Resources;
 using System;
 
 namespace EfModelMigrations.Extensions
@@ -14,7 +14,7 @@ namespace EfModelMigrations.Extensions
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.CannotCreateInstance, type.Name), e);
+                throw new ModelMigrationsException(Strings.CannotCreateInstance(type.Name), e);
             }
         }
     }

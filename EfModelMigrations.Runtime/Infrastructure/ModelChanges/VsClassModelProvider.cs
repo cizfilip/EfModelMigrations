@@ -1,7 +1,6 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
-using EfModelMigrations.Runtime.Properties;
 using EnvDTE;
 using EnvDTE80;
 using System;
@@ -12,6 +11,7 @@ using EfModelMigrations.Infrastructure.EntityFramework;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using EfModelMigrations.Extensions;
+using EfModelMigrations.Runtime.Resources;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
@@ -51,7 +51,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format(Resources.CannotFindClassInModelProject, className), e);
+                throw new ModelMigrationsException(Strings.CannotFindClassInModelProject(className), e);
             }
         }
 

@@ -37,7 +37,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                                                 a.GetTypes().Where( t => t.FullName.EqualsOrdinal(CommandFullName)
                                             ))
                                         .Single();
-                command = CreateInstance<ModelMigrationsCommand>(commandType, Parameters);
+                command = commandType.CreateInstance<ModelMigrationsCommand>(Parameters);
             }
             catch (Exception e)
             {

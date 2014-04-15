@@ -1,6 +1,5 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
-using EfModelMigrations.Properties;
 using EfModelMigrations.Transformations;
 using System;
 using System.Collections.Generic;

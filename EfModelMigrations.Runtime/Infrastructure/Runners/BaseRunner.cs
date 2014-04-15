@@ -1,9 +1,10 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Exceptions;
+using EfModelMigrations.Extensions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Runtime.Infrastructure.Migrations;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
-using EfModelMigrations.Runtime.Properties;
+using EfModelMigrations.Runtime.Resources;
 using EfModelMigrations.Utilities;
 using EnvDTE;
 using System;
@@ -66,7 +67,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             {
                 if (dbContext == null)
                 {
-                    dbContext = CreateInstance<DbContext>(DbConfiguration.ContextType);
+                    dbContext = DbConfiguration.ContextType.CreateInstance<DbContext>();
                 }
                 return dbContext;
             }
@@ -90,8 +91,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             catch (FileNotFoundException ex)
             {
                 throw new ModelMigrationsException(
-                    //TODO: Zlepšit formátování stringů z resourců
-                    String.Format(Resources.BaseRunner_AssemblyNotFound, ex.FileName),
+                    Strings.BaseRunner_AssemblyNotFound(ex.FileName),
                     ex);
             }
         }
@@ -106,8 +106,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             catch (FileNotFoundException ex)
             {
                 throw new ModelMigrationsException(
-                    //TODO: Zlepšit formátování stringů z resourců
-                    String.Format(Resources.BaseRunner_AssemblyNotFound, ex.FileName),
+                    Strings.BaseRunner_AssemblyNotFound(ex.FileName),
                     ex);
             }
         }
@@ -118,25 +117,25 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             var typeFinder = new TypeFinder();
             if(typeFinder.TryFindModelMigrationsConfigurationType(ProjectAssembly, out configType))
             {
-                return CreateInstance<ModelMigrationsConfigurationBase>(configType);
+                return configType.CreateInstance<ModelMigrationsConfigurationBase>();
             }
             else
             {
-                throw new ModelMigrationsException(Resources.CannotFindConfiguration);
+                throw new ModelMigrationsException(Strings.CannotFindConfiguration);
             }
         }
 
-        protected T CreateInstance<T>(Type type, object[] constructorParameters = null)
-        {
-            try
-            {
-                return (T)Activator.CreateInstance(type, constructorParameters);
-            }
-            catch (Exception e)
-            {
-                throw new ModelMigrationsException(string.Format(Resources.CannotCreateInstance, type.Name), e);
-            }
-        }
+        //protected T CreateInstance<T>(Type type, object[] constructorParameters = null)
+        //{
+        //    try
+        //    {
+        //        return (T)Activator.CreateInstance(type, constructorParameters);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new ModelMigrationsException(Strings.CannotCreateInstance(type.Name), e);
+        //    }
+        //}
 
         
        
