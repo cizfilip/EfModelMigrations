@@ -53,14 +53,14 @@ namespace EfModelMigrations
         public abstract void Up();
         public abstract void Down();
 
-        //TODO: internal or public??
-        internal void AddTransformation(ModelTransformation transformation)
+        public void AddTransformation(ModelTransformation transformation)
         {
+            Check.NotNull(transformation, "transformation");
+
             transformations.Add(transformation);
         }
 
-        //TODO: internal or public??
-        public void Reset()
+        internal void Reset()
         {
             transformations.Clear();
         }

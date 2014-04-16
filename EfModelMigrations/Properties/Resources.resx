@@ -117,8 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ApplyMigrationError" xml:space="preserve">
+    <value>Cannot apply model migration. See inner exception for details.</value>
+  </data>
+  <data name="BaseRunner_AssemblyNotFound" xml:space="preserve">
+    <value>Could not load assembly '{0}'.</value>
+  </data>
+  <data name="CannotBuildProject" xml:space="preserve">
+    <value>Project failed to build.</value>
+  </data>
   <data name="CannotCreateInstance" xml:space="preserve">
     <value>Cannot create instance of type {0}.</value>
+  </data>
+  <data name="CannotFindClassInModelProject" xml:space="preserve">
+    <value>Cannot find class with name {0} in model project.</value>
+  </data>
+  <data name="CannotFindConfiguration" xml:space="preserve">
+    <value>Cannot find configuration class in project.</value>
+  </data>
+  <data name="CannotFindEnumInModelProject" xml:space="preserve">
+    <value>Cannot find enum with name {0} in model project.</value>
   </data>
   <data name="CannotFindMigration" xml:space="preserve">
     <value>Cannot find migration {0}.</value>
@@ -126,10 +144,64 @@
   <data name="CannotFindMigrationId" xml:space="preserve">
     <value>Cannot find migration Id.</value>
   </data>
+  <data name="CommandNameNotSpecified" xml:space="preserve">
+    <value>Command name not specified.</value>
+  </data>
   <data name="InvalidModelMigrationId" xml:space="preserve">
     <value>Invalid model migration id.</value>
   </data>
+  <data name="ModelEnableSuccessfull" xml:space="preserve">
+    <value>Model migrations was successfully enabled in current project.</value>
+  </data>
+  <data name="ModelMigrationsAlreadyEnabled" xml:space="preserve">
+    <value>Model migrations was already enabled.</value>
+  </data>
+  <data name="NoMigrationsToApplyOrRevert" xml:space="preserve">
+    <value>Unable to find any migration to apply or revert.</value>
+  </data>
+  <data name="ProjectExtensions_PathMustBeAbsolute" xml:space="preserve">
+    <value>Specified path must be absolute.</value>
+  </data>
+  <data name="ProjectExtensions_PathMustBeRelative" xml:space="preserve">
+    <value>Specified path must be relative to project directory.</value>
+  </data>
   <data name="TypeFinder_MultipleTypesFound" xml:space="preserve">
     <value>More than one type with base type {0} was found.</value>
+  </data>
+  <data name="VsCodeModel_FailedToAddDbSetProperty" xml:space="preserve">
+    <value>Cannot add DbSet property to DbContext for class {0} in model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToAddMappingInformation" xml:space="preserve">
+    <value>Cannot add mapping information of type {0}. See inner exception.</value>
+  </data>
+  <data name="VsCodeModel_FailedToAddProperty" xml:space="preserve">
+    <value>Cannot add property {0} to class {1} in model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToCreateClass" xml:space="preserve">
+    <value>Cannot create class {0} in model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToFindDbSetProperty" xml:space="preserve">
+    <value>Cannot find DbSet property for class {0} in DbContext.</value>
+  </data>
+  <data name="VsCodeModel_FailedToFindMethod" xml:space="preserve">
+    <value>Cannot find method {0} in class {1}.</value>
+  </data>
+  <data name="VsCodeModel_FailedToFindProperty" xml:space="preserve">
+    <value>Cannot find property {0} in class {1}.</value>
+  </data>
+  <data name="VsCodeModel_FailedToRemoveClass" xml:space="preserve">
+    <value>Cannot remove class {0} from model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToRemoveDbSetProperty" xml:space="preserve">
+    <value>Cannot remove DbSet property from DbContext for class {0} in model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToRemoveProperty" xml:space="preserve">
+    <value>Cannot remove property {0} from class {1} in model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToRenameClass" xml:space="preserve">
+    <value>Cannot rename class {0} in model project.</value>
+  </data>
+  <data name="VsCodeModel_FailedToRenameProperty" xml:space="preserve">
+    <value>Cannot rename property {0} from class {1} in model project.</value>
   </data>
 </root>

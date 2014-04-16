@@ -7,7 +7,7 @@ using EfModelMigrations.Extensions;
 
 namespace EfModelMigrations.Operations.Mapping.Model
 {
-    public class EfFluentApiCallChain : IFluentInterface
+    public class EfFluentApiCallChain
     {
         public string EntityType { get; private set; }
         public IList<EfFluetApiCall> FluentApiCalls { get; private set; }

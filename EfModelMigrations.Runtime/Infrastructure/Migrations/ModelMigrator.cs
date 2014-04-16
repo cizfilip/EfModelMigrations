@@ -5,7 +5,7 @@ using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations;
 using EnvDTE;
 using System;

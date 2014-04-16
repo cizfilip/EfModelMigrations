@@ -8,7 +8,7 @@ using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 using EnvDTE;
 using EnvDTE80;
 using Microsoft.CSharp.RuntimeBinder;

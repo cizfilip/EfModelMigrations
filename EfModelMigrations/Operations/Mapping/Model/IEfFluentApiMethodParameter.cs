@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations.Mapping.Model
 {
-    public interface IEfFluentApiMethodParameter : IFluentInterface
+    public interface IEfFluentApiMethodParameter
     {
     }
 }

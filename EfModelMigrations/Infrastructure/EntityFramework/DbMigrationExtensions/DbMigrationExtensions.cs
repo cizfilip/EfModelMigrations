@@ -13,7 +13,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
 {
     public static class DbMigrationExtensions
     {
-        public static IdentityOperationWrapper AddIdentity(
+        public static IIdentityOperationWrapper AddIdentity(
                 this DbMigration migration,
                 string principalTable,
                 Func<ColumnBuilder, ColumnModel> principalColumnAction)
@@ -25,7 +25,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
             return CreateIdentityOperation(migration, new AddIdentityOperation(), principalTable, principalColumnAction);
         }
 
-        public static IdentityOperationWrapper DropIdentity(
+        public static IIdentityOperationWrapper DropIdentity(
                 this DbMigration migration,
                 string principalTable,
                 Func<ColumnBuilder, ColumnModel> principalColumnAction)
@@ -51,7 +51,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
             return new IdentityOperationWrapper(operation);
         }
 
-        public static InsertFromOperationWrapper InsertFrom(this DbMigration migration)
+        public static IInsertFromOperationWrapper InsertFrom(this DbMigration migration)
         {
             Check.NotNull(migration, "migration");
 
@@ -60,7 +60,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
             return new InsertFromOperationWrapper(operation);
         }
 
-        public static UpdateFromOperationWrapper UpdateFrom(this DbMigration migration)
+        public static IUpdateFromOperationWrapper UpdateFrom(this DbMigration migration)
         {
             Check.NotNull(migration, "migration");
 
@@ -71,7 +71,12 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
     }
 
     //FluentApiWrappers
-    public class IdentityOperationWrapper : IFluentInterface
+    public interface IIdentityOperationWrapper : IFluentInterface
+    {
+        IIdentityOperationWrapper WithDependentColumn(string table, string foreignKeyColumn);
+    }
+
+    public class IdentityOperationWrapper : IIdentityOperationWrapper
     {
         private IdentityOperation operation;
 
@@ -82,7 +87,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
             this.operation = operation;
         }
 
-        public IdentityOperationWrapper WithDependentColumn(
+        public IIdentityOperationWrapper WithDependentColumn(
             string table,
             string foreignKeyColumn)
         {
@@ -99,7 +104,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
         }
     }
 
-    public class MoveDataOperationWrapper<T> : IFluentInterface where T : class
+    public class MoveDataOperationWrapper<T> where T : class
     {
         protected MoveDataOperation<T> operation;
 
@@ -111,14 +116,20 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
         }
     }
 
-    public class InsertFromOperationWrapper : MoveDataOperationWrapper<InserFromDataModel>
+    public interface IInsertFromOperationWrapper : IFluentInterface
+    {
+        IInsertFromOperationWrapper FromTable(string table, string[] columns);
+        IInsertFromOperationWrapper ToTable(string table, string[] columns);
+    }
+
+    public class InsertFromOperationWrapper : MoveDataOperationWrapper<InserFromDataModel>, IInsertFromOperationWrapper
     {
         public InsertFromOperationWrapper(InsertFromOperation operation)
             : base(operation)
         {
         }
 
-        public InsertFromOperationWrapper FromTable(
+        public IInsertFromOperationWrapper FromTable(
             string table,
             string[] columns)
         {
@@ -129,7 +140,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
             return this;
         }
 
-        public InsertFromOperationWrapper ToTable(
+        public IInsertFromOperationWrapper ToTable(
             string table,
             string[] columns)
         {
@@ -141,14 +152,20 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
         }
     }
 
-    public class UpdateFromOperationWrapper : MoveDataOperationWrapper<UpdateFromDataModel>
+    public interface IUpdateFromOperationWrapper : IFluentInterface
+    {
+        IUpdateFromOperationWrapper FromTable(string table, string[] columns, string[] joinColumns);
+        IUpdateFromOperationWrapper ToTable(string table, string[] columns, string[] joinColumns);
+    }
+
+    public class UpdateFromOperationWrapper : MoveDataOperationWrapper<UpdateFromDataModel>, IUpdateFromOperationWrapper
     {
         public UpdateFromOperationWrapper(UpdateFromOperation operation)
             :base(operation)
         {
         }
 
-        public UpdateFromOperationWrapper FromTable(
+        public IUpdateFromOperationWrapper FromTable(
             string table,
             string[] columns,
             string[] joinColumns)
@@ -161,7 +178,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
             return this;
         }
 
-        public UpdateFromOperationWrapper ToTable(
+        public IUpdateFromOperationWrapper ToTable(
             string table,
             string[] columns,
             string[] joinColumns)

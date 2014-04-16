@@ -4,7 +4,7 @@ using System.Data.Entity.Infrastructure.DependencyResolution;
 
 namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 {
-    public abstract class NavigationPropertyBuilder : IFluentInterface
+    public abstract class NavigationPropertyBuilder
     {
         private string targetClass;
 
@@ -36,7 +36,13 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public sealed class OneNavigationPropertyBuilder : NavigationPropertyBuilder
+    public interface IOneNavigationPropertyBuilder : IFluentInterface
+    {
+        NavigationPropertyCodeModel One(string name, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        NavigationPropertyCodeModel One(CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+    }
+
+    public sealed class OneNavigationPropertyBuilder : NavigationPropertyBuilder, IOneNavigationPropertyBuilder
     {
         public OneNavigationPropertyBuilder(string targetClass)
             :base(targetClass)
@@ -59,7 +65,13 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public sealed class ManyNavigationPropertyBuilder : NavigationPropertyBuilder
+    public interface IManyNavigationPropertyBuilder : IFluentInterface
+    {
+        NavigationPropertyCodeModel Many(string name, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        NavigationPropertyCodeModel Many(CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+    }
+
+    public sealed class ManyNavigationPropertyBuilder : NavigationPropertyBuilder, IManyNavigationPropertyBuilder
     {
         public ManyNavigationPropertyBuilder(string targetClass)
             :base(targetClass)

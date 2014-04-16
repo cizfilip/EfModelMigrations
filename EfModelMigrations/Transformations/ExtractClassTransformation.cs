@@ -185,7 +185,7 @@ namespace EfModelMigrations.Transformations
 
         private PrimitivePropertyCodeModel GetDefaultPrimaryKeyForNewClass()
         {
-            var prop = new PrimitivePropertyBuilder().Int().Property;
+            var prop = ((PrimitiveMappingBuilder)new PrimitivePropertyBuilder().Int()).Property;
             prop.Name = "Id";
             return prop;
         }

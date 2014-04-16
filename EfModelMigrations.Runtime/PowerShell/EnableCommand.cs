@@ -11,7 +11,7 @@ using EfModelMigrations.Runtime.Templates;
 using System.IO;
 using EfModelMigrations.Configuration;
 using System.Resources;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {

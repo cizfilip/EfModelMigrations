@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Exceptions;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.Infrastructure
 {

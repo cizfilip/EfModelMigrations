@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using EfModelMigrations.Extensions;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.Extensions
 {

@@ -9,9 +9,30 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 {
-    public sealed class PrimitivePropertyBuilder : IFluentInterface
+    public interface IPrimitivePropertyBuilder : IFluentInterface
     {
-        public BinaryMappingBuilder Binary(
+        IBinaryMappingBuilder Binary(CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Boolean(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Byte(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IDateTimeMappingBuilder DateTime(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IDateTimeMappingBuilder DateTimeOffset(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IDecimalMappingBuilder Decimal(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Double(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Geography(CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Geometry(CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Guid(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Short(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Int(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Long(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Single(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IStringMappingBuilder String(CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IDateTimeMappingBuilder Time(bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+        IPrimitiveMappingBuilder Enum(string enumType, bool isNullable = false, CodeModelVisibility? visibility = null, bool? isVirtual = null, bool? isSetterPrivate = null);
+    }
+
+    public sealed class PrimitivePropertyBuilder : IPrimitivePropertyBuilder
+    {
+        public IBinaryMappingBuilder Binary(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
@@ -21,7 +42,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Boolean(
+        public IPrimitiveMappingBuilder Boolean(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -32,7 +53,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Byte(
+        public IPrimitiveMappingBuilder Byte(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -43,7 +64,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public DateTimeMappingBuilder DateTime(
+        public IDateTimeMappingBuilder DateTime(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -54,7 +75,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public DateTimeMappingBuilder DateTimeOffset(
+        public IDateTimeMappingBuilder DateTimeOffset(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -65,7 +86,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public DecimalMappingBuilder Decimal(
+        public IDecimalMappingBuilder Decimal(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -76,7 +97,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Double(
+        public IPrimitiveMappingBuilder Double(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -87,7 +108,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Geography(
+        public IPrimitiveMappingBuilder Geography(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
@@ -97,7 +118,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Geometry(
+        public IPrimitiveMappingBuilder Geometry(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
@@ -107,7 +128,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Guid(
+        public IPrimitiveMappingBuilder Guid(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -118,7 +139,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Short(
+        public IPrimitiveMappingBuilder Short(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -129,7 +150,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Int(
+        public IPrimitiveMappingBuilder Int(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -140,7 +161,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Long(
+        public IPrimitiveMappingBuilder Long(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -151,7 +172,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Single(
+        public IPrimitiveMappingBuilder Single(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -162,7 +183,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public StringMappingBuilder String(
+        public IStringMappingBuilder String(
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
             bool? isSetterPrivate = null)
@@ -172,7 +193,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public DateTimeMappingBuilder Time(
+        public IDateTimeMappingBuilder Time(
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
             bool? isVirtual = null,
@@ -183,7 +204,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             );
         }
 
-        public PrimitiveMappingBuilder Enum(
+        public IPrimitiveMappingBuilder Enum(
             string enumType,
             bool isNullable = false,
             CodeModelVisibility? visibility = null,
@@ -220,7 +241,15 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 
     }
 
-    public class PrimitiveMappingBuilder : IFluentInterface
+
+    public interface IPrimitiveMappingBuilder : IFluentInterface
+    {
+        IPrimitiveMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        IPrimitiveMappingBuilder WithIndex(IndexAttribute index);
+        IPrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+    }
+
+    public class PrimitiveMappingBuilder : IPrimitiveMappingBuilder
     {
         private PrimitivePropertyCodeModel property;
         internal PrimitivePropertyCodeModel Property
@@ -236,7 +265,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             this.property = property;
         }
 
-        public PrimitiveMappingBuilder WithColumnMapping(string columnName = null,
+        public IPrimitiveMappingBuilder WithColumnMapping(string columnName = null,
             bool? isNullable = null,
             string databaseType = null,
             int? order = null,
@@ -248,13 +277,13 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public PrimitiveMappingBuilder WithIndex(IndexAttribute index)
+        public IPrimitiveMappingBuilder WithIndex(IndexAttribute index)
         {
             property.Column.ColumnAnnotations.Add(IndexAnnotation.AnnotationName, new IndexAnnotation(index));
             return this;
         }
 
-        public PrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public IPrimitiveMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             property.Column.DatabaseGeneratedOption = option;
             return this;
@@ -294,13 +323,22 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public class StringMappingBuilder : LengthMappingBuilder
+    public interface IStringMappingBuilder : IFluentInterface
+    {
+        IStringMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        IStringMappingBuilder WithIndex(IndexAttribute index);
+        IStringMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+        IStringMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null);
+        IStringMappingBuilder IsUnicode(bool value);
+    }
+
+    public class StringMappingBuilder : LengthMappingBuilder, IStringMappingBuilder
     {
         public StringMappingBuilder(PrimitivePropertyCodeModel property)
             : base(property)
         {
         }
-        public new StringMappingBuilder WithColumnMapping(string columnName = null,
+        public new IStringMappingBuilder WithColumnMapping(string columnName = null,
             bool? isNullable = null,
             string databaseType = null,
             int? order = null,
@@ -311,38 +349,47 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public new StringMappingBuilder WithIndex(IndexAttribute index)
+        public new IStringMappingBuilder WithIndex(IndexAttribute index)
         {
             base.WithIndex(index);
             return this;
         }
 
-        public new StringMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public new IStringMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             base.HasDatabaseGeneratedOption(option);
             return this;
         }
 
-        public new StringMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
+        public new IStringMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
         {
             base.WithLengthOptions(maxLength, isMaxLength, isFixedLegth);
             return this;
         }
 
-        public StringMappingBuilder IsUnicode(bool value)
+        public IStringMappingBuilder IsUnicode(bool value)
         {
             Property.Column.IsUnicode = value;
             return this;
         }
     }
 
-    public class BinaryMappingBuilder : LengthMappingBuilder
+    public interface IBinaryMappingBuilder : IFluentInterface
+    {
+        IBinaryMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        IBinaryMappingBuilder WithIndex(IndexAttribute index);
+        IBinaryMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+        IBinaryMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null);
+        IBinaryMappingBuilder IsTimespan();
+    }
+
+    public class BinaryMappingBuilder : LengthMappingBuilder, IBinaryMappingBuilder
     {
         public BinaryMappingBuilder(PrimitivePropertyCodeModel property)
             : base(property)
         {
         }
-        public new BinaryMappingBuilder WithColumnMapping(string columnName = null,
+        public new IBinaryMappingBuilder WithColumnMapping(string columnName = null,
             bool? isNullable = null,
             string databaseType = null,
             int? order = null,
@@ -353,39 +400,47 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public new BinaryMappingBuilder WithIndex(IndexAttribute index)
+        public new IBinaryMappingBuilder WithIndex(IndexAttribute index)
         {
             base.WithIndex(index);
             return this;
         }
 
-        public new BinaryMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public new IBinaryMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             base.HasDatabaseGeneratedOption(option);
             return this;
         }
 
-        public new BinaryMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
+        public new IBinaryMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null)
         {
             base.WithLengthOptions(maxLength, isMaxLength, isFixedLegth);
             return this;
         }
 
-        public BinaryMappingBuilder IsTimespan()
+        public IBinaryMappingBuilder IsTimespan()
         {
             Property.Column.IsRowVersion = true;
             return this;
         }
     }
 
-    public class DateTimeMappingBuilder : PrimitiveMappingBuilder
+    public interface IDateTimeMappingBuilder : IFluentInterface
+    {
+        IDateTimeMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        IDateTimeMappingBuilder WithIndex(IndexAttribute index);
+        IDateTimeMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+        IDateTimeMappingBuilder WithPrecision(byte precision);
+    }
+
+    public class DateTimeMappingBuilder : PrimitiveMappingBuilder, IDateTimeMappingBuilder
     {
         public DateTimeMappingBuilder(PrimitivePropertyCodeModel property)
             : base(property)
         {
         }
 
-        public new DateTimeMappingBuilder WithColumnMapping(string columnName = null,
+        public new IDateTimeMappingBuilder WithColumnMapping(string columnName = null,
             bool? isNullable = null,
             string databaseType = null,
             int? order = null,
@@ -396,32 +451,40 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public new DateTimeMappingBuilder WithIndex(IndexAttribute index)
+        public new IDateTimeMappingBuilder WithIndex(IndexAttribute index)
         {
             base.WithIndex(index);
             return this;
         }
 
-        public new DateTimeMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public new IDateTimeMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             base.HasDatabaseGeneratedOption(option);
             return this;
         }
 
-        public DateTimeMappingBuilder WithPrecision(byte precision)
+        public IDateTimeMappingBuilder WithPrecision(byte precision)
         {
             Property.Column.Precision = precision;
             return this;
         }
     }
 
-    public class DecimalMappingBuilder : PrimitiveMappingBuilder
+    public interface IDecimalMappingBuilder : IFluentInterface
+    {
+        IDecimalMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        IDecimalMappingBuilder WithIndex(IndexAttribute index);
+        IDecimalMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+        IDecimalMappingBuilder WithPrecision(byte precision, byte scale);
+    }
+
+    public class DecimalMappingBuilder : PrimitiveMappingBuilder, IDecimalMappingBuilder
     {
         public DecimalMappingBuilder(PrimitivePropertyCodeModel property)
             : base(property)
         {
         }
-        public new DecimalMappingBuilder WithColumnMapping(string columnName = null,
+        public new IDecimalMappingBuilder WithColumnMapping(string columnName = null,
             bool? isNullable = null,
             string databaseType = null,
             int? order = null,
@@ -432,19 +495,19 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
             return this;
         }
 
-        public new DecimalMappingBuilder WithIndex(IndexAttribute index)
+        public new IDecimalMappingBuilder WithIndex(IndexAttribute index)
         {
             base.WithIndex(index);
             return this;
         }
 
-        public new DecimalMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
+        public new IDecimalMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option)
         {
             base.HasDatabaseGeneratedOption(option);
             return this;
         }
 
-        public DecimalMappingBuilder WithPrecision(byte precision, byte scale)
+        public IDecimalMappingBuilder WithPrecision(byte precision, byte scale)
         {
             Property.Column.Precision = precision;
             Property.Column.Scale = scale;

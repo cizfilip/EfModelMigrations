@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using EfModelMigrations.Runtime.Extensions;
 using System.IO;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {

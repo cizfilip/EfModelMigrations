@@ -11,7 +11,7 @@ using EfModelMigrations.Infrastructure.EntityFramework;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
 using EfModelMigrations.Extensions;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {

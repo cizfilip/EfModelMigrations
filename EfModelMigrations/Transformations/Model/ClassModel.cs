@@ -26,13 +26,4 @@ namespace EfModelMigrations.Transformations.Model
             this.Visibility = visibility;
         }
     }
-
-    public sealed class ClassModelBuilder
-    {
-        public ClassModel Class(string name, CodeModelVisibility? visibility = null, string tableName = null, string schema = null)
-        {
-            var table = tableName != null ? new TableName(tableName, schema) : null;
-            return new ClassModel(name, table, visibility);
-        }
-    }
 }

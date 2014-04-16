@@ -207,6 +207,7 @@
     <Compile Include="Transformations\ModelTransformation.cs" />
     <Compile Include="Transformations\Model\AssociationEnd.cs" />
     <Compile Include="Transformations\Model\ClassModel.cs" />
+    <Compile Include="Transformations\Model\ClassModelBuilder.cs" />
     <Compile Include="Transformations\Model\ManyToManyJoinTable.cs" />
     <Compile Include="Transformations\Model\MultiplicityHelper.cs" />
     <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />

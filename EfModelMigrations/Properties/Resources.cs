@@ -16,11 +16,59 @@ namespace EfModelMigrations.Resources
     internal static class Strings
     {
         // <summary>
+        // A string like "Cannot apply model migration. See inner exception for details."
+        // </summary>
+        internal static string ApplyMigrationError
+        {
+            get { return EntityRes.GetString(EntityRes.ApplyMigrationError); }
+        }
+
+        // <summary>
+        // A string like "Could not load assembly '{0}'."
+        // </summary>
+        internal static string BaseRunner_AssemblyNotFound(object p0)
+        {
+            return EntityRes.GetString(EntityRes.BaseRunner_AssemblyNotFound, p0);
+        }
+
+        // <summary>
+        // A string like "Project failed to build."
+        // </summary>
+        internal static string CannotBuildProject
+        {
+            get { return EntityRes.GetString(EntityRes.CannotBuildProject); }
+        }
+
+        // <summary>
         // A string like "Cannot create instance of type {0}."
         // </summary>
         internal static string CannotCreateInstance(object p0)
         {
             return EntityRes.GetString(EntityRes.CannotCreateInstance, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot find class with name {0} in model project."
+        // </summary>
+        internal static string CannotFindClassInModelProject(object p0)
+        {
+            return EntityRes.GetString(EntityRes.CannotFindClassInModelProject, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot find configuration class in project."
+        // </summary>
+        internal static string CannotFindConfiguration
+        {
+            get { return EntityRes.GetString(EntityRes.CannotFindConfiguration); }
+        }
+
+        // <summary>
+        // A string like "Cannot find enum with name {0} in model project."
+        // </summary>
+        internal static string CannotFindEnumInModelProject(object p0)
+        {
+            return EntityRes.GetString(EntityRes.CannotFindEnumInModelProject, p0);
         }
 
         // <summary>
@@ -40,6 +88,14 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Command name not specified."
+        // </summary>
+        internal static string CommandNameNotSpecified
+        {
+            get { return EntityRes.GetString(EntityRes.CommandNameNotSpecified); }
+        }
+
+        // <summary>
         // A string like "Invalid model migration id."
         // </summary>
         internal static string InvalidModelMigrationId
@@ -48,11 +104,147 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Model migrations was successfully enabled in current project."
+        // </summary>
+        internal static string ModelEnableSuccessfull
+        {
+            get { return EntityRes.GetString(EntityRes.ModelEnableSuccessfull); }
+        }
+
+        // <summary>
+        // A string like "Model migrations was already enabled."
+        // </summary>
+        internal static string ModelMigrationsAlreadyEnabled
+        {
+            get { return EntityRes.GetString(EntityRes.ModelMigrationsAlreadyEnabled); }
+        }
+
+        // <summary>
+        // A string like "Unable to find any migration to apply or revert."
+        // </summary>
+        internal static string NoMigrationsToApplyOrRevert
+        {
+            get { return EntityRes.GetString(EntityRes.NoMigrationsToApplyOrRevert); }
+        }
+
+        // <summary>
+        // A string like "Specified path must be absolute."
+        // </summary>
+        internal static string ProjectExtensions_PathMustBeAbsolute
+        {
+            get { return EntityRes.GetString(EntityRes.ProjectExtensions_PathMustBeAbsolute); }
+        }
+
+        // <summary>
+        // A string like "Specified path must be relative to project directory."
+        // </summary>
+        internal static string ProjectExtensions_PathMustBeRelative
+        {
+            get { return EntityRes.GetString(EntityRes.ProjectExtensions_PathMustBeRelative); }
+        }
+
+        // <summary>
         // A string like "More than one type with base type {0} was found."
         // </summary>
         internal static string TypeFinder_MultipleTypesFound(object p0)
         {
             return EntityRes.GetString(EntityRes.TypeFinder_MultipleTypesFound, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot add DbSet property to DbContext for class {0} in model project."
+        // </summary>
+        internal static string VsCodeModel_FailedToAddDbSetProperty(object p0)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToAddDbSetProperty, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot add mapping information of type {0}. See inner exception."
+        // </summary>
+        internal static string VsCodeModel_FailedToAddMappingInformation(object p0)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToAddMappingInformation, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot add property {0} to class {1} in model project."
+        // </summary>
+        internal static string VsCodeModel_FailedToAddProperty(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToAddProperty, p0, p1);
+        }
+
+        // <summary>
+        // A string like "Cannot create class {0} in model project."
+        // </summary>
+        internal static string VsCodeModel_FailedToCreateClass(object p0)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToCreateClass, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot find DbSet property for class {0} in DbContext."
+        // </summary>
+        internal static string VsCodeModel_FailedToFindDbSetProperty(object p0)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToFindDbSetProperty, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot find method {0} in class {1}."
+        // </summary>
+        internal static string VsCodeModel_FailedToFindMethod(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToFindMethod, p0, p1);
+        }
+
+        // <summary>
+        // A string like "Cannot find property {0} in class {1}."
+        // </summary>
+        internal static string VsCodeModel_FailedToFindProperty(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToFindProperty, p0, p1);
+        }
+
+        // <summary>
+        // A string like "Cannot remove class {0} from model project."
+        // </summary>
+        internal static string VsCodeModel_FailedToRemoveClass(object p0)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToRemoveClass, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot remove DbSet property from DbContext for class {0} in model project."
+        // </summary>
+        internal static string VsCodeModel_FailedToRemoveDbSetProperty(object p0)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToRemoveDbSetProperty, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot remove property {0} from class {1} in model project."
+        // </summary>
+        internal static string VsCodeModel_FailedToRemoveProperty(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToRemoveProperty, p0, p1);
+        }
+
+        // <summary>
+        // A string like "Cannot rename class {0} in model project."
+        // </summary>
+        internal static string VsCodeModel_FailedToRenameClass(object p0)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToRenameClass, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot rename property {0} from class {1} in model project."
+        // </summary>
+        internal static string VsCodeModel_FailedToRenameProperty(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.VsCodeModel_FailedToRenameProperty, p0, p1);
         }
     }
 
@@ -63,11 +255,35 @@ namespace EfModelMigrations.Resources
     [GeneratedCode("Resources.tt", "1.0.0.0")]
     internal sealed class EntityRes
     {
+        internal const string ApplyMigrationError = "ApplyMigrationError";
+        internal const string BaseRunner_AssemblyNotFound = "BaseRunner_AssemblyNotFound";
+        internal const string CannotBuildProject = "CannotBuildProject";
         internal const string CannotCreateInstance = "CannotCreateInstance";
+        internal const string CannotFindClassInModelProject = "CannotFindClassInModelProject";
+        internal const string CannotFindConfiguration = "CannotFindConfiguration";
+        internal const string CannotFindEnumInModelProject = "CannotFindEnumInModelProject";
         internal const string CannotFindMigration = "CannotFindMigration";
         internal const string CannotFindMigrationId = "CannotFindMigrationId";
+        internal const string CommandNameNotSpecified = "CommandNameNotSpecified";
         internal const string InvalidModelMigrationId = "InvalidModelMigrationId";
+        internal const string ModelEnableSuccessfull = "ModelEnableSuccessfull";
+        internal const string ModelMigrationsAlreadyEnabled = "ModelMigrationsAlreadyEnabled";
+        internal const string NoMigrationsToApplyOrRevert = "NoMigrationsToApplyOrRevert";
+        internal const string ProjectExtensions_PathMustBeAbsolute = "ProjectExtensions_PathMustBeAbsolute";
+        internal const string ProjectExtensions_PathMustBeRelative = "ProjectExtensions_PathMustBeRelative";
         internal const string TypeFinder_MultipleTypesFound = "TypeFinder_MultipleTypesFound";
+        internal const string VsCodeModel_FailedToAddDbSetProperty = "VsCodeModel_FailedToAddDbSetProperty";
+        internal const string VsCodeModel_FailedToAddMappingInformation = "VsCodeModel_FailedToAddMappingInformation";
+        internal const string VsCodeModel_FailedToAddProperty = "VsCodeModel_FailedToAddProperty";
+        internal const string VsCodeModel_FailedToCreateClass = "VsCodeModel_FailedToCreateClass";
+        internal const string VsCodeModel_FailedToFindDbSetProperty = "VsCodeModel_FailedToFindDbSetProperty";
+        internal const string VsCodeModel_FailedToFindMethod = "VsCodeModel_FailedToFindMethod";
+        internal const string VsCodeModel_FailedToFindProperty = "VsCodeModel_FailedToFindProperty";
+        internal const string VsCodeModel_FailedToRemoveClass = "VsCodeModel_FailedToRemoveClass";
+        internal const string VsCodeModel_FailedToRemoveDbSetProperty = "VsCodeModel_FailedToRemoveDbSetProperty";
+        internal const string VsCodeModel_FailedToRemoveProperty = "VsCodeModel_FailedToRemoveProperty";
+        internal const string VsCodeModel_FailedToRenameClass = "VsCodeModel_FailedToRenameClass";
+        internal const string VsCodeModel_FailedToRenameProperty = "VsCodeModel_FailedToRenameProperty";
 
         private static EntityRes loader;
         private readonly ResourceManager resources;

@@ -1,5 +1,5 @@
 ﻿using EfModelMigrations.Exceptions;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 using EnvDTE;
 using EnvDTE80;
 using System;

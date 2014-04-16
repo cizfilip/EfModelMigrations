@@ -9,7 +9,7 @@ using System.Reflection;
 using EfModelMigrations.Runtime.Infrastructure;
 using EfModelMigrations.Runtime.Extensions;
 using EfModelMigrations.Exceptions;
-using EfModelMigrations.Runtime.Resources;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.PowerShell
 {
