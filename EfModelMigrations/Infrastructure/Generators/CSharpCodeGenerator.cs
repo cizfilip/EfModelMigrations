@@ -16,7 +16,6 @@ using EfModelMigrations.Configuration;
 
 namespace EfModelMigrations.Infrastructure.Generators
 {
-    //TODO: generovat spravne nullable typy
     public class CSharpCodeGenerator : CodeGenerator
     {
         protected IPluralizationService pluralizationService;
@@ -47,15 +46,19 @@ namespace EfModelMigrations.Infrastructure.Generators
         {
             propertyName = propertyModel.Name;
 
+            var propertyDefaults = GetPropertyDefaults(propertyModel);
+
             return new PropertyTemplate()
             {
                 Name = propertyModel.Name,
                 Type = GetPropertyType(propertyModel),
-                Visibility = CodeModelVisibilityToString(propertyModel.Visibility ?? defaults.Property.Visibility),
-                IsVirtual = propertyModel.IsVirtual ?? defaults.Property.IsVirtual,
-                IsSetterPrivate = propertyModel.IsSetterPrivate ?? defaults.Property.IsSetterPrivate
+                Visibility = CodeModelVisibilityToString(propertyModel.Visibility ?? propertyDefaults.Visibility),
+                IsVirtual = propertyModel.IsVirtual ?? propertyDefaults.IsVirtual,
+                IsSetterPrivate = propertyModel.IsSetterPrivate ?? propertyDefaults.IsSetterPrivate
             }.TransformText();
         }
+
+
 
         public override string GenerateDbSetProperty(string className, out string dbSetPropertyName)
         {
@@ -100,7 +103,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
         }
 
-        private string GetPropertyType(PropertyCodeModel property)
+        protected virtual string GetPropertyType(PropertyCodeModel property)
         {
             try
             {
@@ -229,7 +232,15 @@ namespace EfModelMigrations.Infrastructure.Generators
             return property.IsTypeNullable ? property.EnumType + "?" : property.EnumType;
         }
 
-        
+        protected virtual PropertyDefaults GetPropertyDefaults(PropertyCodeModel property)
+        {
+            if (property is NavigationPropertyCodeModel)
+            {
+                return defaults.NavigationProperty;
+            }
+
+            return defaults.Property;
+        }
 
 
         

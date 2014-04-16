@@ -13,6 +13,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         public ClassDefaults Class { get; set; }
         public PropertyDefaults Property { get; set; }
+        public PropertyDefaults NavigationProperty { get; set; }
 
         public static CodeGeneratorDefaults Create()
         {
@@ -27,6 +28,12 @@ namespace EfModelMigrations.Infrastructure.Generators
                     Visibility = CodeModelVisibility.Public,
                     IsSetterPrivate = false,
                     IsVirtual = false
+                },
+                NavigationProperty = new PropertyDefaults()
+                {
+                    Visibility = CodeModelVisibility.Public,
+                    IsSetterPrivate = false,
+                    IsVirtual = true
                 }
             };
         }
