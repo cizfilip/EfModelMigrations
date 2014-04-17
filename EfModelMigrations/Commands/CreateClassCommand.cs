@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations;
 using EfModelMigrations.Transformations.Model;
 using System;
@@ -18,16 +19,15 @@ namespace EfModelMigrations.Commands
         private string tableName;
         private string schema;
 
-        //TODO: Dat stringy vyjimek do resourcu
         public CreateClassCommand(string className, string visibility, string tableName, string schema, string[] properties)
         {
             if (string.IsNullOrWhiteSpace(className))
             {
-                throw new ModelMigrationsException("Name od the new class is missing.");
+                throw new ModelMigrationsException(Strings.Commands_CreateClass_ClassNameMissing);
             }
             if (properties == null || properties.Length == 0)
             {
-                throw new ModelMigrationsException("Properties for the new class is missing.");
+                throw new ModelMigrationsException(Strings.Commands_CreateClass_PropertiesMissing(className));
             }
 
             this.className = className;

@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations;
 using System;
 using System.Collections.Generic;
@@ -20,17 +21,17 @@ namespace EfModelMigrations.Commands
         {
             if (string.IsNullOrWhiteSpace(className))
             {
-                throw new ModelMigrationsException("You must specify class name. old property name and new property name.");
+                throw new ModelMigrationsException(Strings.Commands_RenameProperty_ClassNameMissing);
             }
 
             if (string.IsNullOrWhiteSpace(oldPropertyName))
             {
-                throw new ModelMigrationsException("You must specify old property name.");
+                throw new ModelMigrationsException(Strings.Commands_RenameProperty_OldPropertyMissing);
             }
 
             if (string.IsNullOrWhiteSpace(newPropertyName))
             {
-                throw new ModelMigrationsException("You must specify new property name.");
+                throw new ModelMigrationsException(Strings.Commands_RenameProperty_NewPropertyMissing);
             }
 
             this.className = className;

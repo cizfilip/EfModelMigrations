@@ -9,8 +9,7 @@ using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Infrastructure
 {
-    //TODO: Musime mit metodu co zajisti unikatnost jmen migraci
-    public class ModelMigrationsLocator
+    public sealed class ModelMigrationsLocator
     {
         /// <summary>
         /// Holds this keyvalue pairs: (modelMigrationId -> Type represent modelmigration)
@@ -50,6 +49,11 @@ namespace EfModelMigrations.Infrastructure
             {
                 throw new ModelMigrationsException(Strings.CannotFindMigration(modelMigrationId));
             }
+        }
+
+        public string UniquifyMigrationName(string migrationName)
+        {
+            return modelMigrations.Select(m => m.Value.GetType().Name).Uniquify(migrationName);
         }
 
         public IEnumerable<string> FindModelMigrationsToApplyOrRevert(string targetMigration, out bool isRevert)

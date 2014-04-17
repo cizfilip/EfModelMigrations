@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Commands
 {
-    
+    //TODO: nechat ci vyhodit?
     public class ExtractComplexTypeCommand : ModelMigrationsCommand
     {
         private string className;

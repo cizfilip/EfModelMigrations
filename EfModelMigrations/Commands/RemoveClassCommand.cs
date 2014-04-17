@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations;
 using System;
 using System.Collections.Generic;
@@ -13,12 +14,11 @@ namespace EfModelMigrations.Commands
     {
         private string className;
 
-        //TODO: Dat stringy vyjimek do resourcu
         public RemoveClassCommand(string className)
         {
             if (string.IsNullOrWhiteSpace(className))
             {
-                throw new ModelMigrationsException("Name of class to remove is missing.");
+                throw new ModelMigrationsException(Strings.Commands_RemoveClass_ClassNameMissing);
             }
 
             this.className = className;

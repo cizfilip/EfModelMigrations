@@ -74,18 +74,8 @@ namespace EfModelMigrations.Runtime.Infrastructure
 
         public string FindModelMigrationsConfiguration()
         {
-
-            //LogInfo(string.Join(Environment.NewLine, AppDomain.CurrentDomain.GetAssemblies().Select(a => a.FullName)));
-
-            //LogInfo("-------------------------------------");
-
-            //LogInfo(string.Join(Environment.NewLine, executor.newDomain.GetAssemblies().Select(a => a.FullName)));
-
-
             return executor.ExecuteRunner<string>(new FindModelMigrationsConfigurationRunner());
         }
-
-        
 
         private NewAppDomainExecutor CreateExecutor()
         {

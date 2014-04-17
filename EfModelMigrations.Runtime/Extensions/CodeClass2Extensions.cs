@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Extensions
 {
-    public static class CodeClass2Extensions
+    internal static class CodeClass2Extensions
     {
         public static CodeProperty2 FindProperty(this CodeClass2 codeClass, string propertyName)
         {

@@ -1,5 +1,7 @@
 $InitialModel = '0'
 
+#TODO: pridat koncept knownExceptions (kouknout jak dela EF) a alespon validacni exceptiony zobrazovat jako WriteError
+
 <#
 .SYNOPSIS
     Model-EmptyMigration command.

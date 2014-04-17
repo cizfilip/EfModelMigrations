@@ -126,6 +126,9 @@
   <data name="CannotBuildProject" xml:space="preserve">
     <value>Project failed to build.</value>
   </data>
+  <data name="CannotCreateCommandInstance" xml:space="preserve">
+    <value>Cannot create command instance. Command {0} not found.</value>
+  </data>
   <data name="CannotCreateInstance" xml:space="preserve">
     <value>Cannot create instance of type {0}.</value>
   </data>
@@ -147,6 +150,48 @@
   <data name="CommandNameNotSpecified" xml:space="preserve">
     <value>Command name not specified.</value>
   </data>
+  <data name="Commands_AddProperties_ClassNameMissing" xml:space="preserve">
+    <value>Name of class for new properties is missing.</value>
+  </data>
+  <data name="Commands_AddProperties_NoProperties" xml:space="preserve">
+    <value>No properties was specified to add to class {0}.</value>
+  </data>
+  <data name="Commands_CreateClass_ClassNameMissing" xml:space="preserve">
+    <value>Name od the new class is missing.</value>
+  </data>
+  <data name="Commands_CreateClass_PropertiesMissing" xml:space="preserve">
+    <value>Properties for the new class {0} is missing.</value>
+  </data>
+  <data name="Commands_MigrationNameMissing" xml:space="preserve">
+    <value>Migration name not specified.</value>
+  </data>
+  <data name="Commands_RemoveClass_ClassNameMissing" xml:space="preserve">
+    <value>Name of class to remove is missing.</value>
+  </data>
+  <data name="Commands_RemoveProperties_ClassNameMissing" xml:space="preserve">
+    <value>Name of class for removing properties is missing.</value>
+  </data>
+  <data name="Commands_RemoveProperties_PropertiesMissing" xml:space="preserve">
+    <value>Properties to remove from class {0} missing.</value>
+  </data>
+  <data name="Commands_RemoveProperties_PropertyNotFound" xml:space="preserve">
+    <value>Cannot remove property {0} from class {1}, property does not exist.</value>
+  </data>
+  <data name="Commands_RenameClass_NewClassNameMissing" xml:space="preserve">
+    <value>New class name missing.</value>
+  </data>
+  <data name="Commands_RenameClass_OldClassNameMissing" xml:space="preserve">
+    <value>Old class name missing.</value>
+  </data>
+  <data name="Commands_RenameProperty_ClassNameMissing" xml:space="preserve">
+    <value>Class name for renaming property missing.</value>
+  </data>
+  <data name="Commands_RenameProperty_NewPropertyMissing" xml:space="preserve">
+    <value>New property name is missing.</value>
+  </data>
+  <data name="Commands_RenameProperty_OldPropertyMissing" xml:space="preserve">
+    <value>Old property name is missing.</value>
+  </data>
   <data name="DataInDbMayBeLost" xml:space="preserve">
     <value>Some operations in migration {0} may cause data loss in database! If you really want to execute this migration rerun the migrate command with -Force parameter.</value>
   </data>
@@ -161,6 +206,15 @@
   </data>
   <data name="NoMigrationsToApplyOrRevert" xml:space="preserve">
     <value>Unable to find any migration to apply or revert.</value>
+  </data>
+  <data name="ParameterParser_InvalidVisibility" xml:space="preserve">
+    <value>Unknown visibility {0}. Only {1} can be specified.</value>
+  </data>
+  <data name="ParameterParser_UnknownPropertyType" xml:space="preserve">
+    <value>Unknown property type {0}. Type is not primitive or enum.</value>
+  </data>
+  <data name="ParameterParser_WrongPropertyFormat" xml:space="preserve">
+    <value>Wrong property format, use [PropertyName]:[PropertyType], example: Name:string</value>
   </data>
   <data name="PreconditionFailed" xml:space="preserve">
     <value>Transformation {0} can not be applied.</value>

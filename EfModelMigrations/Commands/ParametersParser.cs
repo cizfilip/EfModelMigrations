@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Resources;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,6 @@ namespace EfModelMigrations.Commands
             this.modelProvider = modelProvider;
         }
 
-        //TODO: Dat stringy vyjimek do resourcu
         public CodeModelVisibility ParseVisibility(string visibility)
         {
             Check.NotEmpty(visibility, "visibility");
@@ -37,10 +37,9 @@ namespace EfModelMigrations.Commands
                 return visibilityParser[visibility];
             }
 
-            throw new ModelMigrationsException(string.Format("Unknown visibility {0}. Only {1} can be specified", visibility, string.Join(", ", visibilityParser.Keys))); 
+            throw new ModelMigrationsException(Strings.ParameterParser_InvalidVisibility(visibility, string.Join(", ", visibilityParser.Keys))); 
         }
 
-        //TODO: Dat stringy vyjimek do resourcu
         public IEnumerable<PrimitivePropertyCodeModel> ParseProperties(IEnumerable<string> parameters)
         {
             Check.NotNullOrEmpty(parameters, "parameters");
@@ -51,7 +50,6 @@ namespace EfModelMigrations.Commands
             }
         }
 
-        //TODO: Dat stringy vyjimek do resourcu
         public PrimitivePropertyCodeModel ParseProperty(string parameter)
         {
             Check.NotEmpty(parameter, "parameter");
@@ -60,7 +58,7 @@ namespace EfModelMigrations.Commands
 
             if (splitted.Length != 2 || string.IsNullOrWhiteSpace(splitted[0]) || string.IsNullOrWhiteSpace(splitted[1]))
             {
-                throw new ModelMigrationsException("Wrong property format, use [PropertyName]:[PropertyType], example: Name:string ");
+                throw new ModelMigrationsException(Strings.ParameterParser_WrongPropertyFormat);
             }
 
             string name = splitted[0];
@@ -81,7 +79,7 @@ namespace EfModelMigrations.Commands
             }
 
             //TODO: udelat lepsi hlasku
-            throw new ModelMigrationsException(string.Format("Unknown property type {0}. Type is not primitive or enum.", splitted[1])); 
+            throw new ModelMigrationsException(Strings.ParameterParser_UnknownPropertyType(splitted[1])); 
         }
 
        

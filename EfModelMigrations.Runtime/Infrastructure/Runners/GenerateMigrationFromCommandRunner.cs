@@ -12,13 +12,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EfModelMigrations.Infrastructure.EntityFramework;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Runners
 {
     [Serializable]
     internal class GenerateMigrationFromCommandRunner : BaseRunner
     {
-
         public Project ModelProject { get; set; }
 
         public string CommandFullName { get; set; }
@@ -27,7 +27,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
         public override void Run()
         {
             //Initialize Command
-            
             ModelMigrationsCommand command;
 
             try
@@ -41,18 +40,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             }
             catch (Exception e)
             {
-                //TODO: string do resourcu
-                throw new ModelMigrationsException("Cannot create command instance!", e);
+                throw new ModelMigrationsException(Strings.CannotCreateCommandInstance(CommandFullName), e);
             }
 
             var edmxModel = new EdmxModelExtractor().GetEdmxModelAsString(DbContext);
             var classModelProvider = new VsClassModelProvider(ModelProject, Configuration, edmxModel);
             var transformations = command.GetTransformations(classModelProvider);
 
-
             //params for generation
-            //TODO: Migration name must be unique! We must check that...
-            string migrationName = command.GetMigrationName();
+            string migrationName = new ModelMigrationsLocator(Configuration).UniquifyMigrationName(command.GetMigrationName());
             string migrationId = ModelMigrationIdGenerator.GenerateId(migrationName);
             string migrationNamespace = Configuration.ModelMigrationsNamespace;
 
@@ -64,10 +60,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             generatedMigration.MigrationDirectory = Configuration.ModelMigrationsDirectory;
 
             Return(generatedMigration);
-        }
-        
-    
-
-        
+        }    
     }
 }

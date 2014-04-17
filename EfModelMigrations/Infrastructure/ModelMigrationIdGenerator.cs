@@ -31,8 +31,11 @@ namespace EfModelMigrations.Infrastructure
 
         public static string GetNameFromId(string migrationId)
         {
-            //TODO: check zda je id vubec validni
-            return migrationId.Substring(16);
+            if (IsValidId(migrationId))
+            {
+                return migrationId.Substring(16);
+            }
+            return migrationId;            
         }
     }
 }

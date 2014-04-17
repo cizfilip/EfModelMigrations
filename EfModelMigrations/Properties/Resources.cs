@@ -40,6 +40,14 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Cannot create command instance. Command {0} not found."
+        // </summary>
+        internal static string CannotCreateCommandInstance(object p0)
+        {
+            return EntityRes.GetString(EntityRes.CannotCreateCommandInstance, p0);
+        }
+
+        // <summary>
         // A string like "Cannot create instance of type {0}."
         // </summary>
         internal static string CannotCreateInstance(object p0)
@@ -96,6 +104,118 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Name of class for new properties is missing."
+        // </summary>
+        internal static string Commands_AddProperties_ClassNameMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_AddProperties_ClassNameMissing); }
+        }
+
+        // <summary>
+        // A string like "No properties was specified to add to class {0}."
+        // </summary>
+        internal static string Commands_AddProperties_NoProperties(object p0)
+        {
+            return EntityRes.GetString(EntityRes.Commands_AddProperties_NoProperties, p0);
+        }
+
+        // <summary>
+        // A string like "Name od the new class is missing."
+        // </summary>
+        internal static string Commands_CreateClass_ClassNameMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_CreateClass_ClassNameMissing); }
+        }
+
+        // <summary>
+        // A string like "Properties for the new class {0} is missing."
+        // </summary>
+        internal static string Commands_CreateClass_PropertiesMissing(object p0)
+        {
+            return EntityRes.GetString(EntityRes.Commands_CreateClass_PropertiesMissing, p0);
+        }
+
+        // <summary>
+        // A string like "Migration name not specified."
+        // </summary>
+        internal static string Commands_MigrationNameMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_MigrationNameMissing); }
+        }
+
+        // <summary>
+        // A string like "Name of class to remove is missing."
+        // </summary>
+        internal static string Commands_RemoveClass_ClassNameMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_RemoveClass_ClassNameMissing); }
+        }
+
+        // <summary>
+        // A string like "Name of class for removing properties is missing."
+        // </summary>
+        internal static string Commands_RemoveProperties_ClassNameMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_RemoveProperties_ClassNameMissing); }
+        }
+
+        // <summary>
+        // A string like "Properties to remove from class {0} missing."
+        // </summary>
+        internal static string Commands_RemoveProperties_PropertiesMissing(object p0)
+        {
+            return EntityRes.GetString(EntityRes.Commands_RemoveProperties_PropertiesMissing, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot remove property {0} from class {1}, property does not exist."
+        // </summary>
+        internal static string Commands_RemoveProperties_PropertyNotFound(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.Commands_RemoveProperties_PropertyNotFound, p0, p1);
+        }
+
+        // <summary>
+        // A string like "New class name missing."
+        // </summary>
+        internal static string Commands_RenameClass_NewClassNameMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_RenameClass_NewClassNameMissing); }
+        }
+
+        // <summary>
+        // A string like "Old class name missing."
+        // </summary>
+        internal static string Commands_RenameClass_OldClassNameMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_RenameClass_OldClassNameMissing); }
+        }
+
+        // <summary>
+        // A string like "Class name for renaming property missing."
+        // </summary>
+        internal static string Commands_RenameProperty_ClassNameMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_RenameProperty_ClassNameMissing); }
+        }
+
+        // <summary>
+        // A string like "New property name is missing."
+        // </summary>
+        internal static string Commands_RenameProperty_NewPropertyMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_RenameProperty_NewPropertyMissing); }
+        }
+
+        // <summary>
+        // A string like "Old property name is missing."
+        // </summary>
+        internal static string Commands_RenameProperty_OldPropertyMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Commands_RenameProperty_OldPropertyMissing); }
+        }
+
+        // <summary>
         // A string like "Some operations in migration {0} may cause data loss in database! If you really want to execute this migration rerun the migrate command with -Force parameter."
         // </summary>
         internal static string DataInDbMayBeLost(object p0)
@@ -133,6 +253,30 @@ namespace EfModelMigrations.Resources
         internal static string NoMigrationsToApplyOrRevert
         {
             get { return EntityRes.GetString(EntityRes.NoMigrationsToApplyOrRevert); }
+        }
+
+        // <summary>
+        // A string like "Unknown visibility {0}. Only {1} can be specified."
+        // </summary>
+        internal static string ParameterParser_InvalidVisibility(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.ParameterParser_InvalidVisibility, p0, p1);
+        }
+
+        // <summary>
+        // A string like "Unknown property type {0}. Type is not primitive or enum."
+        // </summary>
+        internal static string ParameterParser_UnknownPropertyType(object p0)
+        {
+            return EntityRes.GetString(EntityRes.ParameterParser_UnknownPropertyType, p0);
+        }
+
+        // <summary>
+        // A string like "Wrong property format, use [PropertyName]:[PropertyType], example: Name:string"
+        // </summary>
+        internal static string ParameterParser_WrongPropertyFormat
+        {
+            get { return EntityRes.GetString(EntityRes.ParameterParser_WrongPropertyFormat); }
         }
 
         // <summary>
@@ -290,6 +434,7 @@ namespace EfModelMigrations.Resources
         internal const string ApplyMigrationError = "ApplyMigrationError";
         internal const string BaseRunner_AssemblyNotFound = "BaseRunner_AssemblyNotFound";
         internal const string CannotBuildProject = "CannotBuildProject";
+        internal const string CannotCreateCommandInstance = "CannotCreateCommandInstance";
         internal const string CannotCreateInstance = "CannotCreateInstance";
         internal const string CannotFindClassInModelProject = "CannotFindClassInModelProject";
         internal const string CannotFindConfiguration = "CannotFindConfiguration";
@@ -297,11 +442,28 @@ namespace EfModelMigrations.Resources
         internal const string CannotFindMigration = "CannotFindMigration";
         internal const string CannotFindMigrationId = "CannotFindMigrationId";
         internal const string CommandNameNotSpecified = "CommandNameNotSpecified";
+        internal const string Commands_AddProperties_ClassNameMissing = "Commands_AddProperties_ClassNameMissing";
+        internal const string Commands_AddProperties_NoProperties = "Commands_AddProperties_NoProperties";
+        internal const string Commands_CreateClass_ClassNameMissing = "Commands_CreateClass_ClassNameMissing";
+        internal const string Commands_CreateClass_PropertiesMissing = "Commands_CreateClass_PropertiesMissing";
+        internal const string Commands_MigrationNameMissing = "Commands_MigrationNameMissing";
+        internal const string Commands_RemoveClass_ClassNameMissing = "Commands_RemoveClass_ClassNameMissing";
+        internal const string Commands_RemoveProperties_ClassNameMissing = "Commands_RemoveProperties_ClassNameMissing";
+        internal const string Commands_RemoveProperties_PropertiesMissing = "Commands_RemoveProperties_PropertiesMissing";
+        internal const string Commands_RemoveProperties_PropertyNotFound = "Commands_RemoveProperties_PropertyNotFound";
+        internal const string Commands_RenameClass_NewClassNameMissing = "Commands_RenameClass_NewClassNameMissing";
+        internal const string Commands_RenameClass_OldClassNameMissing = "Commands_RenameClass_OldClassNameMissing";
+        internal const string Commands_RenameProperty_ClassNameMissing = "Commands_RenameProperty_ClassNameMissing";
+        internal const string Commands_RenameProperty_NewPropertyMissing = "Commands_RenameProperty_NewPropertyMissing";
+        internal const string Commands_RenameProperty_OldPropertyMissing = "Commands_RenameProperty_OldPropertyMissing";
         internal const string DataInDbMayBeLost = "DataInDbMayBeLost";
         internal const string InvalidModelMigrationId = "InvalidModelMigrationId";
         internal const string ModelEnableSuccessfull = "ModelEnableSuccessfull";
         internal const string ModelMigrationsAlreadyEnabled = "ModelMigrationsAlreadyEnabled";
         internal const string NoMigrationsToApplyOrRevert = "NoMigrationsToApplyOrRevert";
+        internal const string ParameterParser_InvalidVisibility = "ParameterParser_InvalidVisibility";
+        internal const string ParameterParser_UnknownPropertyType = "ParameterParser_UnknownPropertyType";
+        internal const string ParameterParser_WrongPropertyFormat = "ParameterParser_WrongPropertyFormat";
         internal const string PreconditionFailed = "PreconditionFailed";
         internal const string Precondition_ClassExists = "Precondition_ClassExists";
         internal const string Precondition_ClassNotExists = "Precondition_ClassNotExists";

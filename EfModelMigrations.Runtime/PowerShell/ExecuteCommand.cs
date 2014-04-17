@@ -22,6 +22,8 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         public ExecuteCommand(string commandFullName, object[] parameters) : base()
         {
+            Check.NotEmpty(commandFullName, "commandFullName");
+
             this.commandFullName = commandFullName;
             this.parameters = parameters;
 

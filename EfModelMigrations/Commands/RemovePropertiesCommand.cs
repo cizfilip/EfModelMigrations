@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Commands
 {
@@ -16,16 +17,15 @@ namespace EfModelMigrations.Commands
         private string className;
         private IEnumerable<string> propertiesToRemove;
 
-        //TODO: Dat stringy vyjimek do resourcu
         public RemovePropertiesCommand(string className, string[] propertiesToRemove)
         {
             if (string.IsNullOrWhiteSpace(className))
             {
-                throw new ModelMigrationsException("Name of class for removing properties is missing.");
+                throw new ModelMigrationsException(Strings.Commands_RemoveProperties_ClassNameMissing);
             }
             if (propertiesToRemove == null || propertiesToRemove.Length == 0)
             {
-                throw new ModelMigrationsException("No property to remove.");
+                throw new ModelMigrationsException(Strings.Commands_RemoveProperties_PropertiesMissing(className));
             }
 
             this.className = className;
@@ -50,7 +50,7 @@ namespace EfModelMigrations.Commands
 
             if(propertyModel == null)
             {
-                throw new ModelMigrationsException(string.Format("Cannot remove property {0} from class {1}, property does not exist.", property, classModel.Name)); //TODO: string do resourcu
+                throw new ModelMigrationsException(Strings.Commands_RemoveProperties_PropertyNotFound(property, classModel.Name)); //TODO: string do resourcu
             }
 
             return propertyModel;
