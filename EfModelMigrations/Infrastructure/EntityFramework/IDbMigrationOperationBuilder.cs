@@ -38,12 +38,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
         //Identity operations
         AddIdentityOperation TryBuildAddIdentityOperation(EntitySet storageEntitySet);
-        DropIdentityOperation TryBuildDropIdentityOperation(EntitySet storageEntitySet);
-
-
-        //Other
-        //InsertFromOperation InsertFromOperation(EntitySet fromEntitySet, IEnumerable<EdmProperty> fromColumns, EntitySet toEntitySet, IEnumerable<EdmProperty> toColumns);
-
-       
+        DropIdentityOperation TryBuildDropIdentityOperation(EntitySet storageEntitySet);       
     }
 }

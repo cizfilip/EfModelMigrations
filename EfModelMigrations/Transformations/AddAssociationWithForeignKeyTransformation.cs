@@ -5,6 +5,7 @@ using EfModelMigrations.Extensions;
 using System.Data.Entity.Migrations.Model;
 using System.Collections.Generic;
 using EfModelMigrations.Infrastructure.EntityFramework;
+using System;
 
 namespace EfModelMigrations.Transformations
 {
@@ -42,20 +43,30 @@ namespace EfModelMigrations.Transformations
 
         public static string[] GetUniquifiedDefaultForeignKeyColumnNames(AssociationEnd principal, AssociationEnd dependent, ClassCodeModel principalCodeModel, ClassCodeModel dependentCodeModel)
         {
-            string prefix = dependent.HasNavigationProperty ? dependent.NavigationProperty.Name : principal.ClassName;
+            Check.NotNull(principal, "principal");
+            Check.NotNull(dependent, "dependent");
+            Check.NotNull(principalCodeModel, "principalCodeModel");
+            Check.NotNull(dependentCodeModel, "dependentCodeModel");
 
             var dependentColumnNames = dependentCodeModel.StoreEntityType.Properties.Select(p => p.Name);
-
-            return principalCodeModel.PrimaryKeys.Select(
-                    p => string.Concat(prefix, "_", dependentColumnNames.Uniquify(p.Column.ColumnName))
-                ).ToArray();
+            return GetDefaultForeignKeyColumnNamesInternal(principal, dependent, principalCodeModel, c => dependentColumnNames.Uniquify(c));
         }
+
         public static string[] GetDefaultForeignKeyColumnNames(AssociationEnd principal, AssociationEnd dependent, ClassCodeModel principalCodeModel)
+        {
+            Check.NotNull(principal, "principal");
+            Check.NotNull(dependent, "dependent");
+            Check.NotNull(principalCodeModel, "principalCodeModel");
+
+            return GetDefaultForeignKeyColumnNamesInternal(principal, dependent, principalCodeModel);
+        }
+
+        private static string[] GetDefaultForeignKeyColumnNamesInternal(AssociationEnd principal, AssociationEnd dependent, ClassCodeModel principalCodeModel, Func<string, string> columnNameModificator = null)
         {
             string prefix = dependent.HasNavigationProperty ? dependent.NavigationProperty.Name : principal.ClassName;
 
             return principalCodeModel.PrimaryKeys.Select(
-                    p => string.Concat(prefix, "_", p.Column.ColumnName)
+                p => string.Concat(prefix, "_", columnNameModificator != null ? columnNameModificator(p.Column.ColumnName) : p.Column.ColumnName)
                 ).ToArray();
         }
     }

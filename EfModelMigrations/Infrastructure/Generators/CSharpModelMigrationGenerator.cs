@@ -9,6 +9,7 @@ using Microsoft.CSharp.RuntimeBinder;
 using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure.CodeModel;
 using System.Data.Entity.Core.Metadata.Edm;
+using EfModelMigrations.Resources;
 
 
 namespace EfModelMigrations.Infrastructure.Generators
@@ -16,7 +17,7 @@ namespace EfModelMigrations.Infrastructure.Generators
     public class CSharpModelMigrationGenerator : ModelMigrationGeneratorBase
     {
         protected static readonly string Indent = "    ";
-        public override GeneratedModelMigration GenerateMigration(string migrationId, IEnumerable<ModelTransformation> transformations, string @namespace, string className)
+        public override GeneratedModelMigration GenerateMigration(string migrationId, string migrationDirectory, IEnumerable<ModelTransformation> transformations, string @namespace, string className)
         {
             string upMethodBody = GenerateMethodBody(transformations);
 
@@ -32,12 +33,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 DownMethod = downMethodBody
             };
 
-            var generatedMigration = new GeneratedModelMigration()
-            {
-                SourceCode = template.TransformText()
-            };
-
-            return generatedMigration;
+            return new GeneratedModelMigration(migrationId, migrationDirectory, template.TransformText());
         }
 
         protected virtual string GenerateMethodBody(IEnumerable<ModelTransformation> transformations)
@@ -59,8 +55,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 }
                 catch (RuntimeBinderException e)
                 {
-                    //TODO: string do resourcu
-                    throw new ModelMigrationsException(string.Format("Cannot generate migration code for model transformation {0}. Generator implementation is missing.", transformation.GetType().Name), e);
+                    throw new ModelMigrationsException(Strings.ModelMigrationGenerator_ImplementationMissing(transformation.GetType().Name), e);
                 }
             }
             return builder.ToString();
@@ -209,8 +204,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
             catch (RuntimeBinderException e)
             {
-                //TODO: string do resourcu
-                throw new ModelMigrationsException(string.Format("Cannot generate property {0}. Generator implementation is missing.", property.Name), e);
+                throw new ModelMigrationsException(Strings.ModelMigrationGenerator_PropertyImplementationMissing(property.Name), e);
             }
         }
 
@@ -298,7 +292,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 case CodeModelVisibility.ProtectedInternal:
                     return "CodeModelVisibility.ProtectedInternal";
                 default:
-                    throw new InvalidOperationException("Invalid CodeModelVisibility."); //TODO: string do resourcu
+                    throw new InvalidOperationException(Strings.CodeModelVisibilityInvalid);
             }
         }
 
@@ -345,7 +339,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 case PrimitiveTypeKind.Single:
                     return "Single";
                 case PrimitiveTypeKind.SByte:
-                    throw new InvalidOperationException("PrimitiveTypeKind.SByte not supported as property type."); //TODO: string do resourcu
+                    throw new InvalidOperationException(Strings.ModelMigrationGenerator_SBytePropertyNotSupported);
                 case PrimitiveTypeKind.Int16:
                     return "Short";
                 case PrimitiveTypeKind.Int32:
@@ -355,7 +349,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 case PrimitiveTypeKind.String:
                     return "String";
                 default:
-                    throw new InvalidOperationException("Invalid PrimitiveTypeKind."); //TODO: string do resourcu
+                    throw new InvalidOperationException(Strings.PrimitiveTypeKindInvalid);
             }
         }
 

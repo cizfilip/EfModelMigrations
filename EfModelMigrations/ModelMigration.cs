@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations
 {
-    //TODO: pridat Check.<method> napric celym projektem - hlavne u public method
     //TODO: definovat metody ktere vraci nazvy DB migraci (jak pro up tak down) mozna by primo up a down metoda mohla vracet string
     public abstract class ModelMigration : IModelMigration
     {

@@ -9,7 +9,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 {
     internal static class XContainerExtension
     {
-
         public static IEnumerable<XElement> Descendants(this XContainer container, IEnumerable<XName> name)
         {
             return name.SelectMany(container.Descendants);

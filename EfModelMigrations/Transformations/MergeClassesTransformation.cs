@@ -3,6 +3,7 @@ using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
 using EfModelMigrations.Operations;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
@@ -36,10 +37,9 @@ namespace EfModelMigrations.Transformations
             this.Dependent = dependent;
             this.PropertiesToMerge = propertiesToMerge;
 
-            //TODO: stringy do resourců
             if (!principal.HasNavigationPropertyName && !dependent.HasNavigationPropertyName)
             {
-                throw new ModelTransformationValidationException("You must specify at least one navigation property for merge classes.");
+                throw new ModelTransformationValidationException(Strings.Transformations_NavigationPropertyMissing);
             }
         }
 

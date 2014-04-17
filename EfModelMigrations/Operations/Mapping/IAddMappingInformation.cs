@@ -6,7 +6,6 @@ namespace EfModelMigrations.Operations.Mapping
     {
         EfFluentApiCallChain BuildEfFluentApiCallChain();
 
-
         //TODO: umoznit delat i mapovani pomoci atributu
         //IEnumerable<AttributeInfo> BuildEfMappingAttributes();
     }

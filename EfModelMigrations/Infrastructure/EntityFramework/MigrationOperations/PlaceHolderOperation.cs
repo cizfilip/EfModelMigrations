@@ -9,7 +9,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
 {
     internal class PlaceholderOperation : SqlOperation
     {
-        private static readonly string PlaceholderSql = "-- EFModelMigrationsHaxOp";
+        private static readonly string PlaceholderSql = "-- EFModelMigrationsPlaceholderOperation";
 
         public PlaceholderOperation(MigrationOperation underlayingOperation)
             :base(PlaceholderSql, null)

@@ -12,6 +12,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions
     {
         public static string GetDefaultNameIfRequired(this IndexAttribute index, IEnumerable<string> columns)
         {
+            Check.NotNull(index, "index");
+
             if (string.IsNullOrEmpty(index.Name))
             {
                 return IndexOperation.BuildDefaultName(columns);
@@ -22,6 +24,9 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions
 
         public static IndexAttribute CopyWithNameAndOrder(this IndexAttribute index, string name, int order)
         {
+            Check.NotNull(index, "index");
+            Check.NotEmpty(name, "name");
+
             var indexToReturn = new IndexAttribute(name, order);
 
             if (index.IsUniqueConfigured)

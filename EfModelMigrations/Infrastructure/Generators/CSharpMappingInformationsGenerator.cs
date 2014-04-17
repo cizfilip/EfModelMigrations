@@ -2,6 +2,7 @@
 using EfModelMigrations.Infrastructure.Generators.Templates;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Operations.Mapping.Model;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations;
 using Microsoft.CSharp.RuntimeBinder;
 using System;
@@ -45,11 +46,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
             var result = string.Join(methodCallSeparator, generatedMethodCalls) + GetSyntaxToken(CSharpTokenType.StatementSeparator);
 
-            return new GeneratedFluetApiCall()
-            {
-                Content = result,
-                TargetType = callChain.EntityType
-            };
+            return new GeneratedFluetApiCall(callChain.EntityType, result);
         }
 
         protected virtual string GenerateOneFluentApiCall(EfFluetApiCall fluentApiCall)
@@ -85,8 +82,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
             catch (RuntimeBinderException e)
             {
-                //TODO: string do resourcu
-                throw new ModelMigrationsException(string.Format("Cannot generate mapping information, because parameter of type {0} is not supported", parameter.GetType().Name), e);
+                throw new ModelMigrationsException(Strings.MappingInformationsGenerator_ParameterNotSupported(parameter.GetType().Name), e);
             }
         }
 
@@ -318,7 +314,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 case CSharpTokenType.IndexerEnd:
                     return "]";
                 default:
-                    throw new InvalidOperationException("Invalid CSharpTokenType."); //TODO: string do resourcu
+                    throw new InvalidOperationException(Strings.MappingInformationsGenerator_InvalidCSharpTokenType);
             }
         }
 

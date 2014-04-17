@@ -88,11 +88,43 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
-        // A string like "Cannot find migration Id."
+        // A string like "Cannot find migration Id for migration {0}."
         // </summary>
-        internal static string CannotFindMigrationId
+        internal static string CannotFindMigrationId(object p0)
         {
-            get { return EntityRes.GetString(EntityRes.CannotFindMigrationId); }
+            return EntityRes.GetString(EntityRes.CannotFindMigrationId, p0);
+        }
+
+        // <summary>
+        // A string like "The argument '{0}' cannot be null, empty or contain only white space."
+        // </summary>
+        internal static string Check_NotEmpty(object p0)
+        {
+            return EntityRes.GetString(EntityRes.Check_NotEmpty, p0);
+        }
+
+        // <summary>
+        // A string like "The argument '{0}' cannot be null or empty."
+        // </summary>
+        internal static string Check_NotNullOrEmpty(object p0)
+        {
+            return EntityRes.GetString(EntityRes.Check_NotNullOrEmpty, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot generate property, because property type {0} is not supported."
+        // </summary>
+        internal static string CodeGenerator_PropertyTypeNotSupported(object p0)
+        {
+            return EntityRes.GetString(EntityRes.CodeGenerator_PropertyTypeNotSupported, p0);
+        }
+
+        // <summary>
+        // A string like "Invalid CodeModelVisibility."
+        // </summary>
+        internal static string CodeModelVisibilityInvalid
+        {
+            get { return EntityRes.GetString(EntityRes.CodeModelVisibilityInvalid); }
         }
 
         // <summary>
@@ -224,11 +256,91 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "The type '{0}' does not inherit from DbMigrationsConfiguration. The ModelMigrationsConfiguration.DbMigrationsConfigurationType property must be set to a type that inherits from DbMigrationsConfiguration."
+        // </summary>
+        internal static string DbMigrationsConfigurationTypeIsInvalid(object p0)
+        {
+            return EntityRes.GetString(EntityRes.DbMigrationsConfigurationTypeIsInvalid, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot create db migrations configuration, DbMigrationsConfigurationType was not specified."
+        // </summary>
+        internal static string DbMigrationsConfigurationTypeNotSpecified
+        {
+            get { return EntityRes.GetString(EntityRes.DbMigrationsConfigurationTypeNotSpecified); }
+        }
+
+        // <summary>
+        // A string like "Cannot find association from {0} to {1} in entity framework metadata."
+        // </summary>
+        internal static string EfModel_CannotFindAssociation(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.EfModel_CannotFindAssociation, p0, p1);
+        }
+
+        // <summary>
+        // A string like "annot find class {0} in entity framework metadata."
+        // </summary>
+        internal static string EfModel_CannotFindClass(object p0)
+        {
+            return EntityRes.GetString(EntityRes.EfModel_CannotFindClass, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot find column for property {0} in class {1}."
+        // </summary>
+        internal static string EfModel_CannotFindColumn(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.EfModel_CannotFindColumn, p0, p1);
+        }
+
+        // <summary>
+        // A string like "Cannot find join table for association from {0} to {1} in entity framework metadata."
+        // </summary>
+        internal static string EfModel_CannotFindJoinTable(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.EfModel_CannotFindJoinTable, p0, p1);
+        }
+
+        // <summary>
+        // A string like "The index with name '{0}' on table '{1}' has the same column order of '{2}' specified for columns '{3}' and '{4}'. Make sure a different order value is used for the IndexAttribute on each column of a multi-column index."
+        // </summary>
+        internal static string IndexOrderInvalid(object p0, object p1, object p2, object p3, object p4)
+        {
+            return EntityRes.GetString(EntityRes.IndexOrderInvalid, p0, p1, p2, p3, p4);
+        }
+
+        // <summary>
         // A string like "Invalid model migration id."
         // </summary>
         internal static string InvalidModelMigrationId
         {
             get { return EntityRes.GetString(EntityRes.InvalidModelMigrationId); }
+        }
+
+        // <summary>
+        // A string like "Invalid CSharpTokenType."
+        // </summary>
+        internal static string MappingInformationsGenerator_InvalidCSharpTokenType
+        {
+            get { return EntityRes.GetString(EntityRes.MappingInformationsGenerator_InvalidCSharpTokenType); }
+        }
+
+        // <summary>
+        // A string like "Cannot generate mapping information, because parameter of type {0} is not supported."
+        // </summary>
+        internal static string MappingInformationsGenerator_ParameterNotSupported(object p0)
+        {
+            return EntityRes.GetString(EntityRes.MappingInformationsGenerator_ParameterNotSupported, p0);
+        }
+
+        // <summary>
+        // A string like "Inversion migration operation was requested but not provided before."
+        // </summary>
+        internal static string MigrationOperationInverseMissing
+        {
+            get { return EntityRes.GetString(EntityRes.MigrationOperationInverseMissing); }
         }
 
         // <summary>
@@ -240,11 +352,51 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Cannot generate migration code for model transformation {0}. Generator implementation is missing."
+        // </summary>
+        internal static string ModelMigrationGenerator_ImplementationMissing(object p0)
+        {
+            return EntityRes.GetString(EntityRes.ModelMigrationGenerator_ImplementationMissing, p0);
+        }
+
+        // <summary>
+        // A string like "Cannot generate migration code for property type {0}. Generator implementation is missing."
+        // </summary>
+        internal static string ModelMigrationGenerator_PropertyImplementationMissing(object p0)
+        {
+            return EntityRes.GetString(EntityRes.ModelMigrationGenerator_PropertyImplementationMissing, p0);
+        }
+
+        // <summary>
+        // A string like "PrimitiveTypeKind.SByte not supported as property type."
+        // </summary>
+        internal static string ModelMigrationGenerator_SBytePropertyNotSupported
+        {
+            get { return EntityRes.GetString(EntityRes.ModelMigrationGenerator_SBytePropertyNotSupported); }
+        }
+
+        // <summary>
         // A string like "Model migrations was already enabled."
         // </summary>
         internal static string ModelMigrationsAlreadyEnabled
         {
             get { return EntityRes.GetString(EntityRes.ModelMigrationsAlreadyEnabled); }
+        }
+
+        // <summary>
+        // A string like "The 'ModelMigrationsDirectory' property of 'ModelMigrationsConfiguration' was set to the absolute path '{0}'. The model migrations directory must be set to a relative path for a sub-directory under the Visual Studio project root."
+        // </summary>
+        internal static string ModelMigrationsDirectoryIsRooted(object p0)
+        {
+            return EntityRes.GetString(EntityRes.ModelMigrationsDirectoryIsRooted, p0);
+        }
+
+        // <summary>
+        // A string like "Multiple migrations with name {0} was found."
+        // </summary>
+        internal static string MultipleMigrationsFound(object p0)
+        {
+            return EntityRes.GetString(EntityRes.MultipleMigrationsFound, p0);
         }
 
         // <summary>
@@ -304,6 +456,14 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Invalid PrimitiveTypeKind."
+        // </summary>
+        internal static string PrimitiveTypeKindInvalid
+        {
+            get { return EntityRes.GetString(EntityRes.PrimitiveTypeKindInvalid); }
+        }
+
+        // <summary>
         // A string like "Specified path must be absolute."
         // </summary>
         internal static string ProjectExtensions_PathMustBeAbsolute
@@ -317,6 +477,78 @@ namespace EfModelMigrations.Resources
         internal static string ProjectExtensions_PathMustBeRelative
         {
             get { return EntityRes.GetString(EntityRes.ProjectExtensions_PathMustBeRelative); }
+        }
+
+        // <summary>
+        // A string like "Invalid RelationshipMultiplicity."
+        // </summary>
+        internal static string RelationshipMultiplicityInvalid
+        {
+            get { return EntityRes.GetString(EntityRes.RelationshipMultiplicityInvalid); }
+        }
+
+        // <summary>
+        // A string like "Inversion transformation was requested but not provided before."
+        // </summary>
+        internal static string TransformationInverseMissing
+        {
+            get { return EntityRes.GetString(EntityRes.TransformationInverseMissing); }
+        }
+
+        // <summary>
+        // A string like "Foreign key properties and foreign key column names are both specified. You can specify only foreign key properties or foreign key column names not both."
+        // </summary>
+        internal static string Transformations_FkNamesAndFkPropsBothSpecified
+        {
+            get { return EntityRes.GetString(EntityRes.Transformations_FkNamesAndFkPropsBothSpecified); }
+        }
+
+        // <summary>
+        // A string like "Principal navigation property in one to many association must have IsCollection set to true."
+        // </summary>
+        internal static string Transformations_InvalidManyNavigationProperty
+        {
+            get { return EntityRes.GetString(EntityRes.Transformations_InvalidManyNavigationProperty); }
+        }
+
+        // <summary>
+        // A string like "Invalid association multiplicity for many to many association."
+        // </summary>
+        internal static string Transformations_InvalidMultiplicityManyToMany
+        {
+            get { return EntityRes.GetString(EntityRes.Transformations_InvalidMultiplicityManyToMany); }
+        }
+
+        // <summary>
+        // A string like "Invalid association multiplicity for one to many association."
+        // </summary>
+        internal static string Transformations_InvalidMultiplicityOneToMany
+        {
+            get { return EntityRes.GetString(EntityRes.Transformations_InvalidMultiplicityOneToMany); }
+        }
+
+        // <summary>
+        // A string like "Invalid association multiplicity for one to one foreign key association."
+        // </summary>
+        internal static string Transformations_InvalidMultiplicityOneToOneFk
+        {
+            get { return EntityRes.GetString(EntityRes.Transformations_InvalidMultiplicityOneToOneFk); }
+        }
+
+        // <summary>
+        // A string like "Invalid association multiplicity for one to one primary key association."
+        // </summary>
+        internal static string Transformations_InvalidMultiplicityOneToOnePk
+        {
+            get { return EntityRes.GetString(EntityRes.Transformations_InvalidMultiplicityOneToOnePk); }
+        }
+
+        // <summary>
+        // A string like "You must specify at least one navigation property."
+        // </summary>
+        internal static string Transformations_NavigationPropertyMissing
+        {
+            get { return EntityRes.GetString(EntityRes.Transformations_NavigationPropertyMissing); }
         }
 
         // <summary>
@@ -441,6 +673,10 @@ namespace EfModelMigrations.Resources
         internal const string CannotFindEnumInModelProject = "CannotFindEnumInModelProject";
         internal const string CannotFindMigration = "CannotFindMigration";
         internal const string CannotFindMigrationId = "CannotFindMigrationId";
+        internal const string Check_NotEmpty = "Check_NotEmpty";
+        internal const string Check_NotNullOrEmpty = "Check_NotNullOrEmpty";
+        internal const string CodeGenerator_PropertyTypeNotSupported = "CodeGenerator_PropertyTypeNotSupported";
+        internal const string CodeModelVisibilityInvalid = "CodeModelVisibilityInvalid";
         internal const string CommandNameNotSpecified = "CommandNameNotSpecified";
         internal const string Commands_AddProperties_ClassNameMissing = "Commands_AddProperties_ClassNameMissing";
         internal const string Commands_AddProperties_NoProperties = "Commands_AddProperties_NoProperties";
@@ -457,9 +693,24 @@ namespace EfModelMigrations.Resources
         internal const string Commands_RenameProperty_NewPropertyMissing = "Commands_RenameProperty_NewPropertyMissing";
         internal const string Commands_RenameProperty_OldPropertyMissing = "Commands_RenameProperty_OldPropertyMissing";
         internal const string DataInDbMayBeLost = "DataInDbMayBeLost";
+        internal const string DbMigrationsConfigurationTypeIsInvalid = "DbMigrationsConfigurationTypeIsInvalid";
+        internal const string DbMigrationsConfigurationTypeNotSpecified = "DbMigrationsConfigurationTypeNotSpecified";
+        internal const string EfModel_CannotFindAssociation = "EfModel_CannotFindAssociation";
+        internal const string EfModel_CannotFindClass = "EfModel_CannotFindClass";
+        internal const string EfModel_CannotFindColumn = "EfModel_CannotFindColumn";
+        internal const string EfModel_CannotFindJoinTable = "EfModel_CannotFindJoinTable";
+        internal const string IndexOrderInvalid = "IndexOrderInvalid";
         internal const string InvalidModelMigrationId = "InvalidModelMigrationId";
+        internal const string MappingInformationsGenerator_InvalidCSharpTokenType = "MappingInformationsGenerator_InvalidCSharpTokenType";
+        internal const string MappingInformationsGenerator_ParameterNotSupported = "MappingInformationsGenerator_ParameterNotSupported";
+        internal const string MigrationOperationInverseMissing = "MigrationOperationInverseMissing";
         internal const string ModelEnableSuccessfull = "ModelEnableSuccessfull";
+        internal const string ModelMigrationGenerator_ImplementationMissing = "ModelMigrationGenerator_ImplementationMissing";
+        internal const string ModelMigrationGenerator_PropertyImplementationMissing = "ModelMigrationGenerator_PropertyImplementationMissing";
+        internal const string ModelMigrationGenerator_SBytePropertyNotSupported = "ModelMigrationGenerator_SBytePropertyNotSupported";
         internal const string ModelMigrationsAlreadyEnabled = "ModelMigrationsAlreadyEnabled";
+        internal const string ModelMigrationsDirectoryIsRooted = "ModelMigrationsDirectoryIsRooted";
+        internal const string MultipleMigrationsFound = "MultipleMigrationsFound";
         internal const string NoMigrationsToApplyOrRevert = "NoMigrationsToApplyOrRevert";
         internal const string ParameterParser_InvalidVisibility = "ParameterParser_InvalidVisibility";
         internal const string ParameterParser_UnknownPropertyType = "ParameterParser_UnknownPropertyType";
@@ -467,8 +718,18 @@ namespace EfModelMigrations.Resources
         internal const string PreconditionFailed = "PreconditionFailed";
         internal const string Precondition_ClassExists = "Precondition_ClassExists";
         internal const string Precondition_ClassNotExists = "Precondition_ClassNotExists";
+        internal const string PrimitiveTypeKindInvalid = "PrimitiveTypeKindInvalid";
         internal const string ProjectExtensions_PathMustBeAbsolute = "ProjectExtensions_PathMustBeAbsolute";
         internal const string ProjectExtensions_PathMustBeRelative = "ProjectExtensions_PathMustBeRelative";
+        internal const string RelationshipMultiplicityInvalid = "RelationshipMultiplicityInvalid";
+        internal const string TransformationInverseMissing = "TransformationInverseMissing";
+        internal const string Transformations_FkNamesAndFkPropsBothSpecified = "Transformations_FkNamesAndFkPropsBothSpecified";
+        internal const string Transformations_InvalidManyNavigationProperty = "Transformations_InvalidManyNavigationProperty";
+        internal const string Transformations_InvalidMultiplicityManyToMany = "Transformations_InvalidMultiplicityManyToMany";
+        internal const string Transformations_InvalidMultiplicityOneToMany = "Transformations_InvalidMultiplicityOneToMany";
+        internal const string Transformations_InvalidMultiplicityOneToOneFk = "Transformations_InvalidMultiplicityOneToOneFk";
+        internal const string Transformations_InvalidMultiplicityOneToOnePk = "Transformations_InvalidMultiplicityOneToOnePk";
+        internal const string Transformations_NavigationPropertyMissing = "Transformations_NavigationPropertyMissing";
         internal const string TypeFinder_MultipleTypesFound = "TypeFinder_MultipleTypesFound";
         internal const string VsCodeModel_FailedToAddDbSetProperty = "VsCodeModel_FailedToAddDbSetProperty";
         internal const string VsCodeModel_FailedToAddMappingInformation = "VsCodeModel_FailedToAddMappingInformation";

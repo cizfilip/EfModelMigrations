@@ -11,6 +11,7 @@ using System.Data.Entity.Core.Common;
 using System.Data.Entity.Infrastructure.Annotations;
 using EfModelMigrations.Exceptions;
 using EfModelMigrations.Transformations.Model;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
@@ -61,7 +62,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
             catch (Exception e)
             {
-                throw new EfModelException(string.Format("Cannot find join table for association from {0} to {1} in entity framework metadata", from.ClassName, to.ClassName), e); //TODO: string do resourcu
+                throw new EfModelException(Strings.EfModel_CannotFindJoinTable(from.ClassName, to.ClassName), e);
             }
         }
 
@@ -91,7 +92,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
             catch (Exception e)
             {
-                throw new EfModelException(string.Format("Cannot find association from {0} to {1} in entity framework metadata", from.ClassName, to.ClassName), e); //TODO: string do resourcu
+                throw new EfModelException(Strings.EfModel_CannotFindAssociation(from.ClassName, to.ClassName), e);
             }
             
         }
@@ -105,7 +106,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
             catch (Exception e)
             {
-                throw new EfModelException(string.Format("Cannot find class {0} in entity framework metadata", className), e); //TODO: string do resourcu
+                throw new EfModelException(Strings.EfModel_CannotFindClass(className), e);
             }
         }
 
@@ -118,7 +119,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
             catch (Exception e)
             {
-                throw new EfModelException(string.Format("Cannot find class {0} in entity framework metadata", className), e); //TODO: string do resourcu
+                throw new EfModelException(Strings.EfModel_CannotFindClass(className), e);
             }
         }
 
@@ -135,7 +136,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             }
             catch (Exception e)
             {
-                throw new EfModelException(string.Format("Cannot find column for property {0} in class {1}", propertyName, className), e); //TODO: string do resourcu
+                throw new EfModelException(Strings.EfModel_CannotFindColumn(propertyName, className), e);
             }
         }
        

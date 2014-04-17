@@ -5,6 +5,7 @@ using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
@@ -47,20 +48,19 @@ namespace EfModelMigrations.Transformations
             this.ForeignKeyProperties = foreignKeyProperties;
             this.ForeignKeyIndex = foreignKeyIndex;
 
-            //TODO: stringy do resourců
             if (!MultiplicityHelper.IsOneToMany(principal, dependent))
             {
-                throw new ModelTransformationValidationException("Invalid association multiplicity for one to many association.");
+                throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityOneToMany);
             }
 
             if (principal.HasNavigationProperty && !principal.NavigationProperty.IsCollection)
             {
-                throw new ModelTransformationValidationException("Principal navigation property in one to many association must have IsCollection set to true.");
+                throw new ModelTransformationValidationException(Strings.Transformations_InvalidManyNavigationProperty);
             }
 
             if (ForeignKeyColumnNames != null && foreignKeyProperties != null)
             {
-                throw new ModelTransformationValidationException("Foreign key properties and foreign key column names are both specified. You can specify only foreign key properties or foreign key column names not both.");
+                throw new ModelTransformationValidationException(Strings.Transformations_FkNamesAndFkPropsBothSpecified);
             }
         }
 

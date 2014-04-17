@@ -25,15 +25,12 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            //TODO: a co mapovaci informace jednak o tride a jednak o jejich property??
             yield return new RemoveMappingInformationOperation(new RemoveClassMapping(Name));
             yield return new RemoveClassOperation(Name);
 
             yield return new RemoveDbSetPropertyOperation(Name);
         }
         
-        //TODO: pri dropu tabulky ci sloupecku se musi kontrolovat zda-li se s tim mazou nejaka data - a kdyby ano
-        //tak operaci provést jenom pokud byl predan parameter -Force
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
             yield return builder.DropTableOperation(

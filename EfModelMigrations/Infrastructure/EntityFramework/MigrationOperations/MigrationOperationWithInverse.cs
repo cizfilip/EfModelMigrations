@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EfModelMigrations.Resources;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
 using System.Linq;
@@ -21,6 +22,10 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations
         {
             get
             {
+                if (inverse == null)
+                {
+                    throw new InvalidOperationException(Strings.MigrationOperationInverseMissing);
+                }
                 return inverse;
             }
         }

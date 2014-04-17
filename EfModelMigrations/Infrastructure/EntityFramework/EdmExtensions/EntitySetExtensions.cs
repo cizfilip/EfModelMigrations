@@ -12,6 +12,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         //TODO: mozna prevzit z EF tridu DbName a pouzivat ji
         public static string FullTableName(this EntitySet storageEntitySet)
         {
+            Check.NotNull(storageEntitySet, "storageEntitySet");
+
             return string.Concat(storageEntitySet.Schema, ".", storageEntitySet.Table);
         }
     }

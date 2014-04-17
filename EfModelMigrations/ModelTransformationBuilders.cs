@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations
 {
-    //TODO: refaktorovat fluent api pro associace
+    //TODO: refaktorovat fluent api pro associace nebo odstranit
+
     //public abstract class ModelTransformationBuilderBase : IFluentInterface
     //{
     //    protected ModelMigration migration;

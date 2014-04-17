@@ -2,6 +2,7 @@
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
@@ -23,10 +24,9 @@ namespace EfModelMigrations.Transformations
         {
             this.JoinTable = joinTable;
 
-            //TODO: stringy do resourců
             if (!MultiplicityHelper.IsOneToMany(source, target))
             {
-                throw new ModelTransformationValidationException("Invalid association multiplicity for many to many association.");
+                throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityManyToMany);
             }
         }
 

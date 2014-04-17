@@ -145,7 +145,19 @@
     <value>Cannot find migration {0}.</value>
   </data>
   <data name="CannotFindMigrationId" xml:space="preserve">
-    <value>Cannot find migration Id.</value>
+    <value>Cannot find migration Id for migration {0}.</value>
+  </data>
+  <data name="Check_NotEmpty" xml:space="preserve">
+    <value>The argument '{0}' cannot be null, empty or contain only white space.</value>
+  </data>
+  <data name="Check_NotNullOrEmpty" xml:space="preserve">
+    <value>The argument '{0}' cannot be null or empty.</value>
+  </data>
+  <data name="CodeGenerator_PropertyTypeNotSupported" xml:space="preserve">
+    <value>Cannot generate property, because property type {0} is not supported.</value>
+  </data>
+  <data name="CodeModelVisibilityInvalid" xml:space="preserve">
+    <value>Invalid CodeModelVisibility.</value>
   </data>
   <data name="CommandNameNotSpecified" xml:space="preserve">
     <value>Command name not specified.</value>
@@ -195,14 +207,59 @@
   <data name="DataInDbMayBeLost" xml:space="preserve">
     <value>Some operations in migration {0} may cause data loss in database! If you really want to execute this migration rerun the migrate command with -Force parameter.</value>
   </data>
+  <data name="DbMigrationsConfigurationTypeIsInvalid" xml:space="preserve">
+    <value>The type '{0}' does not inherit from DbMigrationsConfiguration. The ModelMigrationsConfiguration.DbMigrationsConfigurationType property must be set to a type that inherits from DbMigrationsConfiguration.</value>
+  </data>
+  <data name="DbMigrationsConfigurationTypeNotSpecified" xml:space="preserve">
+    <value>Cannot create db migrations configuration, DbMigrationsConfigurationType was not specified.</value>
+  </data>
+  <data name="EfModel_CannotFindAssociation" xml:space="preserve">
+    <value>Cannot find association from {0} to {1} in entity framework metadata.</value>
+  </data>
+  <data name="EfModel_CannotFindClass" xml:space="preserve">
+    <value>annot find class {0} in entity framework metadata.</value>
+  </data>
+  <data name="EfModel_CannotFindColumn" xml:space="preserve">
+    <value>Cannot find column for property {0} in class {1}.</value>
+  </data>
+  <data name="EfModel_CannotFindJoinTable" xml:space="preserve">
+    <value>Cannot find join table for association from {0} to {1} in entity framework metadata.</value>
+  </data>
+  <data name="IndexOrderInvalid" xml:space="preserve">
+    <value>The index with name '{0}' on table '{1}' has the same column order of '{2}' specified for columns '{3}' and '{4}'. Make sure a different order value is used for the IndexAttribute on each column of a multi-column index.</value>
+  </data>
   <data name="InvalidModelMigrationId" xml:space="preserve">
     <value>Invalid model migration id.</value>
+  </data>
+  <data name="MappingInformationsGenerator_InvalidCSharpTokenType" xml:space="preserve">
+    <value>Invalid CSharpTokenType.</value>
+  </data>
+  <data name="MappingInformationsGenerator_ParameterNotSupported" xml:space="preserve">
+    <value>Cannot generate mapping information, because parameter of type {0} is not supported.</value>
+  </data>
+  <data name="MigrationOperationInverseMissing" xml:space="preserve">
+    <value>Inversion migration operation was requested but not provided before.</value>
   </data>
   <data name="ModelEnableSuccessfull" xml:space="preserve">
     <value>Model migrations was successfully enabled in current project.</value>
   </data>
+  <data name="ModelMigrationGenerator_ImplementationMissing" xml:space="preserve">
+    <value>Cannot generate migration code for model transformation {0}. Generator implementation is missing.</value>
+  </data>
+  <data name="ModelMigrationGenerator_PropertyImplementationMissing" xml:space="preserve">
+    <value>Cannot generate migration code for property type {0}. Generator implementation is missing.</value>
+  </data>
+  <data name="ModelMigrationGenerator_SBytePropertyNotSupported" xml:space="preserve">
+    <value>PrimitiveTypeKind.SByte not supported as property type.</value>
+  </data>
   <data name="ModelMigrationsAlreadyEnabled" xml:space="preserve">
     <value>Model migrations was already enabled.</value>
+  </data>
+  <data name="ModelMigrationsDirectoryIsRooted" xml:space="preserve">
+    <value>The 'ModelMigrationsDirectory' property of 'ModelMigrationsConfiguration' was set to the absolute path '{0}'. The model migrations directory must be set to a relative path for a sub-directory under the Visual Studio project root.</value>
+  </data>
+  <data name="MultipleMigrationsFound" xml:space="preserve">
+    <value>Multiple migrations with name {0} was found.</value>
   </data>
   <data name="NoMigrationsToApplyOrRevert" xml:space="preserve">
     <value>Unable to find any migration to apply or revert.</value>
@@ -225,11 +282,41 @@
   <data name="Precondition_ClassNotExists" xml:space="preserve">
     <value>Class {0} does not exist in model.</value>
   </data>
+  <data name="PrimitiveTypeKindInvalid" xml:space="preserve">
+    <value>Invalid PrimitiveTypeKind.</value>
+  </data>
   <data name="ProjectExtensions_PathMustBeAbsolute" xml:space="preserve">
     <value>Specified path must be absolute.</value>
   </data>
   <data name="ProjectExtensions_PathMustBeRelative" xml:space="preserve">
     <value>Specified path must be relative to project directory.</value>
+  </data>
+  <data name="RelationshipMultiplicityInvalid" xml:space="preserve">
+    <value>Invalid RelationshipMultiplicity.</value>
+  </data>
+  <data name="TransformationInverseMissing" xml:space="preserve">
+    <value>Inversion transformation was requested but not provided before.</value>
+  </data>
+  <data name="Transformations_FkNamesAndFkPropsBothSpecified" xml:space="preserve">
+    <value>Foreign key properties and foreign key column names are both specified. You can specify only foreign key properties or foreign key column names not both.</value>
+  </data>
+  <data name="Transformations_InvalidManyNavigationProperty" xml:space="preserve">
+    <value>Principal navigation property in one to many association must have IsCollection set to true.</value>
+  </data>
+  <data name="Transformations_InvalidMultiplicityManyToMany" xml:space="preserve">
+    <value>Invalid association multiplicity for many to many association.</value>
+  </data>
+  <data name="Transformations_InvalidMultiplicityOneToMany" xml:space="preserve">
+    <value>Invalid association multiplicity for one to many association.</value>
+  </data>
+  <data name="Transformations_InvalidMultiplicityOneToOneFk" xml:space="preserve">
+    <value>Invalid association multiplicity for one to one foreign key association.</value>
+  </data>
+  <data name="Transformations_InvalidMultiplicityOneToOnePk" xml:space="preserve">
+    <value>Invalid association multiplicity for one to one primary key association.</value>
+  </data>
+  <data name="Transformations_NavigationPropertyMissing" xml:space="preserve">
+    <value>You must specify at least one navigation property.</value>
   </data>
   <data name="TypeFinder_MultipleTypesFound" xml:space="preserve">
     <value>More than one type with base type {0} was found.</value>

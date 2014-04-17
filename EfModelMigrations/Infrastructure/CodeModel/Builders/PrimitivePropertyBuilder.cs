@@ -237,10 +237,7 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
 
             return scalarProperty;
         }
-
-
     }
-
 
     public interface IPrimitiveMappingBuilder : IFluentInterface
     {

@@ -98,7 +98,6 @@
     <Compile Include="Infrastructure\CodeModel\NavigationPropertyCodeModel.cs" />
     <Compile Include="Infrastructure\EntityFramework\DbMigrationExtensions\DbMigrationExtensions.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\EdmxNames.cs" />
-    <Compile Include="Infrastructure\EntityFramework\Edmx\EdmxXmlExtensions.cs" />
     <Compile Include="Infrastructure\EntityFramework\Edmx\XContainerExtension.cs" />
     <Compile Include="Infrastructure\EntityFramework\ExtendedCSharpMigrationCodeGenerator.cs" />
     <Compile Include="Infrastructure\EntityFramework\ExtendedSqlServerMigrationSqlGenerator.cs" />
@@ -168,7 +167,6 @@
     <Compile Include="Operations\Mapping\Model\EfFluentApiMethods.cs" />
     <Compile Include="Operations\Mapping\Model\EfFluetApiCall.cs" />
     <Compile Include="Operations\Mapping\Model\EnumParameter.cs" />
-    <Compile Include="Operations\Mapping\Model\IEfFluentApiMethod.cs" />
     <Compile Include="Operations\Mapping\Model\IEfFluentApiMethodParameter.cs" />
     <Compile Include="Operations\Mapping\Model\IndexAnnotationParameter.cs" />
     <Compile Include="Operations\Mapping\Model\MapMethodParameter.cs" />
@@ -213,7 +211,6 @@
     <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />
     <Compile Include="Transformations\Preconditions\ClassExistsInModelPrecondition.cs" />
     <Compile Include="Transformations\Preconditions\ClassNotExistsInModelPrecondition.cs" />
-    <Compile Include="Transformations\Preconditions\IPreconditionBuilder.cs" />
     <Compile Include="Transformations\Preconditions\ModelTransformationPrecondition.cs" />
     <Compile Include="Transformations\Preconditions\VerificationResult.cs" />
     <Compile Include="Transformations\RemoveAssociationTransformation.cs" />

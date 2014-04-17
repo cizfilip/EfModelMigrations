@@ -15,6 +15,9 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
     {
         public static ColumnModel ToColumnModel(this EdmProperty property, DbProviderManifest providerManifest, IDictionary<string, AnnotationValues> annotations = null)
         {
+            Check.NotNull(property, "property");
+            Check.NotNull(providerManifest, "providerManifest");
+
             var conceptualTypeUsage = providerManifest.GetEdmType(property.TypeUsage);
             var defaultStoreTypeUsage = providerManifest.GetStoreType(conceptualTypeUsage);
 

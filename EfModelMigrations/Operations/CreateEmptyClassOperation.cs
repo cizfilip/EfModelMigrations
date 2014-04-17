@@ -1,8 +1,4 @@
-﻿using EfModelMigrations.Infrastructure;
-using EfModelMigrations.Infrastructure.CodeModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EfModelMigrations.Infrastructure.CodeModel;
 
 namespace EfModelMigrations.Operations
 {

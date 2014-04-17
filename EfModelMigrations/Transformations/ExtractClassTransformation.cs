@@ -131,7 +131,6 @@ namespace EfModelMigrations.Transformations
 
             //drop columns
             operations.AddRange(dropColumnOperations);
-            
 
             return operations;
         }
@@ -185,6 +184,7 @@ namespace EfModelMigrations.Transformations
 
         private PrimitivePropertyCodeModel GetDefaultPrimaryKeyForNewClass()
         {
+            //A co kdyz property s nazvem Id bude exisotvat (tj je to jedna z extrahovanych properties)
             var prop = ((PrimitiveMappingBuilder)new PrimitivePropertyBuilder().Int()).Property;
             prop.Name = "Id";
             return prop;

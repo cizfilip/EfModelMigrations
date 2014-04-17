@@ -9,7 +9,6 @@ using System.Data.Entity.Migrations.Model;
 
 namespace EfModelMigrations.Transformations
 {
-    //TODO: pridat moznost specifikovat index
     public class AddPropertyTransformation : ModelTransformation
     {
         public string ClassName { get; private set; }

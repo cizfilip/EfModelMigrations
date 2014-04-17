@@ -8,6 +8,7 @@ using System.Data.Entity.Utilities;
 using System.Diagnostics;
 using System.Linq;
 using EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions;
+using EfModelMigrations.Resources;
 using System;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
@@ -69,7 +70,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             get { return table; }
         }
 
-        //TODO: stringy do resourcu
         public void Add(string columnName, IndexAttribute newIndex)
         {
             Debug.Assert(index.Name == newIndex.Name);
@@ -77,10 +77,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             if (columns.ContainsKey(newIndex.Order))
             {
                 throw new InvalidOperationException(
-                    string.Format("The index with name '{0}' on table '{1}' has the same column order of '{2}' specified for columns '{3}' and '{4}'. Make sure a different order value is used for the IndexAttribute on each column of a multi-column index.",
-                        newIndex.Name, table, newIndex.Order, columns[newIndex.Order], columnName
-                    ));
-                    
+                    Strings.IndexOrderInvalid(newIndex.Name, table, newIndex.Order, columns[newIndex.Order], columnName)
+                );    
             }
 
             columns[newIndex.Order] = columnName;

@@ -15,6 +15,9 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         public CodeGenerator(CodeGeneratorDefaults defaults, IMappingInformationsGenerator mappingGenerator)
         {
+            Check.NotNull(defaults, "defaults");
+            Check.NotNull(mappingGenerator, "mappingGenerator");
+
             this.defaults = defaults;
             this.mappingGenerator = mappingGenerator;
         }

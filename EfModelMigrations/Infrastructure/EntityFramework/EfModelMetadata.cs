@@ -150,8 +150,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 .Single(p => p.Property.Name.EqualsOrdinal(propertyName));
         }
 
-
-        //TODO: upravit EdmxNames tak abych ho ideálně mohl z projektu úplně vypustit - jelikož z něho využívám jen to co je v této metodě
         public static EfModelMetadata Load(string edmx)
         {
             var model = XDocument.Parse(edmx);

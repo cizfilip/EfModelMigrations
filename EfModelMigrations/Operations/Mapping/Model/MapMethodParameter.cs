@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EfModelMigrations.Operations.Mapping.Model
 {
@@ -18,7 +15,7 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public MapMethodParameter MapKey(string[] foreignKeyColumnNames)
         {
-            Check.NotNull(foreignKeyColumnNames, "foreignKeyColumnNames");
+            Check.NotNullOrEmpty(foreignKeyColumnNames, "foreignKeyColumnNames");
 
             MapKeyInternal(foreignKeyColumnNames, EfFluentApiMethods.MapKey);
             return this;
@@ -26,7 +23,7 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public MapMethodParameter MapLeftKey(string[] foreignKeyColumnNames)
         {
-            Check.NotNull(foreignKeyColumnNames, "foreignKeyColumnNames");
+            Check.NotNullOrEmpty(foreignKeyColumnNames, "foreignKeyColumnNames");
 
             MapKeyInternal(foreignKeyColumnNames, EfFluentApiMethods.MapLeftKey);
             return this;
@@ -34,7 +31,7 @@ namespace EfModelMigrations.Operations.Mapping.Model
 
         public MapMethodParameter MapRightKey(string[] foreignKeyColumnNames)
         {
-            Check.NotNull(foreignKeyColumnNames, "foreignKeyColumnNames");
+            Check.NotNullOrEmpty(foreignKeyColumnNames, "foreignKeyColumnNames");
 
             MapKeyInternal(foreignKeyColumnNames, EfFluentApiMethods.MapRightKey);
             return this;

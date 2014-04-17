@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using EfModelMigrations.Extensions;
 
 namespace EfModelMigrations.Operations.Mapping.Model
 {
-    public class EfFluentApiCallChain
+    public sealed class EfFluentApiCallChain
     {
         public string EntityType { get; private set; }
         public IList<EfFluetApiCall> FluentApiCalls { get; private set; }

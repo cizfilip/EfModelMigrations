@@ -2,6 +2,7 @@
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Collections.Generic;
@@ -24,10 +25,9 @@ namespace EfModelMigrations.Transformations
             this.Principal = principal;
             this.Dependent = dependent;
 
-            //TODO: stringy do resourců
             if (!principal.HasNavigationProperty && !dependent.HasNavigationProperty)
             {
-                throw new ModelTransformationValidationException("You must specify at least one navigation property for association.");
+                throw new ModelTransformationValidationException(Strings.Transformations_NavigationPropertyMissing);
             }
         }
 

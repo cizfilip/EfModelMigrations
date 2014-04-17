@@ -12,6 +12,7 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure.Pluralization;
 using System.Data.Entity.Infrastructure.DependencyResolution;
 using EfModelMigrations.Configuration;
+using EfModelMigrations.Resources;
 
 
 namespace EfModelMigrations.Infrastructure.Generators
@@ -30,6 +31,9 @@ namespace EfModelMigrations.Infrastructure.Generators
             CodeModelVisibility? visibility, string baseType, 
             IEnumerable<string> implementedInterfaces)
         {
+            Check.NotEmpty(name, "name");
+            Check.NotEmpty(@namespace, "@namespace");           
+
             return new ClassTemplate()
             {
                 Name = name,
@@ -44,8 +48,9 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         public override string GenerateProperty(PropertyCodeModel propertyModel, out string propertyName)
         {
-            propertyName = propertyModel.Name;
+            Check.NotNull(propertyModel, "propertyModel");
 
+            propertyName = propertyModel.Name;
             var propertyDefaults = GetPropertyDefaults(propertyModel);
 
             return new PropertyTemplate()
@@ -62,6 +67,8 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         public override string GenerateDbSetProperty(string className, out string dbSetPropertyName)
         {
+            Check.NotEmpty(className, "className");
+
             dbSetPropertyName = pluralizationService.Pluralize(className);
             return new DbSetPropertyTemplate()
             {
@@ -113,8 +120,7 @@ namespace EfModelMigrations.Infrastructure.Generators
             }
             catch (RuntimeBinderException e)
             {
-                //TODO: string do resourcu
-                throw new ModelMigrationsException(string.Format("Cannot generate property, because property type {0} is not supported", property.GetType().Name), e);
+                throw new ModelMigrationsException(Strings.CodeGenerator_PropertyTypeNotSupported(property.GetType().Name), e);
             }
         }
 
@@ -204,7 +210,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                     returnType = "string";
                     break;
                 default:
-                    throw new InvalidOperationException("Invalid PrimitiveTypeKind."); //TODO: string do resourcu
+                    throw new InvalidOperationException(Strings.PrimitiveTypeKindInvalid);
             }
 
             if (mayBeNullable && property.IsTypeNullable)
@@ -217,6 +223,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 
         protected virtual string GetPropertyTypeAsString(NavigationPropertyCodeModel property)
         {
+            //TODO: dodelat moznost nastaveni jaky interface pro kolekcni navigacni property se bude pouzivat
             if (property.IsCollection)
             {
                 return string.Format("ICollection<{0}>", property.TargetClass);
@@ -241,8 +248,5 @@ namespace EfModelMigrations.Infrastructure.Generators
 
             return defaults.Property;
         }
-
-
-        
     }
 }

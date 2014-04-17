@@ -46,10 +46,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
         protected override IEnumerable<string> GetNamespaces(IEnumerable<MigrationOperation> operations)
         {
             var addedNamespaces = new List<string>();
-
             addedNamespaces.Add("EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions");
-
-            //TODO: pridat namespacy s extension metodama pro nove databazove migracni operace
             return base.GetNamespaces(operations).Concat(addedNamespaces);
         }
 

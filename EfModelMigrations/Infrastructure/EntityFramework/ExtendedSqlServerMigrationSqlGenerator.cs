@@ -71,13 +71,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                     " INNER JOIN " + from.TableName + " AS " + fromTableAlias +
                     " ON " + joinColumns
             ));
-
-            //UPDATE t
-            //   SET t.col1 = o.col1
-            //  FROM table1 AS t
-            //         INNER JOIN 
-            //       table2 AS o 
-            //         ON t.id = o.id            
         }
 
         protected virtual void Generate(IdentityOperation migrationOperation)

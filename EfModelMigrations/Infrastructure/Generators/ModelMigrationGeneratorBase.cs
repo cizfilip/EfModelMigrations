@@ -9,7 +9,7 @@ namespace EfModelMigrations.Infrastructure.Generators
 {
     public abstract class ModelMigrationGeneratorBase : IModelMigrationGenerator
     {
-        public abstract GeneratedModelMigration GenerateMigration(string migrationId, IEnumerable<ModelTransformation> transformations, string @namespace, string className);
+        public abstract GeneratedModelMigration GenerateMigration(string migrationId, string migrationDirectory, IEnumerable<ModelTransformation> transformations, string @namespace, string className);
 
         protected virtual IEnumerable<string> GetImportNamespaces()
         {

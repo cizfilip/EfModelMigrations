@@ -9,6 +9,8 @@ namespace EfModelMigrations
 
         public ModelMigrationIdAttribute(string id)
         {
+            Check.NotEmpty(id, "id");
+
             this.Id = id;
         }
     }

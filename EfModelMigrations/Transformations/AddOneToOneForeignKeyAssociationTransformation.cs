@@ -11,6 +11,7 @@ using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
 using System.ComponentModel.DataAnnotations.Schema;
 using EfModelMigrations.Infrastructure.CodeModel;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Transformations
 {
@@ -23,10 +24,9 @@ namespace EfModelMigrations.Transformations
         {
             this.ForeignKeyColumnNames = foreignKeyColumnNames;
 
-            //TODO: stringy do resourců
             if (!MultiplicityHelper.IsOneToOne(principal, dependent))
             {
-                throw new ModelTransformationValidationException("Invalid association multiplicity for one to one foreign key association.");
+                throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityOneToOneFk);
             }
         }
 
@@ -34,6 +34,7 @@ namespace EfModelMigrations.Transformations
         {
             var principalCodeClass = modelProvider.GetClassCodeModel(Principal.ClassName);
 
+            //TODO: udelat z tohohle precondition! - a pak pouzivat i v OneToMany a ManyToMany
             if(ForeignKeyColumnNames != null && principalCodeClass.PrimaryKeys.Count() != ForeignKeyColumnNames.Count())
             {
                 throw new ModelTransformationValidationException("Supplied foreign key column names for one to one association are invalid."); //TODO: string do resourcu

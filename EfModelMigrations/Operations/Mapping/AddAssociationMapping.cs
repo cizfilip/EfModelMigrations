@@ -11,6 +11,7 @@ using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Operations.Mapping
 {
@@ -183,7 +184,7 @@ namespace EfModelMigrations.Operations.Mapping
                 case RelationshipMultiplicity.ZeroOrOne:
                     return EfFluentApiMethods.HasOptional;
                 default:
-                    throw new InvalidOperationException("Invalid RelationshipMultiplicity."); //TODO: string do resourcu
+                    throw new InvalidOperationException(Strings.RelationshipMultiplicityInvalid);
             }
         }
 
@@ -198,7 +199,7 @@ namespace EfModelMigrations.Operations.Mapping
                 case RelationshipMultiplicity.ZeroOrOne:
                     return EfFluentApiMethods.WithOptional;
                 default:
-                    throw new InvalidOperationException("Invalid RelationshipMultiplicity."); //TODO: string do resourcu
+                    throw new InvalidOperationException(Strings.RelationshipMultiplicityInvalid);
             }
         }
 

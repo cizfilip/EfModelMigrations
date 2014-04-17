@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-//using System.Data.Entity.Utilities;
 using System.Xml.Linq;
-
-// Copyright (c) Microsoft Open Technologies, Inc. All rights reserved. See License.txt in the project root for license information.
 
 namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 {
@@ -29,190 +26,136 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 
         public static string AliasAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Alias");
         }
 
         public static string ActionAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Action");
         }
 
         public static string ColumnNameAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("ColumnName");
         }
 
         public static string EntitySetAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("EntitySet");
         }
 
         public static string NameAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Name");
         }
 
         public static string NamespaceAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Namespace");
         }
 
         public static string EntityTypeAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("EntityType");
         }
 
         public static string FromRoleAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("FromRole");
         }
 
         public static string ToRoleAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("ToRole");
         }
 
         public static string NullableAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Nullable");
         }
 
         public static string MaxLengthAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("MaxLength");
         }
 
         public static string MultiplicityAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Multiplicity");
         }
 
         public static string FixedLengthAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("FixedLength");
         }
 
         public static string PrecisionAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Precision");
         }
 
         public static string ProviderAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Provider");
         }
 
         public static string ProviderManifestTokenAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("ProviderManifestToken");
         }
 
         public static string RelationshipAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Relationship");
         }
 
         public static string ScaleAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Scale");
         }
 
         public static string StoreGeneratedPatternAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("StoreGeneratedPattern");
         }
 
         public static string UnicodeAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Unicode");
         }
 
         public static string RoleAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Role");
         }
 
         public static string SchemaAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Schema");
         }
 
         public static string StoreEntitySetAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("StoreEntitySet");
         }
 
         public static string TableAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Table");
         }
 
         public static string TypeAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Type");
         }
 
         public static string TypeNameAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("TypeName");
         }
 
         public static string ValueAttribute(this XElement element)
         {
-            //DebugCheck.NotNull(element);
-
             return (string)element.Attribute("Value");
         }
 
@@ -230,8 +173,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 
             private static IEnumerable<XName> Names(string elementName)
             {
-                //DebugCheck.NotEmpty(elementName);
-
                 return new List<XName>
                     {
                         _csdlNamespaceV3 + elementName,
@@ -254,8 +195,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 
             private static IEnumerable<XName> Names(string elementName)
             {
-                //DebugCheck.NotEmpty(elementName);
-
                 return new List<XName>
                     {
                         _mslNamespaceV3 + elementName,
@@ -282,8 +221,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.Edmx
 
             private static IEnumerable<XName> Names(string elementName)
             {
-                //DebugCheck.NotEmpty(elementName);
-
                 return new List<XName>
                     {
                         _ssdlNamespaceV3 + elementName,

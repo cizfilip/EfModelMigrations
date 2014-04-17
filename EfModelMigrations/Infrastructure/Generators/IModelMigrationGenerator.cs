@@ -9,6 +9,6 @@ namespace EfModelMigrations.Infrastructure.Generators
 {
     public interface IModelMigrationGenerator
     {
-        GeneratedModelMigration GenerateMigration(string migrationId, IEnumerable<ModelTransformation> transformations, string @namespace, string className);
+        GeneratedModelMigration GenerateMigration(string migrationId, string migrationDirectory, IEnumerable<ModelTransformation> transformations, string @namespace, string className);
     }
 }

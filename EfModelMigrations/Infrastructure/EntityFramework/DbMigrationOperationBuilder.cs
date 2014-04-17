@@ -179,20 +179,6 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return TryBuildIdentityOperation(storageEntitySet, OldModel, () => new DropIdentityOperation());
         }
 
-        //public InsertFromOperation InsertFromOperation(EntitySet fromEntitySet, IEnumerable<EdmProperty> fromColumns, EntitySet toEntitySet, IEnumerable<EdmProperty> toColumns)
-        //{
-        //    Check.NotNull(fromEntitySet, "fromEntitySet");
-        //    Check.NotNullOrEmpty(fromColumns, "fromColumns");
-        //    Check.NotNull(toEntitySet, "toEntitySet");
-        //    Check.NotNullOrEmpty(toColumns, "toColumns");
-
-        //    return new InsertFromOperation()
-        //    {
-        //        From = new InsertDataModel(fromEntitySet.FullTableName(), fromColumns.Select(c => c.Name).ToArray()),
-        //        To = new InsertDataModel(toEntitySet.FullTableName(), toColumns.Select(c => c.Name).ToArray())
-        //    };
-        //}
-
         private T TryBuildIdentityOperation<T>(EntitySet storageEntitySet, EfModel model, Func<T> operationFactory) where T : IdentityOperation
         {
             var primaryKeys = storageEntitySet.ElementType.KeyProperties;

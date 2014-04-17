@@ -1,12 +1,11 @@
-﻿using System;
+﻿using EfModelMigrations.Resources;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EfModelMigrations
 {
-    //TODO: pouzivat napric projektem pro null checky
+    //TODO: pridat Check.<method> napric celym projektem - hlavne u public method
     internal class Check
     {
         public static T NotNull<T>(T value, string parameterName) where T : class
@@ -33,7 +32,7 @@ namespace EfModelMigrations
         {
             if (string.IsNullOrWhiteSpace(value))
             {
-                throw new ArgumentException(string.Format("The argument '{0}' cannot be null, empty or contain only white space.", parameterName)); //TODO: string do resourcu
+                throw new ArgumentException(Strings.Check_NotEmpty(parameterName));
             }
 
             return value;
@@ -45,7 +44,7 @@ namespace EfModelMigrations
 
             if (!value.Any())
             {
-                throw new ArgumentException(string.Format("The argument '{0}' cannot be empty.", parameterName)); //TODO: string do resourcu
+                throw new ArgumentException(Strings.Check_NotNullOrEmpty(parameterName));
             }
 
             return value;

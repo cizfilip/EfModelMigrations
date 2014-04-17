@@ -9,7 +9,7 @@ using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Infrastructure
 {
-    public sealed class ModelMigrationsLocator
+    internal sealed class ModelMigrationsLocator
     {
         /// <summary>
         /// Holds this keyvalue pairs: (modelMigrationId -> Type represent modelmigration)
@@ -123,7 +123,7 @@ namespace EfModelMigrations.Infrastructure
             }
             if (possibleMigrationIds.Length > 1)
             {
-                throw new ModelMigrationsException(string.Format("Multiple migrations with name {0} was found.", migrationName)); //String do resourcu
+                throw new ModelMigrationsException(Strings.MultipleMigrationsFound(migrationName));
             }
 
             return possibleMigrationIds.Single();
@@ -157,7 +157,7 @@ namespace EfModelMigrations.Infrastructure
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(Strings.CannotFindMigrationId, e);
+                throw new ModelMigrationsException(Strings.CannotFindMigrationId(migrationType.Name), e);
             }
 
             if (string.IsNullOrEmpty(id) || !ModelMigrationIdGenerator.IsValidId(id))

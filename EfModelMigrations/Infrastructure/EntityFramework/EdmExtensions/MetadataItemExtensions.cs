@@ -16,21 +16,29 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.EdmExtensions
 
         public static IEnumerable<MetadataProperty> Annotations(this MetadataItem item)
         {
+            Check.NotNull(item, "item");
+
             return item.MetadataProperties.Where(m => m.IsAnnotation);
         }
 
         public static IEnumerable<MetadataProperty> CustomAnnotations(this MetadataItem item)
         {
+            Check.NotNull(item, "item");
+
             return Annotations(item).Where(a => a.Name.StartsWith(CustomAnnotationPrefix, StringComparison.Ordinal));
         }
 
         public static IDictionary<string, object> CustomAnnotationsAsDictionary(this MetadataItem item)
         {
+            Check.NotNull(item, "item");
+
             return CustomAnnotations(item).ToDictionary(a => a.Name.Substring(CustomAnnotationPrefix.Length), a => a.Value);
         }
 
         public static IEnumerable<IndexAnnotation> IndexAnnotations(this MetadataItem item)
         {
+            Check.NotNull(item, "item");
+
             return Annotations(item).Where(a => a.Name == IndexAnnotationWithPrefix)
                 .Select(s => s.Value)
                 .OfType<IndexAnnotation>();

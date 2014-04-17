@@ -9,6 +9,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Transformations
 {
@@ -17,10 +18,9 @@ namespace EfModelMigrations.Transformations
         public AddOneToOnePrimaryKeyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, bool? willCascadeOnDelete = null)
             :base(principal, dependent, willCascadeOnDelete)
         {
-            //TODO: stringy do resourců
             if (MultiplicityHelper.IsOneToOne(principal, dependent) && !(principal.Multipticity == RelationshipMultiplicity.ZeroOrOne && dependent.Multipticity == RelationshipMultiplicity.ZeroOrOne))
             {
-                throw new ModelTransformationValidationException("Invalid association multiplicity for one to one primary key association.");
+                throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityOneToOnePk);
             }
         }
 

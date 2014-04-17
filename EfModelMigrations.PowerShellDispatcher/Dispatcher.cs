@@ -74,10 +74,13 @@ namespace EfModelMigrations.PowerShellDispatcher
 
         public void InvokeScript(string script)
         {
+            if (string.IsNullOrWhiteSpace(script))
+            {
+                throw new ArgumentNullException("script");
+            }
+
             cmdlet.InvokeCommand.InvokeScript(script);
         }
-
-       
     }
 
 }

@@ -54,11 +54,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
             var generator = Configuration.ModelMigrationGenerator;
             
-            var generatedMigration = generator.GenerateMigration(migrationId, transformations, migrationNamespace, migrationName);
-
-            generatedMigration.MigrationId = migrationId;
-            generatedMigration.MigrationDirectory = Configuration.ModelMigrationsDirectory;
-
+            var generatedMigration = generator.GenerateMigration(migrationId, Configuration.ModelMigrationsDirectory, transformations, migrationNamespace, migrationName);
+            
             Return(generatedMigration);
         }    
     }

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Infrastructure
 {
-    
     public class ModelMigrationIdGenerator
     {
         public const string InitialModel = "0";
@@ -17,9 +16,7 @@ namespace EfModelMigrations.Infrastructure
         private static readonly string migrationIdFormat = "yyyyMMddHHmmssf";
 
         public static string GenerateId(string migrationName)
-        {
-            //TODO: Generate timestamp like EF tema does - see source of EF
-            
+        {            
             string timestamp = DateTime.UtcNow.ToString(migrationIdFormat, CultureInfo.InvariantCulture);
             return (timestamp + "_" + migrationName);
         }
