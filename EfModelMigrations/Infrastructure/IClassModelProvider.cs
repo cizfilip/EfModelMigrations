@@ -13,6 +13,8 @@ namespace EfModelMigrations.Infrastructure
     {
         ClassCodeModel GetClassCodeModel(string className);
 
+        bool IsClassInModel(string className);
+
         bool IsEnumInModel(string enumName);
 
         EfModel EfModel { get; }

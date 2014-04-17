@@ -71,5 +71,25 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 return false;
             }
         }
+
+
+        public bool IsClassInModel(string className)
+        {
+            try
+            {
+                var classType = efModel.Metadata.GetEntityTypeForClass(className);
+                if (classType != null)
+                {
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+                throw;
+            }
+            
+        }
     }
 }

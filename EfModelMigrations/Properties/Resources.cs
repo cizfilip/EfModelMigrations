@@ -96,6 +96,14 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Some operations in migration {0} may cause data loss in database! If you really want to execute this migration rerun the migrate command with -Force parameter."
+        // </summary>
+        internal static string DataInDbMayBeLost(object p0)
+        {
+            return EntityRes.GetString(EntityRes.DataInDbMayBeLost, p0);
+        }
+
+        // <summary>
         // A string like "Invalid model migration id."
         // </summary>
         internal static string InvalidModelMigrationId
@@ -125,6 +133,30 @@ namespace EfModelMigrations.Resources
         internal static string NoMigrationsToApplyOrRevert
         {
             get { return EntityRes.GetString(EntityRes.NoMigrationsToApplyOrRevert); }
+        }
+
+        // <summary>
+        // A string like "Transformation {0} can not be applied."
+        // </summary>
+        internal static string PreconditionFailed(object p0)
+        {
+            return EntityRes.GetString(EntityRes.PreconditionFailed, p0);
+        }
+
+        // <summary>
+        // A string like "Class {0} already exists in model."
+        // </summary>
+        internal static string Precondition_ClassExists(object p0)
+        {
+            return EntityRes.GetString(EntityRes.Precondition_ClassExists, p0);
+        }
+
+        // <summary>
+        // A string like "Class {0} does not exist in model."
+        // </summary>
+        internal static string Precondition_ClassNotExists(object p0)
+        {
+            return EntityRes.GetString(EntityRes.Precondition_ClassNotExists, p0);
         }
 
         // <summary>
@@ -265,10 +297,14 @@ namespace EfModelMigrations.Resources
         internal const string CannotFindMigration = "CannotFindMigration";
         internal const string CannotFindMigrationId = "CannotFindMigrationId";
         internal const string CommandNameNotSpecified = "CommandNameNotSpecified";
+        internal const string DataInDbMayBeLost = "DataInDbMayBeLost";
         internal const string InvalidModelMigrationId = "InvalidModelMigrationId";
         internal const string ModelEnableSuccessfull = "ModelEnableSuccessfull";
         internal const string ModelMigrationsAlreadyEnabled = "ModelMigrationsAlreadyEnabled";
         internal const string NoMigrationsToApplyOrRevert = "NoMigrationsToApplyOrRevert";
+        internal const string PreconditionFailed = "PreconditionFailed";
+        internal const string Precondition_ClassExists = "Precondition_ClassExists";
+        internal const string Precondition_ClassNotExists = "Precondition_ClassNotExists";
         internal const string ProjectExtensions_PathMustBeAbsolute = "ProjectExtensions_PathMustBeAbsolute";
         internal const string ProjectExtensions_PathMustBeRelative = "ProjectExtensions_PathMustBeRelative";
         internal const string TypeFinder_MultipleTypesFound = "TypeFinder_MultipleTypesFound";

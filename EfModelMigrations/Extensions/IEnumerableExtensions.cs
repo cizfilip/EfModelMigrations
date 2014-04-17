@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Extensions
 {
-    public static class IEnumerableExtensions
+    internal static class IEnumerableExtensions
     {
         public static T SingleOrThrow<T>(this IEnumerable<T> enumerable,
             Func<Exception> noneException, 

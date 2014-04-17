@@ -211,6 +211,11 @@
     <Compile Include="Transformations\Model\ManyToManyJoinTable.cs" />
     <Compile Include="Transformations\Model\MultiplicityHelper.cs" />
     <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />
+    <Compile Include="Transformations\Preconditions\ClassExistsInModelPrecondition.cs" />
+    <Compile Include="Transformations\Preconditions\ClassNotExistsInModelPrecondition.cs" />
+    <Compile Include="Transformations\Preconditions\IPreconditionBuilder.cs" />
+    <Compile Include="Transformations\Preconditions\ModelTransformationPrecondition.cs" />
+    <Compile Include="Transformations\Preconditions\VerificationResult.cs" />
     <Compile Include="Transformations\RemoveAssociationTransformation.cs" />
     <Compile Include="Transformations\RemoveAssociationWithForeignKeyTransformation.cs" />
     <Compile Include="Transformations\RemoveClassTransformation.cs" />

@@ -147,6 +147,9 @@
   <data name="CommandNameNotSpecified" xml:space="preserve">
     <value>Command name not specified.</value>
   </data>
+  <data name="DataInDbMayBeLost" xml:space="preserve">
+    <value>Some operations in migration {0} may cause data loss in database! If you really want to execute this migration rerun the migrate command with -Force parameter.</value>
+  </data>
   <data name="InvalidModelMigrationId" xml:space="preserve">
     <value>Invalid model migration id.</value>
   </data>
@@ -158,6 +161,15 @@
   </data>
   <data name="NoMigrationsToApplyOrRevert" xml:space="preserve">
     <value>Unable to find any migration to apply or revert.</value>
+  </data>
+  <data name="PreconditionFailed" xml:space="preserve">
+    <value>Transformation {0} can not be applied.</value>
+  </data>
+  <data name="Precondition_ClassExists" xml:space="preserve">
+    <value>Class {0} already exists in model.</value>
+  </data>
+  <data name="Precondition_ClassNotExists" xml:space="preserve">
+    <value>Class {0} does not exist in model.</value>
   </data>
   <data name="ProjectExtensions_PathMustBeAbsolute" xml:space="preserve">
     <value>Specified path must be absolute.</value>

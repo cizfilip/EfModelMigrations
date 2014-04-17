@@ -4,7 +4,7 @@ using System;
 
 namespace EfModelMigrations.Extensions
 {
-    public static class TypeExtensions
+    internal static class TypeExtensions
     {
         public static T CreateInstance<T>(this Type type, object[] constructorParameters = null)
         {

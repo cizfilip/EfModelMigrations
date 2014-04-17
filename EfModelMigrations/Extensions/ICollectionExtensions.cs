@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Extensions
 {
-    public static class ICollectionExtensions
+    internal static class ICollectionExtensions
     {
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> enumerable)
         {

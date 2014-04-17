@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Extensions
 {
-    //TODO: extension tridy dat internal
-    public static class StringExtensions
+    internal static class StringExtensions
     {
         public static bool EqualsOrdinalIgnoreCase(this string s1, string s2)
         {
@@ -17,6 +16,18 @@ namespace EfModelMigrations.Extensions
         public static bool EqualsOrdinal(this string s1, string s2)
         {
             return string.Equals(s1, s2, StringComparison.Ordinal);
+        }
+
+        public static string RemoveFromEnd(this string s, string suffix)
+        {
+            if (s.EndsWith(suffix))
+            {
+                return s.Substring(0, s.Length - suffix.Length);
+            }
+            else
+            {
+                return s;
+            }
         }
     }
 }

@@ -82,7 +82,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
                 if (transformations.Where(t => t.IsDestructiveChange).Any() && !force)
                 {
-                    throw new ModelMigrationsException(string.Format("Some operations in migration {0} may cause data loss in database! If you really want to execute this migration rerun the migrate command with -Force parameter.", migration.Name)); //TODO: string do resourcu
+                    throw new ModelMigrationsException(Strings.DataInDbMayBeLost(migration.Name));
                 }
 
                 var dbMigrationOperations = new List<MigrationOperation>();
@@ -91,8 +91,13 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 //proccess transformations
                 foreach (var transformation in transformations)
                 {
+                    var modelProvider = classModelProviderFactory(oldEdmxModel);
+
+                    //Verify preconditions
+                    VerifyPreconsitions(transformation, modelProvider);
+
                     //apply model changes
-                    ApplyModelChanges(transformation, oldEdmxModel);
+                    ApplyModelChanges(transformation, modelProvider);
 
                     //build & get new model
                     projectBuilder.BuildModelProject();
@@ -135,12 +140,29 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             }
         }
 
-       
-        internal virtual void ApplyModelChanges(ModelTransformation transformation, string edmxModel)
+        internal virtual void VerifyPreconsitions(ModelTransformation transformation, IClassModelProvider modelProvider)
         {
-            IEnumerable<IModelChangeOperation> operations = transformation.GetModelChangeOperations(
-                    classModelProviderFactory(edmxModel)
-                );
+            var preconditions = transformation.GetPreconditions();
+
+            foreach (var precondition in preconditions)
+            {
+                var result = precondition.Verify(modelProvider);
+                if (!result.Success)
+                {
+                    string transformationName = transformation.GetType().Name.RemoveFromEnd("Transformation");
+                    throw new ModelTransformationValidationException(
+                        string.Concat(Strings.PreconditionFailed(transformationName), 
+                        Environment.NewLine,
+                        result.Message)
+                    );
+                }
+            }
+        }
+
+       
+        internal virtual void ApplyModelChanges(ModelTransformation transformation, IClassModelProvider modelProvider)
+        {
+            IEnumerable<IModelChangeOperation> operations = transformation.GetModelChangeOperations(modelProvider);
             modelChangesExecutor.Execute(operations);
         }
 

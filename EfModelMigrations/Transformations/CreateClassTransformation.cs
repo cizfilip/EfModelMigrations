@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Transformations.Model;
+using EfModelMigrations.Transformations.Preconditions;
 
 namespace EfModelMigrations.Transformations
 {
@@ -25,9 +26,15 @@ namespace EfModelMigrations.Transformations
             this.PrimaryKeys = primaryKeys;
         }
 
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            //TODO: pridat preconditions u vsech transformaci!
+            //TODO: udelat precondition co validuje spravnost pridavanych property - momentalne asi jenom v pripade ze je property enum tak enum musi existovat...
+            yield return new ClassNotExistsInModelPrecondition(Model.Name);
+        }
+
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
-            //TODO: vyhazovat vyjimky pokud trida jiz existuje... i jinde treba v addproperty pokud property jiz existuje atd..
             yield return new CreateEmptyClassOperation(Model.Name, Model.Visibility);
             yield return new AddMappingInformationOperation(new AddClassMapping(Model, PrimaryKeys));
 
