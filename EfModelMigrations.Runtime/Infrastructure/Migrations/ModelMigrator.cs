@@ -23,7 +23,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
     {
         private HistoryTracker historyTracker;
         private ModelMigratorHelper migratorHelper;
-        private Func<string, IClassModelProvider> classModelProviderFactory;
+        private Func<EfModelMetadata, IClassModelProvider> classModelProviderFactory;
         private IModelChangesExecutor modelChangesExecutor;
         private ModelMigrationsConfigurationBase configuration;
         private ModelMigrationsLocator locator;
@@ -33,7 +33,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
         public ModelMigrator(HistoryTracker historyTracker,
             ModelMigratorHelper migratorHelper,
-            Func<string, IClassModelProvider> classModelProviderFactory,
+            Func<EfModelMetadata, IClassModelProvider> classModelProviderFactory,
             IModelChangesExecutor modelChangesExecutor,
             ModelMigrationsConfigurationBase configuration,
             VsProjectBuilder projectBuilder,
@@ -73,6 +73,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         internal virtual void MigrateOne(string migrationId, bool isRevert, bool force)
         {
             string oldEdmxModel;
+            EfModelMetadata oldEfModelMetadata;
             ScaffoldedMigration scaffoldedMigration = null;
 
             try
@@ -88,10 +89,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 var dbMigrationOperations = new List<MigrationOperation>();
 
                 oldEdmxModel = migratorHelper.GetEdmxModel();
+                oldEfModelMetadata = EfModelMetadata.Load(oldEdmxModel);
                 //proccess transformations
                 foreach (var transformation in transformations)
                 {
-                    var modelProvider = classModelProviderFactory(oldEdmxModel);
+                    var modelProvider = classModelProviderFactory(oldEfModelMetadata);
 
                     //Verify preconditions
                     VerifyPreconsitions(transformation, modelProvider);
@@ -101,13 +103,15 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
                     //build & get new model
                     projectBuilder.BuildModelProject();
-                    string newEdmxModel = migratorHelper.GetEdmxModel();
+                    var newEdmxModel = migratorHelper.GetEdmxModel();
+                    var newEfModelMetadata = EfModelMetadata.Load(newEdmxModel);
 
                     //get db migration operations & append it to list
-                    var dbOperations = GetDbMigrationOperations(transformation, oldEdmxModel, newEdmxModel);
+                    var dbOperations = GetDbMigrationOperations(transformation, oldEfModelMetadata, newEfModelMetadata);
                     dbMigrationOperations.AddRange(dbOperations);
 
                     oldEdmxModel = newEdmxModel;
+                    oldEfModelMetadata = newEfModelMetadata;
                 }
                 
                 //generate db migration    
@@ -166,9 +170,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             modelChangesExecutor.Execute(operations);
         }
 
-        internal virtual IEnumerable<MigrationOperation> GetDbMigrationOperations(ModelTransformation transformation, string oldEdmxModel, string newEdmxModel)
+        internal virtual IEnumerable<MigrationOperation> GetDbMigrationOperations(ModelTransformation transformation, EfModelMetadata oldEfModelMetadata, EfModelMetadata newEfModelMetadata)
         {
-            var operationBuilder = new DbMigrationOperationBuilder(new EfModel(oldEdmxModel), new EfModel(newEdmxModel));
+            var operationBuilder = new DbMigrationOperationBuilder(new EfModel(oldEfModelMetadata), new EfModel(newEfModelMetadata));
 
             return transformation.GetDbMigrationOperations(operationBuilder).ToList();
         }
@@ -246,6 +250,5 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 dbMigrationWriter.RemoveMigration(scaffoldedMigration);
             }
         }
-
     }
 }

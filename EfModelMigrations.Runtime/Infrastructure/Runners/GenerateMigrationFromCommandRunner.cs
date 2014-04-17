@@ -44,7 +44,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             }
 
             var edmxModel = new EdmxModelExtractor().GetEdmxModelAsString(DbContext);
-            var classModelProvider = new VsClassModelProvider(ModelProject, Configuration, edmxModel);
+            var classModelProvider = new VsClassModelProvider(ModelProject, Configuration, EfModelMetadata.Load(edmxModel));
             var transformations = command.GetTransformations(classModelProvider);
 
             //params for generation

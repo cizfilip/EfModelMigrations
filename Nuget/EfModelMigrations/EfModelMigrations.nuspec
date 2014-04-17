@@ -16,6 +16,7 @@
   
   </metadata>
 
+    <!-- TODO: Change dlls to target only .NEt 4.5 -->
   <files>
     <!-- TODO: Change to release path! -->
     <file src="..\..\EfModelMigrations.Runtime\bin\Debug\EfModelMigrations.Runtime.dll" target="tools" />

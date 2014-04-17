@@ -28,12 +28,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             get { return efModel; }
         }
 
-        public VsClassModelProvider(Project modelProject, ModelMigrationsConfigurationBase configuration, string edmxModel)
+        public VsClassModelProvider(Project modelProject, ModelMigrationsConfigurationBase configuration, EfModelMetadata efModelMetadata)
         {
             this.modelProject = modelProject;
             this.configuration = configuration;
             this.classFinder = new CodeClassFinder(modelProject);
-            this.efModel = new EfModel(edmxModel);
+            this.efModel = new EfModel(efModelMetadata);
             this.mapper = new VsCodeClassToClassCodeModelMapper(configuration.GeneratorDefaults, efModel);
         }
 

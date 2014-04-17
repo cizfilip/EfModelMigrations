@@ -1,5 +1,6 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
         public LoggingModelMigrator(HistoryTracker historyTracker, 
             ModelMigratorHelper migratorHelper,
-            Func<string, IClassModelProvider> classModelProviderFactory, 
+            Func<EfModelMetadata, IClassModelProvider> classModelProviderFactory,
             IModelChangesExecutor modelChangesExecutor,
             ModelMigrationsConfigurationBase configuration,
             VsProjectBuilder projectBuilder,
