@@ -10,10 +10,11 @@ using System.Threading.Tasks;
 using System.Resources;
 using System.IO.Compression;
 using System.Xml.Linq;
+using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 {
-    //TODO: zlepsit writer - EF writer dela trochu vic, ale hlavne bychom chteli aby se vytvorili vsechny soubory nebo zadny
+    //TODO: zlepsit writer - EF writer dela trochu vic
     internal class DbMigrationWriter
     {
         private readonly Project project;
@@ -23,30 +24,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             this.project = project;
         }
 
-        public void RemoveMigration(ScaffoldedMigration scaffoldedMigration)
-        {
-            string userCodePath;
-            string resourcesPath;
-            string designerCodePath;
-            GetPaths(scaffoldedMigration, out userCodePath, out resourcesPath, out designerCodePath);
-
-            var projectRoot = project.GetProjectDir();
-
-            string[] pathsToRemove = new string[] { 
-                Path.Combine(projectRoot, userCodePath), 
-                Path.Combine(projectRoot, resourcesPath), 
-                Path.Combine(projectRoot, designerCodePath)
-            };
-
-            foreach (var path in pathsToRemove)
-            {
-                var projectItem = project.DTE.Solution.FindProjectItem(path);
-                if (projectItem != null)
-                    projectItem.Delete();
-            }
-        }
-
-        public void Write(ScaffoldedMigration scaffoldedMigration, string edmxModel)
+        public void Write(ScaffoldedMigration scaffoldedMigration, string edmxModel, HistoryTracker historyTracker)
         {
             Check.NotNull(scaffoldedMigration, "scaffoldedMigration");
             Check.NotEmpty(edmxModel, "edmxModel");
@@ -55,6 +33,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             string resourcesPath;
             string designerCodePath;
             GetPaths(scaffoldedMigration, out userCodePath, out resourcesPath, out designerCodePath);
+
+            historyTracker.MarkItemAdded(userCodePath);
+            historyTracker.MarkItemAdded(resourcesPath);
+            historyTracker.MarkItemAdded(designerCodePath);
 
             project.AddContentToProject(userCodePath, scaffoldedMigration.UserCode);
             

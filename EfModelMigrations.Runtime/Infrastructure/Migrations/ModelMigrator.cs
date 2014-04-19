@@ -74,8 +74,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         internal override void MigrateOne(string migrationId, bool isRevert, bool force)
         {
             EfModelMetadata oldEfModelMetadata;
-            ScaffoldedMigration scaffoldedMigration = null;
-
             try
             {
                 var migration = GetMigration(migrationId);
@@ -112,9 +110,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
                 }
                 
                 //generate db migration    
-                scaffoldedMigration = base.GenerateDbMigration(dbMigrationOperations, GetDbMigrationName(migration, isRevert));
+                var scaffoldedMigration = base.GenerateDbMigration(dbMigrationOperations, GetDbMigrationName(migration, isRevert));
                 //write migration - edmxModel is supplied because ef MigrationScaffolder see only old model before migrating
-                dbMigrationWriter.Write(scaffoldedMigration, oldEfModelMetadata.Edmx);
+                dbMigrationWriter.Write(scaffoldedMigration, oldEfModelMetadata.Edmx, historyTracker);
 
                 //build project before updating DB
                 projectBuilder.BuildModelProject();
@@ -131,12 +129,12 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             // 2) pokud se restore provedl ok vypsat: vsechny zmeny pred chybou byli vraceny, pokud je vyjimka i v restoru napsat ze je to uplne v haji a at si uzivatel poradi sam :)
             catch (ModelMigrationsException)
             {
-                base.RollbackModelState(historyTracker, scaffoldedMigration);
+                base.RollbackModelState(historyTracker);
                 throw;
             }
             catch (Exception e)
             {
-                base.RollbackModelState(historyTracker, scaffoldedMigration);
+                base.RollbackModelState(historyTracker);
                 throw new ModelMigrationsException(Strings.ApplyMigrationError, e);
             }
         }
@@ -190,16 +188,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             migratorHelper.UpdateDatabase(dbMigrationId);
         }
 
-        internal override void RollbackModelState(HistoryTracker historyTracker, ScaffoldedMigration scaffoldedMigration)
+        internal override void RollbackModelState(HistoryTracker historyTracker)
         {
             historyTracker.Restore();
-
-            //TODO: proc nepouzivat history tracker i na db migraci???
-            //Ensure db migration is removed
-            if (scaffoldedMigration != null)
-            {
-                dbMigrationWriter.RemoveMigration(scaffoldedMigration);
-            }
         }
 
         private IEnumerable<ModelTransformation> GetModelTransformations(ModelMigration migration, bool isRevert)
@@ -238,6 +229,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             //TODO: updatovat na projekt kde jsou migrace ne modelProject - az budu podporovat vicero projektu
             string configurationResourcePath = Path.Combine(migrationProjectPath, configuration.ModelMigrationsDirectory, configuration.GetType().Name + ".resx");
             var updater = new ModelMigrationsConfigurationUpdater(configurationResourcePath);
+            historyTracker.MarkItemModified(configurationResourcePath);
 
             if (!isRevert)
             {

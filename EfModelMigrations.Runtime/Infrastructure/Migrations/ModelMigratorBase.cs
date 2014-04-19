@@ -73,9 +73,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             innerMigrator.UpdateDatabase(dbMigrationId);
         }
 
-        internal virtual void RollbackModelState(HistoryTracker historyTracker, ScaffoldedMigration scaffoldedMigration)
+        internal virtual void RollbackModelState(HistoryTracker historyTracker)
         {
-            innerMigrator.RollbackModelState(historyTracker, scaffoldedMigration);
+            innerMigrator.RollbackModelState(historyTracker);
         }
     }
 }

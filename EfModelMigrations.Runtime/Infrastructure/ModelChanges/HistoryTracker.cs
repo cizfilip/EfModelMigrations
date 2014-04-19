@@ -39,9 +39,19 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             MarkItemModifiedOrDeleted(item);
         }
 
+        public void MarkItemDeleted(string itemPath)
+        {
+            MarkItemModifiedOrDeleted(itemPath);
+        }
+
         public void MarkItemModified(ProjectItem item)
         {
             MarkItemModifiedOrDeleted(item);
+        }
+
+        public void MarkItemModified(string itemPath)
+        {
+            MarkItemModifiedOrDeleted(itemPath);
         }
 
         public void Reset()
@@ -150,15 +160,20 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
         #region Private methods
 
-        private void MarkItemModifiedOrDeleted(ProjectItem item)
+        private void MarkItemModifiedOrDeleted(string itemPath)
         {
-            string key = GetItemFullPath(item);
-
+            string key = itemPath;
             if (!history.ContainsKey(key))
             {
                 string oldContent = GetItemContent(key);
                 history.Add(key, HistoryItem.ModifiedOrDeletedItem(oldContent));
             }
+        }
+
+        private void MarkItemModifiedOrDeleted(ProjectItem item)
+        {
+            string key = GetItemFullPath(item);
+            MarkItemModifiedOrDeleted(key);
         }
 
         private string GetItemFullPath(ProjectItem item)
