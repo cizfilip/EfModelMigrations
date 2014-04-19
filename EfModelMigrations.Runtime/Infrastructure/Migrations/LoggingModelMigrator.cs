@@ -13,43 +13,26 @@ using System.Threading.Tasks;
 namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 {
     //TODO: hlasky do resourcu
-    internal class LoggingModelMigrator : ModelMigrator
+    internal class LoggingModelMigrator : ModelMigratorBase
     {
-        public RunnerLogger Logger { get; set; }
+        private RunnerLogger logger;
 
-        public LoggingModelMigrator(HistoryTracker historyTracker, 
-            ModelMigratorHelper migratorHelper,
-            Func<EfModelMetadata, IClassModelProvider> classModelProviderFactory,
-            IModelChangesExecutor modelChangesExecutor,
-            ModelMigrationsConfigurationBase configuration,
-            VsProjectBuilder projectBuilder,
-            DbMigrationWriter dbMigrationWriter,
-            string migrationProjectPath)
-         
-        :base(
-            historyTracker,
-            migratorHelper,
-            classModelProviderFactory,
-            modelChangesExecutor,
-            configuration,
-            projectBuilder,
-            dbMigrationWriter,
-            migrationProjectPath)
+        public LoggingModelMigrator(ModelMigrator modelMigrator, RunnerLogger logger) : base(modelMigrator)
         {
+            this.logger = logger;
         }
-
 
         internal override void Migrate(IEnumerable<string> migrationIds, bool isRevert, bool force)
         {
             if(!migrationIds.Any())
             {
-                Logger.Info("No migrations to apply or revert.");
+                logger.Info("No migrations to apply or revert.");
             }
             else
             {
                 string direction = isRevert ? "Reverting" : "Applying";
 
-                Logger.Info(string.Format("{0} migrations: [{1}].", direction, string.Join(", ", migrationIds)));
+                logger.Info(string.Format("{0} migrations: [{1}].", direction, string.Join(", ", migrationIds)));
             }
 
             base.Migrate(migrationIds, isRevert, force);
@@ -60,24 +43,24 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             string direction = isRevert ? "Reverting" : "Applying";
             
 
-            Logger.Info(string.Format("{0} migration: {1}.", direction, migrationId));
-            Logger.Info("Applying model changes...");
+            logger.Info(string.Format("{0} migration: {1}.", direction, migrationId));
+            logger.Info("Applying model changes...");
 
             base.MigrateOne(migrationId, isRevert, force);
 
             string direction2 = isRevert ? "reverted" : "applied";
-            Logger.Info(string.Format("Migration {0} was succesfully {1}.", migrationId, direction2));
+            logger.Info(string.Format("Migration {0} was succesfully {1}.", migrationId, direction2));
         }
 
         internal override ScaffoldedMigration GenerateDbMigration(IEnumerable<MigrationOperation> operations, string dbMigrationName)
         {
-            Logger.Info("Generating Db migration...");
+            logger.Info("Generating Db migration...");
             return base.GenerateDbMigration(operations, dbMigrationName);
         }
 
         internal override void UpdateDatabase(string dbMigrationId)
         {
-            Logger.Info("Updating database...");
+            logger.Info("Updating database...");
             base.UpdateDatabase(dbMigrationId);
         }
 

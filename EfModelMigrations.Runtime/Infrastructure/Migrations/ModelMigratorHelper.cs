@@ -1,4 +1,5 @@
-﻿using EfModelMigrations.Runtime.Infrastructure.Runners;
+﻿using EfModelMigrations.Infrastructure.EntityFramework;
+using EfModelMigrations.Runtime.Infrastructure.Runners;
 using System;
 using System.Collections.Generic;
 using System.Linq;

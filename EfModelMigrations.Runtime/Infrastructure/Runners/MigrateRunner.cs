@@ -25,15 +25,14 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
         public VsProjectBuilder ProjectBuilder { get; set; }
 
-        private ModelMigrator migrator;
-        public ModelMigrator Migrator
+        private ModelMigratorBase migrator;
+        public ModelMigratorBase Migrator
         {
             get
             {
                 if(migrator == null)
                 {
-                    //TODO: vytvorit decorator migratoru ktery bude vypisovat uzivateli pomoci RunnerLogger - Ne tohle fakt decorator...
-                    migrator = new LoggingModelMigrator(
+                    var migratorForDecoration = new ModelMigrator(
                         HistoryTracker,
                         MigratorHelper,
                         modelMetadata => new VsClassModelProvider(ModelProject, Configuration, modelMetadata),
@@ -42,10 +41,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                         ProjectBuilder,
                         new DbMigrationWriter(ModelProject),
                         ModelProject.GetProjectDir()
-                        )
-                        {
-                            Logger = Log
-                        };
+                        );
+
+                    migrator = DecorateMigrator(migratorForDecoration);
                 }
                 return migrator;
             }
@@ -58,5 +56,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
             Migrator.Migrate(TargetMigration, Force);
         }
 
+
+        public ModelMigratorBase DecorateMigrator(ModelMigrator migrator)
+        {
+            return new LoggingModelMigrator(migrator, Log);
+        }
     }
 }

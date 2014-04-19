@@ -19,7 +19,7 @@ using System.Xml.Linq;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 {
-    internal class ModelMigrator
+    internal class ModelMigrator : ModelMigratorBase
     {
         private HistoryTracker historyTracker;
         private ModelMigratorHelper migratorHelper;
@@ -39,6 +39,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             VsProjectBuilder projectBuilder,
             DbMigrationWriter dbMigrationWriter,
             string migrationProjectPath)
+        :base(null)
         {
             this.historyTracker = historyTracker;
             this.migratorHelper = migratorHelper;
@@ -52,27 +53,26 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         }
 
 
-        public virtual void Migrate(string targetMigration, bool force)
+        public override void Migrate(string targetMigration, bool force)
         {
             bool isRevert;
             var migrations = locator.FindModelMigrationsToApplyOrRevert(targetMigration, out isRevert);
-            Migrate(migrations, isRevert, force);
+            base.Migrate(migrations, isRevert, force);
         }
 
 
-        internal virtual void Migrate(IEnumerable<string> migrationIds, bool isRevert, bool force)
+        internal override void Migrate(IEnumerable<string> migrationIds, bool isRevert, bool force)
         {
             foreach (var migrationId in migrationIds)
             {
-                MigrateOne(migrationId, isRevert, force);
+                base.MigrateOne(migrationId, isRevert, force);
 
                 historyTracker.Reset();
             }
         }
 
-        internal virtual void MigrateOne(string migrationId, bool isRevert, bool force)
+        internal override void MigrateOne(string migrationId, bool isRevert, bool force)
         {
-            string oldEdmxModel;
             EfModelMetadata oldEfModelMetadata;
             ScaffoldedMigration scaffoldedMigration = null;
 
@@ -88,42 +88,39 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
                 var dbMigrationOperations = new List<MigrationOperation>();
 
-                oldEdmxModel = migratorHelper.GetEdmxModel();
-                oldEfModelMetadata = EfModelMetadata.Load(oldEdmxModel);
+                oldEfModelMetadata = GetEfModelMetadata();
                 //proccess transformations
                 foreach (var transformation in transformations)
                 {
                     var modelProvider = classModelProviderFactory(oldEfModelMetadata);
 
                     //Verify preconditions
-                    VerifyPreconsitions(transformation, modelProvider);
+                    base.VerifyPreconsitions(transformation, modelProvider);
 
                     //apply model changes
-                    ApplyModelChanges(transformation, modelProvider);
+                    base.ApplyModelChanges(transformation, modelProvider);
 
                     //build & get new model
                     projectBuilder.BuildModelProject();
-                    var newEdmxModel = migratorHelper.GetEdmxModel();
-                    var newEfModelMetadata = EfModelMetadata.Load(newEdmxModel);
+                    var newEfModelMetadata = GetEfModelMetadata();
 
                     //get db migration operations & append it to list
-                    var dbOperations = GetDbMigrationOperations(transformation, oldEfModelMetadata, newEfModelMetadata);
+                    var dbOperations = base.GetDbMigrationOperations(transformation, oldEfModelMetadata, newEfModelMetadata);
                     dbMigrationOperations.AddRange(dbOperations);
 
-                    oldEdmxModel = newEdmxModel;
                     oldEfModelMetadata = newEfModelMetadata;
                 }
                 
                 //generate db migration    
-                scaffoldedMigration = GenerateDbMigration(dbMigrationOperations, GetDbMigrationName(migration, isRevert));
+                scaffoldedMigration = base.GenerateDbMigration(dbMigrationOperations, GetDbMigrationName(migration, isRevert));
                 //write migration - edmxModel is supplied because ef MigrationScaffolder see only old model before migrating
-                dbMigrationWriter.Write(scaffoldedMigration, oldEdmxModel);
+                dbMigrationWriter.Write(scaffoldedMigration, oldEfModelMetadata.Edmx);
 
                 //build project before updating DB
                 projectBuilder.BuildModelProject();
 
                 //update DB
-                UpdateDatabase(scaffoldedMigration.MigrationId);
+                base.UpdateDatabase(scaffoldedMigration.MigrationId);
 
                 //update applied migration in configuration 
                 UpdateConfiguration(migrationId, scaffoldedMigration.MigrationId, isRevert);
@@ -134,17 +131,17 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             // 2) pokud se restore provedl ok vypsat: vsechny zmeny pred chybou byli vraceny, pokud je vyjimka i v restoru napsat ze je to uplne v haji a at si uzivatel poradi sam :)
             catch (ModelMigrationsException)
             {
-                RollbackModelState(historyTracker, scaffoldedMigration);
+                base.RollbackModelState(historyTracker, scaffoldedMigration);
                 throw;
             }
             catch (Exception e)
             {
-                RollbackModelState(historyTracker, scaffoldedMigration);
+                base.RollbackModelState(historyTracker, scaffoldedMigration);
                 throw new ModelMigrationsException(Strings.ApplyMigrationError, e);
             }
         }
 
-        internal virtual void VerifyPreconsitions(ModelTransformation transformation, IClassModelProvider modelProvider)
+        internal override void VerifyPreconsitions(ModelTransformation transformation, IClassModelProvider modelProvider)
         {
             var preconditions = transformation.GetPreconditions();
 
@@ -163,21 +160,21 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             }
         }
 
-       
-        internal virtual void ApplyModelChanges(ModelTransformation transformation, IClassModelProvider modelProvider)
+
+        internal override void ApplyModelChanges(ModelTransformation transformation, IClassModelProvider modelProvider)
         {
             IEnumerable<IModelChangeOperation> operations = transformation.GetModelChangeOperations(modelProvider);
             modelChangesExecutor.Execute(operations);
         }
 
-        internal virtual IEnumerable<MigrationOperation> GetDbMigrationOperations(ModelTransformation transformation, EfModelMetadata oldEfModelMetadata, EfModelMetadata newEfModelMetadata)
+        internal override IEnumerable<MigrationOperation> GetDbMigrationOperations(ModelTransformation transformation, EfModelMetadata oldEfModelMetadata, EfModelMetadata newEfModelMetadata)
         {
             var operationBuilder = new DbMigrationOperationBuilder(new EfModel(oldEfModelMetadata), new EfModel(newEfModelMetadata));
 
             return transformation.GetDbMigrationOperations(operationBuilder).ToList();
         }
 
-        internal virtual ScaffoldedMigration GenerateDbMigration(IEnumerable<MigrationOperation> operations, string dbMigrationName)
+        internal override ScaffoldedMigration GenerateDbMigration(IEnumerable<MigrationOperation> operations, string dbMigrationName)
         {
             ((ExtendedCSharpMigrationCodeGenerator)configuration.DbMigrationsConfiguration.CodeGenerator).NewOperations = operations;
 
@@ -188,12 +185,54 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             return scaffoldedMigration;
         }
 
-        internal virtual void UpdateDatabase(string dbMigrationId)
+        internal override void UpdateDatabase(string dbMigrationId)
         {
             migratorHelper.UpdateDatabase(dbMigrationId);
         }
 
-        internal virtual void UpdateConfiguration(string appliedModelMigrationId, string appliedDbMigrationId, bool isRevert)
+        internal override void RollbackModelState(HistoryTracker historyTracker, ScaffoldedMigration scaffoldedMigration)
+        {
+            historyTracker.Restore();
+
+            //Ensure db migration is removed
+            if (scaffoldedMigration != null)
+            {
+                dbMigrationWriter.RemoveMigration(scaffoldedMigration);
+            }
+        }
+
+        private IEnumerable<ModelTransformation> GetModelTransformations(ModelMigration migration, bool isRevert)
+        {
+            migration.Reset();
+            if (isRevert)
+            {
+                migration.Down();
+            }
+            else
+            {
+                migration.Up();
+            }
+
+            return migration.Transformations;
+        }
+
+        private ModelMigration GetMigration(string migrationId)
+        {
+            var modelMigrationType = locator.FindModelMigration(migrationId);
+            return modelMigrationType.CreateInstance<ModelMigration>();
+        }
+
+        private string GetDbMigrationName(ModelMigration migration, bool isRevert)
+        {
+            string dbMigrationName = migration.Name;
+            if (isRevert)
+            {
+                dbMigrationName = "Revert" + dbMigrationName;
+            }
+            return dbMigrationName;
+        }
+
+        private void UpdateConfiguration(string appliedModelMigrationId, string appliedDbMigrationId, bool isRevert)
         {
             //TODO: updatovat na projekt kde jsou migrace ne modelProject - az budu podporovat vicero projektu
             string configurationResourcePath = Path.Combine(migrationProjectPath, configuration.ModelMigrationsDirectory, configuration.GetType().Name + ".resx");
@@ -209,46 +248,10 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
             }
         }
 
-        internal virtual ModelMigration GetMigration(string migrationId)
+        private EfModelMetadata GetEfModelMetadata()
         {
-            var modelMigrationType = locator.FindModelMigration(migrationId);
-            return modelMigrationType.CreateInstance<ModelMigration>();
-        }
-
-        internal virtual string GetDbMigrationName(ModelMigration migration, bool isRevert)
-        {
-            string dbMigrationName = migration.Name;
-            if (isRevert)
-            {
-                dbMigrationName = "Revert" + dbMigrationName;
-            }
-            return dbMigrationName;
-        }
-
-        internal virtual IEnumerable<ModelTransformation> GetModelTransformations(ModelMigration migration, bool isRevert)
-        {
-            migration.Reset();
-            if (isRevert)
-            {
-                migration.Down();
-            }
-            else
-            {
-                migration.Up();
-            }
-
-            return migration.Transformations;
-        }
-
-        internal virtual void RollbackModelState(HistoryTracker historyTracker, ScaffoldedMigration scaffoldedMigration)
-        {
-            historyTracker.Restore();
-
-            //Ensure db migration is removed
-            if (scaffoldedMigration != null)
-            {
-                dbMigrationWriter.RemoveMigration(scaffoldedMigration);
-            }
+            string edmx = migratorHelper.GetEdmxModel();
+            return EfModelMetadata.Load(edmx);
         }
     }
 }

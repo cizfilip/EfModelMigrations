@@ -30,7 +30,19 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             PrimitiveTypeKind.Int64
         };
 
-        private EfModelMetadata() { }
+        private string edmx;
+        internal string Edmx
+        {
+            get
+            {
+                return edmx;
+            }
+        }
+
+        private EfModelMetadata(string edmx) 
+        {
+            this.edmx = edmx;
+        }
 
         public EdmItemCollection EdmItemCollection { get; private set; }
         public StoreItemCollection StoreItemCollection { get; private set; }
@@ -152,6 +164,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
 
         public static EfModelMetadata Load(string edmx)
         {
+            Check.NotNullOrEmpty(edmx, "edmx");
+
             var model = XDocument.Parse(edmx);
 
             var edmItemCollection
@@ -179,7 +193,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
                 storeItemCollection,
                 new[] { new XElement(model.Descendants(EdmXNames.Msl.MappingNames).Single()).CreateReader() });
 
-            return new EfModelMetadata()
+            return new EfModelMetadata(edmx)
             {
                 EdmItemCollection = edmItemCollection,
                 StoreItemCollection = storeItemCollection,
