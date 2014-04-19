@@ -78,7 +78,6 @@ namespace EfModelMigrations.Commands
                 return new EnumPropertyCodeModel(enumType, isNullable);
             }
 
-            //TODO: udelat lepsi hlasku
             throw new ModelMigrationsException(Strings.ParameterParser_UnknownPropertyType(splitted[1])); 
         }
 

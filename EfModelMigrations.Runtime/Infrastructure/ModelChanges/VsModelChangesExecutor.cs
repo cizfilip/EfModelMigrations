@@ -81,8 +81,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         }
 
         //TODO: resit partial tridy (pres CodeClass2.Parts)
-        //TODO: metoda Remove odebira z projektu ale file zustava fyzicky na disku - slo by vyuzit pro revert, Delete metoda smaze i file
-        //TODO: remove class vymaze vse, v pripade chyby a vraceni zpet nejsme schopni obnovit cely zdrojak tak jak byl 
         protected virtual void ExecuteOperation(RemoveClassOperation operation)
         {
             CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.Name);

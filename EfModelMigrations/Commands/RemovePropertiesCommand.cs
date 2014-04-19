@@ -50,7 +50,7 @@ namespace EfModelMigrations.Commands
 
             if(propertyModel == null)
             {
-                throw new ModelMigrationsException(Strings.Commands_RemoveProperties_PropertyNotFound(property, classModel.Name)); //TODO: string do resourcu
+                throw new ModelMigrationsException(Strings.Commands_RemoveProperties_PropertyNotFound(property, classModel.Name)); 
             }
 
             return propertyModel;

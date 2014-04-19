@@ -16,7 +16,6 @@ namespace EfModelMigrations.Commands
         private string oldPropertyName;
         private string newPropertyName;
 
-        //TODO: Dat stringy vyjimek do resourcu
         public RenamePropertyCommand(string className, string oldPropertyName, string newPropertyName)
         {
             if (string.IsNullOrWhiteSpace(className))

@@ -35,5 +35,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
-//TODO: Udelat internals visible to - tzn podepsat assembly
-//TODO: Sloucit resourcy do jednoho v hlavni DLL
+//TODO: Podepsat assembly s projektem nez releasnu

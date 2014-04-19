@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations
 {
@@ -448,7 +449,7 @@ namespace EfModelMigrations
                 var primitiveProperty = mappingBuilder != null ? mappingBuilder.Property : null;
 
                 if (primitiveProperty == null)
-                    throw new ModelMigrationsException("Cannot retrieve property definition from migration!"); // TODO: string do resourcu
+                    throw new ModelMigrationsException(Strings.PropertyDefinitionExtractionFailed); 
 
                 if (string.IsNullOrWhiteSpace(primitiveProperty.Name))
                 {
@@ -469,7 +470,7 @@ namespace EfModelMigrations
                 var fkProperty = property.GetValue(properties) as ForeignKeyPropertyCodeModel;
 
                 if (fkProperty == null)
-                    throw new ModelMigrationsException("Cannot retrieve property definition from migration!"); // TODO: string do resourcu
+                    throw new ModelMigrationsException(Strings.ForeignKeyDefinitionExtractionFailed); 
 
                 if (string.IsNullOrWhiteSpace(fkProperty.Name))
                 {

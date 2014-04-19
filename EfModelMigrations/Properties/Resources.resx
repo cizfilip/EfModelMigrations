@@ -243,6 +243,9 @@
   <data name="ExecuteCommand_ScaffoldingMigration" xml:space="preserve">
     <value>Scaffolding migration from command {0} ...</value>
   </data>
+  <data name="ForeignKeyDefinitionExtractionFailed" xml:space="preserve">
+    <value>Cannot retrieve foreign key definition from migration.</value>
+  </data>
   <data name="HistoryTracker_CannotGetOldContent" xml:space="preserve">
     <value>Cannot retrieve old content for file {0}! See inner exception.</value>
   </data>
@@ -389,6 +392,9 @@
   </data>
   <data name="ProjectExtensions_PathMustBeRelative" xml:space="preserve">
     <value>Specified path must be relative to project directory.</value>
+  </data>
+  <data name="PropertyDefinitionExtractionFailed" xml:space="preserve">
+    <value>Cannot retrieve property definition from migration.</value>
   </data>
   <data name="RelationshipMultiplicityInvalid" xml:space="preserve">
     <value>Invalid RelationshipMultiplicity.</value>

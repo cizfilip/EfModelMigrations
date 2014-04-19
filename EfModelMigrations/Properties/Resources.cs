@@ -352,6 +352,14 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Cannot retrieve foreign key definition from migration."
+        // </summary>
+        internal static string ForeignKeyDefinitionExtractionFailed
+        {
+            get { return EntityRes.GetString(EntityRes.ForeignKeyDefinitionExtractionFailed); }
+        }
+
+        // <summary>
         // A string like "Cannot retrieve old content for file {0}! See inner exception."
         // </summary>
         internal static string HistoryTracker_CannotGetOldContent(object p0)
@@ -744,6 +752,14 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Cannot retrieve property definition from migration."
+        // </summary>
+        internal static string PropertyDefinitionExtractionFailed
+        {
+            get { return EntityRes.GetString(EntityRes.PropertyDefinitionExtractionFailed); }
+        }
+
+        // <summary>
         // A string like "Invalid RelationshipMultiplicity."
         // </summary>
         internal static string RelationshipMultiplicityInvalid
@@ -873,6 +889,7 @@ namespace EfModelMigrations.Resources
         internal const string EnableCommand_EnablingEfMigrations = "EnableCommand_EnablingEfMigrations";
         internal const string ExecuteCommand_MigrationScaffolded = "ExecuteCommand_MigrationScaffolded";
         internal const string ExecuteCommand_ScaffoldingMigration = "ExecuteCommand_ScaffoldingMigration";
+        internal const string ForeignKeyDefinitionExtractionFailed = "ForeignKeyDefinitionExtractionFailed";
         internal const string HistoryTracker_CannotGetOldContent = "HistoryTracker_CannotGetOldContent";
         internal const string HistoryTracker_Error = "HistoryTracker_Error";
         internal const string HistoryTracker_InvalidItemType = "HistoryTracker_InvalidItemType";
@@ -922,6 +939,7 @@ namespace EfModelMigrations.Resources
         internal const string PrimitiveTypeKindInvalid = "PrimitiveTypeKindInvalid";
         internal const string ProjectExtensions_PathMustBeAbsolute = "ProjectExtensions_PathMustBeAbsolute";
         internal const string ProjectExtensions_PathMustBeRelative = "ProjectExtensions_PathMustBeRelative";
+        internal const string PropertyDefinitionExtractionFailed = "PropertyDefinitionExtractionFailed";
         internal const string RelationshipMultiplicityInvalid = "RelationshipMultiplicityInvalid";
         internal const string TransformationInverseMissing = "TransformationInverseMissing";
         internal const string Transformations_FkNamesAndFkPropsBothSpecified = "Transformations_FkNamesAndFkPropsBothSpecified";
