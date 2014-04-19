@@ -194,6 +194,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         {
             historyTracker.Restore();
 
+            //TODO: proc nepouzivat history tracker i na db migraci???
             //Ensure db migration is removed
             if (scaffoldedMigration != null)
             {

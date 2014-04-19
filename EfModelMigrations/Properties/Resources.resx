@@ -213,6 +213,9 @@
   <data name="DbMigrationsConfigurationTypeNotSpecified" xml:space="preserve">
     <value>Cannot create db migrations configuration, DbMigrationsConfigurationType was not specified.</value>
   </data>
+  <data name="EdmPropertyUnknown" xml:space="preserve">
+    <value>Unknown type of EdmProperty.</value>
+  </data>
   <data name="EfModel_CannotFindAssociation" xml:space="preserve">
     <value>Cannot find association from {0} to {1} in entity framework metadata.</value>
   </data>
@@ -225,11 +228,62 @@
   <data name="EfModel_CannotFindJoinTable" xml:space="preserve">
     <value>Cannot find join table for association from {0} to {1} in entity framework metadata.</value>
   </data>
+  <data name="EnableCommand_CreatingConfiguration" xml:space="preserve">
+    <value>Creating ModelConfiguration.</value>
+  </data>
+  <data name="EnableCommand_CreatingDbContext" xml:space="preserve">
+    <value>Creating new DbContext: {0}.</value>
+  </data>
+  <data name="EnableCommand_EnablingEfMigrations" xml:space="preserve">
+    <value>Enabling Entity Framework database migrations...</value>
+  </data>
+  <data name="ExecuteCommand_MigrationScaffolded" xml:space="preserve">
+    <value>Migration {0} was succesfully scaffolded.</value>
+  </data>
+  <data name="ExecuteCommand_ScaffoldingMigration" xml:space="preserve">
+    <value>Scaffolding migration from command {0} ...</value>
+  </data>
+  <data name="HistoryTracker_CannotGetOldContent" xml:space="preserve">
+    <value>Cannot retrieve old content for file {0}! See inner exception.</value>
+  </data>
+  <data name="HistoryTracker_Error" xml:space="preserve">
+    <value>Error during reverting history! See inner exception.</value>
+  </data>
+  <data name="HistoryTracker_InvalidItemType" xml:space="preserve">
+    <value>Invalid history item type.</value>
+  </data>
+  <data name="HistoryTracker_MoreThanOneFileInProjectItem" xml:space="preserve">
+    <value>Project item {0} contains more than one file.</value>
+  </data>
   <data name="IndexOrderInvalid" xml:space="preserve">
     <value>The index with name '{0}' on table '{1}' has the same column order of '{2}' specified for columns '{3}' and '{4}'. Make sure a different order value is used for the IndexAttribute on each column of a multi-column index.</value>
   </data>
   <data name="InvalidModelMigrationId" xml:space="preserve">
     <value>Invalid model migration id.</value>
+  </data>
+  <data name="LoggingModelMigrator_ApplyingModelChanges" xml:space="preserve">
+    <value>Applying model changes...</value>
+  </data>
+  <data name="LoggingModelMigrator_GeneratingDbMigration" xml:space="preserve">
+    <value>Generating Db migration...</value>
+  </data>
+  <data name="LoggingModelMigrator_MigrateList" xml:space="preserve">
+    <value>{0} migrations: [{1}].</value>
+  </data>
+  <data name="LoggingModelMigrator_MigrateOne" xml:space="preserve">
+    <value>{0} migration: {1}.</value>
+  </data>
+  <data name="LoggingModelMigrator_MigrateSuccess" xml:space="preserve">
+    <value>Migration {0} was succesfully {1}.</value>
+  </data>
+  <data name="LoggingModelMigrator_NoMigrations" xml:space="preserve">
+    <value>No migrations to apply or revert.</value>
+  </data>
+  <data name="LoggingModelMigrator_UpdatingDb" xml:space="preserve">
+    <value>Updating database...</value>
+  </data>
+  <data name="MappingInformationRemover_MissingImplementation" xml:space="preserve">
+    <value>Cannot remove mapping information of type {0}. Remover implementation is missing.</value>
   </data>
   <data name="MappingInformationsGenerator_InvalidCSharpTokenType" xml:space="preserve">
     <value>Invalid CSharpTokenType.</value>
@@ -239,6 +293,51 @@
   </data>
   <data name="MigrationOperationInverseMissing" xml:space="preserve">
     <value>Inversion migration operation was requested but not provided before.</value>
+  </data>
+  <data name="ModelChangesExecutor_CannotGetMethodCode" xml:space="preserve">
+    <value>Cannot retrieve method code from method {0}.</value>
+  </data>
+  <data name="ModelChangesExecutor_CannotSetMethodCode" xml:space="preserve">
+    <value>Cannot update method code in method {0}.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToAddDbSetProperty" xml:space="preserve">
+    <value>Cannot add DbSet property to DbContext for class {0} in model project.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToAddMappingInformation" xml:space="preserve">
+    <value>Cannot add mapping information of type {0}. See inner exception.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToAddProperty" xml:space="preserve">
+    <value>Cannot add property {0} to class {1} in model project.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToCreateClass" xml:space="preserve">
+    <value>Cannot create class {0} in model project.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToFindDbSetProperty" xml:space="preserve">
+    <value>Cannot find DbSet property for class {0} in DbContext.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToFindMethod" xml:space="preserve">
+    <value>Cannot find method {0} in class {1}.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToFindProperty" xml:space="preserve">
+    <value>Cannot find property {0} in class {1}.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToRemoveClass" xml:space="preserve">
+    <value>Cannot remove class {0} from model project.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToRemoveDbSetProperty" xml:space="preserve">
+    <value>Cannot remove DbSet property from DbContext for class {0} in model project.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToRemoveProperty" xml:space="preserve">
+    <value>Cannot remove property {0} from class {1} in model project.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToRenameClass" xml:space="preserve">
+    <value>Cannot rename class {0} in model project.</value>
+  </data>
+  <data name="ModelChangesExecutor_FailedToRenameProperty" xml:space="preserve">
+    <value>Cannot rename property {0} from class {1} in model project.</value>
+  </data>
+  <data name="ModelChangesExecutor_MissingImplementation" xml:space="preserve">
+    <value>Cannot execute model change operation {0}. Executor implementation is missing.</value>
   </data>
   <data name="ModelEnableSuccessfull" xml:space="preserve">
     <value>Model migrations was successfully enabled in current project.</value>
@@ -320,41 +419,5 @@
   </data>
   <data name="TypeFinder_MultipleTypesFound" xml:space="preserve">
     <value>More than one type with base type {0} was found.</value>
-  </data>
-  <data name="VsCodeModel_FailedToAddDbSetProperty" xml:space="preserve">
-    <value>Cannot add DbSet property to DbContext for class {0} in model project.</value>
-  </data>
-  <data name="VsCodeModel_FailedToAddMappingInformation" xml:space="preserve">
-    <value>Cannot add mapping information of type {0}. See inner exception.</value>
-  </data>
-  <data name="VsCodeModel_FailedToAddProperty" xml:space="preserve">
-    <value>Cannot add property {0} to class {1} in model project.</value>
-  </data>
-  <data name="VsCodeModel_FailedToCreateClass" xml:space="preserve">
-    <value>Cannot create class {0} in model project.</value>
-  </data>
-  <data name="VsCodeModel_FailedToFindDbSetProperty" xml:space="preserve">
-    <value>Cannot find DbSet property for class {0} in DbContext.</value>
-  </data>
-  <data name="VsCodeModel_FailedToFindMethod" xml:space="preserve">
-    <value>Cannot find method {0} in class {1}.</value>
-  </data>
-  <data name="VsCodeModel_FailedToFindProperty" xml:space="preserve">
-    <value>Cannot find property {0} in class {1}.</value>
-  </data>
-  <data name="VsCodeModel_FailedToRemoveClass" xml:space="preserve">
-    <value>Cannot remove class {0} from model project.</value>
-  </data>
-  <data name="VsCodeModel_FailedToRemoveDbSetProperty" xml:space="preserve">
-    <value>Cannot remove DbSet property from DbContext for class {0} in model project.</value>
-  </data>
-  <data name="VsCodeModel_FailedToRemoveProperty" xml:space="preserve">
-    <value>Cannot remove property {0} from class {1} in model project.</value>
-  </data>
-  <data name="VsCodeModel_FailedToRenameClass" xml:space="preserve">
-    <value>Cannot rename class {0} in model project.</value>
-  </data>
-  <data name="VsCodeModel_FailedToRenameProperty" xml:space="preserve">
-    <value>Cannot rename property {0} from class {1} in model project.</value>
   </data>
 </root>

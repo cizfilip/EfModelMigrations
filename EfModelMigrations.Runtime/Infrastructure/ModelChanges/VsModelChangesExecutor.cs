@@ -56,8 +56,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 }
                 catch (RuntimeBinderException e)
                 {
-                    //TODO: string do resourcu
-                    throw new ModelMigrationsException(string.Format("Cannot execute model change operation {0}. Executor implementation is missing.", operation.GetType().Name), e);
+                    throw new ModelMigrationsException(Strings.ModelChangesExecutor_MissingImplementation(operation.GetType().Name), e);
                 }
             }
 
@@ -77,7 +76,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToCreateClass(operation.Name), e);
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToCreateClass(operation.Name), e);
             }
         }
 
@@ -96,7 +95,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRemoveClass(operation.Name), e);
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToRemoveClass(operation.Name), e);
             }
         }
 
@@ -112,7 +111,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             AddPropertyToClassInternal(codeClass,
                 propertyName,
                 propertyString,
-                e => new ModelMigrationsException(Strings.VsCodeModel_FailedToAddProperty(
+                e => new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToAddProperty(
                     operation.Model.Name,
                     operation.ClassName), e)
                 );
@@ -132,7 +131,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRemoveProperty(operation.Name, operation.ClassName), e);
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToRemoveProperty(operation.Name, operation.ClassName), e);
             }
         }
 
@@ -153,7 +152,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRenameClass(operation.OldName), e);
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToRenameClass(operation.OldName), e);
             }
         }
 
@@ -170,7 +169,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRenameProperty(operation.OldName, operation.ClassName), e);
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToRenameProperty(operation.OldName, operation.ClassName), e);
             }
         }
 
@@ -206,7 +205,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                 }
                 catch (Exception e)
                 {
-                    throw new ModelMigrationsException(Strings.VsCodeModel_FailedToAddMappingInformation(operation.GetType().Name), e);
+                    throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToAddMappingInformation(operation.GetType().Name), e);
                 }
             }
         }
@@ -231,17 +230,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
                 var matches = Regex.Matches(methodCode, string.Concat(prefixForOnModelCreating, generatedInfo.Content), RegexOptions.Singleline);
 
-                //TODO: associace by meli matchnout jen jednou ale property mapping by mohl i vicekrat....
-                //if (matches.Count > 1)
-                //{
-                //    throw new ModelMigrationsException("More than one mapping information for remove found in OnModelCreating"); //TODO: string do resourcu
-                //}
-
-                //if (matches.Count == 1)
-                //{
-                //    var match = matches[0];
-                //    methodCode = methodCode.Remove(match.Index, match.Length);
-                //}
                 foreach (Match match in matches)
                 {
                     methodCode = methodCode.Remove(match.Index, match.Length);
@@ -263,7 +251,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
             AddPropertyToClassInternal(contextClass, dbSetPropertyName, propertyString,
                 e => new ModelMigrationsException(
-                    Strings.VsCodeModel_FailedToAddDbSetProperty(operation.ClassName)
+                    Strings.ModelChangesExecutor_FailedToAddDbSetProperty(operation.ClassName)
                     , e)
                 );
         }
@@ -282,8 +270,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                //TODO: přeorganizovat resource stringy pro add/remove db set property
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToRemoveDbSetProperty(operation.ClassName), e);
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToRemoveDbSetProperty(operation.ClassName), e);
             }
         }
 
@@ -315,7 +302,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             var property = codeClass.FindProperty(propertyName);
             if(property == null)
             {
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToFindProperty(propertyName, codeClass.Name));
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToFindProperty(propertyName, codeClass.Name));
             }
             return property;
         }
@@ -325,7 +312,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             var method = codeClass.FindMethod(methodName);
             if (method == null)
             {
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToFindMethod(methodName, codeClass.Name));
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToFindMethod(methodName, codeClass.Name));
             }
             return method;
         }
@@ -351,7 +338,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format("Cannot retrieve method code from method {0}", method.Name), e); //TODO: string do resourcu
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_CannotGetMethodCode(method.Name), e);
             }
         }
 
@@ -366,7 +353,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(string.Format("Cannot update method code in method {0}", method.Name), e); //TODO: string do resourcu
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_CannotSetMethodCode(method.Name), e);
             }
         }
 
@@ -401,7 +388,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new ModelMigrationsException(Strings.VsCodeModel_FailedToFindDbSetProperty(classNameForRemoveProperty), e);
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToFindDbSetProperty(classNameForRemoveProperty), e);
             }
         }
 

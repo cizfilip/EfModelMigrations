@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using System.Data.Entity.Core.Common;
 using System.ComponentModel.DataAnnotations.Schema;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
 {
@@ -90,7 +91,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             }
             else
             {
-                throw new InvalidOperationException("Unknown type for edmProperty"); //TODO: string do resourcu
+                throw new InvalidOperationException(Strings.EdmPropertyUnknown);
             }
             
             MapPrimitiveProperty(property, edmProperty, column);

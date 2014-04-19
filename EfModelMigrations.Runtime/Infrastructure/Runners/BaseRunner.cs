@@ -124,20 +124,5 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 throw new ModelMigrationsException(Strings.CannotFindConfiguration);
             }
         }
-
-        //protected T CreateInstance<T>(Type type, object[] constructorParameters = null)
-        //{
-        //    try
-        //    {
-        //        return (T)Activator.CreateInstance(type, constructorParameters);
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw new ModelMigrationsException(Strings.CannotCreateInstance(type.Name), e);
-        //    }
-        //}
-
-        
-       
     }
 }

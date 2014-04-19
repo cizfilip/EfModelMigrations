@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Configuration;
 using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
+using EfModelMigrations.Resources;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,6 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 {
-    //TODO: hlasky do resourcu
     internal class LoggingModelMigrator : ModelMigratorBase
     {
         private RunnerLogger logger;
@@ -26,13 +26,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
         {
             if(!migrationIds.Any())
             {
-                logger.Info("No migrations to apply or revert.");
+                logger.Info(Strings.LoggingModelMigrator_NoMigrations);
             }
             else
             {
-                string direction = isRevert ? "Reverting" : "Applying";
-
-                logger.Info(string.Format("{0} migrations: [{1}].", direction, string.Join(", ", migrationIds)));
+                logger.Info(Strings.LoggingModelMigrator_MigrateList(GetDirection(isRevert), string.Join(", ", migrationIds)));
             }
 
             base.Migrate(migrationIds, isRevert, force);
@@ -40,30 +38,46 @@ namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 
         internal override void MigrateOne(string migrationId, bool isRevert, bool force)
         {
-            string direction = isRevert ? "Reverting" : "Applying";
-            
-
-            logger.Info(string.Format("{0} migration: {1}.", direction, migrationId));
-            logger.Info("Applying model changes...");
+            logger.Info(Strings.LoggingModelMigrator_MigrateOne(GetDirection(isRevert), migrationId));
+            logger.Info(Strings.LoggingModelMigrator_ApplyingModelChanges);
 
             base.MigrateOne(migrationId, isRevert, force);
 
-            string direction2 = isRevert ? "reverted" : "applied";
-            logger.Info(string.Format("Migration {0} was succesfully {1}.", migrationId, direction2));
+            logger.Info(Strings.LoggingModelMigrator_MigrateSuccess(migrationId, 
+                GetDirection(isRevert, pastTense: true, lowerCase: true)));
         }
 
         internal override ScaffoldedMigration GenerateDbMigration(IEnumerable<MigrationOperation> operations, string dbMigrationName)
         {
-            logger.Info("Generating Db migration...");
+            logger.Info(Strings.LoggingModelMigrator_GeneratingDbMigration);
             return base.GenerateDbMigration(operations, dbMigrationName);
         }
 
         internal override void UpdateDatabase(string dbMigrationId)
         {
-            logger.Info("Updating database...");
+            logger.Info(Strings.LoggingModelMigrator_UpdatingDb);
             base.UpdateDatabase(dbMigrationId);
         }
 
 
+        private string GetDirection(bool isRevert, bool pastTense = false, bool lowerCase = false)
+        {
+            string returnValue;
+            if (pastTense)
+            {
+                returnValue = isRevert ? "Reverted" : "Applied";
+            }
+            else
+            {
+                returnValue = isRevert ? "Reverting" : "Applying";
+            }
+
+            if (lowerCase)
+            {
+                returnValue = returnValue.ToLower();
+            }
+
+            return returnValue;
+        }
     }
 }

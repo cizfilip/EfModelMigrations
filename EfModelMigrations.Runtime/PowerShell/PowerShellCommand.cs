@@ -83,11 +83,6 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         protected abstract void ExecuteCore();
 
-        //protected virtual NewAppDomainExecutor CreateExecutor()
-        //{
-        //    return new NewAppDomainExecutor(Project.GetAssemblyPath());
-        //}
-
         protected virtual CommandFacade CreateFacade()
         {
             return new CommandFacade(Project)
@@ -100,22 +95,16 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         public virtual void WriteLine(string message)
         {
-            //DebugCheck.NotEmpty(message);
-
             dispatcher.WriteLine(message);
         }
 
         public virtual void WriteWarning(string message)
         {
-            //DebugCheck.NotEmpty(message);
-
             dispatcher.WriteWarning(message);
         }
 
         public void WriteVerbose(string message)
         {
-            //DebugCheck.NotEmpty(message);
-
             dispatcher.WriteVerbose(message);
         }
 
@@ -139,8 +128,6 @@ namespace EfModelMigrations.Runtime.PowerShell
 
         private void Throw(Exception ex)
         {
-            //DebugCheck.NotNull(ex);
-
             domain.SetData("wasError", true);
             domain.SetData("error.Message", ex.Message);
             domain.SetData("error.TypeName", ex.GetType().FullName);

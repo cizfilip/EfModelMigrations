@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using EfModelMigrations.Runtime.Extensions;
 using System.IO;
 using EfModelMigrations.Exceptions;
+using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 {
@@ -68,7 +69,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             catch (Exception e)
             {
                 //TODO: wrap e in new FatalError exception?
-                throw new ModelMigrationsException("Error during reverting history! See inner exception", e); //TODO: string do resourcu
+                throw new ModelMigrationsException(Strings.HistoryTracker_Error, e);
             }
         }
 
@@ -91,7 +92,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
                     RestoreContentOfProjectItem(projectItem, historyItem.Content);
                     break;
                 default:
-                    throw new InvalidOperationException("Invalid history item type."); //TODO: string do resaurcu
+                    throw new InvalidOperationException(Strings.HistoryTracker_InvalidItemType);
             }
         }
 
@@ -163,7 +164,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
         private string GetItemFullPath(ProjectItem item)
         {
             if (item.FileCount != 1)
-                throw new InvalidOperationException(string.Format("Project item {0} contains more than one file!", item.Name)); //TODO: string do resourcu
+                throw new InvalidOperationException(Strings.HistoryTracker_MoreThanOneFileInProjectItem(item.Name));
 
             return item.FileNames[1];
         }
@@ -176,7 +177,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException(string.Format("Cannot retrieve old content for file {0}! See inner exception", fullPath), e); //TODO: string do resourcu
+                throw new InvalidOperationException(Strings.HistoryTracker_CannotGetOldContent(fullPath), e);
             }
         }
         

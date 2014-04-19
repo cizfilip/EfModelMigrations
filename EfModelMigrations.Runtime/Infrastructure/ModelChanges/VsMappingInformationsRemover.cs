@@ -2,6 +2,7 @@
 using EfModelMigrations.Infrastructure.Generators;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Operations.Mapping.Model;
+using EfModelMigrations.Resources;
 using Microsoft.CSharp.RuntimeBinder;
 using System;
 using System.Collections.Generic;
@@ -34,8 +35,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
             catch (RuntimeBinderException e)
             {
-                //TODO: string do resourcu
-                throw new ModelMigrationsException(string.Format("Cannot remove mapping information of type {0}. Remover implementation is missing.", mappingInfo.GetType().Name), e);
+                throw new ModelMigrationsException(Strings.MappingInformationRemover_MissingImplementation(mappingInfo.GetType().Name), e);
             }
         }
 

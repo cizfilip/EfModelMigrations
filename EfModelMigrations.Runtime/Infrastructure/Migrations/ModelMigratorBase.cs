@@ -2,13 +2,9 @@
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Runtime.Infrastructure.ModelChanges;
 using EfModelMigrations.Transformations;
-using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Design;
 using System.Data.Entity.Migrations.Model;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EfModelMigrations.Runtime.Infrastructure.Migrations
 {
