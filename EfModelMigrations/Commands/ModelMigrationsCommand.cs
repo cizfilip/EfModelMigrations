@@ -7,8 +7,27 @@ namespace EfModelMigrations.Commands
     //TODO: projit cely projekt a peclive zvazit co udelat internal a co public !!!
     public abstract class ModelMigrationsCommand
     {
+        private string migrationName;
+        internal string MigrationName
+        {
+            set
+            {
+                this.migrationName = value;
+            }
+        }
+
+
         public abstract IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider);
 
-        public abstract string GetMigrationName();
+        protected abstract string GetDefaultMigrationName();
+
+        public virtual string GetMigrationName()
+        {
+            if (string.IsNullOrWhiteSpace(migrationName))
+            {
+                return GetDefaultMigrationName();
+            }
+            return migrationName;
+        }
     }
 }

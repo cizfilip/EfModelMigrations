@@ -19,7 +19,11 @@ namespace EfModelMigrations.Commands
         private string tableName;
         private string schema;
 
-        public CreateClassCommand(string className, string visibility, string tableName, string schema, string[] properties)
+        public CreateClassCommand(string className, 
+            string visibility, 
+            string tableName, 
+            string schema, 
+            string[] properties)
         {
             if (string.IsNullOrWhiteSpace(className))
             {
@@ -56,7 +60,7 @@ namespace EfModelMigrations.Commands
             yield return new CreateClassTransformation(new ClassModel(className, table, classVisibility), parameterParser.ParseProperties(properties));
         }
 
-        public override string GetMigrationName()
+        protected override string GetDefaultMigrationName()
         {
             return "CreateClass" + className;
         }

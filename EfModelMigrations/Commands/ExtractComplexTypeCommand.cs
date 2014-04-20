@@ -20,7 +20,9 @@ namespace EfModelMigrations.Commands
         private NavigationPropertyCodeModel navigationProperty;
 
         //TODO: Dat stringy vyjimek do resourcu
-        public ExtractComplexTypeCommand(string className, string complexTypeName, string[] properties)
+        public ExtractComplexTypeCommand(string className, 
+            string complexTypeName, 
+            string[] properties)
         {
             if (string.IsNullOrWhiteSpace(className))
             {
@@ -47,7 +49,7 @@ namespace EfModelMigrations.Commands
             yield return new ExtractComplexTypeTransformation(className, complexTypeName, propertiesToExtract, navigationProperty);
         }
 
-        public override string GetMigrationName()
+        protected override string GetDefaultMigrationName()
         {
             return "ExtractComplexType" + complexTypeName + "From" + className;
         }

@@ -36,7 +36,7 @@ namespace EfModelMigrations.Commands
             yield return new RenameClassTransformation(oldClassName, newClassName);
         }
 
-        public override string GetMigrationName()
+        protected override string GetDefaultMigrationName()
         {
             return "RenameClass" + oldClassName;
         }

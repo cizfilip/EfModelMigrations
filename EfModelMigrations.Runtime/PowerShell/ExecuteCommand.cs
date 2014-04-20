@@ -17,14 +17,16 @@ namespace EfModelMigrations.Runtime.PowerShell
     internal class ExecuteCommand : PowerShellCommand
     {
         private string commandFullName;
+        private string migrationName;
         private object[] parameters;
         
 
-        public ExecuteCommand(string commandFullName, object[] parameters) : base()
+        public ExecuteCommand(string commandFullName, string migrationName, object[] parameters) : base()
         {
             Check.NotEmpty(commandFullName, "commandFullName");
 
             this.commandFullName = commandFullName;
+            this.migrationName = migrationName;
             this.parameters = parameters;
 
             Execute();
@@ -43,7 +45,7 @@ namespace EfModelMigrations.Runtime.PowerShell
             GeneratedModelMigration migration = null;
             using(var facade = CreateFacade())
             {
-                migration = facade.GenerateMigration(commandFullName, parameters);
+                migration = facade.GenerateMigration(commandFullName, migrationName, parameters);
             }
 
             if (migration != null)

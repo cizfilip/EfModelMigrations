@@ -56,7 +56,7 @@ namespace EfModelMigrations.Commands
             return propertyModel;
         }
 
-        public override string GetMigrationName()
+        protected override string GetDefaultMigrationName()
         {
             return "RemoveProperties" + string.Join("", propertiesToRemove);
         }

@@ -22,6 +22,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
         public Project ModelProject { get; set; }
 
         public string CommandFullName { get; set; }
+        public string MigrationName { get; set; }
         public object[] Parameters { get; set; }
 
         public override void Run()
@@ -37,6 +38,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                                             ))
                                         .Single();
                 command = commandType.CreateInstance<ModelMigrationsCommand>(Parameters);
+                command.MigrationName = this.MigrationName;
             }
             catch (Exception e)
             {

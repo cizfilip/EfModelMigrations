@@ -16,12 +16,12 @@ function Model-EmptyMigration
 {
     [CmdletBinding()] 
     param (
-        [Parameter(Position = 0, Mandatory = $true, HelpMessage="TODO")]
+        [Parameter(Position = 0, Mandatory = $true, HelpMessage="Specifies model migration name.")]
         [string]
         $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.EmptyMigrationCommand @( ,$MigrationName )
+    Model-ExecuteCommand EfModelMigrations.Commands.EmptyMigrationCommand $MigrationName
 }
 
 <#
@@ -42,14 +42,13 @@ function Model-AddProperties
         #TODO: rozmyslet i pouzivani alias atributu viz example zde.
         #TODO: pripadne pouzivat i validacni atributy - viz http://technet.microsoft.com/en-us/library/hh847743.aspx
         #TODO: pro bool parametry pouzit [Switch] jako typ attribut
-        [Parameter(Position = 0, Mandatory = $true, HelpMessage="TODO")]
-        #[alias("Class","CN")]
-        [string]
-        $ClassName,
-        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+		#[alias("Class","CN")]
+        [Parameter(Position = 0, Mandatory = $true, HelpMessage="TODO")][string] $ClassName,
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.AddPropertiesCommand @( $ClassName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.AddPropertiesCommand $MigrationName @( $ClassName, $Properties )
 }
 
 <#
@@ -70,10 +69,11 @@ function Model-CreateClass
         [Parameter(Mandatory = $false)][string] $Visibility,
         [Parameter(Mandatory = $false)][string] $TableName,
         [Parameter(Mandatory = $false)][string] $Schema,
-        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand @( $ClassName, $Visibility, $TableName, $Schema, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand $MigrationName @( $ClassName, $Visibility, $TableName, $Schema, $Properties )
 }
 
 <#
@@ -90,10 +90,11 @@ function Model-RemoveClass
 {
     [CmdletBinding()] 
     param (
-        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName
+        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.RemoveClassCommand @( ,$ClassName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RemoveClassCommand $MigrationName @( ,$ClassName )
 }
 
 <#
@@ -111,10 +112,11 @@ function Model-RemoveProperties
     [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
-        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.RemovePropertiesCommand @( $ClassName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.RemovePropertiesCommand $MigrationName @( $ClassName, $Properties )
 }
 
 <#
@@ -132,10 +134,11 @@ function Model-RenameClass
     [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $OldClassName,
-        [Parameter(Position = 1, Mandatory = $true)][string] $NewClassName
+        [Parameter(Position = 1, Mandatory = $true)][string] $NewClassName,
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.RenameClassCommand @( $OldClassName, $NewClassName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RenameClassCommand $MigrationName @( $OldClassName, $NewClassName )
 }
 
 <#
@@ -154,10 +157,11 @@ function Model-RenameProperty
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
         [Parameter(Position = 1, Mandatory = $true)][string] $OldPropertyName,
-        [Parameter(Position = 2, Mandatory = $true)][string] $NewPropertyName
+        [Parameter(Position = 2, Mandatory = $true)][string] $NewPropertyName,
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.RenamePropertyCommand @( $ClassName, $OldPropertyName, $NewPropertyName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RenamePropertyCommand $MigrationName @( $ClassName, $OldPropertyName, $NewPropertyName )
 }
 
 
@@ -177,10 +181,11 @@ function Model-ExtractComplexType
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
         [Parameter(Position = 1, Mandatory = $true)][string] $ComplexTypeName,
-        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.ExtractComplexTypeCommand @( $ClassName, $ComplexTypeName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.ExtractComplexTypeCommand $MigrationName @( $ClassName, $ComplexTypeName, $Properties )
 }
 
 
@@ -200,14 +205,15 @@ function Model-ExecuteCommand
     [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $CommandFullName,
-        [Parameter(Position = 1, Mandatory = $true)][Array] $Parameters
+		[Parameter(Position = 1, Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+        [Parameter(Position = 2, Mandatory = $false)][Array] $Parameters
     )
 
     $runner = New-EfModelMigrationsRunner $ProjectName 
 
     try
     {	
-        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ExecuteCommand @( $CommandFullName, $Parameters )
+        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ExecuteCommand @( $CommandFullName, $MigrationName, $Parameters )
 
         $error = Get-RunnerError $runner                    
 

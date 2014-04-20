@@ -47,12 +47,13 @@ namespace EfModelMigrations.Runtime.Infrastructure
         }
 
 
-        public GeneratedModelMigration GenerateMigration(string commandFullName, object[] parameters)
+        public GeneratedModelMigration GenerateMigration(string commandFullName, string migrationName, object[] parameters)
         {
             return executor.ExecuteRunner<GeneratedModelMigration>(new GenerateMigrationFromCommandRunner() 
                         { 
                             ModelProject = this.modelProject,
                             CommandFullName = commandFullName,
+                            MigrationName = migrationName,
                             Parameters = parameters
                         });
         }

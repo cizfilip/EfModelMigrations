@@ -16,7 +16,9 @@ namespace EfModelMigrations.Commands
         private string oldPropertyName;
         private string newPropertyName;
 
-        public RenamePropertyCommand(string className, string oldPropertyName, string newPropertyName)
+        public RenamePropertyCommand(string className, 
+            string oldPropertyName, 
+            string newPropertyName)
         {
             if (string.IsNullOrWhiteSpace(className))
             {
@@ -44,7 +46,7 @@ namespace EfModelMigrations.Commands
         }
 
         
-        public override string GetMigrationName()
+        protected override string GetDefaultMigrationName()
         {
             return "RenameProperty" + oldPropertyName + "In" + className;
         }

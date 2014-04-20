@@ -33,7 +33,7 @@ namespace EfModelMigrations.Commands
                 );
         }
 
-        public override string GetMigrationName()
+        protected override string GetDefaultMigrationName()
         {
             return "RemoveClass" + className;
         }

@@ -10,30 +10,20 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Commands
 {
-    //TODO: pridat moznost predat volitelne jmeno migrace do vsech commandu
     public class EmptyMigrationCommand : ModelMigrationsCommand
     {
-        private string migrationName;
-
-        public EmptyMigrationCommand(string migrationName)
+        public EmptyMigrationCommand()
         {
-            if (string.IsNullOrWhiteSpace(migrationName))
-            {
-                throw new ModelMigrationsException(Strings.Commands_MigrationNameMissing);
-            }
-
-            this.migrationName = migrationName;
         }
-
 
         public override IEnumerable<ModelTransformation> GetTransformations(IClassModelProvider modelProvider)
         {
             return Enumerable.Empty<ModelTransformation>();
         }
 
-        public override string GetMigrationName()
+        protected override string GetDefaultMigrationName()
         {
-            return migrationName;
+            throw new InvalidOperationException(Strings.Commands_MigrationNameMissing);
         }
     }
 }
