@@ -409,7 +409,7 @@
     <value>Invalid RelationshipMultiplicity.</value>
   </data>
   <data name="Rescaffold_NoPendingMigration" xml:space="preserve">
-    <value>Cannot rescaffold last model migration, pending migration not found in project.</value>
+    <value>Cannot rescaffold last model migration, there must be exactly one pending migration in project.</value>
   </data>
   <data name="Rescaffold_SpecifiedNameNotSameAsPending" xml:space="preserve">
     <value>Cannot rescaffold last model migration, specified migration name {0} is not same as pending migration name {1}. </value>

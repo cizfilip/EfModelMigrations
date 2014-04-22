@@ -792,7 +792,7 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
-        // A string like "Cannot rescaffold last model migration, pending migration not found in project."
+        // A string like "Cannot rescaffold last model migration, there must be exactly one pending migration in project."
         // </summary>
         internal static string Rescaffold_NoPendingMigration
         {
