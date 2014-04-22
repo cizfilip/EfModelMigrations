@@ -320,11 +320,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public interface IStringMappingBuilder : IFluentInterface
+    public interface IStringMappingBuilder : IPrimitiveMappingBuilder
     {
-        IStringMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
-        IStringMappingBuilder WithIndex(IndexAttribute index);
-        IStringMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+        new IStringMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        new IStringMappingBuilder WithIndex(IndexAttribute index);
+        new IStringMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
         IStringMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null);
         IStringMappingBuilder IsUnicode(bool value);
     }
@@ -371,11 +371,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public interface IBinaryMappingBuilder : IFluentInterface
+    public interface IBinaryMappingBuilder : IPrimitiveMappingBuilder
     {
-        IBinaryMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
-        IBinaryMappingBuilder WithIndex(IndexAttribute index);
-        IBinaryMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+        new IBinaryMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        new IBinaryMappingBuilder WithIndex(IndexAttribute index);
+        new IBinaryMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
         IBinaryMappingBuilder WithLengthOptions(int? maxLength = null, bool? isMaxLength = null, bool? isFixedLegth = null);
         IBinaryMappingBuilder IsTimespan();
     }
@@ -422,11 +422,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public interface IDateTimeMappingBuilder : IFluentInterface
+    public interface IDateTimeMappingBuilder : IPrimitiveMappingBuilder
     {
-        IDateTimeMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
-        IDateTimeMappingBuilder WithIndex(IndexAttribute index);
-        IDateTimeMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+        new IDateTimeMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        new IDateTimeMappingBuilder WithIndex(IndexAttribute index);
+        new IDateTimeMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
         IDateTimeMappingBuilder WithPrecision(byte precision);
     }
 
@@ -467,11 +467,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel.Builders
         }
     }
 
-    public interface IDecimalMappingBuilder : IFluentInterface
+    public interface IDecimalMappingBuilder : IPrimitiveMappingBuilder
     {
-        IDecimalMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
-        IDecimalMappingBuilder WithIndex(IndexAttribute index);
-        IDecimalMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
+        new IDecimalMappingBuilder WithColumnMapping(string columnName = null, bool? isNullable = null, string databaseType = null, int? order = null, string parameterName = null, bool? isConcurrencyToken = null);
+        new IDecimalMappingBuilder WithIndex(IndexAttribute index);
+        new IDecimalMappingBuilder HasDatabaseGeneratedOption(DatabaseGeneratedOption option);
         IDecimalMappingBuilder WithPrecision(byte precision, byte scale);
     }
 

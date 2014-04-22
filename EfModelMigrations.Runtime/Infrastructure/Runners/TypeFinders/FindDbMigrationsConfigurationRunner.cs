@@ -19,6 +19,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
             if (typeFinder.TryFindDbMigrationsConfigurationType(ProjectAssembly, out foundType))
             {
                 Return(foundType.FullName);
+                return;
             }
 
             

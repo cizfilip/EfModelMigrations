@@ -237,8 +237,14 @@
   <data name="EnableCommand_EnablingEfMigrations" xml:space="preserve">
     <value>Enabling Entity Framework database migrations...</value>
   </data>
+  <data name="ExecuteCommand_MigrationRescaffolded" xml:space="preserve">
+    <value>Migration {0} was succesfully rescaffolded.</value>
+  </data>
   <data name="ExecuteCommand_MigrationScaffolded" xml:space="preserve">
     <value>Migration {0} was succesfully scaffolded.</value>
+  </data>
+  <data name="ExecuteCommand_RescaffoldingMigration" xml:space="preserve">
+    <value>Rescaffolding migration from command {0} ...</value>
   </data>
   <data name="ExecuteCommand_ScaffoldingMigration" xml:space="preserve">
     <value>Scaffolding migration from command {0} ...</value>
@@ -360,6 +366,9 @@
   <data name="ModelMigrationsDirectoryIsRooted" xml:space="preserve">
     <value>The 'ModelMigrationsDirectory' property of 'ModelMigrationsConfiguration' was set to the absolute path '{0}'. The model migrations directory must be set to a relative path for a sub-directory under the Visual Studio project root.</value>
   </data>
+  <data name="ModelMigrationsNotEnabled" xml:space="preserve">
+    <value>Model migrations was not enabled.</value>
+  </data>
   <data name="MultipleMigrationsFound" xml:space="preserve">
     <value>Multiple migrations with name {0} was found.</value>
   </data>
@@ -398,6 +407,12 @@
   </data>
   <data name="RelationshipMultiplicityInvalid" xml:space="preserve">
     <value>Invalid RelationshipMultiplicity.</value>
+  </data>
+  <data name="Rescaffold_NoPendingMigration" xml:space="preserve">
+    <value>Cannot rescaffold last model migration, pending migration not found in project.</value>
+  </data>
+  <data name="Rescaffold_SpecifiedNameNotSameAsPending" xml:space="preserve">
+    <value>Cannot rescaffold last model migration, specified migration name {0} is not same as pending migration name {1}. </value>
   </data>
   <data name="TransformationInverseMissing" xml:space="preserve">
     <value>Inversion transformation was requested but not provided before.</value>

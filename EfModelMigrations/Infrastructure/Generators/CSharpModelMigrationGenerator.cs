@@ -33,7 +33,7 @@ namespace EfModelMigrations.Infrastructure.Generators
                 DownMethod = downMethodBody
             };
 
-            return new GeneratedModelMigration(migrationId, migrationDirectory, template.TransformText());
+            return new GeneratedModelMigration(migrationId, string.Concat(@namespace, ".", className), migrationDirectory, template.TransformText(), upMethodBody, downMethodBody);
         }
 
         protected virtual string GenerateMethodBody(IEnumerable<ModelTransformation> transformations)

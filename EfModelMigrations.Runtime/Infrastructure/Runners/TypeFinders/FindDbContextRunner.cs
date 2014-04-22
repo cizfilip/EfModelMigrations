@@ -20,6 +20,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
             if (typeFinder.TryFindDbContextType(ProjectAssembly, out foundType))
             {
                 Return(foundType.FullName);
+                return;
             }
 
 

@@ -36,14 +36,14 @@ namespace EfModelMigrations
             ((ModelMigration)migration).AddTransformation(new RemoveClassTransformation(className));
         }
 
-        public static void AddProperty(this IModelMigration migration, string className, string propertyName, Func<IPrimitivePropertyBuilder, PrimitiveMappingBuilder> propertyAction)
+        public static void AddProperty(this IModelMigration migration, string className, string propertyName, Func<IPrimitivePropertyBuilder, IPrimitiveMappingBuilder> propertyAction)
         {
             Check.NotNull(migration, "migration");
             Check.NotEmpty(className, "className");
             Check.NotEmpty(propertyName, "propertyName");
             Check.NotNull(propertyAction, "propertyAction");
 
-            var property = propertyAction(new PrimitivePropertyBuilder()).Property;
+            var property = ((PrimitiveMappingBuilder)propertyAction(new PrimitivePropertyBuilder())).Property;
 
             property.Name = propertyName;
             ((ModelMigration)migration).AddTransformation(new AddPropertyTransformation(className, property));

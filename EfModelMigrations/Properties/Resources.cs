@@ -336,11 +336,27 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Migration {0} was succesfully rescaffolded."
+        // </summary>
+        internal static string ExecuteCommand_MigrationRescaffolded(object p0)
+        {
+            return EntityRes.GetString(EntityRes.ExecuteCommand_MigrationRescaffolded, p0);
+        }
+
+        // <summary>
         // A string like "Migration {0} was succesfully scaffolded."
         // </summary>
         internal static string ExecuteCommand_MigrationScaffolded(object p0)
         {
             return EntityRes.GetString(EntityRes.ExecuteCommand_MigrationScaffolded, p0);
+        }
+
+        // <summary>
+        // A string like "Rescaffolding migration from command {0} ..."
+        // </summary>
+        internal static string ExecuteCommand_RescaffoldingMigration(object p0)
+        {
+            return EntityRes.GetString(EntityRes.ExecuteCommand_RescaffoldingMigration, p0);
         }
 
         // <summary>
@@ -664,6 +680,14 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Model migrations was not enabled."
+        // </summary>
+        internal static string ModelMigrationsNotEnabled
+        {
+            get { return EntityRes.GetString(EntityRes.ModelMigrationsNotEnabled); }
+        }
+
+        // <summary>
         // A string like "Multiple migrations with name {0} was found."
         // </summary>
         internal static string MultipleMigrationsFound(object p0)
@@ -765,6 +789,22 @@ namespace EfModelMigrations.Resources
         internal static string RelationshipMultiplicityInvalid
         {
             get { return EntityRes.GetString(EntityRes.RelationshipMultiplicityInvalid); }
+        }
+
+        // <summary>
+        // A string like "Cannot rescaffold last model migration, pending migration not found in project."
+        // </summary>
+        internal static string Rescaffold_NoPendingMigration
+        {
+            get { return EntityRes.GetString(EntityRes.Rescaffold_NoPendingMigration); }
+        }
+
+        // <summary>
+        // A string like "Cannot rescaffold last model migration, specified migration name {0} is not same as pending migration name {1}. "
+        // </summary>
+        internal static string Rescaffold_SpecifiedNameNotSameAsPending(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.Rescaffold_SpecifiedNameNotSameAsPending, p0, p1);
         }
 
         // <summary>
@@ -887,7 +927,9 @@ namespace EfModelMigrations.Resources
         internal const string EnableCommand_CreatingConfiguration = "EnableCommand_CreatingConfiguration";
         internal const string EnableCommand_CreatingDbContext = "EnableCommand_CreatingDbContext";
         internal const string EnableCommand_EnablingEfMigrations = "EnableCommand_EnablingEfMigrations";
+        internal const string ExecuteCommand_MigrationRescaffolded = "ExecuteCommand_MigrationRescaffolded";
         internal const string ExecuteCommand_MigrationScaffolded = "ExecuteCommand_MigrationScaffolded";
+        internal const string ExecuteCommand_RescaffoldingMigration = "ExecuteCommand_RescaffoldingMigration";
         internal const string ExecuteCommand_ScaffoldingMigration = "ExecuteCommand_ScaffoldingMigration";
         internal const string ForeignKeyDefinitionExtractionFailed = "ForeignKeyDefinitionExtractionFailed";
         internal const string HistoryTracker_CannotGetOldContent = "HistoryTracker_CannotGetOldContent";
@@ -928,6 +970,7 @@ namespace EfModelMigrations.Resources
         internal const string ModelMigrationGenerator_SBytePropertyNotSupported = "ModelMigrationGenerator_SBytePropertyNotSupported";
         internal const string ModelMigrationsAlreadyEnabled = "ModelMigrationsAlreadyEnabled";
         internal const string ModelMigrationsDirectoryIsRooted = "ModelMigrationsDirectoryIsRooted";
+        internal const string ModelMigrationsNotEnabled = "ModelMigrationsNotEnabled";
         internal const string MultipleMigrationsFound = "MultipleMigrationsFound";
         internal const string NoMigrationsToApplyOrRevert = "NoMigrationsToApplyOrRevert";
         internal const string ParameterParser_InvalidVisibility = "ParameterParser_InvalidVisibility";
@@ -941,6 +984,8 @@ namespace EfModelMigrations.Resources
         internal const string ProjectExtensions_PathMustBeRelative = "ProjectExtensions_PathMustBeRelative";
         internal const string PropertyDefinitionExtractionFailed = "PropertyDefinitionExtractionFailed";
         internal const string RelationshipMultiplicityInvalid = "RelationshipMultiplicityInvalid";
+        internal const string Rescaffold_NoPendingMigration = "Rescaffold_NoPendingMigration";
+        internal const string Rescaffold_SpecifiedNameNotSameAsPending = "Rescaffold_SpecifiedNameNotSameAsPending";
         internal const string TransformationInverseMissing = "TransformationInverseMissing";
         internal const string Transformations_FkNamesAndFkPropsBothSpecified = "Transformations_FkNamesAndFkPropsBothSpecified";
         internal const string Transformations_InvalidManyNavigationProperty = "Transformations_InvalidManyNavigationProperty";

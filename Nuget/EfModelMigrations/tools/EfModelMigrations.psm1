@@ -1,6 +1,7 @@
 $InitialModel = '0'
 
 #TODO: pridat koncept knownExceptions (kouknout jak dela EF) a alespon validacni exceptiony zobrazovat jako WriteError
+#TODO: u vsech parametru pouzivat HelpMessage - plus udelat podporu pro get-help command
 
 <#
 .SYNOPSIS
@@ -16,12 +17,10 @@ function Model-EmptyMigration
 {
     [CmdletBinding()] 
     param (
-        [Parameter(Position = 0, Mandatory = $true, HelpMessage="Specifies model migration name.")]
-        [string]
-        $MigrationName
+        [Parameter(Position = 0, Mandatory = $true, HelpMessage="Specifies model migration name.")][string] $MigrationName
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.EmptyMigrationCommand $MigrationName
+    Model-ExecuteCommand EfModelMigrations.Commands.EmptyMigrationCommand $false $MigrationName
 }
 
 <#
@@ -45,10 +44,11 @@ function Model-AddProperties
 		#[alias("Class","CN")]
         [Parameter(Position = 0, Mandatory = $true, HelpMessage="TODO")][string] $ClassName,
         [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
-		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+		[Parameter(Mandatory = $false)][switch] $Rescaffold
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.AddPropertiesCommand $MigrationName @( $ClassName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.AddPropertiesCommand $Rescaffold $MigrationName @( $ClassName, $Properties )
 }
 
 <#
@@ -70,10 +70,11 @@ function Model-CreateClass
         [Parameter(Mandatory = $false)][string] $TableName,
         [Parameter(Mandatory = $false)][string] $Schema,
         [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
-		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+		[Parameter(Mandatory = $false)][switch] $Rescaffold
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand $MigrationName @( $ClassName, $Visibility, $TableName, $Schema, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.CreateClassCommand $Rescaffold $MigrationName @( $ClassName, $Visibility, $TableName, $Schema, $Properties )
 }
 
 <#
@@ -91,10 +92,11 @@ function Model-RemoveClass
     [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
-		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+		[Parameter(Mandatory = $false)][switch] $Rescaffold
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.RemoveClassCommand $MigrationName @( ,$ClassName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RemoveClassCommand $Rescaffold $MigrationName @( ,$ClassName )
 }
 
 <#
@@ -113,10 +115,11 @@ function Model-RemoveProperties
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
         [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
-		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+		[Parameter(Mandatory = $false)][switch] $Rescaffold
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.RemovePropertiesCommand $MigrationName @( $ClassName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.RemovePropertiesCommand $Rescaffold $MigrationName @( $ClassName, $Properties )
 }
 
 <#
@@ -135,10 +138,11 @@ function Model-RenameClass
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $OldClassName,
         [Parameter(Position = 1, Mandatory = $true)][string] $NewClassName,
-		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+		[Parameter(Mandatory = $false)][switch] $Rescaffold
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.RenameClassCommand $MigrationName @( $OldClassName, $NewClassName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RenameClassCommand $Rescaffold $MigrationName @( $OldClassName, $NewClassName )
 }
 
 <#
@@ -158,10 +162,11 @@ function Model-RenameProperty
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
         [Parameter(Position = 1, Mandatory = $true)][string] $OldPropertyName,
         [Parameter(Position = 2, Mandatory = $true)][string] $NewPropertyName,
-		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+		[Parameter(Mandatory = $false)][switch] $Rescaffold
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.RenamePropertyCommand $MigrationName @( $ClassName, $OldPropertyName, $NewPropertyName )
+    Model-ExecuteCommand EfModelMigrations.Commands.RenamePropertyCommand $Rescaffold $MigrationName @( $ClassName, $OldPropertyName, $NewPropertyName )
 }
 
 
@@ -182,10 +187,11 @@ function Model-ExtractComplexType
         [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
         [Parameter(Position = 1, Mandatory = $true)][string] $ComplexTypeName,
         [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
-		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+		[Parameter(Mandatory = $false)][switch] $Rescaffold
     )
 
-    Model-ExecuteCommand EfModelMigrations.Commands.ExtractComplexTypeCommand $MigrationName @( $ClassName, $ComplexTypeName, $Properties )
+    Model-ExecuteCommand EfModelMigrations.Commands.ExtractComplexTypeCommand $Rescaffold $MigrationName @( $ClassName, $ComplexTypeName, $Properties )
 }
 
 
@@ -205,15 +211,16 @@ function Model-ExecuteCommand
     [CmdletBinding()] 
     param (
         [Parameter(Position = 0, Mandatory = $true)][string] $CommandFullName,
-		[Parameter(Position = 1, Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
-        [Parameter(Position = 2, Mandatory = $false)][Array] $Parameters
+		[Parameter(Position = 1, Mandatory = $false)][switch] $Rescaffold,
+		[Parameter(Position = 2, Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+        [Parameter(Position = 3, Mandatory = $false)][Array] $Parameters
     )
 
     $runner = New-EfModelMigrationsRunner $ProjectName 
 
     try
     {	
-        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ExecuteCommand @( $CommandFullName, $MigrationName, $Parameters )
+        Invoke-RunnerCommand $runner EfModelMigrations.Runtime.PowerShell.ExecuteCommand @( $CommandFullName, $Rescaffold.IsPresent, $MigrationName, $Parameters )
 
         $error = Get-RunnerError $runner                    
 
@@ -534,13 +541,6 @@ function New-AppDomainSetup($Project, $InstallPath)
 function Invoke-RunnerCommand($runner, $command, $parameters)
 {
     $domain = $runner.Domain
-
-    #if ($anonymousArguments)
-    #{
-    #    $anonymousArguments.GetEnumerator() | %{
-    #        $domain.SetData($_.Name, $_.Value)
-    #    }
-    #}
 
     $domain.CreateInstanceFrom(
         (Join-Path $runner.ToolsPath 'EfModelMigrations.Runtime.dll'),

@@ -20,8 +20,8 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners.TypeFinders
             if (typeFinder.TryFindModelMigrationsConfigurationType(ProjectAssembly, out foundType))
             {
                 Return(foundType.FullName);
+                return;
             }
-
 
             Return((string)null);
         }

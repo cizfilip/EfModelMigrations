@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\CodeClass2Extensions.cs" />
+    <Compile Include="Extensions\CodeFunction2Extensions.cs" />
     <Compile Include="Extensions\ProjectExtensions.cs" />
     <Compile Include="Extensions\EnvDteExtensions.cs" />
     <Compile Include="Infrastructure\CommandFacade.cs" />

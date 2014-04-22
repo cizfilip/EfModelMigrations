@@ -69,7 +69,6 @@ namespace EfModelMigrations.Utilities
             }
 
             foundType = types.Single();
-
             return true;
         }
     }

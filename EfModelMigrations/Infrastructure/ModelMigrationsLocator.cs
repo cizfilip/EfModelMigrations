@@ -129,7 +129,7 @@ namespace EfModelMigrations.Infrastructure
             return possibleMigrationIds.Single();
         }
 
-        private IEnumerable<string> GetPendingMigrationsIds()
+        public IEnumerable<string> GetPendingMigrationsIds()
         {
             return GetModelMigrationsIds().Except(appliedModelMigrations, StringComparer.Ordinal);
         }

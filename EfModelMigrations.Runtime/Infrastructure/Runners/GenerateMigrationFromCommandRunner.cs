@@ -23,10 +23,33 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
 
         public string CommandFullName { get; set; }
         public string MigrationName { get; set; }
+        public bool IsRescaffold { get; set; }
         public object[] Parameters { get; set; }
 
         public override void Run()
         {
+            var migrationsLocator = new ModelMigrationsLocator(Configuration);
+            string rescaffoldMigrationId = null;
+            //Check rescaffolding preconditions
+            if (IsRescaffold)
+            {
+                var pendingMigrations = migrationsLocator.GetPendingMigrationsIds();
+                if (pendingMigrations.Count() != 1)
+                {
+                    throw new ModelMigrationsException(Strings.Rescaffold_NoPendingMigration);
+                }
+
+                rescaffoldMigrationId = pendingMigrations.Single();
+                string pendingMigrationName = ModelMigrationIdGenerator.GetNameFromId(rescaffoldMigrationId);
+                if (!string.IsNullOrWhiteSpace(MigrationName) && !MigrationName.EqualsOrdinal(pendingMigrationName))
+                {
+                    throw new ModelMigrationsException(Strings.Rescaffold_SpecifiedNameNotSameAsPending(MigrationName, pendingMigrationName));
+                }
+                
+                MigrationName = pendingMigrationName;
+            }
+
+
             //Initialize Command
             ModelMigrationsCommand command;
 
@@ -45,13 +68,24 @@ namespace EfModelMigrations.Runtime.Infrastructure.Runners
                 throw new ModelMigrationsException(Strings.CannotCreateCommandInstance(CommandFullName), e);
             }
 
+            
             var edmxModel = new EdmxModelExtractor().GetEdmxModelAsString(DbContext);
             var classModelProvider = new VsClassModelProvider(ModelProject, Configuration, EfModelMetadata.Load(edmxModel));
             var transformations = command.GetTransformations(classModelProvider);
 
             //params for generation
-            string migrationName = new ModelMigrationsLocator(Configuration).UniquifyMigrationName(command.GetMigrationName());
-            string migrationId = ModelMigrationIdGenerator.GenerateId(migrationName);
+            string migrationName;
+            string migrationId;
+            if (IsRescaffold)
+            {
+                migrationName = MigrationName;
+                migrationId = rescaffoldMigrationId;
+            }
+            else
+            {
+                migrationName = migrationsLocator.UniquifyMigrationName(command.GetMigrationName());
+                migrationId = ModelMigrationIdGenerator.GenerateId(migrationName);
+            }
             string migrationNamespace = Configuration.ModelMigrationsNamespace;
 
             var generator = Configuration.ModelMigrationGenerator;

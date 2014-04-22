@@ -193,13 +193,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
 
                 try
                 {
-                    var editPoint = onModelCreatingMethod.GetEndPoint(vsCMPart.vsCMPartBody).CreateEditPoint();
-
-                    editPoint.Insert(string.Concat(prefixForOnModelCreating, generatedInfo.Content));
-                    editPoint.Insert(Environment.NewLine);
-
-                    //Format inserted mapping
-                    onModelCreatingMethod.StartPoint.CreateEditPoint().SmartFormat(onModelCreatingMethod.EndPoint);
+                    onModelCreatingMethod.InsertAtEnd(string.Concat(prefixForOnModelCreating, generatedInfo.Content));
                 }
                 catch (Exception e)
                 {
