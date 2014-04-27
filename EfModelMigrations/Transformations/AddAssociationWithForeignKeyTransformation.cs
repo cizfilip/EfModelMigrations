@@ -6,22 +6,39 @@ using System.Data.Entity.Migrations.Model;
 using System.Collections.Generic;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using System;
+using EfModelMigrations.Infrastructure;
+using EfModelMigrations.Operations.Mapping;
 
 namespace EfModelMigrations.Transformations
 {
-    public abstract class AddAssociationWithForeignKeyTransformation : AddAssociationWithCascadeDeleteTransformation
+    public abstract class AddAssociationWithForeignKeyTransformation : AddAssociationTransformation
     {
-
-        public AddAssociationWithForeignKeyTransformation(AssociationEnd principal, AssociationEnd dependent, bool? willCascadeOnDelete = null)
-            : base(principal, dependent, willCascadeOnDelete)
+        public AddAssociationWithForeignKeyTransformation(AssociationCodeModel model)
+            : base(model)
         {
+        }
+
+        protected override AddAssociationMapping CreateAssociationMapping(IClassModelProvider modelProvider)
+        {
+            if (Model.GetForeignKeyIndex() != null && Model.GetForeignKeyColumnNames() == null)
+            {
+                var foreignKeyColumnNames = AddAssociationWithForeignKeyTransformation.GetUniquifiedDefaultForeignKeyColumnNames(
+                        Model.Principal,
+                        Model.Dependent,
+                        modelProvider.GetClassCodeModel(Model.Principal.ClassName),
+                        modelProvider.GetClassCodeModel(Model.Dependent.ClassName));
+
+                Model.AddInformation(AssociationInfo.CreateForeignKeyColumnNames(foreignKeyColumnNames));
+            }
+
+            return base.CreateAssociationMapping(modelProvider);
         }
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            var referentialConstraint = builder.NewModel.GetStoreAssociationTypeForAssociation(Principal, Dependent)
+            var referentialConstraint = builder.NewModel.GetStoreAssociationTypeForAssociation(Model.Principal, Model.Dependent)
                 .Constraint;
-            var dependentStoreEntitySet = builder.NewModel.GetStoreEntitySetForClass(Dependent.ClassName);
+            var dependentStoreEntitySet = builder.NewModel.GetStoreEntitySetForClass(Model.Dependent.ClassName);
             var foreignKeyColumns = referentialConstraint.ToProperties;
 
             //Add fk columns

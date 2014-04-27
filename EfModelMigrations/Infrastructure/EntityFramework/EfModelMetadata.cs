@@ -129,17 +129,18 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             return EdmItemCollection.GetItems<EntityType>().Single(e => e.Name.EqualsOrdinal(className));
         }
 
-
         public EntityTypeMapping GetEntityTypeMappingForClass(string className)
         {
             Check.NotEmpty(className, "className");
 
             return EntityTypeMappings
-                .Single(t => t.EntityType.Name.EqualsOrdinal(className));
+                .Single(t => 
+                    t.IsHierarchyMapping ? 
+                    t.IsOfEntityTypes.Single().Name.EqualsOrdinal(className) : 
+                    t.EntityType.Name.EqualsOrdinal(className));
         }
 
         //TODO: hint jak handlovat mapping fragmenty je v efmodeldifferu metoda FindRenamedMappedColumns
-        //TODO: nejspis nebude fungovat pri dedicnosti - EntityType bude mit vice MappingFragmentu
         public EntitySet GetStoreEntitySetForClass(string className)
         {
             Check.NotEmpty(className, "className");

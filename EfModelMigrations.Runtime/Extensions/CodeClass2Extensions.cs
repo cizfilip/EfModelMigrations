@@ -11,25 +11,23 @@ namespace EfModelMigrations.Runtime.Extensions
     {
         public static CodeProperty2 FindProperty(this CodeClass2 codeClass, string propertyName)
         {
-            try
-            {
-                return (CodeProperty2)codeClass.Members.Item(propertyName);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
+            return codeClass.FindMember<CodeProperty2>(propertyName);
         }
 
         public static CodeFunction2 FindMethod(this CodeClass2 codeClass, string methodName)
         {
+            return codeClass.FindMember<CodeFunction2>(methodName);
+        }
+
+        public static T FindMember<T>(this CodeClass2 codeClass, string memberName) where T : class
+        {
             try
             {
-                return (CodeFunction2)codeClass.Members.Item(methodName);
+                return codeClass.Members.Item(memberName) as T;
             }
             catch (Exception)
             {
-                return null;
+                return (T)null;
             }
         }
     }

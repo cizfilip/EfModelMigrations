@@ -1,7 +1,7 @@
 ﻿using EfModelMigrations.Infrastructure.CodeModel;
 using System.Data.Entity.Core.Metadata.Edm;
 
-namespace EfModelMigrations.Transformations.Model
+namespace EfModelMigrations.Infrastructure.CodeModel
 {
     public sealed class AssociationEnd
     {
@@ -29,14 +29,6 @@ namespace EfModelMigrations.Transformations.Model
         public AssociationEnd(string className, RelationshipMultiplicity multipticity)
             :this(className, multipticity, null)
         {
-        }
-
-        public SimpleAssociationEnd ToSimpleAssociationEnd()
-        {
-            return new SimpleAssociationEnd(
-                ClassName,
-                HasNavigationProperty ? NavigationProperty.Name : null
-                );
         }
     }
 }

@@ -624,6 +624,14 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Cannot set base class {0} for class {1} in model project."
+        // </summary>
+        internal static string ModelChangesExecutor_FailedToSetBaseClass(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.ModelChangesExecutor_FailedToSetBaseClass, p0, p1);
+        }
+
+        // <summary>
         // A string like "Cannot execute model change operation {0}. Executor implementation is missing."
         // </summary>
         internal static string ModelChangesExecutor_MissingImplementation(object p0)
@@ -963,6 +971,7 @@ namespace EfModelMigrations.Resources
         internal const string ModelChangesExecutor_FailedToRemoveProperty = "ModelChangesExecutor_FailedToRemoveProperty";
         internal const string ModelChangesExecutor_FailedToRenameClass = "ModelChangesExecutor_FailedToRenameClass";
         internal const string ModelChangesExecutor_FailedToRenameProperty = "ModelChangesExecutor_FailedToRenameProperty";
+        internal const string ModelChangesExecutor_FailedToSetBaseClass = "ModelChangesExecutor_FailedToSetBaseClass";
         internal const string ModelChangesExecutor_MissingImplementation = "ModelChangesExecutor_MissingImplementation";
         internal const string ModelEnableSuccessfull = "ModelEnableSuccessfull";
         internal const string ModelMigrationGenerator_ImplementationMissing = "ModelMigrationGenerator_ImplementationMissing";

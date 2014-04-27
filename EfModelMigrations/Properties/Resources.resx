@@ -345,6 +345,9 @@
   <data name="ModelChangesExecutor_FailedToRenameProperty" xml:space="preserve">
     <value>Cannot rename property {0} from class {1} in model project.</value>
   </data>
+  <data name="ModelChangesExecutor_FailedToSetBaseClass" xml:space="preserve">
+    <value>Cannot set base class {0} for class {1} in model project.</value>
+  </data>
   <data name="ModelChangesExecutor_MissingImplementation" xml:space="preserve">
     <value>Cannot execute model change operation {0}. Executor implementation is missing.</value>
   </data>

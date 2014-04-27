@@ -3,7 +3,7 @@ using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Resources;
-using EfModelMigrations.Transformations.Model;
+using EfModelMigrations.Infrastructure.CodeModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,18 +14,15 @@ namespace EfModelMigrations.Transformations
 {
     public abstract class AddAssociationTransformation : ModelTransformation
     {
-        public AssociationEnd Principal { get; private set; }
-        public AssociationEnd Dependent { get; private set; }
+        public AssociationCodeModel Model { get; private set; }
 
-        public AddAssociationTransformation(AssociationEnd principal, AssociationEnd dependent)
+        public AddAssociationTransformation(AssociationCodeModel model)
         {
-            Check.NotNull(principal, "principal");
-            Check.NotNull(dependent, "dependent");
+            Check.NotNull(model, "model");
 
-            this.Principal = principal;
-            this.Dependent = dependent;
+            this.Model = model;
 
-            if (!principal.HasNavigationProperty && !dependent.HasNavigationProperty)
+            if (!Model.Principal.HasNavigationProperty && !Model.Dependent.HasNavigationProperty)
             {
                 throw new ModelTransformationValidationException(Strings.Transformations_NavigationPropertyMissing);
             }
@@ -35,23 +32,26 @@ namespace EfModelMigrations.Transformations
         {
             var modelChangeOperations = CreateModelChangeOperations(modelProvider);
 
-            return modelChangeOperations.Concat(new[] { new AddMappingInformationOperation(CreateAssociationMappingInformation(modelProvider)) });
+            return modelChangeOperations.Concat(new[] { new AddMappingInformationOperation(CreateAssociationMapping(modelProvider)) });
         }
 
         protected virtual IEnumerable<IModelChangeOperation> CreateModelChangeOperations(IClassModelProvider modelProvider)
         {
-            if (Principal.HasNavigationProperty)
+            if (Model.Principal.HasNavigationProperty)
             {
-                yield return new AddPropertyToClassOperation(Principal.ClassName, Principal.NavigationProperty);
+                yield return new AddPropertyToClassOperation(Model.Principal.ClassName, Model.Principal.NavigationProperty);
             }
 
-            if (Dependent.HasNavigationProperty)
+            if (Model.Dependent.HasNavigationProperty)
             {
-                yield return new AddPropertyToClassOperation(Dependent.ClassName, Dependent.NavigationProperty);
+                yield return new AddPropertyToClassOperation(Model.Dependent.ClassName, Model.Dependent.NavigationProperty);
             }
         }
 
-        protected abstract AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider);
+        protected virtual AddAssociationMapping CreateAssociationMapping(IClassModelProvider modelProvider)
+        {
+            return new AddAssociationMapping(Model);
+        }
 
         public override bool IsDestructiveChange
         {

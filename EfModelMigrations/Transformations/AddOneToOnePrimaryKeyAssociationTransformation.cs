@@ -3,6 +3,7 @@ using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Transformations.Model;
 using System;
 using System.Linq;
@@ -13,12 +14,12 @@ using EfModelMigrations.Resources;
 
 namespace EfModelMigrations.Transformations
 {
-    public class AddOneToOnePrimaryKeyAssociationTransformation : AddAssociationWithCascadeDeleteTransformation
+    public class AddOneToOnePrimaryKeyAssociationTransformation : AddAssociationTransformation
     {
-        public AddOneToOnePrimaryKeyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, bool? willCascadeOnDelete = null)
-            :base(principal, dependent, willCascadeOnDelete)
+        public AddOneToOnePrimaryKeyAssociationTransformation(AssociationCodeModel model)
+            :base(model)
         {
-            if (MultiplicityHelper.IsOneToOne(principal, dependent) && !(principal.Multipticity == RelationshipMultiplicity.ZeroOrOne && dependent.Multipticity == RelationshipMultiplicity.ZeroOrOne))
+            if (Model.IsOneToOne() && !(Model.Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne && Model.Dependent.Multipticity == RelationshipMultiplicity.ZeroOrOne))
             {
                 throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityOneToOnePk);
             }
@@ -26,7 +27,7 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            var dependentStoreEntitySet = builder.NewModel.GetStoreEntitySetForClass(Dependent.ClassName);
+            var dependentStoreEntitySet = builder.NewModel.GetStoreEntitySetForClass(Model.Dependent.ClassName);
 
             //drop identity if required
             var dropIdentityOperation = builder.TryBuildDropIdentityOperation(dependentStoreEntitySet);
@@ -35,7 +36,7 @@ namespace EfModelMigrations.Transformations
                 yield return dropIdentityOperation;
             }
 
-            var referentialConstraint = builder.NewModel.GetStoreAssociationTypeForAssociation(Principal, Dependent)
+            var referentialConstraint = builder.NewModel.GetStoreAssociationTypeForAssociation(Model.Principal, Model.Dependent)
                 .Constraint;
             var foreignKeyColumns = referentialConstraint.ToProperties;
 
@@ -50,23 +51,10 @@ namespace EfModelMigrations.Transformations
             yield return builder.AddForeignKeyOperation(referentialConstraint);
         }
 
-        protected override AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider)
-        {
-            return new AddAssociationMapping(Principal, Dependent)
-            {
-                WillCascadeOnDelete = WillCascadeOnDelete
-            };
-        }
 
         public override ModelTransformation Inverse()
         {
-            return new RemoveOneToOnePrimaryKeyAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd(), true);
-        }
-
-       
+            return new RemoveOneToOnePrimaryKeyAssociationTransformation(Model.Principal.ToSimpleAssociationEnd(), Model.Dependent.ToSimpleAssociationEnd(), true);
+        }  
     }
-
-    
-
-
 }

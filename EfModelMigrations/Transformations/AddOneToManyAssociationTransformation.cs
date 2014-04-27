@@ -21,79 +21,58 @@ namespace EfModelMigrations.Transformations
 {
     public class AddOneToManyAssociationTransformation : AddAssociationWithForeignKeyTransformation
     {
-        public string[] ForeignKeyColumnNames { get; private set; }
-        public ForeignKeyPropertyCodeModel[] ForeignKeyProperties { get; private set; }
-        public IndexAttribute ForeignKeyIndex { get; private set; }
-
-
-        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ForeignKeyPropertyCodeModel[] foreignKeyProperties, bool? willCascadeOnDelete = null, IndexAttribute foreignKeyIndex = null)
-            : this(principal, dependent, foreignKeyProperties, null, willCascadeOnDelete, foreignKeyIndex)
+        public AddOneToManyAssociationTransformation(AssociationCodeModel model)
+            : base(model)
         {
-        }
-
-        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, string[] foreignKeyColumnNames, bool? willCascadeOnDelete = null, IndexAttribute foreignKeyIndex = null)
-            : this(principal, dependent, null, foreignKeyColumnNames, willCascadeOnDelete, foreignKeyIndex)
-        {
-        }
-
-        public AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, bool? willCascadeOnDelete = null, IndexAttribute foreignKeyIndex = null)
-            : this(principal, dependent, null, null, willCascadeOnDelete, foreignKeyIndex)
-        {
-        }
-
-        private AddOneToManyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, ForeignKeyPropertyCodeModel[] foreignKeyProperties, string[] foreignKeyColumnNames, bool? willCascadeOnDelete, IndexAttribute foreignKeyIndex)
-            : base(principal, dependent, willCascadeOnDelete)
-        {
-            this.ForeignKeyColumnNames = foreignKeyColumnNames;
-            this.ForeignKeyProperties = foreignKeyProperties;
-            this.ForeignKeyIndex = foreignKeyIndex;
-
-            if (!MultiplicityHelper.IsOneToMany(principal, dependent))
+            if (!Model.IsOneToMany())
             {
                 throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityOneToMany);
             }
 
-            if (principal.HasNavigationProperty && !principal.NavigationProperty.IsCollection)
+            if (Model.Principal.HasNavigationProperty && !Model.Principal.NavigationProperty.IsCollection)
             {
                 throw new ModelTransformationValidationException(Strings.Transformations_InvalidManyNavigationProperty);
             }
 
-            if (ForeignKeyColumnNames != null && foreignKeyProperties != null)
+            if (Model.GetForeignKeyColumnNames() != null && Model.GetForeignKeyProperties() != null)
             {
                 throw new ModelTransformationValidationException(Strings.Transformations_FkNamesAndFkPropsBothSpecified);
             }
         }
-
+        
         protected override IEnumerable<IModelChangeOperation> CreateModelChangeOperations(IClassModelProvider modelProvider)
         {
             var baseOperations = base.CreateModelChangeOperations(modelProvider);
 
             var addForeignKeyPropertyOperations = new List<IModelChangeOperation>();
-            if (ForeignKeyProperties != null)
+            var foreignKeyProperties = Model.GetForeignKeyProperties();
+            var foreignKeyIndex = Model.GetForeignKeyIndex();
+
+            if (foreignKeyProperties != null)
             {
-                var principalPks = modelProvider.GetClassCodeModel(Principal.ClassName).PrimaryKeys.ToArray();
+                var principalPks = modelProvider.GetClassCodeModel(Model.Principal.ClassName).PrimaryKeys.ToArray();
 
                 string indexName = null;
-                if (ForeignKeyIndex != null)
+                if (foreignKeyIndex != null)
                 {
-                    indexName = ForeignKeyIndex.GetDefaultNameIfRequired(ForeignKeyProperties.Select(p => p.Name));
+                    indexName = foreignKeyIndex.GetDefaultNameIfRequired(foreignKeyProperties.Select(p => p.Name));
                 }
 
-                for (int i = 0; i < ForeignKeyProperties.Length; i++)
+                for (int i = 0; i < foreignKeyProperties.Length; i++)
                 {
                     IndexAttribute index = null;
-                    if (ForeignKeyIndex != null)
+                    if (foreignKeyIndex != null)
                     {
-                        index = ForeignKeyIndex.CopyWithNameAndOrder(indexName, i);
+                        index = foreignKeyIndex.CopyWithNameAndOrder(indexName, i);
                     }
-                    var foreignKeyProperty = CreateForeignKey(ForeignKeyProperties[i], principalPks[i], index);
+                    var foreignKeyProperty = CreateForeignKey(foreignKeyProperties[i], principalPks[i], index);
                     
                     addForeignKeyPropertyOperations.Add(
-                            new AddPropertyToClassOperation(Dependent.ClassName, foreignKeyProperty)
+                            new AddPropertyToClassOperation(Model.Dependent.ClassName, foreignKeyProperty)
                         );
 
                     addForeignKeyPropertyOperations.Add(
-                            new AddMappingInformationOperation(new AddPropertyMapping(Dependent.ClassName, foreignKeyProperty))
+                            new AddMappingInformationOperation(new AddPropertyMapping(Model.Dependent.ClassName, foreignKeyProperty))
                         );
                 }
             }
@@ -103,17 +82,15 @@ namespace EfModelMigrations.Transformations
 
         private PrimitivePropertyCodeModel CreateForeignKey(ForeignKeyPropertyCodeModel foreignKey, PrimitivePropertyCodeModel primaryKey, IndexAttribute index = null)
         {
-            bool isForeignKeyNullable = Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne ? true : false;
+            bool isForeignKeyNullable = Model.Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne ? true : false;
             var foreignKeyProperty = primaryKey.MergeWith(foreignKey, isForeignKeyNullable);
 
             foreignKeyProperty.Column.DatabaseGeneratedOption = DatabaseGeneratedOption.None;
             foreignKeyProperty.Column.ColumnName = foreignKey.ColumnName;
             foreignKeyProperty.Column.ParameterName = null;
             foreignKeyProperty.Column.ColumnOrder = null;
-
-            //TODO: opravdu je ok tyhle veci dat null - jeste zrevidovat
             foreignKeyProperty.Column.IsConcurrencyToken = null;
-            foreignKeyProperty.Column.ColumnType = null;
+            foreignKeyProperty.Column.IsRowVersion = null;
 
             foreignKeyProperty.Column.ColumnAnnotations.Clear();
             if (index != null)
@@ -124,45 +101,17 @@ namespace EfModelMigrations.Transformations
             return foreignKeyProperty;
         }
 
-        protected override AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider)
-        {
-            if (ForeignKeyProperties != null)
-            {
-                return new AddAssociationMapping(Principal, Dependent)
-                {
-                    ForeignKeyProperties = ForeignKeyProperties.Select(p => p.Name).ToArray(),
-                    WillCascadeOnDelete = WillCascadeOnDelete
-                };
-            }
-            else
-            {
-                if (ForeignKeyColumnNames == null)
-                {
-                    ForeignKeyColumnNames = AddAssociationWithForeignKeyTransformation.GetUniquifiedDefaultForeignKeyColumnNames(
-                        Principal,
-                        Dependent,
-                        modelProvider.GetClassCodeModel(Principal.ClassName),
-                        modelProvider.GetClassCodeModel(Dependent.ClassName));
-                }
-
-                return new AddAssociationMapping(Principal, Dependent)
-                {
-                    ForeignKeyColumnNames = ForeignKeyColumnNames,
-                    ForeignKeyIndex = ForeignKeyIndex,
-                    WillCascadeOnDelete = WillCascadeOnDelete
-                };
-            }
-        }
-
         public override ModelTransformation Inverse()
         {
+            var foreignKeyProperties = Model.GetForeignKeyProperties();
+
             string[] foreignKeyPropertiesNames = null;
-            if (ForeignKeyProperties != null)
+            if (foreignKeyProperties != null)
             {
-                foreignKeyPropertiesNames = ForeignKeyProperties.Select(p => p.Name).ToArray();
+                foreignKeyPropertiesNames = foreignKeyProperties.Select(p => p.Name).ToArray();
             }
 
-            return new RemoveOneToManyAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd(), foreignKeyPropertiesNames);
+            return new RemoveOneToManyAssociationTransformation(Model.Principal.ToSimpleAssociationEnd(), Model.Dependent.ToSimpleAssociationEnd(), foreignKeyPropertiesNames);
         }
     }
 }

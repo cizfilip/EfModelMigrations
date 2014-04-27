@@ -146,6 +146,40 @@ namespace EfModelMigrations
         //    return new AssociationBuilder((ModelMigration)migration);
         //}
 
+
+        private static AssociationCodeModel CreateAsociationModel(AssociationEnd principal,
+            AssociationEnd dependent,
+            bool? willCascadeOnDelete = null,
+            string[] dependentFkNames = null,
+            ForeignKeyPropertyCodeModel[] dependentFkProps = null,
+            ManyToManyJoinTable joinTable = null,
+            IndexAttribute foreignKeyIndex = null
+            )
+        {
+            var model = new AssociationCodeModel(principal, dependent);
+            if (willCascadeOnDelete.HasValue)
+            {
+                model.AddInformation(AssociationInfo.CreateWillCascadeOnDelete(willCascadeOnDelete.Value));
+            }
+            if (dependentFkNames != null)
+            {
+                model.AddInformation(AssociationInfo.CreateForeignKeyColumnNames(dependentFkNames));
+            }
+            if (dependentFkProps != null)
+            {
+                model.AddInformation(AssociationInfo.CreateForeignKeyProperties(dependentFkProps));
+            }
+            if (foreignKeyIndex != null)
+            {
+                model.AddInformation(AssociationInfo.CreateForeignKeyIndex(foreignKeyIndex));
+            }
+            if (joinTable != null)
+            {
+                model.AddInformation(AssociationInfo.CreateJoinTable(joinTable));
+            }
+            return model;
+        }
+
         //1:1 PK
         public static void AddOneToOnePrimaryKeyAssociation(this IModelMigration migration,
             string principal,
@@ -155,7 +189,7 @@ namespace EfModelMigrations
             bool bothRequired = false,
             bool? willCascadeOnDelete = null)
         {
-            Check.NotNull(migration, "migration");           
+            Check.NotNull(migration, "migration");
             Check.NotEmpty(principal, "principal");
             Check.NotNull(principalNavigationProperty, "principalNavigationProperty");
             Check.NotEmpty(dependent, "dependent");
@@ -164,9 +198,12 @@ namespace EfModelMigrations
             var principalMultiplicity = bothRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToOnePrimaryKeyAssociationTransformation(
-                new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
-                new AssociationEnd(dependent, RelationshipMultiplicity.One, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
-                willCascadeOnDelete));
+                CreateAsociationModel(
+                    new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
+                    new AssociationEnd(dependent, RelationshipMultiplicity.One, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
+                    willCascadeOnDelete: willCascadeOnDelete
+                )
+            ));
 
         }
         public static void AddOneToOnePrimaryKeyAssociation(this IModelMigration migration,
@@ -209,10 +246,13 @@ namespace EfModelMigrations
             var dependentMultiplicity = dependentRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToOneForeignKeyAssociationTransformation(
-                new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
-                new AssociationEnd(dependent, dependentMultiplicity, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
-                dependentFkNames,
-                willCascadeOnDelete));
+                CreateAsociationModel(
+                    new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new OneNavigationPropertyBuilder(dependent))),
+                    new AssociationEnd(dependent, dependentMultiplicity, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
+                    willCascadeOnDelete: willCascadeOnDelete, 
+                    dependentFkNames: dependentFkNames
+                )
+            ));    
         }
         public static void AddOneToOneForeignKeyAssociation(this IModelMigration migration,
             string principal,
@@ -257,11 +297,14 @@ namespace EfModelMigrations
             var principalMultiplicity = principalRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToManyAssociationTransformation(
-                new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
-                new AssociationEnd(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
-                dependentFkNames,
-                willCascadeOnDelete,
-                foreignKeyIndex));
+                CreateAsociationModel(
+                    new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
+                    new AssociationEnd(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
+                    dependentFkNames: dependentFkNames,
+                    willCascadeOnDelete: willCascadeOnDelete,
+                    foreignKeyIndex: foreignKeyIndex
+                )
+            ));
         }
         public static void AddOneToManyAssociation(this IModelMigration migration,
             string principal,
@@ -307,11 +350,14 @@ namespace EfModelMigrations
             var principalMultiplicity = principalRequired ? RelationshipMultiplicity.One : RelationshipMultiplicity.ZeroOrOne;
 
             ((ModelMigration)migration).AddTransformation(new AddOneToManyAssociationTransformation(
-                new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
-                new AssociationEnd(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
-                ConvertObjectToForeignKeyPropertyModel(dependentFkPropertiesAction(new ForeignKeyPropertyBuilder())).ToArray(),
-                willCascadeOnDelete,
-                foreignKeyIndex));
+                CreateAsociationModel(
+                    new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
+                    new AssociationEnd(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
+                    dependentFkProps: ConvertObjectToForeignKeyPropertyModel(dependentFkPropertiesAction(new ForeignKeyPropertyBuilder())).ToArray(),
+                    willCascadeOnDelete: willCascadeOnDelete,
+                    foreignKeyIndex: foreignKeyIndex
+                )
+            ));
         }
         public static void AddOneToManyAssociation<TProps>(this IModelMigration migration,
             string principal,
@@ -351,9 +397,12 @@ namespace EfModelMigrations
             Check.NotNull(targetNavigationProperty, "targetNavigationProperty");
 
             ((ModelMigration)migration).AddTransformation(new AddManyToManyAssociationTransformation(
-                new AssociationEnd(source, RelationshipMultiplicity.Many, sourceNavigationProperty(new ManyNavigationPropertyBuilder(target))),
-                new AssociationEnd(target, RelationshipMultiplicity.Many, targetNavigationProperty(new ManyNavigationPropertyBuilder(source))),
-                joinTable));
+                CreateAsociationModel(
+                    new AssociationEnd(source, RelationshipMultiplicity.Many, sourceNavigationProperty(new ManyNavigationPropertyBuilder(target))),
+                    new AssociationEnd(target, RelationshipMultiplicity.Many, targetNavigationProperty(new ManyNavigationPropertyBuilder(source))),
+                    joinTable: joinTable
+                )
+            ));
         }
         public static void AddManyToManyAssociation(this IModelMigration migration,
             string source,

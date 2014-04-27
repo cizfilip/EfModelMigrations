@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EfModelMigrations.Transformations.Model
+namespace EfModelMigrations.Infrastructure.CodeModel
 {
     public sealed class ManyToManyJoinTable
     {

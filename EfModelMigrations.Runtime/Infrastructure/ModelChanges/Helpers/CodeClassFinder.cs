@@ -50,9 +50,9 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             return codeClass;
         }
 
-        private string GetFullNameOfClass(string @namespace, string className)
+        public string GetFullNameOfClass(string @namespace, string className)
         {
-            return @namespace + "." + className;
+            return string.Concat(@namespace, ".", className);
         }
 
 

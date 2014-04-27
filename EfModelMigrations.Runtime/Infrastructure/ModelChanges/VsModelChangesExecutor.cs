@@ -80,6 +80,21 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges
             }
         }
 
+        protected virtual void ExecuteOperation(SetBaseClassOperation operation)
+        {
+            CodeClass2 codeClass = classFinder.FindCodeClass(modelNamespace, operation.ForClass);
+            historyTracker.MarkItemModified(codeClass.ProjectItem);
+
+            try
+            {
+                codeClass.AddBase(classFinder.GetFullNameOfClass(modelNamespace, operation.BaseClass), -1);
+            }
+            catch (Exception e)
+            {
+                throw new ModelMigrationsException(Strings.ModelChangesExecutor_FailedToSetBaseClass(operation.BaseClass, operation.ForClass), e);
+            }
+        }
+
         //TODO: resit partial tridy (pres CodeClass2.Parts)
         protected virtual void ExecuteOperation(RemoveClassOperation operation)
         {

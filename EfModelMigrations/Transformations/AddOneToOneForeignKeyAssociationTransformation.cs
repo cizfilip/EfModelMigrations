@@ -17,49 +17,45 @@ namespace EfModelMigrations.Transformations
 {
     public class AddOneToOneForeignKeyAssociationTransformation : AddAssociationWithForeignKeyTransformation
     {   
-        public string[] ForeignKeyColumnNames { get; private set; }
-
-        public AddOneToOneForeignKeyAssociationTransformation(AssociationEnd principal, AssociationEnd dependent, string[] foreignKeyColumnNames = null, bool? willCascadeOnDelete = null)
-            :base(principal, dependent, willCascadeOnDelete)
+        public AddOneToOneForeignKeyAssociationTransformation(AssociationCodeModel model)
+            :base(model)
         {
-            this.ForeignKeyColumnNames = foreignKeyColumnNames;
-
-            if (!MultiplicityHelper.IsOneToOne(principal, dependent))
+            if (!Model.IsOneToOne())
             {
                 throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityOneToOneFk);
             }
         }
 
-        protected override AddAssociationMapping CreateAssociationMappingInformation(IClassModelProvider modelProvider)
+        protected override AddAssociationMapping CreateAssociationMapping(IClassModelProvider modelProvider)
         {
-            var principalCodeClass = modelProvider.GetClassCodeModel(Principal.ClassName);
+            var principalCodeClass = modelProvider.GetClassCodeModel(Model.Principal.ClassName);
+
+            
 
             //TODO: udelat z tohohle precondition! - a pak pouzivat i v OneToMany a ManyToMany
-            if(ForeignKeyColumnNames != null && principalCodeClass.PrimaryKeys.Count() != ForeignKeyColumnNames.Count())
+            //if (foreignKeyColumnNames != null && principalCodeClass.PrimaryKeys.Count() != foreignKeyColumnNames.Count())
+            //{
+            //    throw new ModelTransformationValidationException("Supplied foreign key column names for one to one association are invalid."); //TODO: string do resourcu
+            //}
+
+            var foreignKeyColumnNames = Model.GetForeignKeyColumnNames();
+            if (foreignKeyColumnNames == null)
             {
-                throw new ModelTransformationValidationException("Supplied foreign key column names for one to one association are invalid."); //TODO: string do resourcu
+                foreignKeyColumnNames = AddAssociationWithForeignKeyTransformation.GetUniquifiedDefaultForeignKeyColumnNames(
+                        Model.Principal,
+                        Model.Dependent,
+                        modelProvider.GetClassCodeModel(Model.Principal.ClassName),
+                        modelProvider.GetClassCodeModel(Model.Dependent.ClassName));
+
+                Model.AddInformation(AssociationInfo.CreateForeignKeyColumnNames(foreignKeyColumnNames));
             }
 
-            if(ForeignKeyColumnNames == null)
-            {
-                ForeignKeyColumnNames = AddAssociationWithForeignKeyTransformation.GetUniquifiedDefaultForeignKeyColumnNames(
-                    Principal,
-                    Dependent,
-                    principalCodeClass, 
-                    modelProvider.GetClassCodeModel(Dependent.ClassName));
-            }
-
-            return new AddAssociationMapping(Principal, Dependent)
-            {
-                ForeignKeyColumnNames = ForeignKeyColumnNames,
-                ForeignKeyIndex = new IndexAttribute() { IsUnique = true },
-                WillCascadeOnDelete = WillCascadeOnDelete
-            };
+            return base.CreateAssociationMapping(modelProvider);
         }
 
         public override ModelTransformation Inverse()
         {
-            return new RemoveOneToOneForeignKeyAssociationTransformation(Principal.ToSimpleAssociationEnd(), Dependent.ToSimpleAssociationEnd());
+            return new RemoveOneToOneForeignKeyAssociationTransformation(Model.Principal.ToSimpleAssociationEnd(), Model.Dependent.ToSimpleAssociationEnd());
         }
         
         

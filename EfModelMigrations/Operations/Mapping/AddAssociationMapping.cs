@@ -17,28 +17,13 @@ namespace EfModelMigrations.Operations.Mapping
 {
     public class AddAssociationMapping : IAddMappingInformation
     {
-        //Principal
-        public AssociationEnd Source { get; private set; }
-        //Dependent
-        public AssociationEnd Target { get; private set; }
+        public AssociationCodeModel Model { get; private set; }
 
-        public bool? WillCascadeOnDelete { get; set; }
-
-        public ManyToManyJoinTable JoinTable { get; set; }
-
-        public string[] ForeignKeyColumnNames { get; set; }
-
-        public string[] ForeignKeyProperties { get; set; }
-
-        public IndexAttribute ForeignKeyIndex { get; set; }
-
-        public AddAssociationMapping(AssociationEnd source, AssociationEnd target)
+        public AddAssociationMapping(AssociationCodeModel model)
         {
-            Check.NotNull(source, "source");
-            Check.NotNull(target, "target");
+            Check.NotNull(model, "model");
 
-            this.Source = source;
-            this.Target = target;
+            this.Model = model;
         }
 
 
@@ -46,19 +31,19 @@ namespace EfModelMigrations.Operations.Mapping
         {
             EfFluentApiCallChain callChain;
 
-            if (Source.HasNavigationProperty) //Navigation property on Source
+            if (Model.Principal.HasNavigationProperty) //Navigation property on Source
             {
                 var methods = GetFluentApiMethodsStartingFromSource();
-                callChain = new EfFluentApiCallChain(Source.ClassName)
-                    .AddMethodCall(methods.Item1, CreatePropertySelectorParameter(Source.ClassName, Source.NavigationProperty))
-                    .AddMethodCall(methods.Item2, CreatePropertySelectorParameter(Target.ClassName, Target.NavigationProperty));
+                callChain = new EfFluentApiCallChain(Model.Principal.ClassName)
+                    .AddMethodCall(methods.Item1, CreatePropertySelectorParameter(Model.Principal.ClassName, Model.Principal.NavigationProperty))
+                    .AddMethodCall(methods.Item2, CreatePropertySelectorParameter(Model.Dependent.ClassName, Model.Dependent.NavigationProperty));
             }
             else //Navigation property on Target
             {
                 var methods = GetFluentApiMethodsStartingFromTarget();
-                callChain = new EfFluentApiCallChain(Target.ClassName)
-                    .AddMethodCall(methods.Item1, CreatePropertySelectorParameter(Target.ClassName, Target.NavigationProperty))
-                    .AddMethodCall(methods.Item2, CreatePropertySelectorParameter(Source.ClassName, Source.NavigationProperty));
+                callChain = new EfFluentApiCallChain(Model.Dependent.ClassName)
+                    .AddMethodCall(methods.Item1, CreatePropertySelectorParameter(Model.Dependent.ClassName, Model.Dependent.NavigationProperty))
+                    .AddMethodCall(methods.Item2, CreatePropertySelectorParameter(Model.Principal.ClassName, Model.Principal.NavigationProperty));
             }
 
             AddAdditionalMethodCalls(callChain);            
@@ -69,15 +54,15 @@ namespace EfModelMigrations.Operations.Mapping
 
         protected virtual Tuple<EfFluentApiMethods, EfFluentApiMethods> GetFluentApiMethodsStartingFromSource()
         {
-            var hasMethod = MapMultiplicityToHasAssociationFluentApiMethod(Target.Multipticity);
-            var withMethod = MapMultiplicityToWithAssociationFluentApiMethod(Source.Multipticity);
+            var hasMethod = MapMultiplicityToHasAssociationFluentApiMethod(Model.Dependent.Multipticity);
+            var withMethod = MapMultiplicityToWithAssociationFluentApiMethod(Model.Principal.Multipticity);
 
             return FixAssociationFluentApiMethods(hasMethod, withMethod, isPrincipal: true);
         }
         protected virtual Tuple<EfFluentApiMethods, EfFluentApiMethods> GetFluentApiMethodsStartingFromTarget()
         {
-            var hasMethod = MapMultiplicityToHasAssociationFluentApiMethod(Source.Multipticity);
-            var withMethod = MapMultiplicityToWithAssociationFluentApiMethod(Target.Multipticity);
+            var hasMethod = MapMultiplicityToHasAssociationFluentApiMethod(Model.Principal.Multipticity);
+            var withMethod = MapMultiplicityToWithAssociationFluentApiMethod(Model.Dependent.Multipticity);
 
             return FixAssociationFluentApiMethods(hasMethod, withMethod, isPrincipal: false);
         }
@@ -85,46 +70,52 @@ namespace EfModelMigrations.Operations.Mapping
         
         protected virtual void AddAdditionalMethodCalls(EfFluentApiCallChain callChain)
         {
-            if (ForeignKeyProperties != null && MultiplicityHelper.IsOneToMany(Source, Target))
+            var foreignKeyProperties = Model.GetForeignKeyProperties();
+            var foreignKeyColumnNames = Model.GetForeignKeyColumnNames();
+            var joinTable = Model.GetJoinTable();
+            var willCascadeOnDelete = Model.GetWillCascadeOnDelete();
+
+            if (foreignKeyProperties != null && Model.IsOneToMany())
             {
-                AddHasForeignKeyMethodCall(callChain);
+                AddHasForeignKeyMethodCall(callChain, foreignKeyProperties);
             }
-            else if (ForeignKeyColumnNames != null &&
-                (MultiplicityHelper.IsOneToMany(Source, Target) || (MultiplicityHelper.IsOneToOne(Source, Target))))
+            else if (foreignKeyColumnNames != null &&
+                (Model.IsOneToMany() || (Model.IsOneToOne())))
             {
-                AddMapForeignKeysMethodCall(callChain);
+                AddMapForeignKeysMethodCall(callChain, foreignKeyColumnNames);
             }
 
-            if (JoinTable != null && MultiplicityHelper.IsManyToMany(Source, Target))
+            if (joinTable != null && Model.IsManyToMany())
             {
-                AddMapJoinTableMethodCall(callChain);
+                AddMapJoinTableMethodCall(callChain, joinTable);
             }
 
-            if (WillCascadeOnDelete.HasValue && !MultiplicityHelper.IsManyToMany(Source, Target))
+            if (willCascadeOnDelete.HasValue && !Model.IsManyToMany())
             {
-                AddCascadeOnDeleteMethodCall(callChain);
+                AddCascadeOnDeleteMethodCall(callChain, willCascadeOnDelete.Value);
             }
         }
 
         #region Private Methods
-        private void AddHasForeignKeyMethodCall(EfFluentApiCallChain callChain)
+        private void AddHasForeignKeyMethodCall(EfFluentApiCallChain callChain, ForeignKeyPropertyCodeModel[] foreignKeyProperties)
         {
-            callChain.AddMethodCall(EfFluentApiMethods.HasForeignKey, new PropertySelectorParameter(Target.ClassName, ForeignKeyProperties));
+            callChain.AddMethodCall(EfFluentApiMethods.HasForeignKey, new PropertySelectorParameter(Model.Dependent.ClassName, foreignKeyProperties.Select(p => p.Name).ToArray()));
         }
 
-        private void AddMapForeignKeysMethodCall(EfFluentApiCallChain callChain)
+        private void AddMapForeignKeysMethodCall(EfFluentApiCallChain callChain, string[] foreignKeyColumnNames)
         {
-            var mapMethodParameter = new MapMethodParameter().MapKey(ForeignKeyColumnNames);
+            var mapMethodParameter = new MapMethodParameter().MapKey(foreignKeyColumnNames);
 
-            if(ForeignKeyIndex != null)
+            var foreignKeyIndex = Model.GetForeignKeyIndex();
+            if(foreignKeyIndex != null)
             {
-                var indexName = ForeignKeyIndex.GetDefaultNameIfRequired(ForeignKeyColumnNames);
+                var indexName = foreignKeyIndex.GetDefaultNameIfRequired(foreignKeyColumnNames);
                 var indexAnnotationName = IndexAnnotation.AnnotationName;
 
-                for (int i = 0; i < ForeignKeyColumnNames.Length; i++)
+                for (int i = 0; i < foreignKeyColumnNames.Length; i++)
                 {
-                    mapMethodParameter.HasIndexColumnAnnotation(ForeignKeyColumnNames[i], indexAnnotationName, 
-                            ForeignKeyIndex.CopyWithNameAndOrder(indexName, i)
+                    mapMethodParameter.HasIndexColumnAnnotation(foreignKeyColumnNames[i], indexAnnotationName, 
+                            foreignKeyIndex.CopyWithNameAndOrder(indexName, i)
                         );
                 }
             }
@@ -132,30 +123,30 @@ namespace EfModelMigrations.Operations.Mapping
             callChain.AddMethodCall(EfFluentApiMethods.Map, mapMethodParameter);
         }
 
-        private void AddCascadeOnDeleteMethodCall(EfFluentApiCallChain callChain)
+        private void AddCascadeOnDeleteMethodCall(EfFluentApiCallChain callChain, bool willCascadeOnDelete)
         {
-            callChain.AddMethodCall(EfFluentApiMethods.WillCascadeOnDelete, new ValueParameter(WillCascadeOnDelete.Value));
+            callChain.AddMethodCall(EfFluentApiMethods.WillCascadeOnDelete, new ValueParameter(willCascadeOnDelete));
         }
 
-        private void AddMapJoinTableMethodCall(EfFluentApiCallChain callChain)
+        private void AddMapJoinTableMethodCall(EfFluentApiCallChain callChain, ManyToManyJoinTable joinTable)
         {
             string[] leftKeys;
             string[] rightKeys;
 
-            if (Source.HasNavigationProperty)
+            if (Model.Principal.HasNavigationProperty)
             {
-                leftKeys = JoinTable.SourceForeignKeyColumns;
-                rightKeys = JoinTable.TargetForeignKeyColumns;
+                leftKeys = joinTable.SourceForeignKeyColumns;
+                rightKeys = joinTable.TargetForeignKeyColumns;
             }
             else
             {
-                leftKeys = JoinTable.TargetForeignKeyColumns;
-                rightKeys = JoinTable.SourceForeignKeyColumns;
+                leftKeys = joinTable.TargetForeignKeyColumns;
+                rightKeys = joinTable.SourceForeignKeyColumns;
             }
 
             callChain.AddMethodCall(EfFluentApiMethods.Map,
                 new MapMethodParameter()
-                    .ToTable(JoinTable.TableName)
+                    .ToTable(joinTable.TableName)
                     .MapLeftKey(leftKeys)
                     .MapRightKey(rightKeys)
                 );

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
-using System.Data.Entity.Migrations.Model;
+using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Extensions;
 using System.Linq;
 using System.Text;
@@ -29,6 +29,7 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             this.Metadata = metadata;
         }
 
+        //TODO: nebude zde problem pri inheritance??
         public IEnumerable<AssociationSet> GetAssociationSetsForEntitySet(EntitySet entitySet)
         {
             Check.NotNull(entitySet, "entitySet");

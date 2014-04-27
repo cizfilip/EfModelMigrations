@@ -137,26 +137,28 @@ namespace EfModelMigrations.Transformations
 
         public override ModelTransformation Inverse()
         {
-            var associationEnds = GetAssociationEnds();
-            return new MergeClassesTransformation(associationEnds.Item1.ToSimpleAssociationEnd(), associationEnds.Item2.ToSimpleAssociationEnd(), Properties);
+            var associationModel = GetAssociationModel();
+            return new MergeClassesTransformation(associationModel.Principal.ToSimpleAssociationEnd(), associationModel.Dependent.ToSimpleAssociationEnd(), Properties);
         }
 
 
         private AddOneToOneForeignKeyAssociationTransformation GetAssociationTransformation(IClassModelProvider modelProvider)
         {
-            var associationEnds = GetAssociationEnds();
-            var principal = associationEnds.Item1;
-            var dependent = associationEnds.Item2;
-
+            var associationModel = GetAssociationModel();
+            
             if(ForeignKeyColumns == null)
             {
                 ForeignKeyColumns = AddAssociationWithForeignKeyTransformation
-                    .GetDefaultForeignKeyColumnNames(principal, dependent, modelProvider.GetClassCodeModel(FromClass));
+                    .GetDefaultForeignKeyColumnNames(associationModel.Principal, associationModel.Dependent, modelProvider.GetClassCodeModel(FromClass));
             }
-            return new AddOneToOneForeignKeyAssociationTransformation(principal, dependent, ForeignKeyColumns, true);
+
+            associationModel.AddInformation(AssociationInfo.CreateForeignKeyColumnNames(ForeignKeyColumns));
+            associationModel.AddInformation(AssociationInfo.CreateWillCascadeOnDelete(true));
+
+            return new AddOneToOneForeignKeyAssociationTransformation(associationModel);
         }
 
-        private Tuple<AssociationEnd, AssociationEnd> GetAssociationEnds()
+        private AssociationCodeModel GetAssociationModel()
         {
             if(FromClassNavigationProperty == null && NewClassNavigationProperty == null)
             {
@@ -167,7 +169,7 @@ namespace EfModelMigrations.Transformations
             var principal = new AssociationEnd(FromClass, RelationshipMultiplicity.One, FromClassNavigationProperty);
             var dependent = new AssociationEnd(NewClass.Name, RelationshipMultiplicity.One, NewClassNavigationProperty);
 
-            return Tuple.Create(principal, dependent);
+            return new AssociationCodeModel(principal, dependent);
         }
 
         private CreateClassTransformation GetCreateClassTransformation(IClassModelProvider modelProvider)
