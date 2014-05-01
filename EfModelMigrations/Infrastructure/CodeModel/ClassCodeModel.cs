@@ -38,15 +38,11 @@ namespace EfModelMigrations.Infrastructure.CodeModel
         public CodeModelVisibility Visibility { get; private set; }
         public string BaseType { get; private set; }
         public IEnumerable<string> ImplementedInterfaces { get; private set; }
-
         public IEnumerable<PrimitivePropertyCodeModel> Properties { get; private set; }
-
         public IEnumerable<NavigationPropertyCodeModel> NavigationProperties { get; private set; }
-
         public IEnumerable<PrimitivePropertyCodeModel> PrimaryKeys { get; private set; }
 
         public EntityType StoreEntityType { get; internal set; }
-
         public EntityType ConceptualEntityType { get; internal set; }
 
         public ClassModel ToClassModel()

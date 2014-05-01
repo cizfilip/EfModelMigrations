@@ -34,22 +34,17 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
         public ClassCodeModel MapToClassCodeModel(CodeClass2 codeClass, EntityType entityType, EntitySet storeEntitySet)
         {
             var scalarProperties = MapProperties(codeClass, entityType.Properties);
-            var primaryKeys = entityType.KeyProperties.Select(k => k.Name);
-
-            //TODO: associace obecne - metoda InitializeForeignKeyLists na EntitySet - hiearchie komplikuje nejspis i asociace!!!! - viz extnsiony v ef IsAssignableFrom a IsSubtypeOf
-            //TODO: foreign keys
-            //var fks = efModel.Metadata.EntityContainer.AssociationSets.Select(a => a.ElementType)
-            //    .Where(at => at.IsForeignKey && at.Constraint != null && at.Constraint.ToRole.GetEntityType().Equals(entityType))
-            //    .SelectMany(a => a.Constraint.ToProperties);
+            var navigationProperties = MapNavigationProperties(codeClass, entityType.NavigationProperties);
+            var primaryKeys = entityType.KeyProperties.Select(k => k.Name).ToList();
 
             return new ClassCodeModel(
                 codeClass.Name,
                 new TableName(storeEntitySet.Table, storeEntitySet.Schema),
                 MapVisibility(codeClass.Access),
                 MapBaseType(codeClass.Bases),
-                MapImplementedInterfaces(codeClass.ImplementedInterfaces),
+                MapImplementedInterfaces(codeClass.ImplementedInterfaces).ToList(),
                 scalarProperties,
-                MapNavigationProperties(codeClass, entityType.NavigationProperties),
+                navigationProperties,
                 scalarProperties.Where(p => primaryKeys.Contains(p.Name)).ToList()
                 )
                 {
@@ -58,7 +53,39 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                 };
         }
 
-        private IEnumerable<PrimitivePropertyCodeModel> MapProperties(CodeClass2 codeClass, IEnumerable<EdmProperty> properties)
+        //private IList<AssociationCodeModel> MapAssociations(EntityType entityType, IList<PrimitivePropertyCodeModel> scalarProperties, IList<NavigationPropertyCodeModel> navigationProperties)
+        //{
+        //    return efModel.Metadata.EntityContainer.AssociationSets.Select(a => a.ElementType)
+        //        .Where(at => at.RelationshipEndMembers.Any(re => re.GetEntityType().Equals(entityType)))
+        //        .Select(at => MapAssociation(entityType, at, scalarProperties, navigationProperties))
+        //        .ToList();
+        //}
+
+        //private AssociationCodeModel MapAssociation(EntityType entityType, AssociationType associationType, IList<PrimitivePropertyCodeModel> scalarProperties, IList<NavigationPropertyCodeModel> navigationProperties)
+        //{
+        //    //TODO: associace obecne - metoda InitializeForeignKeyLists na EntitySet - hiearchie komplikuje nejspis i asociace!!!! - viz extnsiony v ef IsAssignableFrom a IsSubtypeOf
+        //    //TODO: foreign keys
+        //    //var fks = efModel.Metadata.EntityContainer.AssociationSets.Select(a => a.ElementType)
+        //    //    .Where(at => at.IsForeignKey && at.Constraint != null && at.Constraint.ToRole.GetEntityType().Equals(entityType))
+        //    //    .SelectMany(a => a.Constraint.ToProperties);
+            
+
+        //    var principalEnd = associationType.RelationshipEndMembers.First();
+        //    var dependentEnd = associationType.RelationshipEndMembers.Last();
+
+        //    var principalName = principalEnd.GetEntityType().Name;
+        //    var dependentName = dependentEnd.GetEntityType().Name;
+
+        //    var principal = new AssociationEnd(principalEnd.GetEntityType().Name, principalEnd.RelationshipMultiplicity);
+
+
+        //    var model = new AssociationCodeModel();
+
+        //    return model;
+        //}
+
+
+        private IList<PrimitivePropertyCodeModel> MapProperties(CodeClass2 codeClass, IEnumerable<EdmProperty> properties)
         {
             return properties.Select(p => MapProperty(
                                                 codeClass.FindProperty(p.Name), 
@@ -67,7 +94,7 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
                                             )).ToList();
         }
 
-        private IEnumerable<NavigationPropertyCodeModel> MapNavigationProperties(CodeClass2 codeClass, IEnumerable<NavigationProperty> properties)
+        private IList<NavigationPropertyCodeModel> MapNavigationProperties(CodeClass2 codeClass, IEnumerable<NavigationProperty> properties)
         {
             return properties.Select(p => MapNavigationProperty(codeClass.FindProperty(p.Name), p)).ToList();
         }
@@ -101,8 +128,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             return property;
         }
 
-        
-
         private NavigationPropertyCodeModel MapNavigationProperty(CodeProperty2 codeProperty, NavigationProperty edmProperty)
         {
             Check.NotNull(codeProperty, "codeProperty");
@@ -129,7 +154,6 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
         {
             var storeEntity = column.DeclaringType as EntityType;
 
-            //property.Column.ColumnOrder = storeEntity != null ? storeEntity.Properties.Select((p, i) => Tuple.Create((int?)i, p)).Where(p => p.Item2.Name.EqualsOrdinal(column.Name)).Select(i => i.Item1).SingleOrDefault() : null;
             property.Column.ColumnAnnotations.AddRange(column.CustomAnnotationsAsDictionary());
             property.Column.ColumnName = column.Name;
             property.Column.ColumnType = column.TypeName;
@@ -147,10 +171,11 @@ namespace EfModelMigrations.Runtime.Infrastructure.ModelChanges.Helpers
             //TODO: momentalne nemapuji PropertyName... a column order
             //efModel.Metadata.EntityContainerMapping.EntitySetMappings.SelectMany(es => es.ModificationFunctionMappings).Where(mf => mf.EntityType == edmProperty.DeclaringType).SelectMany(ef => ef.DeleteFunctionMapping.ParameterBindings.)
             //property.Column.ParameterName = edm
+            //property.Column.ColumnOrder = storeEntity != null ? storeEntity.Properties.Select((p, i) => Tuple.Create((int?)i, p)).Where(p => p.Item2.Name.EqualsOrdinal(column.Name)).Select(i => i.Item1).SingleOrDefault() : null;
         }
 
 
-        private IEnumerable<string> MapImplementedInterfaces(CodeElements codeElements)
+        private IList<string> MapImplementedInterfaces(CodeElements codeElements)
         {
             List<string> interfaces = new List<string>();
             foreach (CodeElement @interface in codeElements)

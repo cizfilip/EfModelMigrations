@@ -23,8 +23,8 @@ namespace EfModelMigrations.Infrastructure.Generators
             Check.NotEmpty(migrationClassFullName, "migrationClassFullName");
             Check.NotEmpty(migrationDirectory, "migrationDirectory");
             Check.NotEmpty(sourceCode, "sourceCode");
-            Check.NotEmpty(upMethodSourceCode, "upMethodSourceCode");
-            Check.NotEmpty(downMethodSourceCode, "downMethodSourceCode");
+            Check.NotNull(upMethodSourceCode, "upMethodSourceCode");
+            Check.NotNull(downMethodSourceCode, "downMethodSourceCode");
 
             this.MigrationId = migrationId;
             this.MigrationClassFullName = migrationClassFullName;

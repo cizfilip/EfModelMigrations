@@ -169,32 +169,6 @@ function Model-RenameProperty
     Model-ExecuteCommand EfModelMigrations.Commands.RenamePropertyCommand $Rescaffold $MigrationName @( $ClassName, $OldPropertyName, $NewPropertyName )
 }
 
-
-<#
-.SYNOPSIS
-    Model-ExtractComplexType command.
-
-.DESCRIPTION
-    Model-ExtractComplexType command.
-
-.PARAMETER command
-    Model-ExtractComplexType command.
-#>
-function Model-ExtractComplexType
-{
-    [CmdletBinding()] 
-    param (
-        [Parameter(Position = 0, Mandatory = $true)][string] $ClassName,
-        [Parameter(Position = 1, Mandatory = $true)][string] $ComplexTypeName,
-        [Parameter(ValueFromRemainingArguments = $true)][string[]] $Properties,
-		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
-		[Parameter(Mandatory = $false)][switch] $Rescaffold
-    )
-
-    Model-ExecuteCommand EfModelMigrations.Commands.ExtractComplexTypeCommand $Rescaffold $MigrationName @( $ClassName, $ComplexTypeName, $Properties )
-}
-
-
 <#
 .SYNOPSIS
     Model-ExecuteCommand command.
@@ -558,6 +532,6 @@ function Invoke-RunnerCommand($runner, $command, $parameters)
 
 
 # EXPORT ----------------------
-Export-ModuleMember @( 	'Model-ExtractComplexType', 'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
+Export-ModuleMember @( 	'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
                         'Model-RemoveProperties', 'Model-RenameClass', 'Model-RenameProperty', 
                         'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate', 'Model-EmptyMigration' ) -Variable InitialModel

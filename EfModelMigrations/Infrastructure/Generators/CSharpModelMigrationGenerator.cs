@@ -19,9 +19,9 @@ namespace EfModelMigrations.Infrastructure.Generators
         protected static readonly string Indent = "    ";
         public override GeneratedModelMigration GenerateMigration(string migrationId, string migrationDirectory, IEnumerable<ModelTransformation> transformations, string @namespace, string className)
         {
-            string upMethodBody = GenerateMethodBody(transformations);
+            string upMethodBody = GenerateMethodBody(transformations) ?? "";
 
-            string downMethodBody = GenerateMethodBody(transformations.Select(t => t.Inverse()).Where(t => t != null).Reverse());
+            string downMethodBody = GenerateMethodBody(transformations.Select(t => t.Inverse()).Where(t => t != null).Reverse()) ?? "";
 
             var template = new ModelMigrationTemplate()
             {
@@ -165,33 +165,6 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append(QuoteString(transformation.OldName));
             builder.Append(", ");
             builder.Append(QuoteString(transformation.NewName));
-            builder.Append(");");
-        }
-
-        protected virtual void Generate(ExtractComplexTypeTransformation transformation, StringBuilder builder)
-        {
-            builder.Append("Model.ExtractComplexType(");
-            builder.Append(QuoteString(transformation.ClassName));
-            builder.Append(", ");
-            builder.Append(QuoteString(transformation.ComplexTypeName));
-            builder.Append(", ");
-            builder.Append("new string[] { ");
-            foreach (var property in transformation.PropertiesToExtract)
-            {
-                builder.Append(QuoteString(property));
-                builder.Append(", ");
-            }
-
-            builder.Append("}");
-            builder.Append(");");
-        }
-
-        protected virtual void Generate(JoinComplexTypeTransformation transformation, StringBuilder builder)
-        {
-            builder.Append("Model.JoinComplexType(");
-            builder.Append(QuoteString(transformation.ComplexTypeName));
-            builder.Append(", ");
-            builder.Append(QuoteString(transformation.ClassName));
             builder.Append(");");
         }
 

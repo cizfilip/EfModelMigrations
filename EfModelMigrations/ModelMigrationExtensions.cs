@@ -77,26 +77,6 @@ namespace EfModelMigrations
             ((ModelMigration)migration).AddTransformation(new RenamePropertyTransformation(className, oldPropertyName, newPropertyName));
         }
 
-        //TODO: odstranit ci nechat complex typy?
-        public static void ExtractComplexType(this IModelMigration migration, string className, string complexTypeName, string[] propertiesToExtract)
-        {
-            Check.NotNull(migration, "migration");
-            Check.NotEmpty(className, "className");
-            Check.NotEmpty(complexTypeName, "complexTypeName");
-            Check.NotNullOrEmpty(propertiesToExtract, "propertiesToExtract");
-
-            ((ModelMigration)migration).AddTransformation(new ExtractComplexTypeTransformation(className, complexTypeName, propertiesToExtract, new NavigationPropertyCodeModel(complexTypeName)));
-        }
-
-        public static void JoinComplexType(this IModelMigration migration, string complexTypeName, string className)
-        {
-            Check.NotNull(migration, "migration");
-            Check.NotEmpty(complexTypeName, "complexTypeName");
-            Check.NotEmpty(className, "className");
-
-            ((ModelMigration)migration).AddTransformation(new JoinComplexTypeTransformation(complexTypeName, className));
-        }
-
         public static void ExtractClass(this IModelMigration migration, 
             string fromClassName, 
             string[] propertiesToExtract, 

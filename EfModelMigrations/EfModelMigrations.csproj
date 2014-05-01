@@ -52,7 +52,6 @@
     <Compile Include="Commands\AddPropertiesCommand.cs" />
     <Compile Include="Commands\CreateClassCommand.cs" />
     <Compile Include="Commands\EmptyMigrationCommand.cs" />
-    <Compile Include="Commands\ExtractComplexTypeCommand.cs" />
     <Compile Include="Commands\ModelMigrationsCommand.cs" />
     <Compile Include="Commands\ParametersParser.cs" />
     <Compile Include="Commands\RemoveClassCommand.cs" />
@@ -201,9 +200,8 @@
     <Compile Include="Transformations\AddOneToOnePrimaryKeyAssociationTransformation.cs" />
     <Compile Include="Transformations\AddPropertyTransformation.cs" />
     <Compile Include="Transformations\CreateClassTransformation.cs" />
+    <Compile Include="Transformations\ExtractBaseClassTransformation.cs" />
     <Compile Include="Transformations\ExtractClassTransformation.cs" />
-    <Compile Include="Transformations\ExtractComplexTypeTransformation.cs" />
-    <Compile Include="Transformations\JoinComplexTypeTransformation.cs" />
     <Compile Include="Transformations\MergeClassesTransformation.cs" />
     <Compile Include="Transformations\ModelTransformation.cs" />
     <Compile Include="Infrastructure\CodeModel\Associations\AssociationEnd.cs" />
