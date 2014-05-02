@@ -393,8 +393,14 @@
   <data name="Precondition_ClassExists" xml:space="preserve">
     <value>Class {0} already exists in model.</value>
   </data>
+  <data name="Precondition_ClassHasBase" xml:space="preserve">
+    <value>Class {0} has already base defined.</value>
+  </data>
   <data name="Precondition_ClassNotExists" xml:space="preserve">
     <value>Class {0} does not exist in model.</value>
+  </data>
+  <data name="Precondition_PropertiesNotExistsInClass" xml:space="preserve">
+    <value>Properties {0} are not defined in class {1}.</value>
   </data>
   <data name="PrimitiveTypeKindInvalid" xml:space="preserve">
     <value>Invalid PrimitiveTypeKind.</value>

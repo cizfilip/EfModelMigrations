@@ -1,10 +1,13 @@
 ﻿using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
+using EfModelMigrations.Extensions;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Design;
 using System.Data.Entity.Migrations.Model;
 using System.Data.Entity.Migrations.Utilities;
 using System.Linq;
 using System;
+using System.IO;
+using System.Globalization;
 
 namespace EfModelMigrations.Infrastructure.EntityFramework
 {
@@ -158,5 +161,111 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             writer.WriteLine(";");
         }
 
+        //Override for CreateTable - because Ef implementations merge fkconstraints and indexes which means that
+        //model migration which does CreateClass and then AddAssoc generate db migrations which does not compile!
+        protected override void Generate(CreateTableOperation createTableOperation, IndentedTextWriter writer)
+        {
+            Check.NotNull(createTableOperation, "createTableOperation");
+            Check.NotNull(writer, "writer");
+
+            writer.WriteLine("CreateTable(");
+            writer.Indent++;
+            writer.Write(Quote(createTableOperation.Name));
+            writer.WriteLine(",");
+            writer.WriteLine("c => new");
+            writer.Indent++;
+            writer.WriteLine("{");
+            writer.Indent++;
+
+            createTableOperation.Columns.Each(
+                c =>
+                {
+                    var scrubbedName = ScrubName(c.Name);
+
+                    writer.Write(scrubbedName);
+                    writer.Write(" =");
+                    Generate(c, writer, !string.Equals(c.Name, scrubbedName, StringComparison.Ordinal));
+                    writer.WriteLine(",");
+                });
+
+            writer.Indent--;
+            writer.Write("}");
+            writer.Indent--;
+
+            if (createTableOperation.Annotations.Any())
+            {
+                writer.WriteLine(",");
+                writer.Write("annotations: ");
+                GenerateAnnotations(createTableOperation.Annotations, writer);
+            }
+
+            writer.Write(")");
+
+            GenerateInline(createTableOperation.PrimaryKey, writer);
+
+            writer.WriteLine(";");
+            writer.Indent--;
+            writer.WriteLine();
+        }
+
+        protected override string Generate(
+            IEnumerable<MigrationOperation> operations, string @namespace, string className)
+        {
+            Check.NotNull(operations, "operations");
+            Check.NotEmpty(className, "className");
+
+            using (var stringWriter = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                using (var writer = new IndentedTextWriter(stringWriter))
+                {
+                    WriteClassStart(
+                        @namespace, className, writer, "DbMigration", designer: false,
+                        namespaces: GetNamespaces(operations));
+
+                    writer.WriteLine("public override void Up()");
+                    writer.WriteLine("{");
+                    writer.Indent++;
+
+                    operations
+                        .Each<dynamic>(o => Generate(o, writer));
+
+                    writer.Indent--;
+                    writer.WriteLine("}");
+
+                    writer.WriteLine();
+
+                    writer.WriteLine("public override void Down()");
+                    writer.WriteLine("{");
+                    writer.Indent++;
+
+                    operations
+                        = operations
+                            .Select(o => o.Inverse)
+                            .Where(o => o != null)
+                            .Reverse();
+
+                    var hasUnsupportedOperations
+                        = operations.Any(o => o is NotSupportedOperation);
+
+                    operations
+                        .Where(o => !(o is NotSupportedOperation))
+                        .Each<dynamic>(o => Generate(o, writer));
+
+                    if (hasUnsupportedOperations)
+                    {
+                        writer.Write("throw new NotSupportedException(");
+                        writer.Write(Generate("Scaffolding create or alter procedure operations is not supported in down methods."));
+                        writer.WriteLine(");");
+                    }
+
+                    writer.Indent--;
+                    writer.WriteLine("}");
+
+                    WriteClassEnd(@namespace, writer);
+                }
+
+                return stringWriter.ToString();
+            }
+        }
     }
 }

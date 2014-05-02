@@ -752,11 +752,27 @@ namespace EfModelMigrations.Resources
         }
 
         // <summary>
+        // A string like "Class {0} has already base defined."
+        // </summary>
+        internal static string Precondition_ClassHasBase(object p0)
+        {
+            return EntityRes.GetString(EntityRes.Precondition_ClassHasBase, p0);
+        }
+
+        // <summary>
         // A string like "Class {0} does not exist in model."
         // </summary>
         internal static string Precondition_ClassNotExists(object p0)
         {
             return EntityRes.GetString(EntityRes.Precondition_ClassNotExists, p0);
+        }
+
+        // <summary>
+        // A string like "Properties {0} are not defined in class {1}."
+        // </summary>
+        internal static string Precondition_PropertiesNotExistsInClass(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.Precondition_PropertiesNotExistsInClass, p0, p1);
         }
 
         // <summary>
@@ -987,7 +1003,9 @@ namespace EfModelMigrations.Resources
         internal const string ParameterParser_WrongPropertyFormat = "ParameterParser_WrongPropertyFormat";
         internal const string PreconditionFailed = "PreconditionFailed";
         internal const string Precondition_ClassExists = "Precondition_ClassExists";
+        internal const string Precondition_ClassHasBase = "Precondition_ClassHasBase";
         internal const string Precondition_ClassNotExists = "Precondition_ClassNotExists";
+        internal const string Precondition_PropertiesNotExistsInClass = "Precondition_PropertiesNotExistsInClass";
         internal const string PrimitiveTypeKindInvalid = "PrimitiveTypeKindInvalid";
         internal const string ProjectExtensions_PathMustBeAbsolute = "ProjectExtensions_PathMustBeAbsolute";
         internal const string ProjectExtensions_PathMustBeRelative = "ProjectExtensions_PathMustBeRelative";

@@ -24,7 +24,7 @@ namespace EfModelMigrations
             Check.NotNull(propertiesAction, "propertiesAction");
             
             ((ModelMigration)migration).AddTransformation(
-                new CreateClassTransformation(classAction(new ClassModelBuilder()), ConvertObjectToPrimitivePropertyModel(propertiesAction(new PrimitivePropertyBuilder())), primaryKeys)
+                new CreateClassTransformation(classAction(new ClassModelBuilder()), ModelMigrationApiHelpers.ConvertObjectToPrimitivePropertyModel(propertiesAction(new PrimitivePropertyBuilder())), primaryKeys)
                 );
         }
 
@@ -95,7 +95,7 @@ namespace EfModelMigrations
             NavigationPropertyCodeModel fromNavigationProp = fromClassNavigationPropAction != null ? fromClassNavigationPropAction(new OneNavigationPropertyBuilder(newClassModel.Name)) : null;
             NavigationPropertyCodeModel newNavigationProp = newClassNavigationPropAction != null ? newClassNavigationPropAction(new OneNavigationPropertyBuilder(fromClassName)) : null;
 
-            IEnumerable<PrimitivePropertyCodeModel> primaryKeys = primaryKeysAction != null ? ConvertObjectToPrimitivePropertyModel(primaryKeysAction(new PrimitivePropertyBuilder())) : null;
+            IEnumerable<PrimitivePropertyCodeModel> primaryKeys = primaryKeysAction != null ? ModelMigrationApiHelpers.ConvertObjectToPrimitivePropertyModel(primaryKeysAction(new PrimitivePropertyBuilder())) : null;
 
             ((ModelMigration)migration).AddTransformation(
                 new ExtractClassTransformation(fromClassName, propertiesToExtract, newClassModel, primaryKeys, fromNavigationProp, newNavigationProp, foreignKeyColumns)
@@ -333,7 +333,7 @@ namespace EfModelMigrations
                 CreateAsociationModel(
                     new AssociationEnd(principal, principalMultiplicity, principalNavigationProperty(new ManyNavigationPropertyBuilder(dependent))),
                     new AssociationEnd(dependent, RelationshipMultiplicity.Many, dependentNavigationProperty(new OneNavigationPropertyBuilder(principal))),
-                    dependentFkProps: ConvertObjectToForeignKeyPropertyModel(dependentFkPropertiesAction(new ForeignKeyPropertyBuilder())).ToArray(),
+                    dependentFkProps: ModelMigrationApiHelpers.ConvertObjectToForeignKeyPropertyModel(dependentFkPropertiesAction(new ForeignKeyPropertyBuilder())).ToArray(),
                     willCascadeOnDelete: willCascadeOnDelete,
                     foreignKeyIndex: foreignKeyIndex
                 )
@@ -464,53 +464,6 @@ namespace EfModelMigrations
                 new SimpleAssociationEnd(source, sourceNavigationPropertyName),
                 new SimpleAssociationEnd(target, targetNavigationPropertyName)));
         }
-
-
-        private static IEnumerable<PrimitivePropertyCodeModel> ConvertObjectToPrimitivePropertyModel<TProps>(TProps properties)
-        {
-            var propertiesOnObject = properties.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(
-                p => !p.GetIndexParameters().Any());
-
-            foreach (var property in propertiesOnObject)
-            {
-                var mappingBuilder = property.GetValue(properties) as PrimitiveMappingBuilder;
-
-                var primitiveProperty = mappingBuilder != null ? mappingBuilder.Property : null;
-
-                if (primitiveProperty == null)
-                    throw new ModelMigrationsException(Strings.PropertyDefinitionExtractionFailed); 
-
-                if (string.IsNullOrWhiteSpace(primitiveProperty.Name))
-                {
-                    primitiveProperty.Name = property.Name;
-                }
-
-                yield return primitiveProperty;
-            }
-        }
-
-        private static IEnumerable<ForeignKeyPropertyCodeModel> ConvertObjectToForeignKeyPropertyModel<TProps>(TProps properties)
-        {
-            var propertiesOnObject = properties.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(
-                p => !p.GetIndexParameters().Any());
-
-            foreach (var property in propertiesOnObject)
-            {
-                var fkProperty = property.GetValue(properties) as ForeignKeyPropertyCodeModel;
-
-                if (fkProperty == null)
-                    throw new ModelMigrationsException(Strings.ForeignKeyDefinitionExtractionFailed); 
-
-                if (string.IsNullOrWhiteSpace(fkProperty.Name))
-                {
-                    fkProperty.Name = property.Name;
-                }
-
-                yield return fkProperty;
-            }
-        }
+        
     }
-
-
-
 }
