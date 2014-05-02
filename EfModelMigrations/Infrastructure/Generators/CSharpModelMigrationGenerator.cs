@@ -10,6 +10,7 @@ using EfModelMigrations.Exceptions;
 using EfModelMigrations.Infrastructure.CodeModel;
 using System.Data.Entity.Core.Metadata.Edm;
 using EfModelMigrations.Resources;
+using EfModelMigrations.Transformations.Model;
 
 
 namespace EfModelMigrations.Infrastructure.Generators
@@ -65,35 +66,9 @@ namespace EfModelMigrations.Infrastructure.Generators
         {
             builder.AppendLine("Model.CreateClass(");
             AppendIndent(builder);
-            builder.Append("c => c.Class(");
-            builder.Append(QuoteString(transformation.Model.Name));
+            GenerateClassModel(transformation.Model, builder);
 
-            
-            if(transformation.Model.Visibility.HasValue || transformation.Model.TableName != null)
-            {
-                if(transformation.Model.Visibility.HasValue)
-                {
-                    builder.Append(", ")
-                        .Append("visibility: ")
-                        .Append(TranslateCodeModelVisbility(transformation.Model.Visibility.Value));
-                }
-                
-                if (transformation.Model.TableName != null)
-                {
-                    builder.Append(", ")
-                        .Append("tableName: ")
-                        .Append(QuoteString(transformation.Model.TableName.Table));
-
-                    if(!string.IsNullOrWhiteSpace(transformation.Model.TableName.Schema))
-                    {
-                        builder.Append(", ")
-                            .Append("schema: ")
-                            .Append(QuoteString(transformation.Model.TableName.Schema));
-                    }
-                }
-            }
-
-            builder.Append("), ");
+            builder.Append(", ");
             builder.AppendLine();
             AppendIndent(builder);
             builder.AppendLine("p => new");
@@ -116,11 +91,86 @@ namespace EfModelMigrations.Infrastructure.Generators
             builder.Append("});");
         }
 
+        protected virtual void GenerateClassModel(ClassModel model, StringBuilder builder)
+        {
+            builder.Append("c => c.Class(");
+            builder.Append(QuoteString(model.Name));
+
+            if (model.Visibility.HasValue || model.TableName != null)
+            {
+                if (model.Visibility.HasValue)
+                {
+                    builder.Append(", ")
+                        .Append("visibility: ")
+                        .Append(TranslateCodeModelVisbility(model.Visibility.Value));
+                }
+
+                if (model.TableName != null)
+                {
+                    builder.Append(", ")
+                        .Append("tableName: ")
+                        .Append(QuoteString(model.TableName.Table));
+
+                    if (!string.IsNullOrWhiteSpace(model.TableName.Schema))
+                    {
+                        builder.Append(", ")
+                            .Append("schema: ")
+                            .Append(QuoteString(model.TableName.Schema));
+                    }
+                }
+            }
+            builder.Append(")");
+        }
+
         protected virtual void Generate(RemoveClassTransformation transformation, StringBuilder builder)
         {
             builder.Append("Model.RemoveClass(");
             builder.Append(QuoteString(transformation.Name));
             builder.Append(");");
+        }
+
+        protected virtual void Generate(ExtractClassTransformation transformation, StringBuilder builder)
+        {
+            builder.Append("Model.ExtractClass(")
+                .Append(QuoteString(transformation.FromClass))
+                .Append(", ")
+                .Append("new[] { ")
+                .Append(string.Join(", ", transformation.Properties.Select(p => QuoteString(p))))
+                .Append(" }, ");
+            GenerateClassModel(transformation.NewClass, builder);
+            builder.Append(");");
+        }
+
+        protected virtual void Generate(MergeClassesTransformation transformation, StringBuilder builder)
+        {
+            builder.Append("Model.MergeClasses(")
+                .Append(QuoteString(transformation.Principal.ClassName))
+                .Append(", ");
+            
+            GenerateSimpleAssociationEnd(transformation.Principal, builder);
+
+            builder.Append(", ")
+                .Append(QuoteString(transformation.Dependent.ClassName))
+                .Append(", ");
+
+            GenerateSimpleAssociationEnd(transformation.Dependent, builder);
+
+            builder.Append(", new[] { ")
+                .Append(string.Join(", ", transformation.PropertiesToMerge.Select(p => QuoteString(p))))
+                .Append(" });");
+        }
+
+        
+        protected virtual void GenerateSimpleAssociationEnd(SimpleAssociationEnd associationEnd, StringBuilder builder, string noNavPropText = "null")
+        {
+            if (associationEnd.HasNavigationPropertyName)
+            {
+                builder.Append(QuoteString(associationEnd.NavigationPropertyName));
+            }
+            else
+            {
+                builder.Append(noNavPropText);
+            }
         }
 
         protected virtual void Generate(AddPropertyTransformation transformation, StringBuilder builder)

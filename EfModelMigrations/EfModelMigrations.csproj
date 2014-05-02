@@ -52,6 +52,7 @@
     <Compile Include="Commands\AddPropertiesCommand.cs" />
     <Compile Include="Commands\CreateClassCommand.cs" />
     <Compile Include="Commands\EmptyMigrationCommand.cs" />
+    <Compile Include="Commands\ExtractClassCommand.cs" />
     <Compile Include="Commands\ModelMigrationsCommand.cs" />
     <Compile Include="Commands\ParametersParser.cs" />
     <Compile Include="Commands\RemoveClassCommand.cs" />

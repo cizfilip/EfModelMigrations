@@ -101,6 +101,30 @@ function Model-RemoveClass
 
 <#
 .SYNOPSIS
+    Model-ExtractClass command.
+
+.DESCRIPTION
+    Model-ExtractClass command.
+
+.PARAMETER command
+    Model-ExtractClass command.
+#>
+function Model-ExtractClass
+{
+    [CmdletBinding()] 
+    param (
+        [Parameter(Position = 0, Mandatory = $true)][string] $NewClassName,
+		[Parameter(Position = 1, Mandatory = $true)][string] $FromClassName,
+        [Parameter(ValueFromRemainingArguments = $true)][string[]] $PropertiesToExtract,
+		[Parameter(Mandatory = $false, HelpMessage="Specifies model migration name.")][string] $MigrationName,
+		[Parameter(Mandatory = $false)][switch] $Rescaffold
+    )
+
+    Model-ExecuteCommand EfModelMigrations.Commands.ExtractClassCommand $Rescaffold $MigrationName @( $NewClassName, $FromClassName, $PropertiesToExtract )
+}
+
+<#
+.SYNOPSIS
     Model-RemoveProperties command.
 
 .DESCRIPTION
@@ -532,6 +556,6 @@ function Invoke-RunnerCommand($runner, $command, $parameters)
 
 
 # EXPORT ----------------------
-Export-ModuleMember @( 	'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 
+Export-ModuleMember @( 	'Model-AddProperties', 'Model-CreateClass', 'Model-RemoveClass', 'Model-ExtractClass',
                         'Model-RemoveProperties', 'Model-RenameClass', 'Model-RenameProperty', 
                         'Model-ExecuteCommand', 'Model-Enable', 'Model-Migrate', 'Model-EmptyMigration' ) -Variable InitialModel
