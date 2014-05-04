@@ -28,7 +28,6 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
         {
-            //TODO: pridat preconditions u vsech transformaci!
             //TODO: udelat precondition co validuje spravnost pridavanych property - momentalne asi jenom v pripade ze je property enum tak enum musi existovat...
             yield return new ClassNotExistsInModelPrecondition(Model.Name);
         }

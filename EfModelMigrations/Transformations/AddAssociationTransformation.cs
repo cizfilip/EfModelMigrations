@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EfModelMigrations.Transformations.Preconditions;
 
 namespace EfModelMigrations.Transformations
 {
@@ -26,6 +27,12 @@ namespace EfModelMigrations.Transformations
             {
                 throw new ModelTransformationValidationException(Strings.Transformations_NavigationPropertyMissing);
             }
+        }
+
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(Model.Principal.ClassName);
+            yield return new ClassExistsInModelPrecondition(Model.Dependent.ClassName);
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)

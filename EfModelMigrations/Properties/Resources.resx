@@ -390,6 +390,9 @@
   <data name="PreconditionFailed" xml:space="preserve">
     <value>Transformation {0} can not be applied.</value>
   </data>
+  <data name="Precondition_ClassesNotHaveSamePK" xml:space="preserve">
+    <value>Classes {0} does not have same primary keys.</value>
+  </data>
   <data name="Precondition_ClassExists" xml:space="preserve">
     <value>Class {0} already exists in model.</value>
   </data>
@@ -449,5 +452,8 @@
   </data>
   <data name="TypeFinder_MultipleTypesFound" xml:space="preserve">
     <value>More than one type with base type {0} was found.</value>
+  </data>
+  <data name="Precondition_PropertiesExistsInClass" xml:space="preserve">
+    <value>Properties {0} are already defined in class {1}.</value>
   </data>
 </root>

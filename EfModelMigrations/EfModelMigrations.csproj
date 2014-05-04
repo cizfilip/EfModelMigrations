@@ -212,10 +212,12 @@
     <Compile Include="Infrastructure\CodeModel\Associations\ManyToManyJoinTable.cs" />
     <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />
     <Compile Include="Transformations\Preconditions\ClassDoesNotHaveBasePrecondition.cs" />
+    <Compile Include="Transformations\Preconditions\ClassesHaveSamePrimaryKeyPrecondition.cs" />
     <Compile Include="Transformations\Preconditions\ClassExistsInModelPrecondition.cs" />
     <Compile Include="Transformations\Preconditions\ClassNotExistsInModelPrecondition.cs" />
     <Compile Include="Transformations\Preconditions\ModelTransformationPrecondition.cs" />
-    <Compile Include="Transformations\Preconditions\PropertiesExistsInClassPrecondition.cs" />
+    <Compile Include="Transformations\Preconditions\PropertiesExistInClassPrecondition.cs" />
+    <Compile Include="Transformations\Preconditions\PropertiesNotExistInClassPrecondition.cs" />
     <Compile Include="Transformations\Preconditions\VerificationResult.cs" />
     <Compile Include="Transformations\RemoveAssociationTransformation.cs" />
     <Compile Include="Transformations\RemoveAssociationWithForeignKeyTransformation.cs" />

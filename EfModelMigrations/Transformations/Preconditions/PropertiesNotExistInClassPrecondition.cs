@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace EfModelMigrations.Transformations.Preconditions
 {
-    public class PropertiesExistsInClassPrecondition : ModelTransformationPrecondition
+    public class PropertiesNotExistInClassPrecondition : ModelTransformationPrecondition
     {
         private string className;
         private string[] properties;
 
-        public PropertiesExistsInClassPrecondition(string className, string[] properties)
+        public PropertiesNotExistInClassPrecondition(string className, string[] properties)
         {
             Check.NotEmpty(className, "className");
             Check.NotNullOrEmpty(properties, "properties");
@@ -31,11 +31,11 @@ namespace EfModelMigrations.Transformations.Preconditions
                     .Select(p => p.Name)
                     .ToList();
 
-                var nonExistingProperties = properties.Where(p => !classProperties.Contains(p)).ToList(); 
+                var existingProperties = properties.Where(p => classProperties.Contains(p)).ToList();
 
-                if (nonExistingProperties.Count > 0)
+                if (existingProperties.Count > 0)
                 {
-                    return VerificationResult.Error(Strings.Precondition_PropertiesNotExistsInClass(string.Join(", ", nonExistingProperties), className));
+                    return VerificationResult.Error(Strings.Precondition_PropertiesExistsInClass(string.Join(", ", existingProperties), className));
                 }
             }
             catch (Exception) { }

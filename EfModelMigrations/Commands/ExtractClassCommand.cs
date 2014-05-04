@@ -19,6 +19,7 @@ namespace EfModelMigrations.Commands
 
         public ExtractClassCommand(string newClassName, string fromClassName, string[] propertiesToExtract)
         {
+            //TODO: strings to resources
             if (string.IsNullOrWhiteSpace(newClassName))
             {
                 throw new ModelMigrationsException("Name of extracted class missing.");

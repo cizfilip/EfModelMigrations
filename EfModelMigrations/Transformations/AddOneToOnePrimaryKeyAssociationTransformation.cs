@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
 using System.Data.Entity.Migrations.Model;
 using EfModelMigrations.Resources;
+using EfModelMigrations.Transformations.Preconditions;
 
 namespace EfModelMigrations.Transformations
 {
@@ -24,6 +25,15 @@ namespace EfModelMigrations.Transformations
                 throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityOneToOnePk);
             }
         }
+
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            var basePreconditions = base.GetPreconditions().ToList();
+            basePreconditions.Add(new ClassesHaveSamePrimaryKeyPrecondition(new[] { Model.Principal.ClassName, Model.Dependent.ClassName }));
+
+            return basePreconditions;
+        }
+
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {

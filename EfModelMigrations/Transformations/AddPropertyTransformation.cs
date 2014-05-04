@@ -3,6 +3,7 @@ using EfModelMigrations.Infrastructure.CodeModel;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Transformations.Preconditions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -21,6 +22,12 @@ namespace EfModelMigrations.Transformations
 
             this.ClassName = className;
             this.Model = model;
+        }
+
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(ClassName);
+            yield return new PropertiesNotExistInClassPrecondition(ClassName, new [] { Model.Name });
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
