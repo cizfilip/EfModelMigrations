@@ -407,15 +407,17 @@ namespace EfModelMigrations
             string source,
             string sourceNavigationPropertyName,
             string target,
-            string targetNavigationPropertyName)
+            string targetNavigationPropertyName,
+            bool addIdentity = true)
         {
             Check.NotNull(migration, "migration");
             Check.NotEmpty(source, "source");
             Check.NotEmpty(target, "target");
 
-            ((ModelMigration)migration).AddTransformation(new RemoveOneToOneForeignKeyAssociationTransformation(
+            ((ModelMigration)migration).AddTransformation(new RemoveOneToOnePrimaryKeyAssociationTransformation(
                 new SimpleAssociationEnd(source, sourceNavigationPropertyName),
-                new SimpleAssociationEnd(target, targetNavigationPropertyName)));
+                new SimpleAssociationEnd(target, targetNavigationPropertyName),
+                addIdentity));
         }
 
         public static void RemoveOneToOneForeignKeyAssociation(this IModelMigration migration,

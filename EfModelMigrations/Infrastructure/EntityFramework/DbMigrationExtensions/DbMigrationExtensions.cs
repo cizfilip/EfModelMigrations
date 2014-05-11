@@ -16,35 +16,39 @@ namespace EfModelMigrations.Infrastructure.EntityFramework.DbMigrationExtensions
         public static IIdentityOperationWrapper AddIdentity(
                 this DbMigration migration,
                 string principalTable,
+                string principalColumnName,
                 Func<ColumnBuilder, ColumnModel> principalColumnAction)
         {
             Check.NotNull(migration, "migration");
             Check.NotEmpty(principalTable, "principalTable");
             Check.NotNull(principalColumnAction, "principalColumnAction");
 
-            return CreateIdentityOperation(migration, new AddIdentityOperation(), principalTable, principalColumnAction);
+            return CreateIdentityOperation(migration, new AddIdentityOperation(), principalTable, principalColumnName, principalColumnAction);
         }
 
         public static IIdentityOperationWrapper DropIdentity(
                 this DbMigration migration,
                 string principalTable,
+                string principalColumnName,
                 Func<ColumnBuilder, ColumnModel> principalColumnAction)
         {
             Check.NotNull(migration, "migration");
             Check.NotEmpty(principalTable, "principalTable");
             Check.NotNull(principalColumnAction, "principalColumnAction");
 
-            return CreateIdentityOperation(migration, new DropIdentityOperation(), principalTable, principalColumnAction);
+            return CreateIdentityOperation(migration, new DropIdentityOperation(), principalTable, principalColumnName, principalColumnAction);
         }
 
         private static IdentityOperationWrapper CreateIdentityOperation(
                 DbMigration migration,
                 IdentityOperation operation,
                 string principalTable,
+                string principalColumnName,
                 Func<ColumnBuilder, ColumnModel> principalColumnAction)
         {
             operation.PrincipalTable = principalTable;
             operation.PrincipalColumn = principalColumnAction(new ColumnBuilder());
+            operation.PrincipalColumn.Name = principalColumnName;
 
             ((IDbMigration)migration).AddOperation(operation);
 

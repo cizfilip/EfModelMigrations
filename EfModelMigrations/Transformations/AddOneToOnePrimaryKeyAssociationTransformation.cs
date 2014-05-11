@@ -20,7 +20,7 @@ namespace EfModelMigrations.Transformations
         public AddOneToOnePrimaryKeyAssociationTransformation(AssociationCodeModel model)
             :base(model)
         {
-            if (Model.IsOneToOne() && !(Model.Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne && Model.Dependent.Multipticity == RelationshipMultiplicity.ZeroOrOne))
+            if (Model.IsOneToOne() && !(Model.Principal.Multipticity == RelationshipMultiplicity.ZeroOrOne || Model.Dependent.Multipticity == RelationshipMultiplicity.ZeroOrOne))
             {
                 throw new ModelTransformationValidationException(Strings.Transformations_InvalidMultiplicityOneToOnePk);
             }
@@ -37,10 +37,8 @@ namespace EfModelMigrations.Transformations
 
         public override IEnumerable<MigrationOperation> GetDbMigrationOperations(IDbMigrationOperationBuilder builder)
         {
-            var dependentStoreEntitySet = builder.NewModel.GetStoreEntitySetForClass(Model.Dependent.ClassName);
-
             //drop identity if required
-            var dropIdentityOperation = builder.TryBuildDropIdentityOperation(dependentStoreEntitySet);
+            var dropIdentityOperation = builder.TryBuildDropIdentityOperation(builder.OldModel.GetStoreEntitySetForClass(Model.Dependent.ClassName));
             if(dropIdentityOperation != null)
             {
                 yield return dropIdentityOperation;
@@ -51,6 +49,7 @@ namespace EfModelMigrations.Transformations
             var foreignKeyColumns = referentialConstraint.ToProperties;
 
             //add index on Fk if exists on ef model
+            var dependentStoreEntitySet = builder.NewModel.GetStoreEntitySetForClass(Model.Dependent.ClassName);
             var indexOperation = builder.TryBuildCreateIndexOperation(dependentStoreEntitySet, foreignKeyColumns);
             if (indexOperation != null)
             {

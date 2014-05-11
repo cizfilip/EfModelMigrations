@@ -137,6 +137,8 @@ namespace EfModelMigrations.Infrastructure.EntityFramework
             writer.Write(extensionMethodName);
             writer.Write("(");
             writer.Write(Quote(operation.PrincipalTable));
+            writer.Write(", ");
+            writer.Write(Quote(operation.PrincipalColumn.Name));
             writer.Write(", c =>");
             Generate(operation.PrincipalColumn, writer);
             writer.Write(")");

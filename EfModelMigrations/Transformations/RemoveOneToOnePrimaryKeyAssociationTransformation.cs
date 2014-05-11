@@ -45,7 +45,7 @@ namespace EfModelMigrations.Transformations
             //add identity if required
             if(AddIdentityOnDependentPk)
             {
-                var addIdentityOperation = builder.TryBuildAddIdentityOperation(dependentStoreEntitySet);
+                var addIdentityOperation = builder.TryBuildAddIdentityOperation(builder.NewModel.GetStoreEntitySetForClass(Dependent.ClassName));
                 if (addIdentityOperation != null)
                 {
                     yield return addIdentityOperation;
