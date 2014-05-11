@@ -918,6 +918,14 @@ namespace EfModelMigrations.Resources
         {
             return EntityRes.GetString(EntityRes.Precondition_PropertiesExistsInClass, p0, p1);
         }
+
+        // <summary>
+        // A string like "Association between {0} and {1} is not defined."
+        // </summary>
+        internal static string Precondition_AssociationNotExists(object p0, object p1)
+        {
+            return EntityRes.GetString(EntityRes.Precondition_AssociationNotExists, p0, p1);
+        }
     }
 
     // <summary>
@@ -1040,6 +1048,7 @@ namespace EfModelMigrations.Resources
         internal const string Transformations_NavigationPropertyMissing = "Transformations_NavigationPropertyMissing";
         internal const string TypeFinder_MultipleTypesFound = "TypeFinder_MultipleTypesFound";
         internal const string Precondition_PropertiesExistsInClass = "Precondition_PropertiesExistsInClass";
+        internal const string Precondition_AssociationNotExists = "Precondition_AssociationNotExists";
 
         private static EntityRes loader;
         private readonly ResourceManager resources;

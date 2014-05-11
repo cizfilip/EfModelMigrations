@@ -54,6 +54,7 @@ namespace EfModelMigrations.Transformations
         {
             yield return new ClassExistsInModelPrecondition(Principal.ClassName);
             yield return new ClassExistsInModelPrecondition(Dependent.ClassName);
+            yield return new AssociationExistsInModelPrecondition(Principal, Dependent);
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)

@@ -210,6 +210,7 @@
     <Compile Include="Transformations\Model\ClassModelBuilder.cs" />
     <Compile Include="Infrastructure\CodeModel\Associations\ManyToManyJoinTable.cs" />
     <Compile Include="Transformations\Model\SimpleAssociationEnd.cs" />
+    <Compile Include="Transformations\Preconditions\AssociationExistsInModelPrecondition.cs" />
     <Compile Include="Transformations\Preconditions\ClassDoesNotHaveBasePrecondition.cs" />
     <Compile Include="Transformations\Preconditions\ClassesHaveSamePrimaryKeyPrecondition.cs" />
     <Compile Include="Transformations\Preconditions\ClassExistsInModelPrecondition.cs" />

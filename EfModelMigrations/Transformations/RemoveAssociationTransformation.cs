@@ -39,11 +39,11 @@ namespace EfModelMigrations.Transformations
         {
         }
 
-        //TODO: precondition - typicka vazba kterou chceme odstranit musi existovat mezi tridami
         public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
         {
             yield return new ClassExistsInModelPrecondition(Principal.ClassName);
             yield return new ClassExistsInModelPrecondition(Dependent.ClassName);
+            yield return new AssociationExistsInModelPrecondition(Principal, Dependent);
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)

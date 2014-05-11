@@ -456,4 +456,7 @@
   <data name="Precondition_PropertiesExistsInClass" xml:space="preserve">
     <value>Properties {0} are already defined in class {1}.</value>
   </data>
+  <data name="Precondition_AssociationNotExists" xml:space="preserve">
+    <value>Association between {0} and {1} is not defined.</value>
+  </data>
 </root>
