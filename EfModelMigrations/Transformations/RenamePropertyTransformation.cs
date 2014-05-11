@@ -8,6 +8,7 @@ using System.Data.Entity.Migrations.Model;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EfModelMigrations.Transformations.Preconditions;
 
 namespace EfModelMigrations.Transformations
 {
@@ -28,6 +29,13 @@ namespace EfModelMigrations.Transformations
             this.ClassName = className;
             this.OldName = oldName;
             this.NewName = newName;
+        }
+
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(ClassName);
+            yield return new PropertiesExistInClassPrecondition(ClassName, new[] { OldName });
+            yield return new PropertiesNotExistInClassPrecondition(ClassName, new[] { NewName });
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)

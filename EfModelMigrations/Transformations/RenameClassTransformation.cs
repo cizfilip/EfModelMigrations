@@ -1,6 +1,7 @@
 ﻿using EfModelMigrations.Infrastructure;
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
+using EfModelMigrations.Transformations.Preconditions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -22,6 +23,12 @@ namespace EfModelMigrations.Transformations
 
             this.OldName = oldName;
             this.NewName = newName;
+        }
+
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(OldName);
+            yield return new ClassNotExistsInModelPrecondition(NewName);
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)

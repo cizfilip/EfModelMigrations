@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity.Migrations.Model;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Transformations.Preconditions;
 
 namespace EfModelMigrations.Transformations
 {
@@ -31,7 +32,12 @@ namespace EfModelMigrations.Transformations
         {
         }
 
-       
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(ClassName);
+            yield return new PropertiesExistInClassPrecondition(ClassName, new[] { Name });
+        }
+
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {
             //TODO: Validovat zda property vůbec existuje

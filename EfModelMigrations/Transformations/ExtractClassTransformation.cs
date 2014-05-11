@@ -5,6 +5,7 @@ using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Transformations.Model;
+using EfModelMigrations.Transformations.Preconditions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Core.Metadata.Edm;
@@ -48,7 +49,6 @@ namespace EfModelMigrations.Transformations
             Check.NotEmpty(fromClass, "fromClass");
             Check.NotNullOrEmpty(properties, "properties");
             Check.NotNull(newClass, "newClass");
-            
 
             this.FromClass = fromClass;
             this.Properties = properties;
@@ -59,7 +59,12 @@ namespace EfModelMigrations.Transformations
             this.NewClassNavigationProperty = newNavigationProp;
         }
 
-       
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(FromClass);
+            yield return new PropertiesExistInClassPrecondition(FromClass, Properties);
+            yield return new ClassNotExistsInModelPrecondition(NewClass.Name);
+        }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
         {

@@ -5,6 +5,7 @@ using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
 using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations.Model;
+using EfModelMigrations.Transformations.Preconditions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -36,6 +37,13 @@ namespace EfModelMigrations.Transformations
         public RemoveAssociationTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent)
             : this(principal, dependent, null)
         {
+        }
+
+        //TODO: precondition - typicka vazba kterou chceme odstranit musi existovat mezi tridami
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(Principal.ClassName);
+            yield return new ClassExistsInModelPrecondition(Dependent.ClassName);
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)

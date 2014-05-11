@@ -5,6 +5,7 @@ using EfModelMigrations.Infrastructure.EntityFramework.MigrationOperations;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Resources;
 using EfModelMigrations.Transformations.Model;
+using EfModelMigrations.Transformations.Preconditions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
@@ -46,6 +47,13 @@ namespace EfModelMigrations.Transformations
         public MergeClassesTransformation(SimpleAssociationEnd principal, SimpleAssociationEnd dependent, string[] propertiesToMerge)
             : this(principal, dependent, propertiesToMerge, null)
         {
+        }
+
+        //TODO: precondition - only one association 1:1 FK exists between classes
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(Principal.ClassName);
+            yield return new ClassExistsInModelPrecondition(Dependent.ClassName);
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)

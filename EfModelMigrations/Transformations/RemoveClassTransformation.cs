@@ -2,6 +2,7 @@
 using EfModelMigrations.Infrastructure.EntityFramework;
 using EfModelMigrations.Operations;
 using EfModelMigrations.Operations.Mapping;
+using EfModelMigrations.Transformations.Preconditions;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations.Model;
 
@@ -21,6 +22,11 @@ namespace EfModelMigrations.Transformations
         public RemoveClassTransformation(string name)
             : this(name, null)
         {
+        }
+
+        public override IEnumerable<ModelTransformationPrecondition> GetPreconditions()
+        {
+            yield return new ClassExistsInModelPrecondition(Name);
         }
 
         public override IEnumerable<IModelChangeOperation> GetModelChangeOperations(IClassModelProvider modelProvider)
